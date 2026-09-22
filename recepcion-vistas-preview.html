@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vista previa — 5 estilos Recepción</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;600;700&family=Inter:wght@500;600;700&family=JetBrains+Mono:wght@500;700&family=Outfit:wght@500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Space+Grotesk:wght@500;600;700&family=DM+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/recepcion-vistas-preview.css?v=2">
+</head>
+<body class="rec-vistas-preview rec-vp-theme-a">
+  <div class="rec-vp-banner">
+    VISTA PREVIA — 5 estilos distintos (tipografía + colores + layout) · <span>Sin tocar producción</span>
+  </div>
+
+  <nav class="rec-vp-picker" aria-label="Elegir estilo">
+    <button type="button" class="rec-vp-opt is-active" data-view="A">A · Institucional<small>IBM Plex Sans · rojo</small></button>
+    <button type="button" class="rec-vp-opt" data-view="B">B · Moderno<small>Outfit · púrpura glass</small></button>
+    <button type="button" class="rec-vp-opt" data-view="C">C · Kanban<small>Space Grotesk · neón</small></button>
+    <button type="button" class="rec-vp-opt" data-view="D">D · Banco<small>Source Serif · azul/claro</small></button>
+    <button type="button" class="rec-vp-opt" data-view="E">E · Terminal<small>JetBrains Mono · verde</small></button>
+  </nav>
+
+  <p class="rec-vp-desc" id="recVpDesc">
+    <strong>A — Institucional:</strong> Fuente IBM Plex Sans, rojo almacén, bordes formales. Layout clásico en una página.
+  </p>
+
+  <div class="rec-vp-stage">
+
+    <!-- A -->
+    <section class="rec-vp-view rec-vp-a is-active" id="viewA">
+      <header class="rec-vp-identity">
+        <div>
+          <h2 class="rec-vp-identity-title">Gestión de Recepción</h2>
+          <p class="rec-vp-identity-meta">IBM Plex Sans · Tema rojo institucional · Layout clásico</p>
+        </div>
+      </header>
+      <div class="rec-mock-toolbar">
+        <p class="rec-mock-user">María Ramos · Colaborador</p>
+        <div class="rec-mock-actions">
+          <span class="rec-mock-btn">Compartir TV</span>
+          <span class="rec-mock-btn">Salir</span>
+        </div>
+      </div>
+      <div class="rec-mock-kpis">
+        <div class="rec-mock-kpi"><span class="rec-mock-kpi-num">8</span><span class="rec-mock-kpi-lbl">Seguimiento</span></div>
+        <div class="rec-mock-kpi"><span class="rec-mock-kpi-num rec-num-pend">3</span><span class="rec-mock-kpi-lbl">Pend. validar</span></div>
+        <div class="rec-mock-kpi"><span class="rec-mock-kpi-num rec-num-val">2</span><span class="rec-mock-kpi-lbl">Validados</span></div>
+        <div class="rec-mock-kpi"><span class="rec-mock-kpi-num rec-num-ent">3</span><span class="rec-mock-kpi-lbl">Con entrada</span></div>
+      </div>
+      <div class="rec-mock-panel">
+        <h3>Registrar contenedor · Próximo REC-0009</h3>
+        <div class="rec-mock-form-grid">
+          <label class="rec-mock-field"><span>Fecha</span><div class="rec-mock-input">20/06/2026</div></label>
+          <label class="rec-mock-field"><span>Contenedor</span><div class="rec-mock-input">COR-45864564</div></label>
+          <label class="rec-mock-field"><span>Tipo</span><div class="rec-mock-input">Local</div></label>
+          <label class="rec-mock-field"><span>División</span><div class="rec-mock-input">COASIS</div></label>
+          <label class="rec-mock-field rec-field-wide"><span>Descripción</span><div class="rec-mock-input">GILLETTE</div></label>
+          <label class="rec-mock-field"><span>Paletas</span><div class="rec-mock-input">18</div></label>
+          <label class="rec-mock-field"><span>Muelle</span><div class="rec-mock-input">J77</div></label>
+        </div>
+        <p class="rec-mock-submit"><span class="rec-mock-btn rec-mock-btn--pri">Registrar contenedor</span></p>
+      </div>
+      <div class="rec-mock-panel">
+        <h3>Seguimiento de contenedores</h3>
+        <table class="rec-mock-table" id="tableA"></table>
+      </div>
+      <div class="rec-mock-panel">
+        <h3>Registro de actividad</h3>
+        <table class="rec-mock-table" id="logA"></table>
+      </div>
+    </section>
+
+    <!-- B -->
+    <section class="rec-vp-view rec-vp-b" id="viewB">
+      <header class="rec-vp-identity">
+        <div>
+          <h2 class="rec-vp-identity-title">Recepción Hub</h2>
+          <p class="rec-vp-identity-meta">Outfit · Púrpura glass · Pestañas por tarea</p>
+        </div>
+      </header>
+      <div class="rec-mock-toolbar">
+        <p class="rec-mock-user">María Ramos · Colaborador</p>
+        <div class="rec-mock-actions"><span class="rec-mock-btn rec-mock-btn--pri">● Pantalla en vivo</span></div>
+      </div>
+      <div class="rec-mock-kpis rec-kpis-compact">
+        <div class="rec-mock-kpi"><span class="rec-mock-kpi-num rec-num-pend">3</span><span class="rec-mock-kpi-lbl">Pendiente</span></div>
+        <div class="rec-mock-kpi"><span class="rec-mock-kpi-num rec-num-val">2</span><span class="rec-mock-kpi-lbl">Validado</span></div>
+        <div class="rec-mock-kpi"><span class="rec-mock-kpi-num rec-num-ent">3</span><span class="rec-mock-kpi-lbl">Entrada</span></div>
+      </div>
+      <div class="rec-vp-tabs">
+        <div class="rec-vp-tab is-on" data-tab="reg">Registrar</div>
+        <div class="rec-vp-tab" data-tab="seg">Seguimiento</div>
+        <div class="rec-vp-tab" data-tab="log">Actividad</div>
+      </div>
+      <div class="rec-vp-tab-pane is-on" data-pane="reg">
+        <div class="rec-mock-panel">
+          <h3>Nuevo contenedor · REC-0009</h3>
+          <div class="rec-mock-form-grid">
+            <label class="rec-mock-field"><span>Contenedor</span><div class="rec-mock-input">COR-45864564</div></label>
+            <label class="rec-mock-field"><span>Descripción</span><div class="rec-mock-input">GILLETTE</div></label>
+            <label class="rec-mock-field"><span>Paletas</span><div class="rec-mock-input">18</div></label>
+            <label class="rec-mock-field"><span>Muelle</span><div class="rec-mock-input">J77</div></label>
+          </div>
+          <p class="rec-mock-submit"><span class="rec-mock-btn rec-mock-btn--pri">Guardar y seguir</span></p>
+        </div>
+      </div>
+      <div class="rec-vp-tab-pane" data-pane="seg">
+        <div class="rec-mock-panel"><table class="rec-mock-table" id="tableB"></table></div>
+      </div>
+      <div class="rec-vp-tab-pane" data-pane="log">
+        <div class="rec-mock-panel"><table class="rec-mock-table" id="logB"></table></div>
+      </div>
+    </section>
+
+    <!-- C -->
+    <section class="rec-vp-view rec-vp-c" id="viewC">
+      <header class="rec-vp-identity">
+        <div>
+          <h2 class="rec-vp-identity-title">Flow Board</h2>
+          <p class="rec-vp-identity-meta">Space Grotesk · Slate + neón · Columnas Kanban</p>
+        </div>
+      </header>
+      <div class="rec-mock-toolbar">
+        <p class="rec-mock-user">Validador · Kelvin P.</p>
+        <div class="rec-mock-actions"><span class="rec-mock-btn rec-mock-btn--pri">+ Nuevo</span></div>
+      </div>
+      <div class="rec-vp-kanban">
+        <div class="rec-vp-col rec-vp-col--pend">
+          <div class="rec-vp-col-head">Pend. validar · 3</div>
+          <div class="rec-vp-card"><strong>COR-45864564</strong><div class="rec-vp-card-meta">GILLETTE · 18 pal · J77</div><div class="rec-vp-card-actions"><span class="rec-mock-btn rec-mock-btn--pri">VALIDAR</span></div></div>
+          <div class="rec-vp-card"><strong>COR-88210391</strong><div class="rec-vp-card-meta">PAMPERS · 24 pal</div><div class="rec-vp-card-actions"><span class="rec-mock-btn rec-mock-btn--pri">VALIDAR</span></div></div>
+          <div class="rec-vp-card"><strong>COR-99122001</strong><div class="rec-vp-card-meta">GATORADE · 12 pal</div><div class="rec-vp-card-actions"><span class="rec-mock-btn rec-mock-btn--pri">VALIDAR</span></div></div>
+        </div>
+        <div class="rec-vp-col rec-vp-col--val">
+          <div class="rec-vp-col-head">Validado · 2</div>
+          <div class="rec-vp-card"><strong>COR-77123456</strong><div class="rec-vp-card-meta">MUELLE J12 · COASIS</div><div class="rec-vp-card-actions"><span class="rec-mock-btn rec-mock-btn--pri">ENTRADA</span></div></div>
+          <div class="rec-vp-card"><strong>COR-66554433</strong><div class="rec-vp-card-meta">IMPORT · 40 pal</div><div class="rec-vp-card-actions"><span class="rec-mock-btn rec-mock-btn--pri">ENTRADA</span></div></div>
+        </div>
+        <div class="rec-vp-col rec-vp-col--ent">
+          <div class="rec-vp-col-head">Con entrada · 3</div>
+          <div class="rec-vp-card"><strong>COR-55443322</strong><div class="rec-vp-card-meta">J9 · OK</div></div>
+          <div class="rec-vp-card"><strong>COR-44332211</strong><div class="rec-vp-card-meta">J15 · OK</div></div>
+          <div class="rec-vp-card"><strong>COR-33221100</strong><div class="rec-vp-card-meta">J3 · OK</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- D -->
+    <section class="rec-vp-view rec-vp-d" id="viewD">
+      <header class="rec-vp-identity">
+        <div>
+          <h2 class="rec-vp-identity-title">Recepción y Ubicación</h2>
+          <p class="rec-vp-identity-meta">Source Serif 4 + Inter · Azul Banco Popular · Panel claro + tabla oscura</p>
+        </div>
+      </header>
+      <div class="rec-vp-split">
+        <aside class="rec-vp-split-form">
+          <div class="rec-mock-toolbar">
+            <p class="rec-mock-user">María Ramos</p>
+            <div class="rec-mock-actions"><span class="rec-mock-btn">Salir</span></div>
+          </div>
+          <div class="rec-mock-panel">
+            <h3>Registrar contenedor</h3>
+            <p class="rec-next-tag">Próximo REC-0009</p>
+            <div class="rec-mock-form-grid rec-form-single">
+              <label class="rec-mock-field"><span>Contenedor</span><div class="rec-mock-input">COR-45864564</div></label>
+              <label class="rec-mock-field"><span>Tipo / División</span><div class="rec-mock-input">Local · COASIS</div></label>
+              <label class="rec-mock-field"><span>Descripción</span><div class="rec-mock-input">GILLETTE</div></label>
+              <label class="rec-mock-field"><span>Paletas / Muelle</span><div class="rec-mock-input">18 · J77</div></label>
+            </div>
+            <span class="rec-mock-btn rec-mock-btn--pri">Registrar contenedor</span>
+          </div>
+          <div class="rec-mock-panel">
+            <h3>Actividad reciente</h3>
+            <p class="rec-vp-activity-note">10:18 · REC-0008 · Validación<br>09:42 · REC-0007 · Muelle J12<br>08:55 · REC-0006 · Registro</p>
+          </div>
+        </aside>
+        <div class="rec-vp-split-table">
+          <div class="rec-mock-panel">
+            <h3>Seguimiento de contenedores</h3>
+            <table class="rec-mock-table" id="tableD"></table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- E -->
+    <section class="rec-vp-view rec-vp-e" id="viewE">
+      <header class="rec-vp-identity">
+        <div>
+          <h2 class="rec-vp-identity-title">REC-OPS v1.0</h2>
+          <p class="rec-vp-identity-meta">JetBrains Mono · Terminal verde · Filtros + tabla densa</p>
+        </div>
+      </header>
+      <div class="rec-mock-toolbar">
+        <p class="rec-mock-user">user@patio $</p>
+        <div class="rec-mock-actions"><span class="rec-mock-btn">[TV]</span><span class="rec-mock-btn">[LOGOUT]</span></div>
+      </div>
+      <div class="rec-vp-e-toolbar">
+        <div class="rec-vp-e-filters">
+          <span class="rec-vp-filter is-on">ALL(8)</span>
+          <span class="rec-vp-filter">PEND(3)</span>
+          <span class="rec-vp-filter">VAL(2)</span>
+          <span class="rec-vp-filter">IN(3)</span>
+        </div>
+        <span class="rec-mock-btn">grep COR-*</span>
+      </div>
+      <div class="rec-mock-panel rec-table-scroll">
+        <table class="rec-mock-table" id="tableE"></table>
+      </div>
+      <p class="rec-vp-drawer-hint">[+] abre drawer registro :: sin perder lista</p>
+      <button type="button" class="rec-vp-fab" id="recVpFab" hidden aria-hidden="true">+</button>
+    </section>
+
+    <div class="rec-vp-compare">
+      <h4>Comparativa de estilos</h4>
+      <table>
+        <thead>
+          <tr><th>Vista</th><th>Tipografía</th><th>Look</th><th>Layout</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>A</strong></td><td>IBM Plex Sans</td><td>Rojo formal</td><td>Clásica 1 página</td></tr>
+          <tr><td><strong>B</strong></td><td>Outfit</td><td>Púrpura glass</td><td>Pestañas</td></tr>
+          <tr><td><strong>C</strong></td><td>Space Grotesk</td><td>Neón / Kanban</td><td>3 columnas</td></tr>
+          <tr><td><strong>D</strong></td><td>Source Serif + Inter</td><td>Azul banco / claro</td><td>Split</td></tr>
+          <tr><td><strong>E</strong></td><td>JetBrains Mono</td><td>Terminal verde</td><td>Filtros + tabla</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var rows = [
+        { reg: 'REC-0008', cont: 'COR-45864564', desc: 'GILLETTE', pal: 18, muelle: 'J77', val: 'ok', ent: 'pend' },
+        { reg: 'REC-0007', cont: 'COR-77123456', desc: 'PAMPERS', pal: 24, muelle: 'J12', val: 'ok', ent: 'pend' },
+        { reg: 'REC-0006', cont: 'COR-88210391', desc: 'COCA COLA', pal: 32, muelle: '—', val: 'pend', ent: 'pend' },
+        { reg: 'REC-0005', cont: 'COR-55443322', desc: 'COLGATE', pal: 15, muelle: 'J9', val: 'ok', ent: 'ok' },
+        { reg: 'REC-0004', cont: 'COR-66554433', desc: 'HUGGIES', pal: 40, muelle: 'J15', val: 'ok', ent: 'pend' }
+      ];
+      var logRows = [
+        { at: '20/6 10:18', reg: 'REC-0008', cont: 'COR-45864564', user: 'Kelvin P.', acc: 'Validación' },
+        { at: '20/6 09:42', reg: 'REC-0007', cont: 'COR-77123456', user: 'María R.', acc: 'Muelle J12' },
+        { at: '20/6 08:55', reg: 'REC-0006', cont: 'COR-88210391', user: 'María R.', acc: 'Registro' }
+      ];
+
+      function badge(ok, eStyle) {
+        var lbl = eStyle && ok === 'ok' ? '[OK]' : (eStyle ? '[PEND]' : (ok === 'ok' ? 'OK' : 'PENDIENTE'));
+        var cls = ok === 'ok' ? 'rec-mock-badge--ok' : 'rec-mock-badge--pend';
+        return '<span class="rec-mock-badge ' + cls + '">' + lbl + '</span>';
+      }
+
+      function renderMainTable(el, eStyle) {
+        if (!el) return;
+        el.innerHTML = '<thead><tr><th>Reg</th><th>Contenedor</th><th>Descripción</th><th>Pal</th><th>Muelle</th><th>Val</th><th>Ent</th></tr></thead><tbody>' +
+          rows.map(function (r) {
+            return '<tr><td>' + r.reg + '</td><td><strong>' + r.cont + '</strong></td><td>' + r.desc + '</td><td>' + r.pal + '</td><td>' + r.muelle + '</td><td>' + badge(r.val, eStyle) + '</td><td>' + badge(r.ent, eStyle) + '</td></tr>';
+          }).join('') + '</tbody>';
+      }
+
+      function renderLogTable(el) {
+        if (!el) return;
+        el.innerHTML = '<thead><tr><th>Fecha</th><th>Reg</th><th>Contenedor</th><th>Usuario</th><th>Acción</th></tr></thead><tbody>' +
+          logRows.map(function (r) {
+            return '<tr><td>' + r.at + '</td><td>' + r.reg + '</td><td>' + r.cont + '</td><td>' + r.user + '</td><td>' + r.acc + '</td></tr>';
+          }).join('') + '</tbody>';
+      }
+
+      renderMainTable(document.getElementById('tableA'), false);
+      renderMainTable(document.getElementById('tableB'), false);
+      renderMainTable(document.getElementById('tableD'), false);
+      renderMainTable(document.getElementById('tableE'), true);
+      ['logA', 'logB'].forEach(function (id) { renderLogTable(document.getElementById(id)); });
+
+      var descriptions = {
+        A: '<strong>A — Institucional:</strong> IBM Plex Sans, rojo almacén, bordes formales. Todo en una página como hoy pero más corporativo.',
+        B: '<strong>B — Moderno SaaS:</strong> Outfit, púrpura con efecto glass, pestañas redondeadas. Sensación app moderna.',
+        C: '<strong>C — Kanban Flow:</strong> Space Grotesk, fondo slate, acentos neón. Tarjetas en columnas por estado.',
+        D: '<strong>D — Banco Popular:</strong> Source Serif + Inter, azul institucional, panel claro a la izquierda y tabla oscura a la derecha.',
+        E: '<strong>E — Terminal Ops:</strong> JetBrains Mono, negro/verde tipo consola. Tabla densa con filtros tipo código.'
+      };
+
+      var fab = document.getElementById('recVpFab');
+
+      function setView(view) {
+        document.body.className = 'rec-vistas-preview rec-vp-theme-' + view.toLowerCase();
+        document.querySelectorAll('.rec-vp-opt').forEach(function (b) { b.classList.remove('is-active'); });
+        document.querySelectorAll('.rec-vp-view').forEach(function (v) { v.classList.remove('is-active'); });
+        var btn = document.querySelector('.rec-vp-opt[data-view="' + view + '"]');
+        var panel = document.getElementById('view' + view);
+        if (btn) btn.classList.add('is-active');
+        if (panel) panel.classList.add('is-active');
+        var desc = document.getElementById('recVpDesc');
+        if (desc) desc.innerHTML = descriptions[view] || '';
+        if (fab) {
+          fab.hidden = view !== 'E';
+          fab.setAttribute('aria-hidden', view !== 'E' ? 'true' : 'false');
+        }
+      }
+
+      document.querySelectorAll('.rec-vp-opt').forEach(function (btn) {
+        btn.addEventListener('click', function () { setView(btn.getAttribute('data-view')); });
+      });
+
+      document.querySelectorAll('.rec-vp-tab').forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var root = tab.closest('.rec-vp-b');
+          if (!root) return;
+          var id = tab.getAttribute('data-tab');
+          root.querySelectorAll('.rec-vp-tab').forEach(function (t) { t.classList.remove('is-on'); });
+          root.querySelectorAll('.rec-vp-tab-pane').forEach(function (p) { p.classList.remove('is-on'); });
+          tab.classList.add('is-on');
+          var pane = root.querySelector('.rec-vp-tab-pane[data-pane="' + id + '"]');
+          if (pane) pane.classList.add('is-on');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+WMS ALMACÉN CENTRAL — PLANTILLA DE ENLACES
+==========================================
+
+Reemplaza 192.168.X.X con la IP que muestra serve-dashboard.ps1
+
+PARA OTROS (celular, laptop, misma red):
+  Prueba:   http://192.168.X.X:8080/conexion-ok.html
+  WMS:      http://192.168.X.X:8080
+  Despacho: http://192.168.X.X:8080/despacho.html
+
+PARA TI (PC servidor):
+  http://localhost:8080
+
+Abrir firewall (una vez, como Administrador):
+  .\ABRIR-ACCESO-RED.bat

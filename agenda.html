@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Agenda operativa — tareas diarias por puesto — Almacén Central 001">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com; img-src 'self' data:; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Agenda — Almacén Central 001</title>
+  <script src="js/relay-bootstrap.js?v=2"></script>
+  <link rel="icon" type="image/png" href="assets/img/ac001-logo.svg?v=1">
+  <link rel="stylesheet" href="css/platform.css?v=32">
+  <link rel="stylesheet" href="css/auth-cinematic.css?v=19">
+  <link rel="stylesheet" href="css/auth-security.css?v=3">
+  <link rel="stylesheet" href="css/dc-brand.css?v=11">
+  <link rel="stylesheet" href="css/ac001-brand.css?v=1">
+  <link rel="stylesheet" href="css/agenda-portal.css?v=4">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="agenda-body auth-locked">
+  <noscript><p class="noscript-msg">Activa JavaScript para usar la Agenda.</p></noscript>
+
+  <div class="agenda-auth-overlay agenda-auth-overlay" id="agendaAuthOverlay" role="dialog" aria-labelledby="agendaAuthTitle">
+    <div class="agenda-auth-card">
+      <img class="jc-logo-img jc-logo-img--portal" src="assets/img/ac001-logo.svg?v=1" alt="AC" width="48" height="48">
+      <h2 id="agendaAuthTitle">Agenda operativa</h2>
+      <p class="agenda-auth-sub">Gestión y seguimiento de tareas por puesto — Almacén Central 001</p>
+      <form id="agendaAuthForm" class="auth-form" novalidate action="#" method="post">
+        <label class="auth-field"><span>Usuario</span>
+          <input id="agendaAuthUsername" class="auth-field-input" type="text" autocomplete="username" maxlength="64" required></label>
+        <label class="auth-remember" for="agendaAuthRememberUser">
+          <input type="checkbox" id="agendaAuthRememberUser" checked> Guardar usuario</label>
+        <label class="auth-field auth-field-password"><span>Contraseña</span>
+          <input id="agendaAuthPassword" class="auth-field-input" type="password" autocomplete="current-password" maxlength="128" required>
+          <button type="button" class="auth-pwd-toggle" id="agendaBtnTogglePassword">Ver</button></label>
+        <button type="submit" class="btn btn-primary" id="agendaAuthSubmit">Entrar a Agenda</button>
+        <p id="agendaAuthError" class="auth-form-error" role="alert" hidden></p>
+      </form>
+      <a href="index.html" class="auth-portal-back" style="display:block;margin-top:1rem;text-align:center">← Volver al mando</a>
+    </div>
+  </div>
+
+  <div id="agendaApp" class="agenda-app is-hidden">
+    <header class="agenda-header">
+      <div class="agenda-header__brand">
+        <img class="jc-logo-img jc-logo-img--sidebar" src="assets/img/ac001-logo.svg?v=1" alt="" width="40" height="40">
+        <div>
+          <p class="agenda-brand-eyebrow">Almacén Central 001</p>
+          <h1 class="agenda-brand-title">Agenda operativa</h1>
+        </div>
+      </div>
+      <nav class="agenda-header__nav" id="agendaSidebarNav" aria-label="Puestos"></nav>
+      <div class="agenda-header__meta">
+        <span class="agenda-live" id="agendaLiveBadge">○ …</span>
+        <div id="agendaClock">--:--</div>
+        <div id="agendaUserLabel">—</div>
+      </div>
+    </header>
+    <main class="agenda-main" id="agendaMain"></main>
+  </div>
+
+  <script src="js/panel-core.js?v=17"></script>
+  <script src="js/platform-security.js?v=5"></script>
+  <script src="js/platform-web-users.js?v=19"></script>
+  <script src="js/platform-admin.js?v=17"></script>
+  <script src="js/platform-toast.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/platform-supabase.js?v=4"></script>
+  <script src="js/platform-supabase-realtime.js?v=1"></script>
+  <script src="js/platform-supabase-bridge.js?v=5"></script>
+  <script src="js/platform-registry-cloud-sync.js?v=2"></script>
+  <script src="js/platform-agenda-core.js?v=2"></script>
+  <script src="js/platform-agenda-sync.js?v=1"></script>
+  <script src="js/platform-agenda-store.js?v=1"></script>
+  <script src="js/platform-agenda-app.js?v=5"></script>
+</body>
+</html>

@@ -1,0 +1,538 @@
+/* Pantalla TV — lista validadores
+   Una sola escala (--desp-table-fs) para que TODO el texto de la tabla
+   crezca igual en TVs grandes; IDC sin salto de línea. */
+body.desp-display-mode .desp-lista-present-inner {
+  /* Objetivo: ≥8 filas visibles en 1080p; tipografía sin cambios */
+  --desp-table-fs: clamp(0.95rem, 1.65vmin, 2.5rem);
+  --desp-badge-h: calc(var(--desp-table-fs) * 1.88);
+  --desp-etapa-h: calc(var(--desp-table-fs) * 1.1);
+  --desp-row-gap: 0;
+  padding: clamp(0.18rem, 0.35vh, 0.38rem) clamp(0.5rem, 1.2vw, 1.2rem);
+}
+
+body.desp-display-mode .desp-lista-present-toolbar {
+  flex-shrink: 0;
+  margin-bottom: clamp(0.06rem, 0.14vh, 0.12rem);
+  gap: clamp(0.35rem, 0.75vw, 0.65rem);
+  align-items: stretch;
+  width: 100%;
+  justify-content: flex-start;
+  box-sizing: border-box;
+}
+
+body.desp-display-mode .desp-lista-present-kpis {
+  flex: 0 0 38%;
+  width: 38%;
+  max-width: 38%;
+  gap: clamp(0.35rem, 0.75vw, 0.65rem);
+  min-width: 0;
+  align-items: stretch;
+}
+
+body.desp-display-mode .desp-lista-present-kpi {
+  min-height: clamp(4rem, 8.5vh, 7.5rem);
+  height: 100%;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  gap: clamp(0.1rem, 0.18vh, 0.16rem);
+  padding: clamp(0.35rem, 0.55vh, 0.55rem) clamp(0.4rem, 0.85vw, 0.75rem);
+  padding-top: clamp(2.45rem, 4.6vmin, 5.25rem);
+  box-sizing: border-box;
+}
+
+body.desp-display-mode .desp-lista-present-kpi-num {
+  font-size: clamp(2.75rem, 5.8vmin, 7.5rem);
+  font-weight: 900;
+  line-height: 0.92;
+  width: 100%;
+  text-align: center;
+  flex: 0 0 auto;
+  height: clamp(2.5rem, 5.2vmin, 6.8rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body.desp-display-mode .desp-lista-present-kpi-iconbox {
+  width: clamp(1.85rem, 3.2vmin, 4rem);
+  height: clamp(1.85rem, 3.2vmin, 4rem);
+  top: clamp(0.32rem, 0.6vh, 0.65rem);
+  left: clamp(0.38rem, 0.75vw, 0.85rem);
+}
+
+body.desp-display-mode .desp-lista-present-kpi-iconbox .desp-estado-icon {
+  width: 100%;
+  height: 100%;
+}
+
+body.desp-display-mode .desp-lista-present-toolbar .desp-val-resumen {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  max-width: none;
+  max-height: none;
+  overflow: visible;
+  padding: clamp(0.2rem, 0.42vh, 0.42rem) clamp(0.35rem, 0.8vw, 0.75rem);
+  box-sizing: border-box;
+}
+
+body.desp-display-mode .desp-val-resumen--solo-barras {
+  justify-content: center;
+  gap: clamp(0.1rem, 0.2vh, 0.16rem);
+  padding: clamp(0.2rem, 0.42vh, 0.42rem) clamp(0.35rem, 0.8vw, 0.75rem);
+}
+
+body.desp-display-mode .desp-val-resumen-legend--tv {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(0.35rem, 0.75vw, 0.7rem);
+  font-size: calc(var(--desp-table-fs) * 0.68);
+  color: #94a3b8;
+  flex-shrink: 0;
+  line-height: 1.15;
+  width: 100%;
+}
+
+body.desp-display-mode .desp-val-resumen-legend--tv .desp-val-swatch {
+  width: clamp(0.55rem, 1vmin, 0.85rem);
+  height: clamp(0.55rem, 1vmin, 0.85rem);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+body.desp-display-mode .desp-val-resumen--solo-barras .desp-val-chart-rows {
+  flex: 1;
+  align-content: center;
+}
+
+body.desp-display-mode .desp-val-chart-rows {
+  gap: clamp(0.1rem, 0.22vh, 0.2rem) clamp(0.45rem, 1vw, 1rem);
+  width: 100%;
+}
+
+body.desp-display-mode .desp-val-chart-row {
+  grid-template-columns: minmax(0, 14vmin) minmax(0, 1fr);
+  width: 100%;
+  font-size: calc(var(--desp-table-fs) * 1.15);
+  line-height: 1.15;
+  position: relative;
+  min-width: 0;
+}
+
+body.desp-display-mode .desp-val-chart-row::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: rgba(148, 163, 184, 0.22);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.desp-display-mode .desp-val-chart-name,
+body.desp-display-mode .desp-val-chart-bars {
+  position: relative;
+  z-index: 1;
+}
+
+body.desp-display-mode .desp-val-chart-name {
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-size: 1em;
+  line-height: 1.15;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.desp-display-mode .desp-val-chart-bars {
+  width: 100%;
+  gap: clamp(0.18rem, 0.32vh, 0.32rem);
+}
+
+body.desp-display-mode .desp-val-chart-bar-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(0.25rem, 0.5vw, 0.45rem);
+  align-items: center;
+}
+
+body.desp-display-mode .desp-val-chart-bar-line {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: clamp(0.55rem, 1.05vmin, 1.35rem);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+body.desp-display-mode .desp-val-chart-bar-line--flex {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+body.desp-display-mode .desp-val-chart-bar-fill {
+  display: block;
+  height: 100%;
+  min-width: 0;
+  border-radius: 999px 0 0 999px;
+}
+
+body.desp-display-mode .desp-val-chart-bar-fill--validado {
+  background: #fbbf24;
+}
+
+body.desp-display-mode .desp-val-chart-bar-fill--cargado {
+  background: #34d399;
+}
+
+body.desp-display-mode .desp-val-chart-bar-rest {
+  display: block;
+  height: 100%;
+  min-width: 0;
+}
+
+body.desp-display-mode .desp-val-chart-seg-num {
+  font-size: 1em;
+  font-weight: 800;
+  line-height: 1.15;
+  min-width: 2ch;
+  flex-shrink: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+body.desp-display-mode .desp-lista-present-table-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+body.desp-display-mode .desp-lista-present-table {
+  font-size: var(--desp-table-fs);
+  table-layout: fixed;
+  width: 100%;
+}
+
+body.desp-display-mode .desp-lista-present-table td {
+  padding: clamp(0.06rem, 0.18vh, 0.14rem) clamp(0.2rem, 0.45vw, 0.55rem);
+  vertical-align: top;
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 0;
+}
+
+body.desp-display-mode .desp-lista-present-cliente,
+body.desp-display-mode .desp-lista-present-validador,
+body.desp-display-mode .desp-lista-present-idc,
+body.desp-display-mode .desp-lista-present-jaula {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body.desp-display-mode .desp-lista-present-col-idc {
+  width: 12%;
+}
+
+body.desp-display-mode .desp-lista-present-col-cliente {
+  width: 20%;
+}
+
+body.desp-display-mode .desp-lista-present-col-jaula {
+  width: 5%;
+}
+
+body.desp-display-mode .desp-lista-present-col-validador {
+  width: 8%;
+}
+
+body.desp-display-mode .desp-lista-present-col-carga {
+  width: 11%;
+}
+
+body.desp-display-mode .desp-lista-present-col-estado {
+  width: 12%;
+}
+
+body.desp-display-mode .desp-lista-present-col-f1,
+body.desp-display-mode .desp-lista-present-col-f2,
+body.desp-display-mode .desp-lista-present-col-f3 {
+  width: 13.33%;
+}
+
+body.desp-display-mode .desp-lista-present-table th {
+  font-size: 0.72em;
+  padding: clamp(0.14rem, 0.28vh, 0.24rem) clamp(0.2rem, 0.45vw, 0.55rem);
+  letter-spacing: 0.05em;
+}
+
+body.desp-display-mode .desp-lista-present-table th,
+body.desp-display-mode .desp-lista-present-table td {
+  font-size: 1.15em;
+}
+
+body.desp-display-mode .desp-lista-present-idc,
+body.desp-display-mode .desp-lista-present-cliente,
+body.desp-display-mode .desp-lista-present-jaula,
+body.desp-display-mode .desp-lista-present-validador {
+  vertical-align: middle;
+}
+
+body.desp-display-mode .desp-lista-present-carga {
+  font-size: clamp(0.62rem, 1.05vw, 0.78rem);
+  color: #ffcc80;
+  font-weight: 600;
+  white-space: normal;
+  line-height: 1.2;
+  vertical-align: middle;
+  overflow: hidden;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+body.desp-display-mode .desp-lista-present-idc {
+  font-size: 1.15em;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+body.desp-display-mode .desp-lista-present-cliente {
+  font-size: 1.06em;
+  font-weight: 600;
+}
+
+body.desp-display-mode .desp-lista-present-jaula {
+  font-size: 1.09em;
+  font-weight: 700;
+}
+
+body.desp-display-mode .desp-lista-present-estado-cell {
+  padding-right: 0.12rem !important;
+}
+
+body.desp-display-mode .desp-lista-present-estado-fecha-cell {
+  padding-left: 0.12rem !important;
+  padding-right: 0.2rem !important;
+  vertical-align: top;
+}
+
+body.desp-display-mode .desp-lista-present-estado-fecha-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--desp-row-gap);
+  width: 100%;
+}
+
+body.desp-display-mode .desp-lista-present-estado-badge-wrap .desp-lista-present-estado {
+  justify-content: flex-start;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+body.desp-display-mode .desp-lista-present-etapas--paired {
+  display: flex;
+  flex-direction: column;
+  gap: var(--desp-row-gap);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+body.desp-display-mode .desp-lista-present-etapas--paired .desp-lista-present-etapa-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(0.35rem, 0.8vw, 0.75rem);
+  min-height: var(--desp-etapa-h);
+  font-size: 0.78em;
+  line-height: 1.05;
+}
+
+body.desp-display-mode .desp-lista-present-etapas--paired .desp-lista-present-etapa-lbl {
+  font-weight: 600;
+}
+
+body.desp-display-mode .desp-lista-present-etapas--paired .desp-lista-present-etapa-time {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-align: right;
+}
+
+body.desp-display-mode .desp-lista-present-fecha-cell {
+  padding-left: 0.12rem !important;
+  padding-right: 0.2rem !important;
+}
+
+body.desp-display-mode .desp-lista-present-th-fecha {
+  padding-left: 0.12rem !important;
+  padding-right: 0.2rem !important;
+  font-size: 0.85em;
+}
+
+body.desp-display-mode .desp-lista-present-estado-col,
+body.desp-display-mode .desp-lista-present-fecha-col {
+  gap: var(--desp-row-gap);
+}
+
+body.desp-display-mode .desp-lista-present-badge-spacer {
+  min-height: var(--desp-badge-h);
+}
+
+body.desp-display-mode .desp-lista-present-etapas--labels,
+body.desp-display-mode .desp-lista-present-etapas--times {
+  gap: var(--desp-row-gap);
+}
+
+body.desp-display-mode .desp-lista-present-etapas--labels .desp-lista-present-etapa,
+body.desp-display-mode .desp-lista-present-etapas--times .desp-lista-present-etapa {
+  font-size: 0.67em;
+  min-height: var(--desp-etapa-h);
+  line-height: 1.05;
+}
+
+body.desp-display-mode .desp-lista-present-etapas--times .desp-lista-present-etapa {
+  font-size: 0.78em;
+}
+
+body.desp-display-mode .desp-lista-present-etapas--labels .desp-lista-present-etapa-lbl,
+body.desp-display-mode .desp-lista-present-etapas--times .desp-lista-present-etapa-time {
+  font-size: 1em;
+  font-weight: 600;
+}
+
+body.desp-display-mode .desp-lista-present-etapas--times .desp-lista-present-etapa-time {
+  font-weight: 700;
+}
+
+body.desp-display-mode .desp-lista-present-estado {
+  padding: 0.1em 0.38em;
+  font-size: 0.73em;
+  font-weight: 700;
+  line-height: 1.1;
+  gap: 0.3em;
+  border-radius: 0.35em;
+}
+
+body.desp-display-mode .desp-lista-present-estado .desp-estado-icon {
+  width: 1.15em;
+  height: 1.15em;
+  flex-shrink: 0;
+}
+
+body.desp-display-mode .desp-lista-present-kpi-lbl {
+  font-size: clamp(0.82rem, 1.45vmin, 1.55rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  text-align: center;
+  width: 100%;
+  white-space: normal;
+  flex: 0 0 auto;
+  min-height: clamp(1.5em, 2.4vmin, 1.85em);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  padding: 0 0.1em;
+  text-transform: none;
+}
+
+body.desp-display-mode .desp-lista-present-kpi--cargado .desp-lista-present-kpi-num {
+  color: #34d399;
+}
+
+body.desp-display-mode .desp-lista-present-validador-pill {
+  padding: 0.12em 0.38em;
+  font-size: 0.91em;
+  font-weight: 600;
+  border-radius: 0.35em;
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.desp-display-mode .desp-lista-present-table td .desp-lista-present-estado,
+body.desp-display-mode .desp-lista-present-table td .desp-lista-present-validador-pill {
+  font-size: 1em;
+}
+
+body.desp-display-mode .desp-lista-present-th-fecha-etapa {
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: 0.72em;
+}
+
+body.desp-display-mode .desp-lista-present-fecha-etapa {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  vertical-align: middle;
+}
+
+body.desp-display-mode .desp-lista-present-fecha-etapa--empty {
+  color: rgba(255, 255, 255, 0.28);
+  font-weight: 600;
+}
+
+body.desp-display-mode .desp-lista-present-fecha-etapa--pendiente {
+  color: #ff8a80;
+}
+
+body.desp-display-mode .desp-lista-present-fecha-etapa--validado {
+  color: #ffd54f;
+}
+
+body.desp-display-mode .desp-lista-present-fecha-etapa--cargado {
+  color: #69f0ae;
+}
+
+body.desp-display-mode .desp-lista-present-estado-cell-only {
+  vertical-align: middle;
+}
+
+body.desp-display-mode .desp-lista-present-foot td {
+  padding: clamp(0.35rem, 0.65vh, 0.55rem) clamp(0.35rem, 0.8vw, 0.75rem);
+  font-size: calc(var(--desp-table-fs) * 0.82);
+  color: #94a3b8;
+  border-top: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(4, 10, 20, 0.55);
+}
+
+body.desp-display-mode .desp-lista-present-foot-item {
+  display: inline-block;
+  margin-right: clamp(0.65rem, 1.4vw, 1.25rem);
+  white-space: nowrap;
+}
+
+body.desp-display-mode .desp-lista-present-foot-item strong {
+  color: #e2e8f0;
+  font-variant-numeric: tabular-nums;
+}
+
+body.desp-display-mode .desp-lista-present-foot-sync {
+  opacity: 0.85;
+  font-size: 0.92em;
+}
+
+body.desp-display-mode .desp-lista-present-foot-idc {
+  opacity: 0.75;
+  font-size: 0.9em;
+}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sincronizar usuarios a la web</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 520px; margin: 2rem auto; padding: 1rem; line-height: 1.5; }
+    .ok { color: #2e7d32; } .warn { color: #e65100; } .err { color: #c62828; }
+    code { background: #f4f4f4; padding: 0.15rem 0.35rem; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Sincronizar usuarios</h1>
+  <p id="status">Leyendo usuarios del navegador…</p>
+  <pre id="log"></pre>
+  <script src="js/panel-core.js?v=11"></script>
+  <script src="js/platform-admin.js?v=11"></script>
+  <script>
+    (function () {
+      var status = document.getElementById('status');
+      var log = document.getElementById('log');
+      function write(msg) { log.textContent += msg + '\n'; }
+
+      if (!window.PlatformAdmin) {
+        status.textContent = 'Error: no se cargó PlatformAdmin.';
+        status.className = 'err';
+        return;
+      }
+
+      var all = PlatformAdmin.getUsers();
+      var staff = PlatformAdmin.getStaffUsers ? PlatformAdmin.getStaffUsers() : [];
+      write('Total en navegador: ' + all.length);
+      write('Personal (sin admin general): ' + staff.length);
+      staff.forEach(function (u) {
+        write('  · ' + u.username + ' — ' + (u.name || u.role));
+      });
+
+      if (!staff.length) {
+        status.textContent = 'No hay personal registrado en ESTE navegador.';
+        status.className = 'warn';
+        write('\nAbre esta página en el mismo navegador donde creaste los usuarios (localhost:8080).');
+        write('Si los creaste en GitHub Pages, entra allí → Administración → Descargar web-users.json.');
+        return;
+      }
+
+      status.textContent = 'Publicando en GitHub Pages…';
+      fetch('/api/publish-web-users-live', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ users: all })
+      }).then(function (res) { return res.json(); })
+        .then(function (body) {
+          if (!body.ok) throw new Error(body.error || 'Error al publicar');
+          if (body.live && body.pushed) {
+            status.textContent = 'Listo: ' + body.count + ' usuario(s) ya están en la web pública.';
+          } else {
+            status.textContent = 'Exportados ' + body.count + ' usuario(s). Git push pendiente.';
+          }
+          status.className = body.live && body.pushed ? 'ok' : 'warn';
+          write('\nURL: https://luisjoserodriguezcorripio-creator.github.io/Almacen-Central-001/');
+        })
+        .catch(function (err) {
+          status.textContent = 'Error: ' + (err.message || err);
+          status.className = 'err';
+        });
+    })();
+  </script>
+</body>
+</html>

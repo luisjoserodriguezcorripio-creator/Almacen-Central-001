@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" fill="none">
+  <rect width="640" height="360" fill="#0a1628"/>
+  <rect width="640" height="360" fill="url(#g)" opacity="0.9"/>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="640" y2="360" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1e3a8a"/>
+      <stop offset="0.55" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#14532d"/>
+    </linearGradient>
+  </defs>
+  <rect x="48" y="72" width="200" height="216" rx="16" fill="#2563eb" opacity="0.95"/>
+  <rect x="72" y="96" width="152" height="20" rx="6" fill="#93c5fd"/>
+  <text x="148" y="168" text-anchor="middle" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="42" font-weight="800">T-0042</text>
+  <text x="148" y="200" text-anchor="middle" fill="#bfdbfe" font-family="Segoe UI,Arial,sans-serif" font-size="16" font-weight="600">Turno asignado</text>
+  <rect x="72" y="220" width="152" height="44" rx="10" fill="#16a34a"/>
+  <text x="148" y="248" text-anchor="middle" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="15" font-weight="700">Chofer en fila</text>
+  <rect x="280" y="120" width="300" height="56" rx="12" fill="rgba(255,255,255,0.08)" stroke="rgba(147,197,253,0.35)"/>
+  <text x="304" y="155" fill="#e2e8f0" font-family="Segoe UI,Arial,sans-serif" font-size="20" font-weight="700">Próximamente: Control de Turnos</text>
+  <text x="304" y="210" fill="#94a3b8" font-family="Segoe UI,Arial,sans-serif" font-size="15">Menos espera · Turno único · Despacho ágil</text>
+  <text x="304" y="238" fill="#94a3b8" font-family="Segoe UI,Arial,sans-serif" font-size="15">Liquidación y notas de crédito en segundos</text>
+  <path d="M430 260h120l28-42H402z" fill="#22c55e"/>
+  <rect x="418" y="268" width="144" height="36" rx="8" fill="#15803d"/>
+  <circle cx="438" cy="304" r="10" fill="#14532d"/>
+  <circle cx="538" cy="304" r="10" fill="#14532d"/>
+</svg>

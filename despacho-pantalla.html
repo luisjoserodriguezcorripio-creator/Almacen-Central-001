@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Pantalla externa Despacho — código de barras IDC y seguimiento del validador.">
+  <meta name="theme-color" content="#050810">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://www.gstatic.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:* http://127.0.0.1:* http://192.168.0.0/16 http://10.0.0.0/8 https://api.jsonbin.io https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.googleapis.com https://*.supabase.co wss://*.supabase.co https://*.trycloudflare.com https://luisjoserodriguezcorripio-creator.github.io; img-src 'self' data:; media-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Pantalla Despacho — Almacén Central 001</title>
+  <script src="js/relay-bootstrap.js?v=2"></script>
+  <link rel="icon" type="image/png" href="assets/img/ac001-logo.svg?v=1">
+  <link rel="stylesheet" href="css/dc-brand.css?v=11">
+  <link rel="stylesheet" href="css/ac001-brand.css?v=1">
+  <link rel="stylesheet" href="css/despacho-dashboard.css?v=56">
+  <link rel="stylesheet" href="css/despacho-display.css?v=36">
+  <link rel="stylesheet" href="css/despacho-display-lista.css?v=33">
+  <link rel="stylesheet" href="css/despacho-display-lista-bar-n.css?v=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="desp-display-mode">
+  <noscript><p class="desp-display-noscript">Activa JavaScript para la pantalla externa.</p></noscript>
+
+  <div class="desp-display-waiting" id="despDisplayWaiting" aria-live="polite">
+    <div class="desp-display-wait-inner">
+      <span class="desp-display-wait-icon" aria-hidden="true">📺</span>
+      <h1 class="desp-display-wait-title">Pantalla externa · Despacho</h1>
+      <p class="desp-display-wait-text">Esperando que compartan desde el panel de control…</p>
+      <p class="desp-display-wait-hint">Abrí esta página en la otra PC o monitor. Con el servidor LAN activo, se actualiza sola.</p>
+    </div>
+  </div>
+
+  <script src="js/panel-core.js"></script>
+  <script src="js/platform-despacho-store.js?v=83"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/platform-supabase.js?v=4"></script>
+  <script src="js/platform-supabase-realtime.js?v=1"></script>
+  <script src="js/platform-supabase-bridge.js?v=4"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <script src="js/platform-firebase-bridge.js?v=5"></script>
+  <script src="js/platform-realtime-badge.js?v=5"></script>
+  <script src="js/platform-despacho-cloud-sync.js?v=20"></script>
+  <script src="js/platform-lan-sync.js?v=13"></script>
+  <script src="js/vendor/JsBarcode.all.min.js"></script>
+  <script src="js/platform-despacho-barcode.js?v=8"></script>
+  <script src="js/platform-despacho-display.js?v=1"></script>
+  <script src="js/platform-despacho-present.js?v=36"></script>
+  <script src="js/platform-despacho-present-lista.js?v=49"></script>
+  <script src="js/platform-wake-lock.js?v=1"></script>
+  <script src="js/platform-despacho-display-app.js?v=4"></script>
+</body>
+</html>

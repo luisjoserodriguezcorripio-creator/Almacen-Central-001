@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Gestión de Recepción y Ubicación — contenedores, validación y entrada · Almacén Central 001">
+  <meta name="theme-color" content="#140305">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.supabase.co wss://*.supabase.co https://luisjoserodriguezcorripio-creator.github.io https://challenges.cloudflare.com; img-src 'self' data: https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Gestión de Recepción y Ubicación — Almacén Central 001</title>
+  <script src="js/relay-bootstrap.js?v=2"></script>
+  <link rel="preload" href="assets/img/recepcion-login-poster.jpg?v=1" as="image">
+  <link rel="icon" type="image/png" href="assets/img/ac001-logo.svg?v=1">
+  <link rel="stylesheet" href="css/platform.css?v=32">
+  <link rel="stylesheet" href="css/auth-cinematic.css?v=19">
+  <link rel="stylesheet" href="css/auth-security.css?v=3">
+  <link rel="stylesheet" href="css/auth-portals-layout.css?v=1">
+  <link rel="stylesheet" href="css/dc-brand.css?v=11">
+  <link rel="stylesheet" href="css/ac001-brand.css?v=1">
+  <link rel="stylesheet" href="css/recepcion-auth.css?v=3">
+  <link rel="stylesheet" href="css/recepcion-portal.css?v=6">
+  <link rel="stylesheet" href="css/recepcion-vistas-banco-logistica.css?v=3">
+  <link rel="stylesheet" href="css/recepcion-torre-control-preview.css?v=9">
+  <link rel="stylesheet" href="css/recepcion-torre-control-prod.css?v=5">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&family=Inter:wght@500;600;700&family=Syne:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body class="auth-locked rec-portal">
+  <noscript><p class="noscript-msg">Activa JavaScript para usar Gestión de Recepción y Ubicación.</p></noscript>
+
+  <div class="auth-overlay rec-auth-overlay" id="recAuthOverlay" role="dialog" aria-labelledby="recAuthTitle">
+    <div class="auth-video-wrap rec-auth-bg-wrap" aria-hidden="true">
+      <div class="auth-video-scrim rec-auth-scrim"></div>
+    </div>
+    <div class="auth-layout">
+      <aside class="auth-hero rec-auth-hero">
+        <div class="auth-hero-panel rec-auth-hero-panel">
+          <header class="auth-hero-head">
+            <img class="jc-logo-img jc-logo-img--hero auth-hero-logo-img" src="assets/img/ac001-logo.svg?v=1" alt="AC" width="52" height="52">
+            <div class="auth-hero-head-text">
+              <p class="auth-welcome-line">Portal independiente</p>
+              <h1 class="rec-auth-brand-title">Gestión de Recepción y Ubicación</h1>
+            </div>
+          </header>
+          <p class="rec-auth-tag">Gestión de Recepción y Ubicación</p>
+          <p class="rec-auth-desc">Registre la llegada, valide mercancía, dé entrada y ubique contenedores importados o locales. Comparta el seguimiento en pantalla TV para el equipo de patio.</p>
+          <div class="rec-auth-steps" aria-label="Flujo operativo">
+            <span class="rec-auth-step">Recepción</span>
+            <span class="rec-auth-step">Validación</span>
+            <span class="rec-auth-step">Entrada</span>
+            <span class="rec-auth-step">Ubicación</span>
+          </div>
+          <a href="index.html" class="rec-auth-back">← Volver al centro de mando WMS</a>
+        </div>
+      </aside>
+      <div class="auth-stack">
+        <div class="auth-glass-card rec-auth-glass">
+          <form id="recAuthForm" class="auth-form" novalidate action="#" method="post">
+            <h2 id="recAuthTitle" class="auth-heading rec-auth-heading">Inicio de sesión</h2>
+            <p class="auth-subheading rec-auth-subheading">Inicia sesión con tu usuario asignado</p>
+            <div class="auth-field">
+              <label for="recAuthUsername">Usuario asignado</label>
+              <input id="recAuthUsername" class="auth-field-input" type="text" autocomplete="username" maxlength="64" required>
+            </div>
+            <label class="auth-remember" for="recAuthRememberUser">
+              <input type="checkbox" id="recAuthRememberUser" checked> Guardar mi usuario en este equipo
+            </label>
+            <div class="auth-field auth-field-password">
+              <label for="recAuthPassword">Contraseña</label>
+              <input id="recAuthPassword" class="auth-field-input" type="password" autocomplete="current-password" maxlength="128" required>
+              <button type="button" class="auth-pwd-toggle" id="recBtnTogglePassword">Ver</button>
+            </div>
+            <button type="submit" class="btn btn-primary">Entrar al portal</button>
+            <p id="recAuthError" class="auth-form-error" role="alert" hidden></p>
+          </form>
+        </div>
+        <a href="index.html" class="rec-auth-back rec-auth-back--stack">← Volver al centro de mando WMS</a>
+        <nav class="auth-hub-links" aria-label="Otros portales">
+          <a href="index.html" class="auth-hub-link auth-hub-link--wms">Control de Mando 001</a>
+          <a href="despacho.html" class="auth-hub-link">Portal Despacho</a>
+          <a href="agenda.html" class="auth-hub-link">Agenda operativa</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <div id="recApp" class="is-hidden" aria-hidden="true"></div>
+
+  <script src="js/panel-core.js?v=17"></script>
+  <script src="js/platform-security.js?v=5"></script>
+  <script src="js/platform-web-users.js?v=19"></script>
+  <script src="js/platform-admin.js?v=18"></script>
+  <script src="js/platform-toast.js"></script>
+  <script src="js/platform-recepcion-store.js?v=10"></script>
+  <script src="js/platform-recepcion-auth.js?v=4"></script>
+  <script src="js/platform-recepcion-ui.js?v=15"></script>
+  <script src="js/platform-recepcion-app.js?v=14"></script>
+</body>
+</html>

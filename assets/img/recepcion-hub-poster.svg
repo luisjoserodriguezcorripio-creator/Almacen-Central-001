@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Control Patio recepción">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#7f0010"/>
+      <stop offset="1" stop-color="#2d0508"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="24" fill="url(#g)"/>
+  <rect x="48" y="120" width="220" height="130" rx="12" fill="#ef5350" stroke="#fff" stroke-width="3"/>
+  <path d="M268 120 L330 92 V250 L268 278 Z" fill="#b71c1c" stroke="#fff" stroke-width="3"/>
+  <text x="48" y="72" fill="#fff" font-family="Arial,sans-serif" font-size="28" font-weight="700">Control Patio</text>
+  <text x="48" y="300" fill="#ffcdd2" font-family="Arial,sans-serif" font-size="20">Recepción · Validación · Entrada</text>
+</svg>

@@ -1,0 +1,131 @@
+/* Almacén Central 001 — marca propia (Luis Rodríguez Corripio) */
+
+:root {
+  --ac001-ink: #0b1219;
+  --ac001-ink-2: #14202c;
+  --ac001-steel: #1f6f8b;
+  --ac001-amber: #f0a202;
+  --ac001-amber-deep: #e07a1f;
+  --ac001-sand: #f4f1ea;
+  --ac001-mist: rgba(244, 241, 234, 0.72);
+  --font-display: "Syne", "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-ui: "Source Sans 3", "DM Sans", system-ui, sans-serif;
+  --accent: var(--ac001-amber);
+  --accent-2: var(--ac001-steel);
+}
+
+body,
+body.executive-ui {
+  font-family: var(--font-ui);
+}
+
+.auth-hero-panel .auth-welcome-line,
+.hub-board__eyebrow,
+.auth-portal-badge,
+.brand-title,
+.auth-brand-title,
+.auth-portals-title {
+  font-family: var(--font-display);
+}
+
+/* Logo monograma 001 */
+.jc-logo-img,
+img.jc-logo-img {
+  border-radius: 50%;
+  box-shadow:
+    0 10px 28px rgba(15, 32, 48, 0.45),
+    0 0 0 2px rgba(240, 162, 2, 0.35);
+  filter: none;
+}
+
+/* Hub: atmósfera industrial (no púrpura / no glow excesivo) */
+body.auth-locked:has(.auth-layout--hub-news) .auth-video-scrim {
+  background:
+    linear-gradient(115deg, rgba(11, 18, 25, 0.55) 0%, rgba(20, 32, 44, 0.72) 48%, rgba(11, 18, 25, 0.88) 100%),
+    radial-gradient(ellipse 60% 50% at 70% 20%, rgba(31, 111, 139, 0.28), transparent 65%),
+    radial-gradient(ellipse 50% 40% at 15% 80%, rgba(240, 162, 2, 0.14), transparent 60%);
+}
+
+.auth-layout--hub.auth-layout--portals-only .auth-hero-panel,
+.hub-drawer-panel.auth-hero-panel {
+  border-color: rgba(240, 162, 2, 0.22);
+  background:
+    linear-gradient(160deg, rgba(20, 32, 44, 0.82) 0%, rgba(11, 18, 25, 0.88) 100%);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(244, 241, 234, 0.08);
+}
+
+.auth-hero-accent {
+  background: linear-gradient(90deg, transparent, var(--ac001-amber) 25%, var(--ac001-steel) 70%, transparent);
+}
+
+.hub-board__eyebrow,
+.auth-welcome-line {
+  color: var(--ac001-amber) !important;
+  letter-spacing: 0.2em;
+}
+
+.hub-board__title,
+.auth-hero-panel .auth-brand-title,
+.auth-portals-title {
+  letter-spacing: -0.03em;
+  color: var(--ac001-sand) !important;
+}
+
+.hub-board__code {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--ac001-ink) !important;
+  background: linear-gradient(135deg, var(--ac001-amber), var(--ac001-amber-deep)) !important;
+  border: none !important;
+  box-shadow: 0 8px 20px rgba(224, 122, 31, 0.35);
+}
+
+.auth-portal-card {
+  border-color: rgba(244, 241, 234, 0.12) !important;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease, background 0.25s ease;
+}
+
+.auth-portal-card:hover,
+.auth-portal-card:focus-visible {
+  transform: translateY(-3px);
+  border-color: rgba(240, 162, 2, 0.45) !important;
+}
+
+.auth-portal-cta {
+  color: var(--ac001-amber) !important;
+}
+
+.hub-corner-menu {
+  background: rgba(20, 32, 44, 0.9) !important;
+  border: 1px solid rgba(240, 162, 2, 0.35) !important;
+  color: var(--ac001-sand) !important;
+}
+
+.hub-board {
+  animation: ac001-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hub-drawer-panel {
+  animation: ac001-slide 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes ac001-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ac001-slide {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-board,
+  .hub-drawer-panel,
+  .auth-portal-card {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light" data-turnos-portal="chofer">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Solicite su turno de despacho — choferes — Almacén Central 001">
+  <meta name="theme-color" content="#003882">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com; img-src 'self' data: blob: https://challenges.cloudflare.com; media-src 'self'; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Turnos Chofer — Almacén Central 001</title>
+  <script>
+    (function () {
+      if (/(?:^|[?&])admin=1(?:&|$)/.test(location.search)) {
+        location.replace('turnos-supervisor.html');
+      }
+    })();
+  </script>
+  <script src="js/relay-bootstrap.js?v=1"></script>
+  <link rel="icon" type="image/png" href="assets/img/ac001-logo.svg?v=1">
+  <link rel="apple-touch-icon" href="assets/img/ac001-logo.svg?v=1">
+  <link rel="manifest" href="turnos.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Turnos Chofer">
+  <link rel="stylesheet" href="css/dc-brand.css?v=11">
+  <link rel="stylesheet" href="css/ac001-brand.css?v=1">
+  <link rel="stylesheet" href="css/turnos-portal.css?v=33">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="turnos-body">
+  <noscript><p class="turnos-noscript">Activa JavaScript para usar el control de turnos.</p></noscript>
+
+  <div id="turnosChoferRoot" class="turnos-chofer-root">
+    <header class="turnos-chofer-header">
+      <img class="turnos-portal-logo" src="assets/img/icon-turnos-portal.svg?v=13" alt="Turnos chofer" width="44" height="44">
+      <div>
+        <p class="turnos-brand-eyebrow">Almacén Central 001</p>
+        <h1 class="turnos-chofer-title">Turnos — Chofer</h1>
+      </div>
+      <div class="turnos-chofer-clock">
+        <p id="turnosChoferClockTime" class="turnos-clock-time">--:--</p>
+        <p class="turnos-clock-tz">Hora RD</p>
+      </div>
+    </header>
+    <main id="turnosChoferMain" class="turnos-chofer-main"></main>
+    <footer class="turnos-chofer-foot">
+      <a href="index.html" class="turnos-back-link">← Volver al mando</a>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/platform-supabase.js?v=4"></script>
+  <script src="js/platform-supabase-realtime.js?v=1"></script>
+  <script src="js/platform-supabase-bridge.js?v=5"></script>
+  <script src="js/platform-turnos-core.js?v=17"></script>
+  <script src="js/platform-turnos-sync.js?v=14"></script>
+  <script src="js/platform-turnos-store.js?v=16"></script>
+  <script src="js/platform-turnos-sw-watch.js?v=1"></script>
+  <script src="js/platform-turnos-chofer-perms.js?v=6"></script>
+  <script src="js/platform-turnos-chofer-call.js?v=6"></script>
+  <script src="js/platform-turnos-chofer.js?v=26"></script>
+  <script src="js/platform-turnos-pwa.js?v=7"></script>
+  <script src="js/platform-turnos-app.js?v=9"></script>
+</body>
+</html>

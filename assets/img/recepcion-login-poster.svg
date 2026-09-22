@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="Recepción de contenedores">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#120205"/>
+      <stop offset="45%" stop-color="#5c0a12"/>
+      <stop offset="100%" stop-color="#1a0306"/>
+    </linearGradient>
+    <linearGradient id="box" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ff5252"/>
+      <stop offset="100%" stop-color="#b71c1c"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect x="0" y="620" width="1600" height="280" fill="#0d0203" opacity="0.85"/>
+  <g opacity="0.18" fill="#ffffff">
+    <rect x="120" y="680" width="180" height="12" rx="6"/>
+    <rect x="340" y="680" width="120" height="12" rx="6"/>
+    <rect x="520" y="680" width="220" height="12" rx="6"/>
+  </g>
+  <g transform="translate(280 210)">
+    <rect x="0" y="120" width="520" height="280" rx="18" fill="url(#box)" stroke="#ffcdd2" stroke-width="4"/>
+    <rect x="36" y="156" width="448" height="18" rx="4" fill="#ffffff" opacity="0.35"/>
+    <rect x="36" y="196" width="320" height="14" rx="4" fill="#ffffff" opacity="0.22"/>
+    <rect x="36" y="230" width="380" height="14" rx="4" fill="#ffffff" opacity="0.18"/>
+    <path d="M520 120 L620 80 L620 360 L520 400 Z" fill="#8e0000" stroke="#ffcdd2" stroke-width="3"/>
+    <rect x="620" y="80" width="420" height="280" rx="14" fill="#c62828" stroke="#ffcdd2" stroke-width="4"/>
+    <text x="40" y="330" fill="#ffffff" font-family="Arial,sans-serif" font-size="34" font-weight="700">CONTROL PATIO</text>
+  </g>
+  <g transform="translate(980 250)">
+    <rect x="0" y="0" width="340" height="340" rx="22" fill="#ffffff" opacity="0.06" stroke="#ff8a80" stroke-width="3"/>
+    <text x="34" y="70" fill="#ffcdd2" font-family="Arial,sans-serif" font-size="28" font-weight="700">RECEPCIÓN</text>
+    <text x="34" y="118" fill="#ffffff" font-family="Arial,sans-serif" font-size="22">Validación · Entrada</text>
+    <text x="34" y="158" fill="#ffffff" font-family="Arial,sans-serif" font-size="22">Ubicación almacén</text>
+    <circle cx="70" cy="240" r="28" fill="#2e7d32"/>
+    <text x="58" y="248" fill="#fff" font-size="18" font-weight="700">OK</text>
+    <circle cx="170" cy="240" r="28" fill="#c62828"/>
+    <text x="138" y="248" fill="#fff" font-size="14" font-weight="700">PEND.</text>
+  </g>
+  <text x="80" y="780" fill="#ffffff" font-family="Arial,sans-serif" font-size="42" font-weight="700">Recepción de contenedores</text>
+  <text x="80" y="830" fill="#ffcdd2" font-family="Arial,sans-serif" font-size="24">Almacén Central DC · División Consumo Masivo</text>
+</svg>

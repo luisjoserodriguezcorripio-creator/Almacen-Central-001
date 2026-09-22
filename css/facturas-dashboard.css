@@ -1,0 +1,681 @@
+/* Dashboard Facturas — ejecutivo + TV */
+
+body.facturas-dash-view .ai-insights-bar {
+  display: none;
+}
+
+.fac-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 1680px;
+  margin: 0 auto;
+}
+
+.fac-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.fac-eyebrow {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+
+.fac-header h2 {
+  margin: 0.2rem 0 0;
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--text-strong);
+}
+
+.fac-sub {
+  margin: 0.3rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  max-width: 60ch;
+}
+
+.fac-filter-row,
+.fac-tc-prominent {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: 10px;
+}
+
+.fac-tc-badge {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.fac-usd-hint {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.fac-tc-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: flex-end;
+  padding: 0.65rem 0.85rem;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.fac-filter-row label,
+.fac-tc-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.fac-filter-row input,
+.fac-filter-row select,
+.fac-tc-row input {
+  min-height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--text);
+  padding: 0 0.6rem;
+  font-size: 0.85rem;
+}
+
+.fac-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.85rem;
+}
+
+.fac-kpi {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.1rem 1.2rem;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.fac-kpi-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin: 0.2rem 0 0;
+  line-height: 1.35;
+}
+
+.fac-kpi-value {
+  display: block;
+  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+  font-weight: 800;
+  line-height: 1.25;
+  margin: 0;
+  color: var(--text-strong);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+
+.fac-kpi-sub {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+.fac-kpi-dop .fac-kpi-value { color: #3b82f6; }
+.fac-kpi-usd .fac-kpi-value { color: #10b981; }
+.fac-kpi-orders .fac-kpi-value { color: #f59e0b; }
+
+.fac-panel {
+  padding: 1rem 1.15rem;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.fac-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.fac-panel-head h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.fac-meta {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.fac-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.fac-chart-panel h3 {
+  margin: 0 0 0.65rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.fac-chart-box {
+  position: relative;
+  height: 260px;
+}
+
+.fac-chart-box canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.fac-metas-table-wrap {
+  overflow: auto;
+  overflow-x: auto;
+  max-height: 320px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+}
+
+.fac-metas-table,
+.fac-compliance-table,
+.fac-detail-table {
+  width: 100%;
+  min-width: 920px;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.fac-metas-table th,
+.fac-compliance-table th,
+.fac-detail-table th {
+  position: sticky;
+  top: 0;
+  background: var(--bg-elevated);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.fac-metas-table td,
+.fac-compliance-table td,
+.fac-detail-table td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.fac-metas-table input {
+  width: 100%;
+  min-height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 0 0.5rem;
+}
+
+.fac-compliance-table .num,
+.fac-detail-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.fac-sem {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.sem-ok { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.sem-warn { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.sem-danger { background: rgba(255, 107, 122, 0.15); color: #ff6b7a; }
+.sem-neutral { background: var(--surface); color: var(--muted); }
+
+tr.sem-ok td:first-child { box-shadow: inset 3px 0 0 #10b981; }
+tr.sem-warn td:first-child { box-shadow: inset 3px 0 0 #f59e0b; }
+tr.sem-danger td:first-child { box-shadow: inset 3px 0 0 #ff6b7a; }
+
+.fac-compliance-table td.fac-diff {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.fac-table-wrap {
+  overflow: auto;
+  overflow-x: auto;
+  max-height: 280px;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+}
+
+.fac-empty {
+  text-align: center;
+  padding: 2.5rem;
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+}
+
+.drop-zone-facturas {
+  border-color: rgba(59, 130, 246, 0.45) !important;
+}
+
+.module-badge.facturas {
+  color: #3b82f6;
+}
+
+/* ——— Modo TV Facturas ——— */
+body.tv-mode.facturas-tv-active .platform-sidebar,
+body.tv-mode.facturas-tv-active .platform-topbar .filters,
+body.tv-mode.facturas-tv-active .ai-insights-bar,
+body.tv-mode.facturas-tv-active .data-status-row,
+body.tv-mode.facturas-tv-active .btn-ghost,
+body.tv-mode.facturas-tv-active .chip-live,
+body.tv-mode.facturas-tv-active .fac-metas-editor,
+body.tv-mode.facturas-tv-active .fac-panel-detail,
+body.tv-mode.facturas-tv-active .fac-filter-row {
+  display: none !important;
+}
+
+body.tv-mode.facturas-tv-active .platform-main {
+  margin-left: 0;
+}
+
+body.tv-mode.facturas-tv-active .platform-content {
+  padding: 0.75rem 1.25rem 1rem;
+  height: calc(100vh - 4rem);
+  overflow: hidden;
+}
+
+body.tv-mode.facturas-tv-active #module-facturas {
+  height: 100%;
+}
+
+body.tv-mode.facturas-tv-active .fac-dashboard {
+  height: 100%;
+  max-width: none;
+  gap: 0.65rem;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-areas:
+    "header"
+    "kpis"
+    "charts";
+}
+
+body.tv-mode.facturas-tv-active .fac-header {
+  grid-area: header;
+  padding: 0.25rem 0;
+  border: none;
+}
+
+body.tv-mode.facturas-tv-active .fac-header h2 {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+}
+
+body.tv-mode.facturas-tv-active .fac-kpi-row {
+  grid-area: kpis;
+  gap: 0.65rem;
+}
+
+body.tv-mode.facturas-tv-active .fac-kpi {
+  padding: 0.85rem 1rem;
+}
+
+body.tv-mode.facturas-tv-active .fac-kpi-value {
+  font-size: clamp(1.75rem, 3.5vw, 3rem);
+}
+
+body.tv-mode.facturas-tv-active .fac-kpi-label {
+  font-size: 0.95rem;
+}
+
+body.tv-mode.facturas-tv-active .fac-charts-single,
+body.tv-mode.facturas-tv-active .fac-charts-premium {
+  grid-area: charts;
+  min-height: 0;
+  margin: 0;
+  padding: 0.8rem 1rem 1rem;
+  border-radius: 20px;
+}
+
+body.tv-mode.facturas-tv-active .fac-charts-premium {
+  background:
+    radial-gradient(ellipse 70% 60% at 45% 0%, rgba(16, 185, 129, 0.14), transparent 60%),
+    linear-gradient(165deg, rgba(8, 18, 30, 0.92), rgba(5, 11, 22, 0.86));
+  border-color: rgba(52, 211, 153, 0.22);
+  box-shadow:
+    0 20px 64px rgba(0, 0, 0, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+body.tv-mode.facturas-tv-active .fac-charts-premium .exec-chart-tabs {
+  margin-bottom: 0.45rem;
+}
+
+body.tv-mode.facturas-tv-active .fac-charts-premium .exec-chart-tab {
+  padding: 0.42rem 0.85rem;
+  font-size: 0.74rem;
+}
+
+body.tv-mode.facturas-tv-active .fac-charts-premium .exec-chart-shell {
+  height: calc(100% - 2.3rem);
+  gap: 0.45rem;
+}
+
+body.tv-mode.facturas-tv-active .fac-charts-premium .exec-chart-header {
+  padding-top: 0;
+}
+
+body.tv-mode.facturas-tv-active .fac-charts-premium .exec-chart-eyebrow {
+  margin-bottom: 0.12rem;
+  font-size: 0.68rem;
+}
+
+body.tv-mode.facturas-tv-active .fac-charts-premium .exec-chart-title {
+  margin-bottom: 0.12rem;
+  font-size: clamp(1.25rem, 2.2vw, 1.85rem);
+}
+
+body.tv-mode.facturas-tv-active .fac-charts-premium .exec-chart-subtitle {
+  margin-bottom: 0.35rem;
+  font-size: clamp(0.8rem, 1.2vw, 1rem);
+}
+
+body.tv-mode.facturas-tv-active .fac-charts-premium .exec-chart-insights {
+  padding: 0.45rem 0.65rem;
+  font-size: clamp(0.74rem, 1.05vw, 0.9rem);
+}
+
+body.tv-mode.facturas-tv-active .fac-charts-premium .exec-chart-canvas-wrap {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  padding: 0.5rem 0.75rem 0.65rem;
+}
+
+body.tv-mode.facturas-tv-active .fac-charts-grid {
+  grid-area: charts;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 0.65rem;
+  min-height: 0;
+}
+
+body.tv-mode.facturas-tv-active .fac-chart-panel {
+  padding: 0.65rem 0.75rem;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+body.tv-mode.facturas-tv-active .fac-chart-box {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+}
+
+body.tv-mode.facturas-tv-active .fac-charts-grid .fac-panel {
+  grid-area: unset;
+}
+
+body.tv-mode.facturas-tv-active .fac-dashboard:has(.fac-compliance-table) {
+  grid-template-rows: auto auto minmax(0, 0.55fr) minmax(180px, 0.4fr);
+  grid-template-areas:
+    "header"
+    "kpis"
+    "charts"
+    "status";
+}
+
+body.tv-mode.facturas-tv-active .fac-panel:has(.fac-compliance-table) {
+  display: flex;
+  flex-direction: column;
+  grid-area: status;
+  min-height: 180px;
+  max-height: 32vh;
+  overflow: hidden;
+  padding: 0.65rem 0.85rem;
+}
+
+body.tv-mode.facturas-tv-active .fac-panel:has(.fac-compliance-table) .fac-metas-table-wrap {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow: auto;
+}
+
+body.tv-mode.facturas-tv-active .fac-metas-table-wrap {
+  max-height: 18vh;
+}
+
+body.tv-mode.facturas-tv-active .fac-compliance-table {
+  font-size: 0.95rem;
+}
+
+@media (max-width: 1100px) {
+  .fac-kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .fac-charts-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .fac-kpi-row { grid-template-columns: 1fr; }
+}
+
+/* ——— Gráficos visuales (sin texto en canvas) ——— */
+.fac-charts-premium.exec-chart-view {
+  padding: 1.1rem 1.2rem 1.15rem;
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 0%, rgba(59, 130, 246, 0.1), transparent 58%),
+    linear-gradient(168deg, rgba(10, 18, 32, 0.72), rgba(6, 12, 22, 0.65));
+  border-color: rgba(94, 179, 255, 0.18);
+}
+
+.exec-chart-shell--fac-visual {
+  gap: 0.65rem;
+}
+
+.fac-vis-signals {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.fac-vis-ring {
+  --fac-pct: 0;
+  position: relative;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  background:
+    conic-gradient(#10b981 calc(var(--fac-pct) * 1%), rgba(255, 255, 255, 0.08) 0);
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.fac-vis-ring::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: rgba(8, 14, 26, 0.92);
+}
+
+.fac-vis-ring-num {
+  position: relative;
+  z-index: 1;
+  font-size: 0.82rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: #ecfdf5;
+}
+
+.fac-vis-mix-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.fac-vis-mix {
+  display: flex;
+  height: 0.65rem;
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.fac-vis-seg {
+  min-width: 3px;
+  transition: flex 0.35s ease, opacity 0.2s ease;
+}
+
+.fac-vis-seg:hover {
+  opacity: 0.85;
+  filter: brightness(1.08);
+}
+
+.fac-vis-sem {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.fac-vis-sem em {
+  font-style: normal;
+  font-size: 0.78rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-strong, #f1f5f9);
+  min-width: 0.85rem;
+}
+
+.fac-vis-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.fac-vis-dot.ok { background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.55); }
+.fac-vis-dot.warn { background: #f59e0b; box-shadow: 0 0 8px rgba(245, 158, 11, 0.45); }
+.fac-vis-dot.danger { background: #ff6b7a; box-shadow: 0 0 8px rgba(255, 107, 122, 0.45); }
+
+.fac-vis-view-glyph {
+  font-size: 1.15rem;
+  opacity: 0.55;
+  color: #93c5fd;
+}
+
+.fac-vis-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  padding: 0.15rem 0;
+}
+
+.fac-vis-swatch {
+  display: inline-block;
+  width: 1.35rem;
+  height: 0.35rem;
+  border-radius: 999px;
+}
+
+.fac-vis-swatch.ok { background: #10b981; }
+.fac-vis-swatch.warn { background: #f59e0b; }
+.fac-vis-swatch.danger { background: #ff6b7a; }
+.fac-vis-swatch.meta-line {
+  width: 1.6rem;
+  height: 0;
+  border-top: 2px dashed rgba(251, 191, 36, 0.9);
+  border-radius: 0;
+}
+
+.exec-chart-canvas-wrap--fac-visual {
+  min-height: 380px;
+  height: min(48vh, 480px);
+  background:
+    radial-gradient(ellipse 75% 60% at 50% 15%, rgba(16, 185, 129, 0.1), transparent 58%),
+    linear-gradient(168deg, rgba(12, 20, 36, 0.55), rgba(6, 11, 20, 0.48));
+}
+
+.exec-chart-tabs--visual .exec-chart-tab {
+  min-width: 2.75rem;
+  padding: 0.5rem 0.65rem;
+}
+
+.fac-tab-glyph {
+  font-size: 0.95rem;
+  line-height: 1;
+  opacity: 0.82;
+}
+
+.exec-chart-tabs--visual .exec-chart-tab.active .fac-tab-glyph {
+  opacity: 1;
+  color: #93c5fd;
+}
+
+html[data-theme="light"] .fac-charts-premium.exec-chart-view {
+  background: linear-gradient(168deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.92));
+  border-color: rgba(59, 130, 246, 0.15);
+}
+
+html[data-theme="light"] .fac-vis-signals {
+  background: rgba(15, 36, 64, 0.04);
+  border-color: rgba(15, 36, 64, 0.08);
+}
+
+html[data-theme="light"] .fac-vis-ring::before {
+  background: #fff;
+}
+
+html[data-theme="light"] .fac-vis-ring-num {
+  color: #0f172a;
+}

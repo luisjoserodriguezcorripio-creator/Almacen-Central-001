@@ -1,0 +1,82 @@
+/* Verificación humana y anti-bots en login */
+.dc-auth-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.auth-human-verify {
+  margin: 0.5rem 0 0.65rem;
+  overflow: visible;
+  position: relative;
+  z-index: 5;
+}
+
+.auth-turnstile-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text, #e6edf3);
+}
+
+.auth-human-math-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text, #e6edf3);
+  margin-bottom: 0.35rem;
+}
+
+.auth-human-math-label strong {
+  color: var(--accent, #60a5fa);
+  font-weight: 800;
+}
+
+.auth-human-answer {
+  max-width: 7rem;
+}
+
+.auth-human-hint {
+  margin: 0.25rem 0 0;
+  font-size: 0.68rem;
+  color: var(--muted, #94a3b8);
+}
+
+.auth-turnstile-mount {
+  min-height: 58px;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: visible;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.25rem 0.35rem;
+}
+
+.auth-turnstile-mount iframe {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  max-width: 100%;
+}
+
+.auth-form .auth-human-verify,
+.auth-glass-card .auth-human-verify,
+.av-auth-glass .auth-human-verify {
+  overflow: visible;
+}
+
+@media (max-width: 480px) {
+  .auth-turnstile-mount {
+    justify-content: center;
+    padding: 0.2rem;
+  }
+}

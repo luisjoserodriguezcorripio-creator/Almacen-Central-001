@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Portal Despacho — Preparador y Validador de pedidos.">
+  <meta name="theme-color" content="#050810" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#e8eef5" media="(prefers-color-scheme: light)">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com https://www.gstatic.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:* http://127.0.0.1:* http://192.168.0.0/16 http://10.0.0.0/8 https://api.jsonbin.io https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.googleapis.com https://*.supabase.co wss://*.supabase.co https://*.trycloudflare.com https://luisjoserodriguezcorripio-creator.github.io https://challenges.cloudflare.com; img-src 'self' data: https://challenges.cloudflare.com; media-src 'self'; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Despacho — Almacén Central 001</title>
+  <script src="js/relay-bootstrap.js?v=2"></script>
+  <link rel="preload" href="assets/img/login-dispatch-poster.jpg" as="image">
+  <link rel="icon" type="image/png" href="assets/img/ac001-logo.svg?v=1">
+  <link rel="stylesheet" href="css/platform.css?v=31">
+  <link rel="stylesheet" href="css/platform-enhance.css">
+  <link rel="stylesheet" href="css/platform-gestures.css?v=16">
+  <link rel="stylesheet" href="css/despacho-dashboard.css?v=59">
+  <link rel="stylesheet" href="css/despacho-auth.css?v=30">
+  <link rel="stylesheet" href="css/auth-cinematic.css?v=18">
+  <link rel="stylesheet" href="css/auth-security.css?v=3">
+  <link rel="stylesheet" href="css/auth-portals-layout.css?v=1">
+  <link rel="stylesheet" href="css/dc-brand.css?v=11">
+  <link rel="stylesheet" href="css/ac001-brand.css?v=1">
+  <link rel="stylesheet" href="css/theme-light.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,500;0,9..40,600;0,9..40,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="auth-locked executive-ui">
+  <noscript><p class="noscript-msg">Activa JavaScript para usar el portal de despacho.</p></noscript>
+
+  <div class="auth-overlay desp-auth-overlay" id="despAuthOverlay" role="dialog" aria-labelledby="despAuthTitle">
+    <div class="auth-video-wrap desp-auth-bg-wrap" aria-hidden="true">
+      <div class="auth-video-scrim desp-auth-scrim"></div>
+    </div>
+    <div class="auth-layout">
+      <aside class="auth-hero desp-auth-hero">
+        <div class="auth-hero-panel desp-auth-hero-panel">
+          <header class="auth-hero-head">
+            <img class="jc-logo-img jc-logo-img--hero auth-hero-logo-img" src="assets/img/ac001-logo.svg?v=1" alt="AC" width="52" height="52">
+            <div class="auth-hero-head-text">
+              <p class="auth-welcome-line">Portal independiente</p>
+              <h1 class="desp-auth-brand-title">Despacho · Almacén Central 001</h1>
+            </div>
+          </header>
+          <p class="desp-auth-tag">Preparador ↔ Validador</p>
+          <p class="desp-auth-desc">Inicio de sesión separado del centro de mando WMS. Los pedidos se sincronizan en tiempo real entre preparador y validador en este almacén.</p>
+          <div class="desp-auth-steps" aria-label="Flujo de estados">
+            <span class="desp-auth-step">Facturado</span>
+            <span class="desp-auth-step">Pend. por validar</span>
+            <span class="desp-auth-step">Validado</span>
+            <span class="desp-auth-step">Cargado</span>
+          </div>
+          <a href="index.html" class="desp-auth-back">← Volver al centro de mando WMS</a>
+        </div>
+      </aside>
+      <div class="auth-stack">
+      <div class="auth-glass-card desp-auth-glass">
+        <form id="despAuthForm" class="auth-form" novalidate action="#" method="post">
+          <h2 id="despAuthTitle" class="auth-heading desp-auth-heading">Acceso a despacho</h2>
+          <p class="auth-subheading desp-auth-subheading">1. Elige tu área · 2. Escribe el usuario que te asignó el administrador</p>
+          <div class="auth-role-picker desp-auth-role-picker" role="radiogroup" aria-label="Elige tu rol en despacho">
+            <div class="desp-auth-role-option">
+              <input class="desp-auth-role-input" type="radio" name="despAuthArea" id="despAuthAreaPrep" value="preparador" checked>
+              <label class="auth-role-card desp-auth-role-card active" for="despAuthAreaPrep" data-role="preparador">
+                <span class="role-check" aria-hidden="true">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                </span>
+                <span class="role-icon-wrap" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                </span>
+                <strong>Preparador</strong>
+                <span class="role-desc">Registra IDC y jaula · código de barras</span>
+              </label>
+            </div>
+            <div class="desp-auth-role-option">
+              <input class="desp-auth-role-input" type="radio" name="despAuthArea" id="despAuthAreaVal" value="validador">
+              <label class="auth-role-card desp-auth-role-card" for="despAuthAreaVal" data-role="validador">
+                <span class="role-check" aria-hidden="true">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                </span>
+                <span class="role-icon-wrap" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                </span>
+                <strong>Validador</strong>
+                <span class="role-desc">Valida y libera pedidos</span>
+              </label>
+            </div>
+          </div>
+          <p class="auth-role-feedback desp-auth-role-feedback" id="despAuthRoleFeedback" aria-live="polite" hidden></p>
+          <div class="auth-field">
+            <label for="despAuthUsername">Usuario asignado</label>
+            <input id="despAuthUsername" class="auth-field-input" type="text" name="desp_assigned_user" placeholder="Tu usuario asignado" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="64" required>
+          </div>
+          <label class="auth-remember" for="despAuthRememberUser">
+            <input type="checkbox" id="despAuthRememberUser" checked>
+            <span>Guardar mi usuario en este equipo</span>
+          </label>
+          <div class="auth-field auth-field-password">
+            <label for="despAuthPassword">Contraseña</label>
+            <input id="despAuthPassword" class="auth-field-input" type="password" name="password" placeholder="Contraseña" autocomplete="current-password" maxlength="128" required>
+            <button type="button" class="auth-pwd-toggle" id="despBtnTogglePassword" aria-label="Mostrar contraseña" title="Mostrar/ocultar">Ver</button>
+          </div>
+          <button type="submit" class="btn btn-primary" id="despAuthSubmit">Entrar al portal de despacho</button>
+          <p class="auth-hint desp-auth-hint">La contraseña no se guarda en el equipo.</p>
+          <p id="despAuthError" class="desp-auth-error" role="alert" aria-live="polite" hidden></p>
+        </form>
+      </div>
+      <nav class="auth-hub-links" aria-label="Otros portales">
+        <a href="index.html" class="auth-hub-link auth-hub-link--wms">Control de Mando 001</a>
+        <a href="averias.html" class="auth-hub-link auth-hub-link--ops">Operaciones de piso</a>
+        <a href="inventario.html" class="auth-hub-link">Inventario RF</a>
+      </nav>
+      </div>
+    </div>
+  </div>
+
+  <div id="despGlobalLivePresent" class="desp-live-present" hidden aria-live="polite"></div>
+
+  <div class="desp-app is-hidden" id="despApp" aria-hidden="true" inert>
+    <header class="desp-topbar">
+      <div class="desp-topbar-title">
+        <h1>Despacho — Preparador y Validador</h1>
+        <p>Usuario: <strong id="despUserName">—</strong> · Última sync: <span id="despSyncLabel">—</span></p>
+      </div>
+      <div class="desp-topbar-actions">
+        <a href="index.html" class="btn btn-ghost">Almacén Central 001</a>
+        <button type="button" class="btn btn-ghost" id="despBtnRefresh" title="Actualizar vista">↻ Actualizar</button>
+        <button type="button" class="btn btn-ghost" id="despBtnTheme">Tema</button>
+        <span class="role-badge" id="despRoleBadge">Usuario</span>
+        <button type="button" class="btn" id="despBtnLogout">Cerrar sesión</button>
+      </div>
+    </header>
+    <main class="desp-content">
+      <section id="despModule" class="module-view active" data-module="despacho"></section>
+    </main>
+  </div>
+
+  <script src="js/panel-core.js?v=18"></script>
+  <script src="js/platform-security.js?v=5"></script>
+  <script src="js/platform-network-relay.js?v=1"></script>
+  <script src="js/platform-store.js"></script>
+  <script src="js/platform-speech.js?v=1"></script>
+  <script src="js/platform-admin.js?v=14"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/platform-supabase.js?v=4"></script>
+  <script src="js/platform-supabase-realtime.js?v=1"></script>
+  <script src="js/platform-supabase-bridge.js?v=4"></script>
+  <script src="js/platform-registry-cloud-sync.js?v=2"></script>
+  <script src="js/platform-web-users.js?v=19"></script>
+  <script src="js/platform-despacho-store.js?v=84"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <script src="js/platform-firebase-bridge.js?v=5"></script>
+  <script src="js/platform-realtime-badge.js?v=5"></script>
+  <script src="js/platform-despacho-cloud-sync.js?v=21"></script>
+  <script src="js/platform-lan-sync.js?v=13"></script>
+  <script src="js/vendor/JsBarcode.all.min.js"></script>
+  <script src="js/platform-despacho-barcode.js?v=6"></script>
+  <script src="js/platform-despacho-display.js?v=1"></script>
+  <script src="js/platform-despacho-present.js?v=36"></script>
+  <script src="js/platform-despacho-present-lista.js?v=49"></script>
+  <script src="js/platform-despacho-voice.js?v=5"></script>
+  <script src="js/platform-wake-lock.js?v=1"></script>
+  <script src="js/platform-despacho-ui.js?v=74"></script>
+  <script src="js/platform-despacho-auth.js?v=5"></script>
+  <script src="js/platform-toast.js"></script>
+  <script src="js/platform-despacho-app.js?v=39"></script>
+</body>
+</html>

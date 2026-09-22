@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="tvBezel" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="tvScreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="tvGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+    <filter id="tvShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <ellipse cx="58" cy="108" rx="36" ry="6" fill="#000" opacity="0.15"/>
+  <g filter="url(#tvShadow)">
+    <!-- monitor -->
+    <rect x="16" y="22" width="72" height="48" rx="4" fill="url(#tvBezel)"/>
+    <rect x="22" y="28" width="60" height="36" rx="2" fill="url(#tvScreen)"/>
+    <!-- contenido manifiesto en pantalla -->
+    <rect x="26" y="32" width="52" height="4" rx="1" fill="#334155"/>
+    <rect x="26" y="40" width="40" height="3" rx="1" fill="#475569"/>
+    <rect x="26" y="47" width="48" height="3" rx="1" fill="#475569"/>
+    <rect x="26" y="54" width="35" height="3" rx="1" fill="#475569"/>
+    <circle cx="72" cy="34" r="3" fill="#22c55e"/>
+    <!-- stand -->
+    <path d="M48 70h8v8h-8z" fill="#475569"/>
+    <rect x="38" y="78" width="28" height="4" rx="2" fill="#64748b"/>
+    <!-- onda transmisión -->
+    <path d="M92 36c8-8 16-8 24 0" stroke="#22c55e" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+    <path d="M96 48c6-6 12-6 18 0" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+    <path d="M100 58c4-4 8-4 12 0" stroke="#86efac" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+    <!-- flecha compartir -->
+    <circle cx="100" cy="36" r="14" fill="url(#tvGlow)" stroke="#fff" stroke-width="2"/>
+    <path d="M94 36h10M98 32l6 4-6 4" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

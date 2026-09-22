@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light" data-turnos-portal="apps">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Instalar apps Turnos Chofer y Turnos Supervisor — Almacén Central 001">
+  <meta name="theme-color" content="#003882">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Apps Turnos — Chofer y Supervisor</title>
+  <script src="js/relay-bootstrap.js?v=1"></script>
+  <link rel="icon" type="image/png" href="assets/img/ac001-logo.svg?v=1">
+  <link rel="stylesheet" href="css/dc-brand.css?v=11">
+  <link rel="stylesheet" href="css/ac001-brand.css?v=1">
+  <link rel="stylesheet" href="css/turnos-portal.css?v=30">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="turnos-body turnos-apps-hub">
+  <noscript><p class="turnos-noscript">Activa JavaScript para instalar las apps.</p></noscript>
+
+  <div class="turnos-apps-shell">
+    <header class="turnos-apps-header">
+      <a href="index.html" class="turnos-back-link turnos-apps-back">← Volver al mando</a>
+      <img class="turnos-portal-logo" src="assets/img/icon-turnos-portal.svg?v=14" alt="" width="52" height="52">
+      <div>
+        <p class="turnos-brand-eyebrow">Almacén Central 001</p>
+        <h1 class="turnos-apps-title">Apps de Turnos</h1>
+      </div>
+    </header>
+
+    <p class="turnos-apps-lead">
+      Puede tener <strong>las dos apps</strong> en el mismo teléfono. Son iconos independientes:
+      uno para choferes y otro para supervisores.
+    </p>
+
+    <div class="turnos-apps-grid">
+      <article class="turnos-apps-card turnos-apps-card--chofer" id="turnosAppsCardChofer" data-app-role="chofer">
+        <div class="turnos-apps-card__badge" id="turnosAppsBadgeChofer" hidden>Instalada ✓</div>
+        <img class="turnos-apps-card__icon" src="assets/img/icon-turnos-portal.svg?v=14" alt="" width="56" height="56">
+        <h2>Turnos Chofer</h2>
+        <p>Solicitar turno, ver cola y recibir alertas cuando lo convoquen.</p>
+        <p class="turnos-apps-card__link-label">Enlace directo</p>
+        <input class="turnos-input turnos-apps-card__link" id="turnosAppsLinkChofer" type="text" readonly>
+        <div class="turnos-apps-card__actions">
+          <a href="turnos.html" class="turnos-btn turnos-btn--secondary turnos-btn--xl">Abrir app chofer</a>
+          <button type="button" class="turnos-btn turnos-btn--primary turnos-btn--xl" id="turnosAppsInstallChofer" data-pwa-install-role="chofer">Instalar app chofer</button>
+          <button type="button" class="turnos-btn turnos-btn--secondary turnos-btn--xl" id="turnosAppsCopyChofer" data-pwa-copy-role="chofer">Copiar enlace chofer</button>
+        </div>
+      </article>
+
+      <article class="turnos-apps-card turnos-apps-card--supervisor" id="turnosAppsCardSupervisor" data-app-role="supervisor">
+        <div class="turnos-apps-card__badge turnos-apps-card__badge--supervisor" id="turnosAppsBadgeSupervisor" hidden>Instalada ✓</div>
+        <img class="turnos-apps-card__icon" src="assets/img/icon-turnos-validacion.svg?v=14" alt="" width="56" height="56">
+        <h2>Turnos Supervisor</h2>
+        <p>Validar solicitudes de choferes, gestionar colas y despachar turnos.</p>
+        <p class="turnos-apps-card__link-label">Enlace directo</p>
+        <input class="turnos-input turnos-apps-card__link" id="turnosAppsLinkSupervisor" type="text" readonly>
+        <div class="turnos-apps-card__actions">
+          <a href="turnos-supervisor.html" class="turnos-btn turnos-btn--secondary turnos-btn--xl">Abrir app supervisor</a>
+          <button type="button" class="turnos-btn turnos-btn--primary turnos-btn--xl" id="turnosAppsInstallSupervisor" data-pwa-install-role="supervisor">Instalar app supervisor</button>
+          <button type="button" class="turnos-btn turnos-btn--secondary turnos-btn--xl" id="turnosAppsCopySupervisor" data-pwa-copy-role="supervisor">Copiar enlace supervisor</button>
+        </div>
+      </article>
+    </div>
+
+    <aside class="turnos-apps-note" id="turnosAppsCrossNote" hidden>
+      <strong>Ya tiene una app instalada</strong>
+      <span>Para agregar la otra, toque «Instalar» y abra el enlace en Safari o Chrome (no desde la app ya instalada). Verá un segundo icono en su pantalla de inicio.</span>
+    </aside>
+  </div>
+
+  <script src="js/platform-turnos-pwa.js?v=6"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.PlatformTurnosPwa && window.PlatformTurnosPwa.init) {
+        window.PlatformTurnosPwa.init();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+/* Portal Operaciones de Piso — login WMS */
+
+body.auth-locked .auth-overlay.av-auth-overlay {
+  pointer-events: auto !important;
+}
+
+.av-auth-overlay .auth-layout,
+.av-auth-overlay .auth-stack,
+.av-auth-overlay .auth-glass-card,
+.av-auth-overlay .auth-form,
+.av-auth-overlay .auth-hub-links,
+.av-auth-overlay .auth-hub-link,
+.av-auth-overlay .auth-field,
+.av-auth-overlay .auth-field-input,
+.av-auth-overlay .auth-remember,
+.av-auth-overlay .auth-remember input,
+.av-auth-overlay .auth-pwd-toggle,
+.av-auth-overlay .btn,
+.av-auth-overlay .auth-human-verify,
+.av-auth-overlay .auth-human-verify * {
+  pointer-events: auto !important;
+}
+
+.av-auth-overlay .auth-hero-panel {
+  pointer-events: auto;
+}
+
+.av-auth-bg-wrap {
+  background: #06080e;
+}
+
+.av-auth-bg-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    url('../assets/img/login-averias-poster.jpg') center 42% / cover no-repeat;
+  transform: scale(1);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .av-auth-bg-wrap::before {
+    animation: avAuthKen 34s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes avAuthKen {
+  from { transform: scale(1); }
+  to { transform: scale(1.055); }
+}
+
+.av-auth-scrim {
+  z-index: 1;
+  background:
+    linear-gradient(90deg,
+      rgba(4, 12, 8, 0.92) 0%,
+      rgba(8, 20, 14, 0.72) 42%,
+      rgba(10, 24, 16, 0.78) 58%,
+      rgba(4, 10, 8, 0.94) 100%),
+    linear-gradient(0deg, rgba(3, 8, 5, 0.72) 0%, transparent 38%),
+    radial-gradient(ellipse 60% 55% at 80% 80%, rgba(76, 175, 80, 0.12), transparent 62%) !important;
+}
+
+body.auth-locked .av-auth-overlay {
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+body.auth-locked .av-auth-overlay .auth-video-wrap,
+body.auth-locked .av-auth-overlay .av-auth-bg-wrap,
+body.auth-locked .av-auth-overlay .av-auth-bg-wrap::before,
+body.auth-locked .av-auth-overlay .av-auth-scrim {
+  pointer-events: none !important;
+}
+
+body.auth-locked .av-auth-overlay .auth-layout,
+body.auth-locked .av-auth-overlay .auth-stack,
+body.auth-locked .av-auth-overlay .auth-glass-card,
+body.auth-locked .av-auth-overlay .auth-form,
+body.auth-locked .av-auth-overlay .auth-hub-links,
+body.auth-locked .av-auth-overlay .auth-hub-link {
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+.av-auth-overlay .auth-stack {
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
+  width: 100%;
+}
+
+.av-auth-overlay .auth-glass-card {
+  position: relative;
+  z-index: 11;
+}
+
+.av-auth-overlay .auth-layout {
+  pointer-events: auto;
+  width: 100%;
+  z-index: 5;
+}
+
+.av-auth-overlay .auth-field-input,
+.av-auth-overlay .auth-remember,
+.av-auth-overlay .auth-remember input,
+.av-auth-overlay .auth-pwd-toggle,
+.av-auth-overlay .btn-primary,
+.av-auth-overlay .auth-human-verify,
+.av-auth-overlay .auth-human-verify input {
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(76, 175, 80, 0.2);
+}
+
+.av-auth-overlay .auth-field-input {
+  min-height: 44px;
+  font-size: 16px;
+}
+
+.av-auth-overlay .btn-primary {
+  min-height: 48px;
+}
+
+.av-auth-overlay .auth-pwd-toggle {
+  min-width: 44px;
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+.av-auth-overlay .auth-hub-link {
+  min-height: 44px;
+}
+
+.av-auth-overlay .auth-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 460px);
+  max-width: 1080px;
+  width: min(100%, 1080px);
+}
+
+.av-auth-hero {
+  pointer-events: none;
+}
+
+.av-auth-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  pointer-events: auto;
+  margin-top: 0.5rem;
+}
+
+.av-auth-back:hover {
+  color: #fff;
+}
+
+.av-auth-glass {
+  pointer-events: auto;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border-radius: 16px;
+  background: rgba(8, 14, 12, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+}
+
+.av-auth-tag {
+  margin: 0.5rem 0 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #81c784;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.av-auth-desc {
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.av-auth-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+}
+
+.av-auth-step {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.av-auth-error {
+  margin: 0.75rem 0 0;
+  font-size: 0.82rem;
+  color: #ff8a80;
+}
+
+.av-auth-error[hidden] {
+  display: none;
+}
+
+/* Portales externos — ahora integrados en auth-portals-layout.css (index) */
+.auth-external-portals {
+  display: none !important;
+}
+
+.auth-portal-card--averias {
+  border-color: rgba(129, 199, 132, 0.35);
+}
+
+.auth-portal-card--averias:hover {
+  border-color: rgba(129, 199, 132, 0.55);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 24px rgba(76, 175, 80, 0.12);
+}
+
+.auth-portal-card--averias .auth-portal-icon {
+  background:
+    linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(46, 125, 50, 0.2)),
+    url('../assets/img/login-averias-poster.jpg') center 40% / cover no-repeat;
+  border-color: rgba(129, 199, 132, 0.3);
+  font-size: 0;
+  overflow: hidden;
+}
+
+.auth-portal-card--averias .auth-portal-cta {
+  color: #81c784;
+}
+
+@media (max-width: 900px) {
+  body.auth-locked .av-auth-overlay {
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding:
+      max(0.85rem, env(safe-area-inset-top, 0px))
+      max(0.85rem, env(safe-area-inset-right, 0px))
+      max(0.85rem, env(safe-area-inset-bottom, 0px))
+      max(0.85rem, env(safe-area-inset-left, 0px));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .av-auth-overlay .auth-layout {
+    grid-template-columns: 1fr;
+    max-width: min(100%, 440px);
+    width: 100%;
+    pointer-events: auto;
+    padding: 0.5rem 0 1rem;
+  }
+
+  .av-auth-hero {
+    display: none;
+  }
+}

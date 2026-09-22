@@ -1,0 +1,291 @@
+/* Variantes rojas — misma estructura Torre de control */
+
+.rbl-red-picker-bar {
+  position: sticky;
+  top: 0;
+  z-index: 250;
+  background: linear-gradient(180deg, #1a1a1a, #0f0f0f);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.65rem 1rem 0.75rem;
+}
+
+.rbl-red-picker-bar p {
+  margin: 0 0 0.5rem;
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.rbl-red-picker {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.rbl-red-pick {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.78);
+  border-radius: 12px;
+  padding: 0.45rem 0.75rem;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.rbl-red-pick small {
+  display: block;
+  font-size: 0.58rem;
+  font-weight: 600;
+  opacity: 0.65;
+  margin-top: 0.1rem;
+}
+
+.rbl-red-pick.is-on {
+  background: linear-gradient(180deg, #dc2626, #991b1b);
+  border-color: #fca5a5;
+  color: #fff;
+}
+
+.rbl-red-desc {
+  max-width: 920px;
+  margin: 0.5rem auto 0;
+  padding: 0 1rem;
+  font-size: 0.74rem;
+  color: #64748b;
+  text-align: center;
+}
+
+.rbl-red-desc strong { color: #b91c1c; }
+
+/* —— R1 · Clásico (actual) —— */
+body.rbl-red-r1.rbl-preview {
+  background: linear-gradient(180deg, #fdf2f2 0%, #f1f5f9 45%, #eef2ff 100%);
+}
+
+body.rbl-red-r1 .rbl-f-hero {
+  background: linear-gradient(135deg, #6b0f0f 0%, #b91c1c 48%, #dc2626 100%);
+}
+
+body.rbl-red-r1 .rbl-hub-btn {
+  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.9), 0 0 22px rgba(220, 38, 38, 0.35), 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* —— R2 · Vino corporativo —— */
+body.rbl-red-r2.rbl-preview {
+  background: linear-gradient(180deg, #faf7f2 0%, #f3ece4 100%);
+  font-family: "Libre Franklin", "Inter", sans-serif;
+}
+
+body.rbl-red-r2 .rbl-f { font-family: "Libre Franklin", sans-serif; }
+
+body.rbl-red-r2 .rbl-f-hero {
+  background: linear-gradient(135deg, #3b0a0a 0%, #7f1d1d 50%, #991b1b 100%);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(59, 10, 10, 0.4);
+}
+
+body.rbl-red-r2 .rbl-f-hero::after {
+  height: 5px;
+  background: linear-gradient(90deg, #b8860b, #ffd700, #b8860b);
+}
+
+body.rbl-red-r2 .rbl-f-logo-text h1 {
+  font-family: "Source Serif 4", Georgia, serif;
+  letter-spacing: 0.01em;
+}
+
+body.rbl-red-r2 .rbl-kpi,
+body.rbl-red-r2 .rbl-card {
+  border-radius: 10px;
+  border-color: rgba(127, 29, 29, 0.12);
+}
+
+body.rbl-red-r2 .rbl-kpi-num { color: #7f1d1d; }
+
+body.rbl-red-r2 .rbl-reg { color: #991b1b; }
+
+body.rbl-red-r2 .rbl-f-submit,
+body.rbl-red-r2 .rbl-cfg-save {
+  background: linear-gradient(180deg, #991b1b, #7f1d1d);
+}
+
+body.rbl-red-r2 .rbl-drawer {
+  background: linear-gradient(180deg, #2a0a0a 0%, #1a0505 100%);
+  border-right-color: rgba(220, 38, 38, 0.35);
+}
+
+body.rbl-red-r2 .rbl-drawer-link.is-on {
+  background: linear-gradient(90deg, rgba(127, 29, 29, 0.5), rgba(185, 28, 28, 0.2));
+  border-color: rgba(248, 113, 113, 0.4);
+  box-shadow: inset 3px 0 0 #ef4444;
+}
+
+/* —— R3 · Operativo claro —— */
+body.rbl-red-r3.rbl-preview {
+  background: #f8fafc;
+  font-family: "Barlow Condensed", "Inter", sans-serif;
+}
+
+body.rbl-red-r3 .rbl-f { font-family: "Inter", sans-serif; }
+
+body.rbl-red-r3 .rbl-f-hero {
+  background: #dc2626;
+  border-radius: 8px;
+  box-shadow: none;
+  border-left: 6px solid #991b1b;
+}
+
+body.rbl-red-r3 .rbl-f-hero::after {
+  display: none;
+}
+
+body.rbl-red-r3 .rbl-f-logo-text h1 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 1.5rem;
+}
+
+body.rbl-red-r3 .rbl-kpi,
+body.rbl-red-r3 .rbl-card {
+  border-radius: 6px;
+  box-shadow: none;
+  border: 1px solid #e2e8f0;
+}
+
+body.rbl-red-r3 .rbl-kpi-lbl,
+body.rbl-red-r3 .rbl-card-head h3 {
+  letter-spacing: 0.06em;
+}
+
+body.rbl-red-r3 .rbl-table th {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+body.rbl-red-r3 .rbl-hub-btn {
+  border-radius: 6px;
+  box-shadow: 0 0 0 2px #dc2626, 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+/* —— R4 · Nocturno rojo —— */
+body.rbl-red-r4.rbl-preview {
+  background: linear-gradient(180deg, #0c0a0a 0%, #1a1010 50%, #0f0f12 100%);
+  color: #e2e8f0;
+}
+
+body.rbl-red-r4 .rbl-tc-hint { color: rgba(255, 255, 255, 0.5); }
+body.rbl-red-r4 .rbl-tc-hint strong { color: #fca5a5; }
+body.rbl-red-r4 .rbl-red-desc { color: rgba(255, 255, 255, 0.45); }
+body.rbl-red-r4 .rbl-red-desc strong { color: #fca5a5; }
+
+body.rbl-red-r4 .rbl-f-hero {
+  background: linear-gradient(135deg, #450a0a 0%, #b91c1c 40%, #ef4444 100%);
+  box-shadow: 0 0 40px rgba(239, 68, 68, 0.25);
+}
+
+body.rbl-red-r4 .rbl-kpi,
+body.rbl-red-r4 .rbl-card,
+body.rbl-red-r4 .rbl-hist-stat {
+  background: #1e1e24;
+  border-color: rgba(248, 113, 113, 0.15);
+  color: #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+body.rbl-red-r4 .rbl-kpi-num { color: #fca5a5; }
+body.rbl-red-r4 .rbl-kpi-lbl { color: #cbd5e1; }
+body.rbl-red-r4 .rbl-kpi-sub { color: #94a3b8; }
+body.rbl-red-r4 .rbl-card-head h3 { color: #fff; }
+body.rbl-red-r4 .rbl-card-head span { color: #94a3b8; }
+
+body.rbl-red-r4 .rbl-table th {
+  background: #2a1515;
+  color: #fca5a5;
+}
+
+body.rbl-red-r4 .rbl-table td { border-color: rgba(255, 255, 255, 0.06); }
+body.rbl-red-r4 .rbl-table tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
+
+body.rbl-red-r4 .rbl-f-form input,
+body.rbl-red-r4 .rbl-f-form select,
+body.rbl-red-r4 .rbl-hist-search,
+body.rbl-red-r4 .rbl-hist-chip,
+body.rbl-red-r4 .rbl-cfg-select {
+  background: #141418;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+}
+
+body.rbl-red-r4 .rbl-f-form label { color: #94a3b8; }
+
+body.rbl-red-r4 .rbl-hist-stat strong { color: #fca5a5; }
+
+/* —— R5 · Granate + dorado —— */
+body.rbl-red-r5.rbl-preview {
+  background: linear-gradient(180deg, #fff9f5 0%, #fef2f2 40%, #fff 100%);
+}
+
+body.rbl-red-r5 .rbl-f-hero {
+  background: linear-gradient(135deg, #500724 0%, #9f1239 45%, #be123c 100%);
+  border: 2px solid rgba(255, 215, 0, 0.35);
+  box-shadow: 0 12px 36px rgba(159, 18, 57, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+body.rbl-red-r5 .rbl-f-hero::after {
+  height: 6px;
+  background: linear-gradient(90deg, transparent, #ffd700, #ffec8b, #ffd700, transparent);
+}
+
+body.rbl-red-r5 .rbl-f-logo-text h1 {
+  font-family: "Source Serif 4", Georgia, serif;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+body.rbl-red-r5 .rbl-kpi {
+  border: 1px solid rgba(190, 18, 60, 0.12);
+  background: linear-gradient(180deg, #fff, #fff5f5);
+}
+
+body.rbl-red-r5 .rbl-card {
+  border: 1px solid rgba(190, 18, 60, 0.1);
+  box-shadow: 0 4px 24px rgba(159, 18, 57, 0.08);
+}
+
+body.rbl-red-r5 .rbl-card-head {
+  border-bottom: 2px solid rgba(255, 215, 0, 0.45);
+}
+
+body.rbl-red-r5 .rbl-kpi-num { color: #9f1239; }
+body.rbl-red-r5 .rbl-reg { color: #be123c; font-weight: 800; }
+
+body.rbl-red-r5 .rbl-f-submit {
+  background: linear-gradient(180deg, #be123c, #881337);
+  box-shadow: 0 4px 16px rgba(190, 18, 60, 0.35);
+}
+
+body.rbl-red-r5 .rbl-table th {
+  background: linear-gradient(180deg, #fff1f2, #ffe4e6);
+  color: #881337;
+}
+
+body.rbl-red-r5 .rbl-hub-btn {
+  box-shadow: 0 0 0 1px #ffd700, 0 0 20px rgba(255, 215, 0, 0.25), 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Default R1 when no variant (fallback) */
+body.rbl-theme-f:not([class*="rbl-red-r"]) .rbl-f-hero,
+body.rbl-red-r1 .rbl-f-hero {
+  background: linear-gradient(135deg, #6b0f0f 0%, #b91c1c 48%, #dc2626 100%);
+}

@@ -1,0 +1,34 @@
+{
+  "id": "./turnos-supervisor.html",
+  "name": "Control de Turnos — Supervisor",
+  "short_name": "Turnos Supervisor",
+  "description": "Valide turnos de choferes y gestione la cola de atención en el almacén.",
+  "start_url": "./turnos-supervisor.html?source=pwa-supervisor",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "orientation": "any",
+  "background_color": "#002a5c",
+  "theme_color": "#003882",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "assets/img/jc-logo-64.png",
+      "sizes": "64x64",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/icon-turnos-validacion.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/icon-turnos-validacion.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

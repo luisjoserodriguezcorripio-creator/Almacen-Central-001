@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "despacho": {
+      ".read": true,
+      ".write": true
+    },
+    "platform": {
+      ".read": true,
+      ".write": true
+    },
+    "averias": {
+      ".read": true,
+      ".write": true
+    }
+  }
+}

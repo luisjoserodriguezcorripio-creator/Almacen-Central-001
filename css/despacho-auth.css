@@ -1,0 +1,488 @@
+/* Portal Despacho — login independiente + tarjeta externa en WMS */
+
+/* Fondo cinematográfico — muelle / despacho */
+.desp-auth-bg-wrap {
+  background: #06080e;
+}
+
+.desp-auth-bg-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    url('../assets/img/login-dispatch-poster.jpg') center 46% / cover no-repeat;
+  transform: scale(1);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .desp-auth-bg-wrap::before {
+    animation: despAuthKen 34s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes despAuthKen {
+  from { transform: scale(1); }
+  to { transform: scale(1.055); }
+}
+
+.desp-auth-scrim {
+  z-index: 1;
+  background:
+    linear-gradient(90deg,
+      rgba(6, 8, 14, 0.9) 0%,
+      rgba(10, 8, 6, 0.68) 40%,
+      rgba(16, 10, 6, 0.78) 56%,
+      rgba(5, 8, 16, 0.94) 100%),
+    linear-gradient(0deg, rgba(3, 5, 10, 0.72) 0%, transparent 38%),
+    radial-gradient(ellipse 70% 75% at 24% 52%, rgba(255, 152, 0, 0.14), transparent 70%),
+    radial-gradient(ellipse 55% 45% at 88% 88%, rgba(255, 87, 34, 0.1), transparent 62%) !important;
+}
+
+html[data-theme="light"] .desp-auth-scrim {
+  background:
+    linear-gradient(90deg,
+      rgba(232, 236, 244, 0.94) 0%,
+      rgba(248, 244, 238, 0.82) 42%,
+      rgba(240, 236, 230, 0.88) 58%,
+      rgba(228, 234, 244, 0.96) 100%),
+    linear-gradient(0deg, rgba(15, 30, 60, 0.06) 0%, transparent 40%),
+    radial-gradient(ellipse 70% 60% at 30% 50%, rgba(255, 152, 0, 0.08), transparent 68%) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desp-auth-bg-wrap::before {
+    animation: none !important;
+  }
+}
+
+/* Tarjeta fuera del formulario ejecutivo (index.html) */
+.auth-external-portal {
+  position: fixed;
+  z-index: 20050;
+  left: clamp(1rem, 3vw, 2rem);
+  bottom: clamp(1rem, 3vw, 2rem);
+  pointer-events: auto;
+  max-width: min(320px, calc(100vw - 2rem));
+}
+
+body:not(.auth-locked) .auth-external-portal {
+  display: none !important;
+}
+
+.auth-portal-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 1rem 1.1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 183, 77, 0.35);
+  background:
+    linear-gradient(145deg, rgba(18, 22, 32, 0.92) 0%, rgba(10, 14, 22, 0.96) 100%);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-portal-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 183, 77, 0.55);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(255, 152, 0, 0.12);
+}
+
+.auth-portal-card:focus-visible {
+  outline: 2px solid var(--accent, #5eb3ff);
+  outline-offset: 3px;
+}
+
+.auth-portal-icon {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  font-size: 1.25rem;
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.25), rgba(255, 87, 34, 0.15));
+  border: 1px solid rgba(255, 183, 77, 0.3);
+}
+
+.auth-portal-body strong {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.15rem;
+  color: #fff;
+}
+
+.auth-portal-body span {
+  display: block;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.auth-portal-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffb74d;
+  letter-spacing: 0.02em;
+}
+
+html[data-theme="light"] .auth-portal-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.98));
+  border-color: rgba(230, 126, 34, 0.35);
+  box-shadow: 0 10px 32px rgba(15, 23, 42, 0.12);
+}
+
+html[data-theme="light"] .auth-portal-body strong {
+  color: #0f172a;
+}
+
+html[data-theme="light"] .auth-portal-body span {
+  color: #475569;
+}
+
+/* Login standalone despacho.html — reglas solo dentro del portal despacho */
+.desp-auth-overlay .auth-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 460px);
+  max-width: 1080px;
+  width: min(100%, 1080px);
+}
+
+.desp-auth-hero {
+  pointer-events: none;
+}
+
+.desp-auth-hero-panel {
+  max-width: 420px;
+}
+
+.desp-auth-brand-title {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.desp-auth-tag {
+  margin: 0.5rem 0 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ffb74d;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.desp-auth-desc {
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.desp-auth-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+}
+
+.desp-auth-step {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.desp-auth-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  pointer-events: auto;
+  margin-top: 0.5rem;
+}
+
+.desp-auth-back:hover {
+  color: #fff;
+}
+
+.desp-auth-glass {
+  pointer-events: auto;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border-radius: 16px;
+  background: rgba(8, 12, 20, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+}
+
+.desp-auth-heading {
+  margin: 0 0 0.35rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.desp-auth-subheading {
+  margin: 0 0 1.1rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.45;
+}
+
+body.auth-locked .desp-auth-overlay {
+  pointer-events: auto;
+}
+
+body.auth-locked .desp-auth-overlay .auth-layout,
+body.auth-locked .desp-auth-overlay .auth-stack,
+body.auth-locked .desp-auth-overlay .auth-glass-card,
+body.auth-locked .desp-auth-overlay .auth-form {
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+.desp-auth-overlay .auth-stack {
+  pointer-events: auto;
+  width: 100%;
+  position: relative;
+  z-index: 5;
+}
+
+.desp-auth-role-picker {
+  grid-template-columns: 1fr 1fr;
+  pointer-events: auto;
+  z-index: 10;
+}
+
+.desp-auth-role-option {
+  display: contents;
+}
+
+.desp-auth-role-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  pointer-events: none;
+}
+
+.desp-auth-role-card {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  touch-action: manipulation;
+  pointer-events: auto;
+  z-index: 3;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.desp-auth-role-card.role-pop {
+  animation: rolePop 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.desp-auth-role-card.active .role-icon-wrap {
+  transform: scale(1.08);
+}
+
+.desp-auth-role-card.active,
+.desp-auth-role-input:checked + .desp-auth-role-card {
+  border-color: rgba(255, 183, 77, 0.55);
+  background: rgba(255, 152, 0, 0.12);
+  box-shadow: 0 0 0 1px rgba(255, 183, 77, 0.28), 0 12px 32px rgba(255, 152, 0, 0.12);
+}
+
+.desp-auth-role-card[data-role="validador"].active,
+.desp-auth-role-input:checked + .desp-auth-role-card[data-role="validador"] {
+  border-color: rgba(206, 147, 216, 0.55);
+  background: rgba(156, 39, 176, 0.1);
+  box-shadow: 0 0 0 1px rgba(206, 147, 216, 0.28), 0 12px 32px rgba(156, 39, 176, 0.12);
+}
+
+.desp-auth-role-card[data-role="validador"].active .role-check,
+.desp-auth-role-input:checked + .desp-auth-role-card[data-role="validador"] .role-check {
+  opacity: 1;
+  transform: scale(1);
+  background: linear-gradient(135deg, #ce93d8, #ab47bc);
+  color: #1a081f;
+}
+
+.desp-auth-role-card[data-role="preparador"].active .role-check,
+.desp-auth-role-input:checked + .desp-auth-role-card[data-role="preparador"] .role-check {
+  opacity: 1;
+  transform: scale(1);
+  background: linear-gradient(135deg, #ffb74d, #ff9800);
+  color: #2a1800;
+}
+
+.desp-auth-role-input:checked + .desp-auth-role-card .role-icon-wrap {
+  transform: scale(1.08);
+}
+
+.desp-auth-role-card .role-icon-wrap {
+  color: #ffb74d;
+}
+
+.desp-auth-role-card[data-role="validador"] .role-icon-wrap {
+  color: #ce93d8;
+}
+
+#despAuthSubmit {
+  position: relative;
+  z-index: 3;
+  pointer-events: auto;
+  cursor: pointer;
+  width: 100%;
+  min-height: 48px;
+}
+
+.desp-auth-hint {
+  margin: 0 0 0.85rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.desp-auth-error {
+  margin: 0.75rem 0 0;
+  font-size: 0.82rem;
+  color: #ff8a80;
+}
+
+.desp-auth-error[hidden] {
+  display: none;
+}
+
+/* App shell despacho */
+.desp-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg, #050810);
+}
+
+.desp-app.is-hidden {
+  display: none;
+}
+
+.desp-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  padding: 0.85rem clamp(1rem, 3vw, 1.75rem);
+  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  background: var(--surface, rgba(8, 12, 20, 0.95));
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.desp-topbar-title h1 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.desp-topbar-title p {
+  margin: 0.15rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted, rgba(255, 255, 255, 0.55));
+}
+
+.desp-topbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.desp-view-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0  clamp(1rem, 3vw, 1.75rem) 0.5rem;
+  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.06));
+}
+
+.desp-view-btn {
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+  background: transparent;
+  color: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.desp-view-btn.active {
+  border-color: rgba(255, 183, 77, 0.45);
+  background: rgba(255, 152, 0, 0.12);
+  color: #ffb74d;
+}
+
+.desp-content {
+  flex: 1;
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+
+.desp-role-preparador {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.desp-role-validador {
+  background: rgba(76, 175, 80, 0.15);
+  color: #81c784;
+}
+
+@media (max-width: 900px) {
+  .auth-external-portal {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0.75rem;
+    width: calc(100% - 1.5rem);
+    max-width: 400px;
+  }
+
+  .auth-portal-card:hover {
+    transform: none;
+  }
+
+  .desp-auth-overlay .auth-layout {
+    max-width: 440px;
+  }
+
+  .desp-auth-hero {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .desp-auth-role-picker {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,15 @@
+Inventario DC — plantilla Excel personal (3 hojas)
+==================================================
+
+Archivo: Inventario-DC-3-hojas.xlsx
+
+Hojas:
+  1. Inventario     → Pegue «Inventario disponible» de Dynamics (CJ, almacén 300).
+  2. Cuadre general → Compare sistema vs contado (columnas Diferencia y Estado).
+  3. Contado        → Digite lo contado en piso (ubicación, código, matrícula, CJ).
+  4. Pasillos       → Catálogo Doble Rick / Sencillo (referencia).
+
+Copia en el Escritorio de Windows: Inventario-DC-3-hojas.xlsx
+
+Nota: Este archivo es personal. La web (Conciliación · Exactitud) sigue usando
+«Cargar Excel» dentro del portal admin — no es la misma hoja editable.

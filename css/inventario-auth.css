@@ -1,0 +1,233 @@
+/* Portal Inventario RF — login independiente (web cinematográfica) */
+
+body.auth-locked .auth-overlay.inv-auth-overlay {
+  pointer-events: auto !important;
+}
+
+.inv-auth-overlay .auth-layout,
+.inv-auth-overlay .auth-stack,
+.inv-auth-overlay .auth-glass-card,
+.inv-auth-overlay .auth-hub-links,
+.inv-auth-overlay .auth-hub-link,
+.inv-auth-overlay .inv-phone,
+.inv-auth-overlay .inv-phone * {
+  pointer-events: auto !important;
+}
+
+.inv-auth-overlay .auth-hero-panel {
+  pointer-events: auto;
+}
+
+.inv-auth-bg-wrap {
+  background: #0d1520;
+}
+
+.inv-auth-bg-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    url('../assets/img/login-inventario-poster.jpg') center 44% / cover no-repeat;
+  transform: scale(1);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .inv-auth-bg-wrap::before {
+    animation: invAuthKen 34s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes invAuthKen {
+  from { transform: scale(1); }
+  to { transform: scale(1.055); }
+}
+
+.inv-auth-scrim {
+  z-index: 1;
+  background:
+    linear-gradient(90deg,
+      rgba(8, 14, 22, 0.92) 0%,
+      rgba(12, 18, 28, 0.68) 40%,
+      rgba(16, 22, 32, 0.76) 56%,
+      rgba(6, 10, 18, 0.94) 100%),
+    linear-gradient(0deg, rgba(4, 8, 14, 0.72) 0%, transparent 38%),
+    radial-gradient(ellipse 65% 55% at 78% 72%, rgba(197, 165, 114, 0.14), transparent 62%) !important;
+}
+
+html[data-theme="light"] .inv-auth-scrim {
+  background:
+    linear-gradient(90deg,
+      rgba(232, 236, 244, 0.94) 0%,
+      rgba(244, 246, 249, 0.82) 42%,
+      rgba(238, 240, 244, 0.88) 58%,
+      rgba(228, 234, 244, 0.96) 100%),
+    linear-gradient(0deg, rgba(15, 30, 60, 0.06) 0%, transparent 40%),
+    radial-gradient(ellipse 65% 55% at 75% 70%, rgba(197, 165, 114, 0.1), transparent 68%) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inv-auth-bg-wrap::before {
+    animation: none !important;
+  }
+}
+
+body.auth-locked .inv-auth-overlay .auth-video-wrap,
+body.auth-locked .inv-auth-overlay .inv-auth-bg-wrap,
+body.auth-locked .inv-auth-overlay .inv-auth-bg-wrap::before,
+body.auth-locked .inv-auth-overlay .inv-auth-scrim {
+  pointer-events: none !important;
+}
+
+.inv-auth-overlay .auth-stack {
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
+  width: 100%;
+}
+
+.inv-auth-overlay .auth-layout {
+  pointer-events: auto;
+  width: 100%;
+  z-index: 5;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 460px);
+  max-width: 1080px;
+}
+
+.inv-auth-hero {
+  pointer-events: none;
+}
+
+.inv-auth-brand-title {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #f8fafc;
+}
+
+.inv-auth-hero-desc {
+  font-size: clamp(0.92rem, 2.5vw, 1rem);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.88);
+  margin: 12px 0 0;
+}
+
+.inv-auth-hero-desc strong {
+  color: #E8D5B5;
+  font-weight: 700;
+}
+
+.inv-auth-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  pointer-events: auto;
+  margin-top: 0.5rem;
+}
+
+.inv-auth-back:hover {
+  color: #fff;
+}
+
+.inv-auth-glass {
+  pointer-events: auto;
+  padding: 0;
+  border-radius: 16px;
+  background: rgba(8, 14, 22, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  overflow: hidden;
+}
+
+.inv-auth-glass .inv-phone {
+  max-width: 100%;
+  min-height: auto;
+  box-shadow: none;
+  border-radius: 0;
+  color: var(--inv-text, #15202B);
+}
+
+.inv-auth-glass .inv-body {
+  color: var(--inv-text, #15202B);
+  background: var(--corp-canvas, #F4F6F9);
+}
+
+.inv-auth-glass .inv-login-title,
+.inv-auth-glass .inv-login-sub,
+.inv-auth-glass .inv-login-card,
+.inv-auth-glass .inv-login-card h3,
+.inv-auth-glass .inv-login-hint {
+  color: var(--inv-text, #15202B);
+}
+
+.inv-auth-glass .inv-login-sub {
+  color: var(--inv-text-hint, #546E7A);
+}
+
+.inv-auth-glass .inv-login-hint {
+  color: var(--corp-gold-dark, #A68B4B);
+}
+
+.inv-auth-overlay .auth-hub-link {
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  body.auth-locked .inv-auth-overlay {
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding:
+      max(0.75rem, env(safe-area-inset-top, 0px))
+      max(0.75rem, env(safe-area-inset-right, 0px))
+      max(0.75rem, env(safe-area-inset-bottom, 0px))
+      max(0.75rem, env(safe-area-inset-left, 0px));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .inv-auth-overlay .auth-layout {
+    grid-template-columns: 1fr;
+    max-width: min(100%, 540px);
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    padding: 0.5rem 0 1rem;
+    margin: 0 auto;
+  }
+
+  .inv-auth-hero {
+    display: block;
+    padding: 0 0 0.85rem;
+  }
+
+  .inv-auth-hero .auth-hero-panel {
+    max-width: 100%;
+    padding: 1.1rem 1.15rem;
+  }
+
+  .inv-auth-overlay .auth-stack {
+    min-height: 0;
+    height: auto;
+  }
+
+  .inv-auth-glass {
+    border-radius: 16px;
+    flex: none;
+    min-height: 0;
+    display: block;
+  }
+
+  .inv-auth-glass .inv-phone {
+    flex: none;
+    min-height: 0;
+  }
+}

@@ -1,0 +1,48 @@
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+*.tmp
+*.swp
+*.lnk
+*.apk
+
+# Dependencias
+node_modules/
+
+# Secretos y config local
+.env
+.env.local
+.env.*
+
+# Datos de runtime (servidor LAN — no subir a GitHub)
+data/*.json
+!data/web-users.json
+!data/averias.json
+!data/site-config.json
+!data/agenda-seed.json
+!data/.gitkeep
+
+# Archivos generados en tu PC (IP personal, links locales)
+ACCESO-RED.txt
+
+# IDE / editor personal
+.vscode/
+.idea/
+*.code-workspace
+.cursor/
+
+# Excel de prueba fuera de plantilla/
+*.xlsx
+*.xls
+!plantilla/**
+
+# Videos: solo el login principal va a GitHub (evita repo muy pesado)
+assets/video/*-bak.mp4
+assets/video/clip-*.mp4
+assets/video/login-forklift.mp4
+assets/video/login-inventory.mp4
+assets/video/login-safety.mp4
+assets/video/login-warehouse.mp4
+assets/video/login-warehouse-poster.jpg

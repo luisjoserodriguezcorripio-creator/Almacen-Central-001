@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "updatedAt": "2026-09-22T20:30:00.000Z",
+  "owner": "luisjoserodriguezcorripio-creator",
+  "project": "Almacen-Central-001",
+  "publicSyncBaseUrl": "",
+  "githubPagesDataUrl": "https://luisjoserodriguezcorripio-creator.github.io/Almacen-Central-001/data/averias.json",
+  "githubPagesDespachoDataUrl": "https://luisjoserodriguezcorripio-creator.github.io/Almacen-Central-001/data/despacho.json",
+  "githubPagesPlatformDataUrl": "https://luisjoserodriguezcorripio-creator.github.io/Almacen-Central-001/data/platform.json",
+  "pollSeconds": 4,
+  "realtime": true,
+  "syncTargetMs": 4000,
+  "firebase": {
+    "enabled": false,
+    "apiKey": "",
+    "authDomain": "",
+    "databaseURL": "",
+    "projectId": "",
+    "storageBucket": "",
+    "messagingSenderId": "",
+    "appId": "",
+    "measurementId": ""
+  },
+  "averiasJsonBin": {
+    "enabled": false,
+    "binId": "",
+    "accessKey": "",
+    "keyType": "master"
+  },
+  "despachoJsonBin": {
+    "enabled": false,
+    "binId": "",
+    "accessKey": "",
+    "keyType": "master"
+  },
+  "platformJsonBin": {
+    "enabled": false,
+    "binId": "",
+    "accessKey": "",
+    "keyType": "master"
+  },
+  "supabase": {
+    "enabled": false,
+    "primary": false,
+    "freeTier": true,
+    "preferPoll": true,
+    "keepAlive": false,
+    "url": "",
+    "anonKey": "",
+    "help": "Configure su propio proyecto Supabase. Los servicios del colaborador anterior fueron desconectados."
+  },
+  "help": "Instancia propia Almacen-Central-001. Active Firebase/Supabase/JsonBin con sus credenciales cuando las tenga.",
+  "security": {
+    "turnstileSiteKey": "",
+    "humanVerifyMinMs": 1200,
+    "turnstileReady": false,
+    "help": "Opcional: configure Cloudflare Turnstile con su site key."
+  }
+}

@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply min-h-screen font-sans text-slate-900 antialiased dark:text-slate-100;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+}
+
+/* html5-qrcode — vista de cámara centrada */
+#dc-qr-reader video {
+  border-radius: 1rem;
+  width: 100% !important;
+  object-fit: cover;
+}
+
+#dc-qr-reader img {
+  display: none;
+}

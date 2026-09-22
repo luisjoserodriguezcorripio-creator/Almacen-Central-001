@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Portal Operaciones de Piso — Reporte de averías, 5S, seguridad y equipos.">
+  <meta name="theme-color" content="#050810">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:* http://127.0.0.1:* http://192.168.0.0/16 http://10.0.0.0/8 https://api.jsonbin.io https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.googleapis.com https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com; img-src 'self' data: https://challenges.cloudflare.com; media-src 'self'; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Operaciones de Piso — Almacén Central 001</title>
+  <link rel="preload" href="assets/img/login-averias-poster.jpg" as="image">
+  <script src="js/relay-bootstrap.js?v=1"></script>
+  <link rel="icon" type="image/png" href="assets/img/ac001-logo.svg?v=1">
+  <link rel="stylesheet" href="css/platform.css?v=32">
+  <link rel="stylesheet" href="css/platform-enhance.css">
+  <link rel="stylesheet" href="css/averias-auth.css?v=6">
+  <link rel="stylesheet" href="css/auth-cinematic.css?v=19">
+  <link rel="stylesheet" href="css/auth-security.css?v=3">
+  <link rel="stylesheet" href="css/auth-portals-layout.css?v=10">
+  <link rel="stylesheet" href="css/dc-brand.css?v=11">
+  <link rel="stylesheet" href="css/ac001-brand.css?v=1">
+  <link rel="stylesheet" href="css/averias-portal.css?v=12">
+  <link rel="stylesheet" href="css/averias-responsive.css?v=13">
+  <link rel="stylesheet" href="css/theme-light.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,500;0,9..40,600;0,9..40,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="auth-locked executive-ui">
+  <noscript><p class="noscript-msg">Activa JavaScript para usar el portal de operaciones.</p></noscript>
+
+  <div class="auth-overlay av-auth-overlay" id="avAuthOverlay" role="dialog" aria-labelledby="avAuthTitle">
+    <div class="auth-video-wrap av-auth-bg-wrap" aria-hidden="true">
+      <div class="auth-video-scrim av-auth-scrim"></div>
+    </div>
+    <div class="auth-layout">
+      <aside class="auth-hero av-auth-hero">
+        <div class="auth-hero-panel desp-auth-hero-panel">
+          <header class="auth-hero-head">
+            <img class="jc-logo-img jc-logo-img--hero auth-hero-logo-img" src="assets/img/ac001-logo.svg?v=1" alt="AC" width="52" height="52">
+            <div class="auth-hero-head-text">
+              <p class="auth-welcome-line">Portal independiente</p>
+              <h1 class="desp-auth-brand-title">Operaciones de Piso · DC</h1>
+            </div>
+          </header>
+          <p class="av-auth-tag">Reporte de averías · 5S · Seguridad · Despacho</p>
+          <p class="av-auth-desc">Misma app de operaciones del almacén (APK), con inicio de sesión del centro de mando WMS: paletas rotas, averías de inventario, seguridad, auditoría 5S, auditoría de despacho e inspección de equipos.</p>
+          <div class="av-auth-steps" aria-label="Módulos">
+            <span class="av-auth-step">Paletas</span>
+            <span class="av-auth-step">Averías</span>
+            <span class="av-auth-step">Seguridad</span>
+            <span class="av-auth-step">5S</span>
+            <span class="av-auth-step">Despacho</span>
+            <span class="av-auth-step">Equipos</span>
+          </div>
+          <a href="index.html" class="av-auth-back">← Volver al centro de mando WMS</a>
+        </div>
+      </aside>
+      <div class="auth-stack">
+      <div class="auth-glass-card av-auth-glass">
+        <form id="avAuthForm" class="auth-form" novalidate action="#" method="post">
+          <h2 id="avAuthTitle" class="auth-heading desp-auth-heading">Acceso operaciones de piso</h2>
+          <p class="auth-subheading desp-auth-subheading">Usa el usuario y contraseña que te asignó el administrador del WMS</p>
+          <div class="auth-field">
+            <label for="avAuthUsername">Usuario asignado</label>
+            <input id="avAuthUsername" class="auth-field-input" type="text" name="av_assigned_user" placeholder="Tu usuario asignado" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="64" required>
+          </div>
+          <label class="auth-remember" for="avAuthRememberUser">
+            <input type="checkbox" id="avAuthRememberUser" checked>
+            <span>Guardar mi usuario en este equipo</span>
+          </label>
+          <div class="auth-field auth-field-password">
+            <label for="avAuthPassword">Contraseña</label>
+            <input id="avAuthPassword" class="auth-field-input" type="password" name="password" placeholder="Contraseña" autocomplete="current-password" maxlength="128" required>
+            <button type="button" class="auth-pwd-toggle" id="avBtnTogglePassword" aria-label="Mostrar contraseña" title="Mostrar/ocultar">Ver</button>
+          </div>
+          <button type="submit" class="btn btn-primary" id="avAuthSubmit">Entrar al portal de operaciones</button>
+          <p class="auth-hint desp-auth-hint">La contraseña no se guarda en el equipo.</p>
+          <p id="avAuthError" class="av-auth-error" role="alert" aria-live="polite" hidden></p>
+        </form>
+      </div>
+      <nav class="auth-hub-links" aria-label="Otros portales">
+        <a href="index.html" class="auth-hub-link auth-hub-link--wms">Control de Mando 001</a>
+        <a href="despacho.html" class="auth-hub-link auth-hub-link--desp">Portal de despacho</a>
+        <a href="inventario.html" class="auth-hub-link">Inventario RF</a>
+      </nav>
+      </div>
+    </div>
+  </div>
+
+  <div class="averias-app is-hidden" id="avApp" aria-hidden="true" inert>
+<div id="mainApp" class="screen hidden" aria-label="Operaciones de piso">
+            <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+            <nav class="drawer" id="drawer">
+                <div class="drawer-header">
+                    <h2>Almacén Central</h2>
+                    <div class="drawer-app-name">Warehouse App DC</div>
+                    <p>¿Qué vamos a reportar hoy?</p>
+                    <div class="drawer-user" id="drawerUser"></div>
+                </div>
+                <div class="drawer-menu-label">MÓDULOS</div>
+                <div class="drawer-menu">
+                    <button class="drawer-item active" data-module="home" onclick="navigateToModule('home')">
+                        <span class="drawer-icon-wrap home"><svg viewBox="0 0 24 24"><path d="M3 10.5L12 4l9 6.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-9.5z"/></svg></span>
+                        <span class="drawer-item-text">
+                            <span class="drawer-item-title">Inicio</span>
+                            <span class="drawer-item-desc">Pantalla de bienvenida</span>
+                        </span>
+                    </button>
+                    <button class="drawer-item" data-module="pallets" onclick="navigateToModule('pallets')">
+                        <span class="drawer-icon-wrap pallets"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="1"/><path d="M7 8V6a2 2 0 012-2h6a2 2 0 012 2v2"/></svg></span>
+                        <span class="drawer-item-text">
+                            <span class="drawer-item-title">Paletas Rotas</span>
+                            <span class="drawer-item-desc">Reportar y corregir paletas dañadas</span>
+                        </span>
+                    </button>
+                    <button class="drawer-item" data-module="damages" onclick="navigateToModule('damages')">
+                        <span class="drawer-icon-wrap damages"><svg viewBox="0 0 24 24"><path d="M12 3L2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/></svg></span>
+                        <span class="drawer-item-text">
+                            <span class="drawer-item-title">Averías de Inventario</span>
+                            <span class="drawer-item-desc">Registrar productos averiados por área</span>
+                        </span>
+                    </button>
+                    <button class="drawer-item" data-module="security" onclick="navigateToModule('security')">
+                        <span class="drawer-icon-wrap security"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 9.5-8 10-4.5-.5-8-5-8-10V6l8-4z"/></svg></span>
+                        <span class="drawer-item-text">
+                            <span class="drawer-item-title">Incidencias de Seguridad</span>
+                            <span class="drawer-item-desc">Actos y condiciones inseguras</span>
+                        </span>
+                    </button>
+                    <button class="drawer-item" data-module="audit" onclick="navigateToModule('audit')">
+                        <span class="drawer-icon-wrap audit"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></span>
+                        <span class="drawer-item-text">
+                            <span class="drawer-item-title">Auditoría 5S</span>
+                            <span class="drawer-item-desc">Orden y limpieza del almacén</span>
+                        </span>
+                    </button>
+                    <button class="drawer-item" data-module="despachoAudit" onclick="navigateToModule('despachoAudit')">
+                        <span class="drawer-icon-wrap despacho-audit"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/><path d="M16 17l2 2 4-4"/></svg></span>
+                        <span class="drawer-item-text">
+                            <span class="drawer-item-title">Auditoría de Despacho</span>
+                            <span class="drawer-item-desc">Control de calidad en despacho</span>
+                        </span>
+                    </button>
+                    <button class="drawer-item" data-module="equipment" onclick="navigateToModule('equipment')">
+                        <span class="drawer-icon-wrap equipment"><svg viewBox="0 0 24 24"><rect x="2" y="14" width="12" height="6" rx="1"/><path d="M14 17h4l3-5V8H6"/><circle cx="6" cy="20" r="2"/><circle cx="18" cy="20" r="2"/></svg></span>
+                        <span class="drawer-item-text">
+                            <span class="drawer-item-title">Inspección de Equipos</span>
+                            <span class="drawer-item-desc">Montacargas, uñas eléctricas y de mano</span>
+                        </span>
+                    </button>
+                    <a href="turnos.html" class="drawer-item drawer-item--turnos" data-external-portal="turnos.html">
+                        <span class="drawer-icon-wrap turnos drawer-icon-wrap--poster"><img src="assets/img/turnos-hub-poster.jpg" alt="" width="48" height="48" loading="lazy"></span>
+                        <span class="drawer-item-text">
+                            <span class="drawer-item-title">Control de Turnos</span>
+                            <span class="drawer-item-desc">QR · turnos consecutivos de despacho</span>
+                        </span>
+                    </a>
+                    <a href="temperatura.html" class="drawer-item drawer-item--temperature" data-external-portal="temperatura.html">
+                        <span class="drawer-icon-wrap temperature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg></span>
+                        <span class="drawer-item-text">
+                            <span class="drawer-item-title">Monitoreo de Temperatura</span>
+                            <span class="drawer-item-desc">6 áreas en vivo · alertas e historial</span>
+                        </span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="app-shell">
+                <div class="app-toolbar">
+                    <button class="btn-menu" onclick="toggleDrawer()" title="Menú" type="button" aria-label="Abrir menú">☰</button>
+                    <span class="toolbar-title" id="moduleTitle">Almacén Central</span>
+                    <span class="av-sync-live" id="avSyncLive" hidden title="Sincronización en tiempo real">● LIVE</span>
+                    <button class="btn-sync-data" id="btnSyncAverias" type="button" onclick="syncAveriasData()" title="Sincronizar reportes" aria-label="Sincronizar reportes">↻</button>
+                    <button class="btn-fit-screen" id="btnFitScreen" type="button" onclick="toggleFitScreen()" title="Ajustar pantalla" aria-pressed="false" aria-label="Ajustar pantalla">⛶</button>
+                    <button class="btn-toolbar-logout" onclick="handleLogout()">Salir</button>
+                </div>
+                <div class="av-sync-banner" id="avSyncBanner" hidden role="status">
+                    <span class="av-sync-banner-text">⚠️ Falta activar sync en tiempo real — cada celular guarda reportes por separado.</span>
+                    <button type="button" class="av-sync-banner-btn" id="btnActivateCloud" onclick="openCloudSetupModal()">Activar ahora</button>
+                    <span class="av-sync-banner-hint">Sync automática vía <strong>Supabase</strong> — misma URL en todos los celulares. Recargue con Ctrl+F5 si no ve el indicador LIVE.</span>
+                </div>
+                <p class="av-sync-status-line av-sync-status-ok" id="avSyncStatus" hidden aria-hidden="true">Conectando sync…</p>
+
+                <div class="module-content">
+                    <!-- PANTALLA DE BIENVENIDA -->
+                    <div id="moduleWelcome" class="module-panel welcome-screen">
+                        <div class="welcome-hero">
+                            <p class="welcome-greeting">Bienvenido a</p>
+                            <h2 class="welcome-title">Almacén Central</h2>
+                            <div class="welcome-accent-line"></div>
+                            <p class="welcome-question">¿Qué vamos a reportar hoy?</p>
+                            <p class="welcome-subtitle">Seleccione un módulo desde el menú lateral para comenzar.</p>
+                        </div>
+                        <div class="welcome-user-card">
+                            <div class="welcome-user-avatar">👤</div>
+                            <div class="welcome-user-info">
+                                <span class="welcome-user-label">Operador en sesión</span>
+                                <span class="welcome-user-name" id="welcomeUserName">—</span>
+                                <span class="welcome-user-role" id="welcomeUserRole">—</span>
+                            </div>
+                        </div>
+                        <div class="welcome-hint">
+                            <span class="welcome-hint-icon">☰</span>
+                            <span>Toque el menú ☰ arriba para elegir un módulo: Paletas, Averías, Seguridad, Auditoría 5S, Despacho, Equipos o <strong>Monitoreo de Temperatura</strong>.</span>
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO PALETAS ROTAS -->
+                    <div id="modulePallets" class="module-panel hidden">
+                        <div id="palletsDashboard" class="sub-panel">
+                            <h3 style="margin-bottom:8px;">Dashboard de Paletas Rotas</h3>
+                            <div class="dashboard-grid">
+                                <div class="stat-card">
+                                    <div class="stat-number" id="statPending">0</div>
+                                    <div class="stat-label">Pendientes</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number" id="statCorrected">0</div>
+                                    <div class="stat-label">Corregidas</div>
+                                </div>
+                                <div class="stat-card critical">
+                                    <div class="stat-number" id="statCritical">0</div>
+                                    <div class="stat-label">Críticas</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number" id="statTotalPl">0</div>
+                                    <div class="stat-label">Total PL</div>
+                                </div>
+                            </div>
+                            <div class="dash-kpi-banner">
+                                <div style="font-size:12px;color:#B3B3B3;">% Completado</div>
+                                <div style="font-size:32px;font-weight:700;color:#2A7F2A;" id="statCompletion">0%</div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn-action btn-report" onclick="handleReportButton()">📝 REPORTAR AVERÍA</button>
+                                <button class="btn-action btn-correct" onclick="handleCorrectButton()">📋 Ver lista completa</button>
+                                <button class="btn-action btn-export" onclick="playSelectFeedback(); exportCSV()">📊 EXPORTAR CSV</button>
+                            </div>
+                            <section class="reported-work-section">
+                                <h4 class="reported-work-title">Trabajos reportados pendientes</h4>
+                                <p class="reported-work-hint">Edite un reporte con error o márquelo resuelto desde aquí.</p>
+                                <div id="palletsReportedList" class="reported-work-list"></div>
+                            </section>
+                            <section class="reported-work-section reported-work-section--done">
+                                <h4 class="reported-work-title">Últimos finalizados</h4>
+                                <div id="palletsCompletedList" class="reported-work-list"></div>
+                            </section>
+                        </div>
+
+                        <div id="palletsReport" class="sub-panel hidden">
+                            <button class="btn btn-small" onclick="showPalletsDashboard()" style="margin-bottom:16px;">← Volver</button>
+                            <form id="palletsReportForm" action="#" method="post" novalidate>
+                                <div class="form-field">
+                                    <label>Ubicación (Rack-Nivel-Posición)</label>
+                                    <input type="text" id="reportLocation" placeholder="Ej: R01-N02-P03" required oninput="lookupProductDescription()">
+                                </div>
+                                <div class="form-field">
+                                    <label>Producto o últimos 4 dígitos</label>
+                                    <input type="text" id="reportProduct" placeholder="Ej: SKU8945" required oninput="lookupProductDescription()">
+                                    <div id="reportProductDescription" style="margin-top:8px;color:#4FC3F7;font-style:italic;display:none;"></div>
+                                </div>
+                                <div class="form-field">
+                                    <label>Tipo de Avería</label>
+                                    <div class="severity-buttons">
+                                        <button type="button" class="severity-btn bajo" onclick="selectSeverity('BAJO')" ontouchend="selectSeverity('BAJO')">🟡 BAJO</button>
+                                        <button type="button" class="severity-btn medio" onclick="selectSeverity('MEDIO')" ontouchend="selectSeverity('MEDIO')">🟠 MEDIO</button>
+                                        <button type="button" class="severity-btn alto" onclick="selectSeverity('ALTO')" ontouchend="selectSeverity('ALTO')">🔴 ALTO</button>
+                                    </div>
+                                    <input type="hidden" id="reportSeverity">
+                                </div>
+                                <div class="form-field">
+                                    <label>Observación</label>
+                                    <textarea id="reportObservation"></textarea>
+                                </div>
+                                <div class="success-message" id="reportSuccess">✅ Incidencia guardada</div>
+                                <div class="error-message" id="reportError"></div>
+                                <button type="submit" class="btn btn-primary">GUARDAR INCIDENCIA</button>
+                            </form>
+                        </div>
+
+                        <div id="palletsCorrect" class="sub-panel hidden">
+                            <button class="btn btn-small" onclick="showPalletsDashboard()" style="margin-bottom:16px;">← Volver</button>
+                            <div class="form-field">
+                                <label>Filtrar por ubicación (opcional)</label>
+                                <input type="text" id="correctLocation" placeholder="Ver todas si está vacío" onkeyup="filterIncidences()">
+                            </div>
+                            <div style="font-size:14px;color:#B3B3B3;margin-bottom:12px;">Pendientes (<span id="pendingCount">0</span>)</div>
+                            <div id="incidencesList"></div>
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO AVERÍAS -->
+                    <div id="moduleDamages" class="module-panel hidden">
+                        <div id="damagesDashboard" class="sub-panel">
+                            <h3 style="margin-bottom:8px;">Dashboard de Averías</h3>
+                            <div class="dashboard-grid">
+                                <div class="stat-card"><div class="stat-number" id="statDamTotal">0</div><div class="stat-label">Total</div></div>
+                                <div class="stat-card"><div class="stat-number" id="statDamAlmacen">0</div><div class="stat-label">Almacén</div></div>
+                                <div class="stat-card"><div class="stat-number" id="statDamDevolucion">0</div><div class="stat-label">Devolución</div></div>
+                                <div class="stat-card"><div class="stat-number" id="statDamRecuperacion">0</div><div class="stat-label">Recuperación</div></div>
+                            </div>
+                            <div class="dash-kpi-banner">
+                                <div style="font-size:12px;color:#B3B3B3;">Registros hoy</div>
+                                <div style="font-size:32px;font-weight:700;color:#2A7F2A;" id="statDamToday">0</div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn-action btn-report" onclick="playSelectFeedback(); showDamagesForm()">⚠️ REGISTRAR AVERÍA</button>
+                                <button class="btn-action btn-correct" onclick="handleDamagesCorrectButton()">📋 Ver lista completa</button>
+                                <button class="btn-action btn-export" onclick="playSelectFeedback(); exportDamagesCSV()">📊 EXPORTAR CSV</button>
+                            </div>
+                            <section class="reported-work-section">
+                                <h4 class="reported-work-title">Trabajos reportados pendientes</h4>
+                                <p class="reported-work-hint">Corrija datos del reporte o márquelo resuelto sin salir del dashboard.</p>
+                                <div id="damagesReportedList" class="reported-work-list"></div>
+                            </section>
+                            <section class="reported-work-section reported-work-section--done">
+                                <h4 class="reported-work-title">Últimos finalizados</h4>
+                                <div id="damagesCompletedList" class="reported-work-list"></div>
+                            </section>
+                        </div>
+                        <div id="damagesFormPanel" class="sub-panel hidden">
+                            <button class="btn btn-small" onclick="showDamagesDashboard()" style="margin-bottom:16px;">← Volver al dashboard</button>
+                            <p style="color:#888;font-size:13px;margin-bottom:12px;">Seleccione el área de trabajo</p>
+                            <div id="damagesAreaSelect" class="area-buttons">
+                                <button class="btn-area almacen" onclick="selectDamageArea('Almacén')">Almacén</button>
+                                <button class="btn-area devolucion" onclick="selectDamageArea('Devolución')">Devolución</button>
+                                <button class="btn-area recuperacion" onclick="selectDamageArea('Recuperación')">Recuperación</button>
+                            </div>
+                            <div id="damagesForm" class="hidden">
+                                <div class="area-badge" id="damageAreaBadge">Área: Almacén</div>
+                                <div class="form-field"><label>Código</label><input type="text" id="damageCodigo" placeholder="Código producto"></div>
+                                <div class="form-field"><label>Cantidad</label><input type="number" id="damageCantidad" placeholder="Cantidad" min="1"></div>
+                                <div class="form-field"><label>Fecha</label><input type="date" id="damageFecha"></div>
+                                <div class="form-field">
+                                    <label>Condición</label>
+                                    <select id="damageCondicion">
+                                        <option>Vencimiento</option>
+                                        <option>Empaque roto</option>
+                                        <option>Producto putrefacto</option>
+                                        <option>Descontinuado</option>
+                                        <option>Producto quebrado</option>
+                                        <option>Fecha corta</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary" onclick="saveDamage()">GUARDAR AVERÍA</button>
+                                <button class="btn btn-secondary" style="margin-top:8px;" onclick="resetDamageArea()">Cambiar área</button>
+                            </div>
+                        </div>
+                        <div id="damagesCorrect" class="sub-panel hidden">
+                            <button class="btn btn-small" onclick="showDamagesDashboard()" style="margin-bottom:16px;">← Volver</button>
+                            <div class="form-field">
+                                <label>Filtrar por código (opcional)</label>
+                                <input type="text" id="damagesCorrectFilter" placeholder="Ver todas si está vacío" onkeyup="filterDamagesPending()">
+                            </div>
+                            <div style="font-size:14px;color:#B3B3B3;margin-bottom:12px;">Pendientes (<span id="damagesPendingCount">0</span>)</div>
+                            <div id="damagesCorrectList"></div>
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO SEGURIDAD -->
+                    <div id="moduleSecurity" class="module-panel hidden">
+                        <div id="securityDashboard" class="sub-panel">
+                            <h3 style="margin-bottom:8px;">Dashboard de Seguridad</h3>
+                            <div class="dashboard-grid">
+                                <div class="stat-card"><div class="stat-number" id="statSecTotal">0</div><div class="stat-label">Total</div></div>
+                                <div class="stat-card critical"><div class="stat-number" id="statSecUrgent">0</div><div class="stat-label">Urgentes</div></div>
+                                <div class="stat-card"><div class="stat-number" id="statSecNonUrgent">0</div><div class="stat-label">No urgentes</div></div>
+                                <div class="stat-card"><div class="stat-number" id="statSecPhoto">0</div><div class="stat-label">Con foto</div></div>
+                            </div>
+                            <div class="dash-kpi-banner">
+                                <div style="font-size:12px;color:#B3B3B3;">% Urgentes</div>
+                                <div style="font-size:32px;font-weight:700;color:#EF5350;" id="statSecPctUrgent">0%</div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn-action btn-report" onclick="playSelectFeedback(); showSecurityForm()">🛡️ NUEVA INCIDENCIA</button>
+                                <button class="btn-action btn-correct" onclick="handleSecurityCorrectButton()">📋 Ver lista completa</button>
+                                <button class="btn-action btn-export" onclick="playSelectFeedback(); exportSecurityCSV()">📊 EXPORTAR CSV</button>
+                            </div>
+                            <section class="reported-work-section">
+                                <h4 class="reported-work-title">Trabajos reportados pendientes</h4>
+                                <p class="reported-work-hint">Corrija datos del reporte o márquelo resuelto desde aquí.</p>
+                                <div id="securityReportedList" class="reported-work-list"></div>
+                            </section>
+                            <section class="reported-work-section reported-work-section--done">
+                                <h4 class="reported-work-title">Últimos finalizados</h4>
+                                <div id="securityCompletedList" class="reported-work-list"></div>
+                            </section>
+                        </div>
+                        <div id="securityFormPanel" class="sub-panel hidden">
+                            <button class="btn btn-small" onclick="showSecurityDashboard()" style="margin-bottom:16px;">← Volver al dashboard</button>
+                            <div class="form-field">
+                                <label>Tipo</label>
+                                <select id="securityTipo">
+                                    <option>Acto inseguro</option>
+                                    <option>Condición insegura</option>
+                                    <option>Acto seguro</option>
+                                    <option>Condición segura</option>
+                                </select>
+                            </div>
+                            <div class="form-field"><label>Detalle</label><textarea id="securityDetalle" placeholder="Describa la incidencia..."></textarea></div>
+                            <div class="form-field"><label>Área específica</label><input type="text" id="securityArea" placeholder="Ej: Pasillo 3"></div>
+                            <div class="form-field">
+                                <label>Clasificación</label>
+                                <div class="radio-row">
+                                    <div class="radio-pill urgent" id="pillUrgente" onclick="selectSecurityClass('Urgente')">🔴 Urgente</div>
+                                    <div class="radio-pill selected" id="pillNoUrgente" onclick="selectSecurityClass('No urgente')">🟡 No urgente</div>
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <label>Foto (simulada)</label>
+                                <button type="button" class="btn btn-secondary" onclick="simulatePhoto()">📷 Subir foto</button>
+                                <div id="photoStatus" style="margin-top:8px;color:#4FC3F7;font-size:12px;"></div>
+                            </div>
+                            <button class="btn btn-primary" onclick="saveSecurity()">GUARDAR INCIDENCIA</button>
+                        </div>
+                        <div id="securityCorrect" class="sub-panel hidden">
+                            <button class="btn btn-small" onclick="showSecurityDashboard()" style="margin-bottom:16px;">← Volver</button>
+                            <div class="form-field">
+                                <label>Filtrar por área (opcional)</label>
+                                <input type="text" id="securityCorrectFilter" placeholder="Ver todas si está vacío" onkeyup="filterSecurityPending()">
+                            </div>
+                            <div style="font-size:14px;color:#B3B3B3;margin-bottom:12px;">Pendientes (<span id="securityPendingCount">0</span>)</div>
+                            <div id="securityCorrectList"></div>
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO AUDITORÍA 5S -->
+                    <div id="moduleAudit" class="module-panel hidden">
+                        <div id="auditDashboard" class="sub-panel">
+                            <h3 style="margin-bottom:8px;">Dashboard Auditoría 5S</h3>
+                            <div class="dashboard-grid">
+                                <div class="stat-card"><div class="stat-number" id="statAuditTotal">0</div><div class="stat-label">Total</div></div>
+                                <div class="stat-card"><div class="stat-number" id="statAuditTurnoA">0</div><div class="stat-label">Turno A</div></div>
+                                <div class="stat-card"><div class="stat-number" id="statAuditTurnoB">0</div><div class="stat-label">Turno B</div></div>
+                                <div class="stat-card"><div class="stat-number" id="statAuditPasillos">0</div><div class="stat-label">Pasillos</div></div>
+                            </div>
+                            <div class="dash-kpi-banner">
+                                <div style="font-size:12px;color:#B3B3B3;">% Cumplimiento checklist</div>
+                                <div style="font-size:32px;font-weight:700;color:#2A7F2A;" id="statAuditCompliance">0%</div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn-action btn-report" onclick="playSelectFeedback(); showAuditForm()">📋 NUEVA AUDITORÍA</button>
+                                <button class="btn-action btn-correct" onclick="handleAuditCorrectButton()">📋 Ver lista completa</button>
+                                <button class="btn-action btn-export" onclick="playSelectFeedback(); exportAuditCSV()">📊 EXPORTAR CSV</button>
+                            </div>
+                            <section class="reported-work-section">
+                                <h4 class="reported-work-title">Trabajos reportados pendientes</h4>
+                                <p class="reported-work-hint">Corrija hallazgos o márquelos resueltos desde aquí.</p>
+                                <div id="auditReportedList" class="reported-work-list"></div>
+                            </section>
+                            <section class="reported-work-section reported-work-section--done">
+                                <h4 class="reported-work-title">Últimos finalizados</h4>
+                                <div id="auditCompletedList" class="reported-work-list"></div>
+                            </section>
+                        </div>
+                        <div id="auditFormPanel" class="sub-panel hidden">
+                            <button class="btn btn-small" onclick="showAuditDashboard()" style="margin-bottom:16px;">← Volver al dashboard</button>
+                            <div class="form-field"><label>Nombre del auditor</label><input type="text" id="auditAuditor"></div>
+                            <div class="form-field"><label>Pasillo auditado</label><input type="text" id="auditPasillo" placeholder="Ej: 1-2, 3-4"></div>
+                            <div class="form-field"><label>Responsable del pasillo</label><input type="text" id="auditResponsable"></div>
+                            <div class="form-field">
+                                <label>Turno</label>
+                                <div class="radio-row">
+                                    <div class="radio-pill selected" id="pillTurnoA" onclick="selectTurno('A')">Turno A</div>
+                                    <div class="radio-pill" id="pillTurnoB" onclick="selectTurno('B')">Turno B</div>
+                                </div>
+                            </div>
+                            <p style="font-weight:700;margin:16px 0 8px;">Checklist 5S <span style="color:#2E7D32;font-size:12px;">verde = correcto</span></p>
+                            <div class="checklist-item" id="chkObstrucciones"><span>1. Sin obstrucciones de pasillo</span><div class="toggle-switch" onclick="toggleCheck(this)"></div></div>
+                            <div class="checklist-item" id="chkSkuAveriado"><span>2. Sin SKU averiado</span><div class="toggle-switch" onclick="toggleCheck(this)"></div></div>
+                            <div class="checklist-item" id="chkIluminacion"><span>3. Iluminación y limpieza</span><div class="toggle-switch" onclick="toggleCheck(this)"></div></div>
+                            <div class="checklist-item" id="chkPaletas"><span>4. Sin paletas rotas</span><div class="toggle-switch" onclick="toggleCheck(this)"></div></div>
+                            <div class="checklist-item" id="chkAcuracidad"><span>5. Acuracidad (teórico vs físico)</span><div class="toggle-switch" onclick="toggleCheck(this)"></div></div>
+                            <button class="btn btn-primary" style="margin-top:16px;" onclick="saveAudit()">GUARDAR AUDITORÍA</button>
+                        </div>
+                        <div id="auditCorrect" class="sub-panel hidden">
+                            <button class="btn btn-small" onclick="showAuditDashboard()" style="margin-bottom:16px;">← Volver</button>
+                            <div class="form-field">
+                                <label>Filtrar por pasillo (opcional)</label>
+                                <input type="text" id="auditCorrectFilter" placeholder="Ver todas si está vacío" onkeyup="filterAuditPending()">
+                            </div>
+                            <div style="font-size:14px;color:#B3B3B3;margin-bottom:12px;">Pendientes (<span id="auditPendingCount">0</span>)</div>
+                            <div id="auditCorrectList"></div>
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO AUDITORÍA DE DESPACHO -->
+                    <div id="moduleDespachoAudit" class="module-panel hidden">
+                        <div id="despachoAuditDashboard" class="sub-panel">
+                            <h3 style="margin-bottom:8px;">Dashboard Auditoría de Despacho</h3>
+                            <div class="dashboard-grid">
+                                <div class="stat-card"><div class="stat-number" id="statDespTotal">0</div><div class="stat-label">Total auditorías</div></div>
+                                <div class="stat-card"><div class="stat-number" id="statDespPending">0</div><div class="stat-label">Pendientes</div></div>
+                                <div class="stat-card critical"><div class="stat-number" id="statDespHallazgos">0</div><div class="stat-label">Incidencia</div></div>
+                                <div class="stat-card"><div class="stat-number" id="statDespHoy">0</div><div class="stat-label">Hoy</div></div>
+                            </div>
+                            <div class="dash-kpi-banner">
+                                <div style="font-size:12px;color:#B3B3B3;">Cumplimiento checklist</div>
+                                <div style="font-size:32px;font-weight:700;color:#2A7F2A;" id="statDespCompliance">0%</div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn-action btn-report" onclick="playSelectFeedback(); showDespachoAuditForm()">📋 NUEVA AUDITORÍA</button>
+                                <button class="btn-action btn-correct" onclick="handleDespachoAuditCorrectButton()">📋 Ver lista completa</button>
+                                <button class="btn-action btn-export" onclick="playSelectFeedback(); exportDespachoAuditCSV()">📊 EXPORTAR CSV</button>
+                            </div>
+                            <section class="reported-work-section">
+                                <h4 class="reported-work-title">Auditorías pendientes</h4>
+                                <p class="reported-work-hint">Corrija datos o marque resueltas desde aquí.</p>
+                                <div id="despachoAuditReportedList" class="reported-work-list"></div>
+                            </section>
+                            <section class="reported-work-section reported-work-section--done">
+                                <h4 class="reported-work-title">Últimas finalizadas</h4>
+                                <div id="despachoAuditCompletedList" class="reported-work-list"></div>
+                            </section>
+                        </div>
+                        <div id="despachoAuditFormPanel" class="sub-panel hidden">
+                            <button class="btn btn-small" onclick="showDespachoAuditDashboard()" style="margin-bottom:16px;">← Cancelar</button>
+                            <div class="da-wizard" id="daWizard">
+                                <div class="da-wizard-head">
+                                    <span class="da-wizard-eyebrow">Nueva auditoría · paso a paso</span>
+                                    <div class="da-wizard-progress">Paso <strong id="daWizardStepNum">1</strong> de <strong id="daWizardStepTotal">11</strong></div>
+                                    <div class="da-wizard-bar" aria-hidden="true"><span id="daWizardBarFill"></span></div>
+                                </div>
+                                <h3 class="da-wizard-title" id="daWizardTitle">—</h3>
+                                <p class="da-wizard-hint" id="daWizardHint"></p>
+                                <div class="da-wizard-body" id="daWizardBody"></div>
+                                <p class="da-wizard-error" id="daWizardError" hidden role="alert"></p>
+                                <div class="da-wizard-actions">
+                                    <button type="button" class="btn btn-ghost" id="daWizardPrev" onclick="despachoAuditWizardPrev()">← Anterior</button>
+                                    <button type="button" class="btn btn-primary" id="daWizardNext" onclick="despachoAuditWizardNext()">Siguiente →</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="despachoAuditCorrect" class="sub-panel hidden">
+                            <button class="btn btn-small" onclick="showDespachoAuditDashboard()" style="margin-bottom:16px;">← Volver</button>
+                            <div class="form-field">
+                                <label>Filtrar por IDC, cliente o chofer (opcional)</label>
+                                <input type="text" id="despachoAuditCorrectFilter" placeholder="Ver todas si está vacío" onkeyup="filterDespachoAuditPending()">
+                            </div>
+                            <div style="font-size:14px;color:#B3B3B3;margin-bottom:12px;">Pendientes (<span id="despachoAuditPendingCount">0</span>)</div>
+                            <div id="despachoAuditCorrectList"></div>
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO INSPECCIÓN DE EQUIPOS -->
+                    <div id="moduleEquipment" class="module-panel hidden">
+                        <div id="equipmentDashboard" class="sub-panel">
+                            <h3 style="margin-bottom:8px;">Dashboard de Equipos</h3>
+                            <div class="dashboard-grid">
+                                <div class="stat-card"><div class="stat-number" id="statEqMontacargas">0</div><div class="stat-label">Montacargas</div></div>
+                                <div class="stat-card"><div class="stat-number" id="statEqUnaElec">0</div><div class="stat-label">Uñas eléctricas</div></div>
+                                <div class="stat-card"><div class="stat-number" id="statEqUnaMano">0</div><div class="stat-label">Uñas de mano</div></div>
+                                <div class="stat-card"><div class="stat-number" id="statEqDisponibles" style="color:#2E7D32;">0</div><div class="stat-label">Disponibles</div></div>
+                            </div>
+                            <div class="dash-kpi-banner">
+                                <div style="font-size:12px;color:#B3B3B3;">Equipos no disponibles</div>
+                                <div style="font-size:32px;font-weight:700;color:#C62828;" id="statEqNoDisponibles">0</div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn-action btn-report" onclick="playSelectFeedback(); showEquipmentForm()">NUEVA INSPECCIÓN</button>
+                                <button class="btn-action btn-correct" onclick="handleEquipmentCorrectButton()">📋 Ver lista completa</button>
+                                <button class="btn-action btn-correct" onclick="playSelectFeedback(); showEquipmentList()">VER EQUIPOS</button>
+                                <button class="btn-action btn-export" onclick="playSelectFeedback(); exportEquipmentCSV()">EXPORTAR CSV</button>
+                            </div>
+                            <section class="reported-work-section">
+                                <h4 class="reported-work-title">Equipos reportados no disponibles</h4>
+                                <p class="reported-work-hint">Marque equipos reparados como disponibles desde aquí.</p>
+                                <div id="equipmentReportedList" class="reported-work-list"></div>
+                            </section>
+                        </div>
+                        <div id="equipmentFormPanel" class="sub-panel hidden">
+                            <button class="btn btn-small" onclick="showEquipmentDashboard()" style="margin-bottom:16px;">← Volver al dashboard</button>
+                            <div class="form-field"><label>Almacén</label><input type="text" id="eqAlmacen" placeholder="Ej: Almacén Central"></div>
+                            <div class="form-field"><label>Fecha</label><input type="date" id="eqFecha"></div>
+                            <div class="form-field"><label>Mes</label><input type="text" id="eqMes" readonly style="opacity:0.8;"></div>
+                            <div class="form-field"><label>Operador</label><input type="text" id="eqOperador"></div>
+                            <div class="form-field"><label>Supervisor</label><input type="text" id="eqSupervisor" placeholder="Nombre del supervisor"></div>
+                            <div class="form-field"><label>Código del equipo</label><input type="text" id="eqCodigo" placeholder="Ej: MC-01"></div>
+                            <div class="form-field">
+                                <label>Tipo de equipo</label>
+                                <select id="eqTipo">
+                                    <option>Montacargas</option>
+                                    <option>Uña eléctrica</option>
+                                    <option>Uña de mano</option>
+                                </select>
+                            </div>
+                            <p style="font-weight:700;margin:16px 0 8px;">Checklist de inspección <span style="color:#8B949E;font-size:12px;">Si / No</span></p>
+                            <div id="equipmentChecklist"></div>
+                            <div class="form-field" style="margin-top:12px;">
+                                <label>Observaciones <span id="eqObsRequired" style="color:#EF5350;display:none;">(obligatorio si hay fallas)</span></label>
+                                <textarea id="eqObservaciones" placeholder="Describa las fallas detectadas"></textarea>
+                            </div>
+                            <button class="btn btn-primary" style="margin-top:16px;" onclick="saveEquipmentInspection()">GUARDAR INSPECCIÓN</button>
+                        </div>
+                        <div id="equipmentListPanel" class="sub-panel hidden">
+                            <button class="btn btn-small" onclick="showEquipmentDashboard()" style="margin-bottom:16px;">← Volver al dashboard</button>
+                            <div class="filter-row">
+                                <select id="eqFilterTipo" onchange="renderEquipmentList()">
+                                    <option value="">Todos los tipos</option>
+                                    <option>Montacargas</option>
+                                    <option>Uña eléctrica</option>
+                                    <option>Uña de mano</option>
+                                </select>
+                                <select id="eqFilterEstado" onchange="renderEquipmentList()">
+                                    <option value="">Todos los estados</option>
+                                    <option value="DISPONIBLE">Disponible</option>
+                                    <option value="NO_DISPONIBLE">No disponible</option>
+                                </select>
+                            </div>
+                            <div id="equipmentListContainer"></div>
+                        </div>
+                        <div id="equipmentCorrect" class="sub-panel hidden">
+                            <button class="btn btn-small" onclick="showEquipmentDashboard()" style="margin-bottom:16px;">← Volver</button>
+                            <p style="color:#888;font-size:13px;margin-bottom:12px;">Equipos no disponibles — marque como corregido cuando estén listos</p>
+                            <div id="equipmentCorrectList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-bar">
+            <div class="home-indicator"></div>
+        </div>
+    </div>
+
+  </div><!-- /avApp -->
+
+    <!-- MODAL confirmación (fuera del app shell para móvil) -->
+    <div id="modal" class="modal averias-app" hidden aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">Confirmación</div>
+            <div class="modal-message" id="modalMessage"></div>
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn modal-btn-cancel">Cancelar</button>
+                <button type="button" class="modal-btn modal-btn-confirm" id="modalConfirmBtn">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sincronización en vivo (Supabase — tiempo real en GitHub Pages) -->
+    <div id="cloudSetupModal" class="modal av-cloud-modal" hidden>
+        <div class="modal-content av-cloud-modal-content">
+            <div class="modal-title">Sincronización en vivo</div>
+            <div id="cloudSetupSupabasePanel">
+                <p class="av-cloud-help">Los celulares con internet compartirán los mismos reportes en tiempo real.</p>
+                <p class="av-cloud-note"><strong>Supabase ya está activo</strong> en la web publicada. No necesita JSONBin ni configuración extra en el celular.</p>
+                <ol class="av-cloud-steps">
+                    <li>Abra la <strong>misma URL</strong> en todos los celulares y PCs</li>
+                    <li>Recargue con <strong>Ctrl+F5</strong> (o cierre y vuelva a abrir en el teléfono)</li>
+                    <li>Verifique el indicador <strong>● LIVE</strong> arriba a la derecha</li>
+                </ol>
+            </div>
+            <div id="cloudSetupFirebasePanel" hidden>
+                <p class="av-cloud-help">Los celulares con internet compartirán los mismos reportes en menos de 1 segundo.</p>
+                <p class="av-cloud-note"><strong>Firebase</strong> como respaldo de sync en vivo.</p>
+                <ol class="av-cloud-steps">
+                    <li>Abra la <strong>misma URL</strong> en todos los celulares y PCs</li>
+                    <li>Recargue con <strong>Ctrl+F5</strong></li>
+                    <li>Verifique el indicador <strong>● LIVE</strong></li>
+                </ol>
+            </div>
+            <div id="cloudSetupJsonBinPanel" hidden>
+                <p class="av-cloud-help">Opción alternativa solo si Supabase no está disponible (servidor LAN local).</p>
+                <ol class="av-cloud-steps">
+                    <li>Cree cuenta gratis en <a href="https://jsonbin.io" target="_blank" rel="noopener">jsonbin.io</a></li>
+                    <li>Copie la <strong>Master Key</strong> (API Keys)</li>
+                    <li>Péguela abajo y pulse Activar</li>
+                </ol>
+                <label class="av-cloud-label" for="cloudMasterKey">Master Key JSONBin (opcional)</label>
+                <input type="password" id="cloudMasterKey" class="av-cloud-input" autocomplete="off" placeholder="Solo para servidor LAN local">
+            </div>
+            <p class="av-cloud-note" id="cloudSetupNote">URL: https://luisjoserodriguezcorripio-creator.github.io/Almacen-Central-001/averias.html</p>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" type="button" onclick="closeCloudSetupModal()">Cerrar</button>
+                <button class="modal-btn modal-btn-confirm" type="button" id="cloudSetupSubmit" onclick="submitCloudSetup()">Sincronizar ahora</button>
+            </div>
+            <p class="av-cloud-status" id="cloudSetupStatus" hidden></p>
+        </div>
+    </div>
+
+  <script src="js/panel-core.js?v=17"></script>
+  <script src="js/platform-security.js?v=5"></script>
+  <script src="js/platform-network-relay.js?v=1"></script>
+  <script src="js/platform-lan-sync.js?v=4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/platform-supabase.js?v=4"></script>
+  <script src="js/platform-supabase-realtime.js?v=1"></script>
+  <script src="js/platform-supabase-bridge.js?v=5"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <script src="js/platform-firebase-bridge.js?v=5"></script>
+  <script src="js/platform-realtime-badge.js?v=5"></script>
+  <script src="js/platform-averias-core.js?v=1"></script>
+  <script src="js/platform-averias-cloud-sync.js?v=45"></script>
+  <script src="js/platform-store.js"></script>
+  <script src="js/platform-admin.js?v=14"></script>
+  <script src="js/platform-registry-cloud-sync.js?v=2"></script>
+  <script src="js/platform-web-users.js?v=19"></script>
+  <script src="js/platform-toast.js"></script>
+  <script src="js/platform-averias-ui.js?v=53"></script>
+  <script src="js/platform-averias-app.js?v=6"></script>
+</body>
+</html>

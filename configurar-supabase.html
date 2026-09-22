@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><title>Activar Supabase</title></head>
+<body style="font-family:Segoe UI;background:#0d1520;color:#fff;padding:40px;max-width:520px;margin:auto">
+<h1 style="color:#C5A572">Activar Supabase</h1>
+<p><b>Paso 1:</b> En Supabase SQL Editor pulsa <b>Run</b> (ya pegaste el SQL).</p>
+<p><b>Paso 2:</b> Project Settings → API. Pega URL y anon key abajo:</p>
+<label>URL</label><br><input id="u" style="width:100%;padding:10px;margin:8px 0"><br>
+<label>Anon key</label><br><input id="k" style="width:100%;padding:10px;margin:8px 0"><br>
+<button onclick="go()" style="padding:12px 20px;background:#C5A572;border:none;font-weight:bold;cursor:pointer;margin-top:12px">Activar</button>
+<pre id="o" style="background:#111;padding:12px;word-break:break-all;color:#81c784;display:none"></pre>
+<script>
+function go(){
+ var url=document.getElementById('u').value.trim(),key=document.getElementById('k').value.trim();
+ if(!url||!key){alert('Completa ambos');return;}
+ var c='powershell -ExecutionPolicy Bypass -File "c:\\Users\\JACASTRO\\Desktop\\Nueva carpeta (2)\\Almacen-Central-001\\scripts\\activar-supabase.ps1" -Url "'+url+'" -AnonKey "'+key+'" -Push';
+ document.getElementById('o').textContent=c;document.getElementById('o').style.display='block';
+ navigator.clipboard.writeText(c);alert('Comando copiado. Pegalo en PowerShell o envialo al chat de Cursor.');
+}
+</script></body></html>

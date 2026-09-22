@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script>
+  (function () {
+    var ua = navigator.userAgent || '';
+    var w = window.innerWidth || 480;
+    var m = window.matchMedia;
+    var scanner = /Zebra|Honeywell|Intermec|Symbol|DataWedge|TC[0-9]{2}|CK[0-9]{2}|EDA[0-9]{2}|Dolphin|Nautiz|Memor/i.test(ua);
+    var touch = m && (m('(pointer: coarse)').matches || m('(hover: none)').matches);
+    if (scanner || w <= 720 || touch) {
+      document.documentElement.classList.add('inv-rf-viewport');
+      document.body.classList.add('inv-rf-device');
+    }
+  })();
+  </script>
+  <meta name="description" content="Portal Inventario RF — Conteo pickup, rack y piso en tiempo real.">
+  <meta name="theme-color" content="#15202B">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:* http://127.0.0.1:* http://192.168.0.0/16 http://10.0.0.0/8 https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com; img-src 'self' data:; media-src 'self'; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Inventario RF — Almacén Central 001</title>
+  <link rel="preload" href="assets/img/login-inventario-poster.jpg" as="image">
+  <script src="js/relay-bootstrap.js?v=1"></script>
+  <link rel="icon" type="image/png" href="assets/img/ac001-logo.svg?v=1">
+  <link rel="stylesheet" href="css/platform.css?v=32">
+  <link rel="stylesheet" href="css/inventario-auth.css?v=5">
+  <link rel="stylesheet" href="css/auth-cinematic.css?v=18">
+  <link rel="stylesheet" href="css/auth-portals-layout.css?v=11">
+  <link rel="stylesheet" href="css/dc-brand.css?v=11">
+  <link rel="stylesheet" href="css/ac001-brand.css?v=1">
+  <link rel="stylesheet" href="css/inventario-portal.css?v=13">
+  <link rel="stylesheet" href="css/inventario-responsive.css?v=4">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="auth-locked executive-ui">
+  <noscript><p class="noscript-msg">Activa JavaScript para usar Inventario RF.</p></noscript>
+
+  <div class="auth-overlay inv-auth-overlay" id="invAuthOverlay" role="dialog" aria-labelledby="invAuthTitle">
+    <div class="auth-video-wrap inv-auth-bg-wrap" aria-hidden="true">
+      <div class="auth-video-scrim inv-auth-scrim"></div>
+    </div>
+    <div class="auth-layout">
+      <aside class="auth-hero inv-auth-hero">
+        <div class="auth-hero-panel">
+          <header class="auth-hero-head">
+            <img class="jc-logo-img jc-logo-img--hero auth-hero-logo-img" src="assets/img/ac001-logo.svg?v=1" alt="AC" width="52" height="52">
+            <div class="auth-hero-head-text">
+              <p class="auth-welcome-line">Portal independiente</p>
+              <h1 class="inv-auth-brand-title">Inventario RF · DC</h1>
+            </div>
+          </header>
+          <p class="auth-hero-desc inv-auth-hero-desc">Conteo de inventario en almacén (pickup, rack, piso), en el navegador con datos <strong>en tiempo real</strong>.</p>
+          <div class="inv-auth-steps" aria-label="Conteo RF">
+            <span class="inv-auth-step">Pickup</span>
+            <span class="inv-auth-step">Rack</span>
+            <span class="inv-auth-step">Piso</span>
+            <span class="inv-auth-step">Registros</span>
+            <span class="inv-auth-step">CSV</span>
+          </div>
+          <p class="inv-auth-desk-label inv-auth-desk-only">Escritorio web · supervisión en PC</p>
+          <div class="inv-auth-desk-access inv-auth-desk-only" aria-label="Acceso cuadre y auditoría">
+            <a class="inv-desk-card inv-desk-card--conc" href="inventario-exactitud.html">
+              <img class="inv-desk-card-icon" src="assets/img/icon-exactitud.svg?v=1" alt="" width="48" height="48">
+              <span class="inv-desk-card-body">
+                <strong>Conciliación · Exactitud</strong>
+                <span>Dashboard CJ · cuadre Ok / Revisar · Excel guardado</span>
+              </span>
+              <span class="inv-desk-card-arrow" aria-hidden="true">→</span>
+            </a>
+            <a class="inv-desk-card inv-desk-card--audit" href="inventario-exactitud.html?ws=auditoria">
+              <img class="inv-desk-card-icon" src="assets/img/icon-auditoria.svg?v=1" alt="" width="48" height="48">
+              <span class="inv-desk-card-body">
+                <strong>Auditoría de conteo</strong>
+                <span>Revisar ubicaciones · hoja en vivo</span>
+              </span>
+              <span class="inv-desk-card-arrow" aria-hidden="true">→</span>
+            </a>
+          </div>
+          <a href="index.html" class="inv-auth-back">← Volver al centro de mando WMS</a>
+        </div>
+      </aside>
+      <div class="auth-stack">
+        <div class="auth-glass-card inv-auth-glass">
+          <div class="inv-phone">
+            <div class="inv-header">
+              <div class="inv-header-top">
+                <div class="inv-brand">Almacén Central</div>
+              </div>
+              <div class="inv-step-row">
+                <span class="inv-step-counter" id="invLoginStepNum">1/2</span>
+                <span class="inv-step-title" id="invLoginStepTitle">Seleccione su perfil</span>
+              </div>
+            </div>
+            <div class="inv-body">
+              <div id="invLoginStep1">
+                <h2 class="inv-login-title">¿Quién usará el equipo?</h2>
+                <p class="inv-login-sub">Elija el tipo de usuario</p>
+                <div class="inv-login-roles">
+                  <div class="inv-role admin" id="invRoleAdmin" role="button" tabindex="0">
+                    <span class="badge">ADMIN</span>
+                    <h3 class="inv-role-title">Administrador</h3>
+                    <p class="inv-role-desc">Registros y sincronización</p>
+                  </div>
+                  <div class="inv-role count" id="invRoleCount" role="button" tabindex="0">
+                    <span class="badge">CONTEO</span>
+                    <h3 class="inv-role-title">Contador</h3>
+                    <p class="inv-role-desc">Escanear en almacén</p>
+                  </div>
+                </div>
+                <button type="button" class="inv-btn inv-btn-primary" id="invBtnContinue" disabled>Continuar →</button>
+              </div>
+              <div id="invLoginStep2" hidden>
+                <button type="button" class="inv-btn inv-btn-back" id="invBtnBackProfile">◀ Cambiar perfil</button>
+                <div class="inv-login-card">
+                  <h3>Acceso</h3>
+                  <div id="invPanelCount">
+                    <input class="inv-field" id="invCode" type="text" placeholder="Código de usuario" inputmode="numeric" autocomplete="off" spellcheck="false">
+                    <p class="inv-login-hint">Escanee su código con el lector RF</p>
+                  </div>
+                  <div id="invPanelAdmin" hidden>
+                    <input class="inv-field" id="invAdmUser" value="admin">
+                    <input class="inv-field" id="invAdmPin" type="password" placeholder="PIN">
+                  </div>
+                </div>
+                <button type="button" class="inv-btn inv-btn-primary" id="invBtnEnter">Entrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <nav class="auth-hub-links" aria-label="Otros portales">
+          <a href="index.html" class="auth-hub-link auth-hub-link--wms">Control de Mando 001</a>
+          <a href="despacho.html" class="auth-hub-link auth-hub-link--desp">Portal de despacho</a>
+          <a href="averias.html" class="auth-hub-link auth-hub-link--ops">Operaciones de piso</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <div class="inv-app-shell is-hidden" id="invApp" hidden>
+    <span class="inv-cloud-badge" id="invCloudBadge">○ Sin conexión</span>
+
+    <!-- Modo conteo -->
+    <div class="inv-phone" id="invViewMode" hidden>
+      <div class="inv-header">
+        <div class="inv-header-top">
+          <div class="inv-brand">Almacén Central</div>
+          <div class="inv-header-user">
+            <div class="inv-header-name" id="invHeaderName">—</div>
+            <div class="inv-header-code" id="invHeaderCode"></div>
+          </div>
+        </div>
+        <h2 class="inv-view-subtitle">Tipo de conteo</h2>
+        <p class="inv-instr">Seleccione cómo va a contar</p>
+      </div>
+      <div class="inv-body">
+        <div class="inv-mode" id="invModePickup" data-mode="pickup">
+          <span class="inv-mode-tag inv-mode-tag--pickup">PICKUP</span>
+          <h3 class="inv-mode-title--pickup">Conteo de Pickup</h3>
+          <p>Solo nivel 1. Sin matrícula. Caja o unidad. Use <b>0</b> si vacía.</p>
+        </div>
+        <div class="inv-mode" id="invModePallet" data-mode="pallet">
+          <span class="inv-mode-tag inv-mode-tag--rack">RACK</span>
+          <h3 class="inv-mode-title--rack">Conteo de Rack</h3>
+          <p>Formato P###-###-# (niveles 2–5). Matrícula y vencimiento omisibles.</p>
+        </div>
+        <div class="inv-mode" id="invModeCuadre" data-mode="cuadre">
+          <span class="inv-mode-tag inv-mode-tag--piso">PISO</span>
+          <h3 class="inv-mode-title--piso">Conteo Piso</h3>
+          <p>5 pasos completos con matrícula y vencimiento opcionales.</p>
+        </div>
+      </div>
+      <nav class="inv-nav">
+        <button type="button" class="inv-btn-logout">Salir</button>
+        <button type="button" data-inv-nav="admin">Admin</button>
+      </nav>
+    </div>
+
+    <!-- Conteo activo -->
+    <div class="inv-phone" id="invViewCount" hidden>
+      <div class="inv-header">
+        <div class="inv-header-top">
+          <div class="inv-brand">Almacén Central</div>
+          <div class="inv-header-user">
+            <div class="inv-header-name">—</div>
+          </div>
+        </div>
+        <div class="inv-step-row">
+          <span class="inv-step-counter" id="invStepCounter">1/4</span>
+          <span class="inv-step-title" id="invStepTitle">Ubicación</span>
+          <span class="inv-mode-badge" id="invModeBadge">PICKUP</span>
+        </div>
+        <p class="inv-instr" id="invInstr">Escanee la ubicación</p>
+        <div class="inv-prog"><div class="inv-prog-bar" id="invProgBar"></div></div>
+      </div>
+      <div class="inv-body">
+        <div class="inv-excel" id="invExcelBox">
+          <b>📊 Vista Excel</b>
+          <div id="invPvLoc" class="dim">Ubicación: —</div>
+          <div id="invPvCode" class="dim">Artículo: —</div>
+          <div id="invPvMat" class="dim">Matrícula: —</div>
+          <div id="invPvExp" class="dim">Vencimiento: —</div>
+          <div id="invPvQty" class="dim">Cajas: —</div>
+          <div id="invPvRound" class="dim">Nº conteo: —</div>
+        </div>
+        <div class="inv-card active" id="invCard1" style="border-color:#00897B">
+          <span class="badge">AHORA</span>
+          <h2 style="color:#00897B">1 · Ubicación</h2>
+          <p class="desc">Escanee o escriba la ubicación del rack</p>
+          <p class="desc desc--accent" id="invPickupHint">Pickup: solo ubicaciones que terminan en 1. Use 0 si está vacía.</p>
+          <input class="inv-field" id="invLoc" readonly style="border-color:#00897B">
+        </div>
+        <div class="inv-card" id="invCard2" style="border-color:#3949AB">
+          <span class="badge">AHORA</span>
+          <h2 style="color:#3949AB">2 · Artículo</h2>
+          <p class="desc">Escanee el código de barras del producto</p>
+          <input class="inv-field" id="invProd" readonly style="border-color:#3949AB">
+          <div class="inv-prod-name" id="invPname">—</div>
+        </div>
+        <div class="inv-card" id="invCard3" style="border-color:#7E57C2">
+          <span class="badge">AHORA</span>
+          <h2 style="color:#7E57C2">3 · Matrícula</h2>
+          <p class="desc" id="invMatHint">Opcional — escanee o omita</p>
+          <input class="inv-field" id="invMat" readonly placeholder="Escanee matrícula" style="border-color:#7E57C2">
+        </div>
+        <div class="inv-card" id="invCard4" style="border-color:#2A9D8F">
+          <span class="badge">AHORA</span>
+          <h2 style="color:#2A9D8F">4 · Vencimiento</h2>
+          <p class="desc">Opcional — fecha DD/MM/AAAA</p>
+          <input class="inv-field" id="invExp" placeholder="DD/MM/AAAA" style="border-color:#2A9D8F">
+        </div>
+        <div class="inv-card" id="invCard5" style="border-color:#EF6C00">
+          <span class="badge">AHORA</span>
+          <h2 id="invQtyTitle" style="color:#EF6C00">Cantidad</h2>
+          <div class="inv-pickup-qty" id="invPickupQtyType" hidden>
+            <p class="desc" style="font-weight:700;margin:0 0 8px">Seleccione cómo va a contar</p>
+            <div class="inv-pickup-qty-btns">
+              <button type="button" id="invBtnQtyBox" style="border:2px solid #EF6C00;background:#EF6C00;color:#fff">CAJA (CJ)</button>
+              <button type="button" id="invBtnQtyUnit" style="border:2px solid #3949AB;background:#E8EEF4;color:#3949AB">UNIDAD (UND)</button>
+            </div>
+          </div>
+          <p id="invQtyAmountLabel" class="desc" hidden>Ingrese la cantidad</p>
+          <input class="inv-field inv-field--qty" id="invQty" type="number" value="1" style="border-color:#EF6C00">
+        </div>
+      </div>
+      <div class="inv-swipe-zone">
+        <div class="inv-swipe-hint" id="invSwipeHint">Escanee con el lector · Deslice ◀ para corregir</div>
+        <div class="inv-swipe-track" id="invSwipeTrack">
+          <span id="invSwipeLabelL">◀ ATRÁS</span>
+          <span id="invSwipeLabelR">SIGUIENTE ▶</span>
+          <div class="inv-swipe-thumb" id="invSwipeThumb">⇆</div>
+        </div>
+      </div>
+      <nav class="inv-nav">
+        <button type="button" data-inv-nav="mode">Modo</button>
+        <button type="button" data-inv-nav="records">Registros</button>
+        <button type="button" class="inv-btn-logout">Salir</button>
+      </nav>
+    </div>
+
+    <!-- Admin -->
+    <div class="inv-phone" id="invViewAdmin" hidden>
+      <div class="inv-header">
+        <div class="inv-brand">Panel administrador</div>
+        <div class="inv-stats">
+          <div class="inv-stat">Registros<b id="invStatTotal">0</b></div>
+          <div class="inv-stat">Pendientes<b class="warn" id="invStatPending">0</b></div>
+          <div class="inv-stat">Contadores<b id="invStatUsers">0</b></div>
+        </div>
+        <div class="inv-sync-status ok" id="invSyncStatus">Conectando…</div>
+      </div>
+      <div class="inv-body" style="padding:0">
+        <div class="inv-admin-row" data-inv-nav="records"><span style="font-size:20px">📋</span><div><strong>Ver registros</strong><span>Lista en tiempo real en la nube</span></div></div>
+        <div class="inv-admin-row" data-inv-action="export"><span style="font-size:20px">📁</span><div><strong>Exportar CSV</strong><span>OneDrive / Excel</span></div></div>
+        <div class="inv-admin-row" id="invBtnTestSb"><span style="font-size:20px">🔗</span><div><strong>Probar conexión</strong><span>Verificar enlace en vivo</span></div></div>
+        <div class="inv-admin-row" id="invBtnSetupSb"><span style="font-size:20px">⚙️</span><div><strong>Configurar sincronización</strong><span>URL y clave (solo este equipo)</span></div></div>
+        <div class="inv-admin-row" data-inv-action="delete-all"><span style="font-size:20px">🗑️</span><div><strong>Borrar registros</strong><span>Elimina todos en la nube</span></div></div>
+        <a class="inv-admin-row inv-admin-link" href="inventario-exactitud.html"><span style="font-size:20px">📊</span><div><strong>Conciliación · Exactitud</strong><span>Cuadre CJ vs conteo en vivo (escritorio)</span></div></a>
+        <a class="inv-admin-row inv-admin-link" href="inventario-exactitud.html?ws=auditoria"><span style="font-size:20px">🔍</span><div><strong>Auditoría de conteo</strong><span>Solo ubicaciones REVISAR</span></div></a>
+        <div class="inv-admin-row" data-inv-nav="count"><span style="font-size:20px">📦</span><div><strong>Ir a conteo</strong><span>Modo contador</span></div></div>
+      </div>
+      <nav class="inv-nav">
+        <button type="button" data-inv-nav="mode">Modo conteo</button>
+        <button type="button" class="inv-btn-logout">Salir</button>
+      </nav>
+    </div>
+
+    <!-- Registros -->
+    <div class="inv-phone" id="invViewRecords" hidden>
+      <div class="inv-header">
+        <h1 class="inv-records-title">Todos los registros</h1>
+        <p class="inv-instr">Sincronizado en la nube</p>
+      </div>
+      <div class="inv-body" style="padding-top:8px">
+        <button type="button" class="inv-btn inv-btn-primary" data-inv-action="export">📁 Exportar CSV</button>
+        <div id="invRecordsList" style="margin-top:12px"></div>
+      </div>
+      <nav class="inv-nav">
+        <button type="button" data-inv-nav="admin">Admin</button>
+        <button type="button" data-inv-nav="count">Conteo</button>
+        <button type="button" class="inv-btn-logout">Salir</button>
+      </nav>
+    </div>
+  </div>
+
+  <div class="inv-toast" id="invToast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/platform-toast.js"></script>
+  <script src="js/platform-supabase.js?v=4"></script>
+  <script src="js/platform-supabase-realtime.js?v=1"></script>
+  <script src="js/platform-supabase-bridge.js?v=4"></script>
+  <script src="js/platform-inventario-core.js?v=2"></script>
+  <script src="js/platform-inventario-sync.js?v=6"></script>
+  <script src="js/platform-inventario-app.js?v=10"></script>
+</body>
+</html>

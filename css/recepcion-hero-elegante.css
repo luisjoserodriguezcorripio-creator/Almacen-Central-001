@@ -1,0 +1,487 @@
+/* Preview — variantes elegantes del hero Torre de control */
+
+.rbl-hero-preview-page {
+  min-height: 100vh;
+  background: linear-gradient(165deg, #f8fafc 0%, #eef2f7 50%, #e8edf4 100%);
+  font-family: "Inter", system-ui, sans-serif;
+  padding-bottom: 3rem;
+}
+
+.rbl-hero-preview-top {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 0.85rem 1rem 1rem;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+}
+
+.rbl-hero-preview-top h1 {
+  margin: 0 0 0.35rem;
+  text-align: center;
+  font-family: "Cormorant Garamond", "Source Serif 4", Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: 0.01em;
+}
+
+.rbl-hero-preview-top p {
+  margin: 0 0 0.75rem;
+  text-align: center;
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.rbl-hero-picker {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.rbl-hero-pick {
+  appearance: none;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #fff;
+  color: #475569;
+  border-radius: 999px;
+  padding: 0.38rem 0.85rem;
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.rbl-hero-pick:hover {
+  border-color: rgba(185, 28, 28, 0.35);
+  color: #991b1b;
+}
+
+.rbl-hero-pick.is-on {
+  background: linear-gradient(135deg, #991b1b, #7f1d1d);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(127, 29, 29, 0.3);
+}
+
+.rbl-hero-stage {
+  max-width: 980px;
+  margin: 1.5rem auto 0;
+  padding: 0 1rem;
+}
+
+.rbl-hero-demo {
+  display: none;
+  animation: rblHeroFade 0.35s ease;
+}
+
+.rbl-hero-demo.is-on { display: block; }
+
+@keyframes rblHeroFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.rbl-hero-demo-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.rbl-hero-demo-meta h2 {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #991b1b;
+}
+
+.rbl-hero-demo-meta span {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.rbl-hero-demo-note {
+  margin: 0.85rem 0 0;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  font-size: 0.75rem;
+  color: #475569;
+  line-height: 1.45;
+}
+
+/* —— Base hero block (shared) —— */
+.rbl-he .rbl-f-hero {
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  margin: 0;
+}
+
+.rbl-he .rbl-f-hero-inner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.15rem 1.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.rbl-he .rbl-f-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.rbl-he .rbl-f-logo-img {
+  width: 3.25rem;
+  height: 3.25rem;
+  flex-shrink: 0;
+}
+
+.rbl-he .rbl-f-logo-text h1 {
+  margin: 0;
+  color: #fff;
+  line-height: 1.15;
+}
+
+.rbl-he .rbl-f-logo-text p {
+  margin: 0.35rem 0 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ═══ H0 · Actual (referencia) ═══ */
+.rbl-he-h0 .rbl-f-hero {
+  background: linear-gradient(135deg, #6b0f0f 0%, #b91c1c 48%, #dc2626 100%);
+  box-shadow: 0 8px 32px rgba(127, 29, 29, 0.35);
+}
+
+.rbl-he-h0 .rbl-f-hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ffc107, #ffeb3b, #ffc107);
+}
+
+.rbl-he-h0 .rbl-f-logo-text h1 {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+/* ═══ H1 · Granate & doble oro ═══ */
+.rbl-he-h1 .rbl-f-hero {
+  background:
+    radial-gradient(ellipse 120% 80% at 20% 0%, rgba(255, 255, 255, 0.08), transparent 50%),
+    linear-gradient(118deg, #2d0707 0%, #5c1010 22%, #8b1515 45%, #a91d1d 58%, #7a1212 78%, #3d0808 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.12) inset,
+    0 20px 50px rgba(45, 7, 7, 0.45),
+    0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 215, 128, 0.12);
+}
+
+.rbl-he-h1 .rbl-f-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 0, 0, 0.03) 3px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.rbl-he-h1 .rbl-f-hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #6b4e0a, #d4af37, #f5e6a8, #d4af37, #6b4e0a);
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.15) inset;
+}
+
+.rbl-he-h1 .rbl-f-logo-img {
+  padding: 0.2rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.55), 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.rbl-he-h1 .rbl-f-logo-text h1 {
+  font-family: "Cormorant Garamond", "Source Serif 4", Georgia, serif;
+  font-size: 1.55rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.rbl-he-h1 .rbl-f-logo-text p {
+  color: rgba(245, 230, 168, 0.85);
+  letter-spacing: 0.18em;
+}
+
+/* ═══ H2 · Cristal satinado ═══ */
+.rbl-he-h2 .rbl-f-hero {
+  background: linear-gradient(135deg, #450a0a 0%, #991b1b 40%, #dc2626 70%, #7f1d1d 100%);
+  box-shadow: 0 16px 48px rgba(127, 29, 29, 0.28);
+}
+
+.rbl-he-h2 .rbl-f-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.06) 28%,
+    transparent 45%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.rbl-he-h2 .rbl-f-hero::after {
+  content: "";
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+}
+
+.rbl-he-h2 .rbl-f-hero-inner {
+  padding: 1.25rem 1.65rem 1.35rem;
+}
+
+.rbl-he-h2 .rbl-f-logo-img {
+  width: 3.5rem;
+  height: 3.5rem;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+}
+
+.rbl-he-h2 .rbl-f-logo-text h1 {
+  font-family: "Outfit", "Inter", sans-serif;
+  font-size: 1.42rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.rbl-he-h2 .rbl-f-logo-text p {
+  font-family: "Outfit", sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  font-size: 0.62rem;
+  opacity: 0.88;
+}
+
+.rbl-he-h2 .rbl-f-gold-rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 5%, #eab308 30%, #fde68a 50%, #eab308 70%, transparent 95%);
+  z-index: 3;
+}
+
+/* ═══ H3 · Medallón institucional ═══ */
+.rbl-he-h3 .rbl-f-hero {
+  background: #7f1d1d;
+  border-radius: 16px;
+  box-shadow:
+    0 2px 0 #450a0a,
+    0 24px 48px rgba(69, 10, 10, 0.35);
+}
+
+.rbl-he-h3 .rbl-f-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #78350f, #fbbf24, #78350f);
+  z-index: 3;
+}
+
+.rbl-he-h3 .rbl-f-hero::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #78350f, #fbbf24, #78350f);
+}
+
+.rbl-he-h3 .rbl-f-logo-mark {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg, #fff 0%, #f1f5f9 100%);
+  border: 3px solid #d4af37;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.rbl-he-h3 .rbl-f-logo-mark img {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.rbl-he-h3 .rbl-f-logo-text h1 {
+  font-family: "Libre Baskerville", "Source Serif 4", Georgia, serif;
+  font-size: 1.38rem;
+  font-weight: 700;
+}
+
+.rbl-he-h3 .rbl-f-logo-text p {
+  color: rgba(254, 243, 199, 0.9);
+}
+
+/* ═══ H4 · Arco luminoso ═══ */
+.rbl-he-h4 .rbl-f-hero {
+  background: #0a0a0a;
+  border-radius: 22px;
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  box-shadow: 0 0 60px rgba(220, 38, 38, 0.15);
+}
+
+.rbl-he-h4 .rbl-f-hero-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 120% at 50% -20%, rgba(220, 38, 38, 0.55), transparent 55%),
+    radial-gradient(ellipse 60% 80% at 100% 50%, rgba(127, 29, 29, 0.35), transparent 50%),
+    linear-gradient(180deg, #1a0505 0%, #0a0a0a 100%);
+  pointer-events: none;
+}
+
+.rbl-he-h4 .rbl-f-hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ef4444, #fca5a5, #ef4444, transparent);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+}
+
+.rbl-he-h4 .rbl-f-logo-text h1 {
+  font-family: "Syne", "Inter", sans-serif;
+  font-size: 1.48rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  background: linear-gradient(180deg, #fff 20%, #fecaca 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.rbl-he-h4 .rbl-f-logo-text p {
+  color: rgba(252, 165, 165, 0.65);
+  letter-spacing: 0.22em;
+}
+
+.rbl-he-h4 .rbl-f-logo-img {
+  filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.35));
+}
+
+/* ═══ H5 · Clásico refinado (menos redondeo) ═══ */
+.rbl-he-h5 .rbl-f-hero {
+  border-radius: 10px;
+  background: linear-gradient(180deg, #991b1b 0%, #7f1d1d 100%);
+  box-shadow: none;
+  border: 1px solid #450a0a;
+}
+
+.rbl-he-h5 .rbl-f-hero::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.rbl-he-h5 .rbl-f-hero::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: repeating-linear-gradient(
+    90deg,
+    #b8860b 0,
+    #b8860b 8px,
+    #ffd700 8px,
+    #ffd700 16px,
+    #b8860b 16px,
+    #b8860b 24px
+  );
+  opacity: 0.85;
+}
+
+.rbl-he-h5 .rbl-f-hero-inner {
+  padding: 1rem 1.4rem 1.15rem;
+}
+
+.rbl-he-h5 .rbl-f-logo-text h1 {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 1.28rem;
+  font-weight: 700;
+  letter-spacing: 0.015em;
+}
+
+.rbl-he-h5 .rbl-f-logo-text p {
+  font-size: 0.64rem;
+  letter-spacing: 0.16em;
+}
+
+/* Compare grid — ver todas */
+.rbl-hero-preview-page.is-compare .rbl-hero-demo {
+  display: block;
+  margin-bottom: 2rem;
+}
+
+.rbl-hero-preview-page.is-compare .rbl-hero-stage {
+  max-width: 920px;
+}
+
+@media (max-width: 640px) {
+  .rbl-he .rbl-f-hero-inner { padding: 1rem 1.1rem; }
+  .rbl-he .rbl-f-logo-text h1 { font-size: 1.15rem !important; }
+  .rbl-he .rbl-f-logo-text p { font-size: 0.58rem; letter-spacing: 0.1em; }
+}

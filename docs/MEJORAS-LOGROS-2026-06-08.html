@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Mejoras y Logros — Almacén Central 001</title>
+  <style>
+    @page { size: A4; margin: 18mm 16mm; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.45;
+      color: #1a1a2e;
+      max-width: 210mm;
+      margin: 0 auto;
+      padding: 12mm 10mm;
+      background: #fff;
+    }
+    .cover {
+      text-align: center;
+      padding: 28px 0 32px;
+      border-bottom: 3px solid #2c98ff;
+      margin-bottom: 24px;
+    }
+    .cover .logo {
+      display: inline-block;
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #2c98ff, #1a6fd4);
+      color: #fff;
+      font-weight: 800;
+      font-size: 22px;
+      line-height: 56px;
+      border-radius: 14px;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 22pt;
+      margin: 0 0 6px;
+      color: #0d1b2a;
+    }
+    .subtitle {
+      font-size: 12pt;
+      color: #4a5568;
+      margin: 0;
+    }
+    .meta {
+      margin-top: 14px;
+      font-size: 9.5pt;
+      color: #718096;
+    }
+    h2 {
+      font-size: 13pt;
+      color: #1e40af;
+      border-left: 4px solid #2c98ff;
+      padding-left: 10px;
+      margin: 22px 0 10px;
+      page-break-after: avoid;
+    }
+    h3 {
+      font-size: 11pt;
+      color: #2d3748;
+      margin: 14px 0 6px;
+    }
+    p { margin: 0 0 8px; }
+    ul { margin: 0 0 10px; padding-left: 20px; }
+    li { margin-bottom: 4px; }
+    .highlight-box {
+      background: #f0f7ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin: 10px 0;
+    }
+    .success-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin: 10px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 16px;
+      font-size: 9.5pt;
+    }
+    th, td {
+      border: 1px solid #e2e8f0;
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #edf2f7;
+      font-weight: 700;
+      color: #2d3748;
+    }
+    tr:nth-child(even) td { background: #fafafa; }
+    .tag {
+      display: inline-block;
+      font-size: 8pt;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-right: 4px;
+    }
+    .tag-new { background: #dcfce7; color: #166534; }
+    .tag-fix { background: #fef3c7; color: #92400e; }
+    .tag-ui { background: #dbeafe; color: #1e40af; }
+    .footer {
+      margin-top: 28px;
+      padding-top: 12px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 9pt;
+      color: #718096;
+      text-align: center;
+    }
+    .url { color: #2563eb; word-break: break-all; }
+    @media print {
+      body { padding: 0; }
+      h2 { page-break-after: avoid; }
+      .no-break { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cover">
+    <div class="logo">DC</div>
+    <h1>Mejoras y Logros del Día</h1>
+    <p class="subtitle">Almacén Central 001 — Plataforma WMS y Portales Web</p>
+    <p class="meta">Fecha: 8 de junio de 2026 &nbsp;|&nbsp; Proyecto: Almacen-Central-001</p>
+  </div>
+
+  <div class="highlight-box">
+    <strong>Resumen ejecutivo:</strong> Hoy se completó la integración del portal web de <em>Operaciones de Piso</em> (reportes de averías, basado en la APK), se corrigieron problemas críticos del portal de despacho en GitHub Pages, se mejoró la experiencia móvil en Android con diseño responsive y se publicaron todos los cambios en producción web.
+  </div>
+
+  <h2>1. Portal Operaciones de Piso (nuevo)</h2>
+  <p><span class="tag tag-new">NUEVO</span> Portal independiente accesible desde el login del WMS y en URL directa.</p>
+  <ul>
+    <li><strong>Archivo principal:</strong> <code>averias.html</code></li>
+    <li><strong>Login:</strong> Usuario y contraseña del WMS (mismo sistema que el centro de mando)</li>
+    <li><strong>6 módulos operativos:</strong> Inicio, Paletas rotas, Averías de inventario, Incidencias de seguridad, Auditoría 5S, Inspección de equipos</li>
+    <li><strong>Datos:</strong> Almacenamiento local por dispositivo (<code>localStorage</code>, prefijo <code>averias_dc_*</code>)</li>
+    <li><strong>Roles:</strong> Administrador / supervisor / validador → modo CORRIGE; operador → modo REPORTA</li>
+  </ul>
+
+  <table>
+    <thead>
+      <tr><th>Archivo</th><th>Función</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>js/platform-averias-app.js</code></td><td>Autenticación WMS y sesión del portal</td></tr>
+      <tr><td><code>js/platform-averias-ui.js</code></td><td>Lógica UI de los 6 módulos (desde APK)</td></tr>
+      <tr><td><code>css/averias-portal.css</code></td><td>Interfaz visual del portal</td></tr>
+      <tr><td><code>css/averias-auth.css</code></td><td>Pantalla de login del portal</td></tr>
+      <tr><td><code>css/averias-responsive.css</code></td><td>Adaptación móvil y PC</td></tr>
+    </tbody>
+  </table>
+
+  <h2>2. Portal de Despacho — correcciones web</h2>
+  <p><span class="tag tag-fix">CORRECCIÓN</span> Problema: no se podía seleccionar Preparador / Validador en GitHub Pages.</p>
+  <ul>
+    <li>Reparado error de sintaxis en <code>platform-despacho-app.js</code></li>
+    <li>Implementado radio + label nativo para selección de rol</li>
+    <li>Mejoras de <code>pointer-events</code> y compatibilidad táctil en navegadores móviles</li>
+  </ul>
+
+  <h2>3. Experiencia móvil (Android / celular)</h2>
+  <p><span class="tag tag-ui">UI MÓVIL</span> Optimización completa del portal de operaciones para pantallas pequeñas, sin afectar la vista de PC.</p>
+
+  <div class="no-break">
+    <h3>Layout responsive</h3>
+    <ul>
+      <li>Menú lateral oculto por defecto; se abre con botón ☰ como <strong>drawer</strong> (overlay)</li>
+      <li>Contenido del dashboard a <strong>ancho completo</strong> en celular</li>
+      <li>Breakpoint PC: sidebar fijo solo en pantallas ≥ 1100px</li>
+      <li>Scroll del fondo bloqueado cuando el menú está abierto</li>
+      <li>Modales a pantalla completa en móvil</li>
+      <li>Campos de formulario con tamaño táctil (mín. 48px) para evitar zoom en iOS/Android</li>
+    </ul>
+
+    <h3>Botón ⛶ Ajustar pantalla</h3>
+    <ul>
+      <li>Nuevo botón en la barra superior (solo celular)</li>
+      <li><strong>Modo pantalla completa (verde):</strong> reparte KPIs y botones según el tamaño del celular</li>
+      <li><strong>Modo normal (gris):</strong> scroll tradicional, tamaños estándar</li>
+      <li>La preferencia se guarda en el dispositivo</li>
+      <li>Escala automática según resolución (<code>--av-ui-scale</code>)</li>
+    </ul>
+
+    <h3>Iconos más visibles</h3>
+    <ul>
+      <li>Iconos del menú de módulos agrandados (52px)</li>
+      <li>Botón ☰ y icono de ayuda en pantalla de inicio más legibles</li>
+      <li>Textos y botones mantienen tamaño cómodo (sin agrandamiento excesivo)</li>
+    </ul>
+  </div>
+
+  <h2>4. Imagen de login del portal de reportes</h2>
+  <p><span class="tag tag-ui">VISUAL</span> Creada imagen cinematográfica para el portal de operaciones.</p>
+  <ul>
+    <li><strong>Archivo:</strong> <code>assets/img/login-averias-poster.jpg</code></li>
+    <li>Tema: almacén, paletas, operador con clipboard, tono verde corporativo</li>
+    <li>Usada como fondo del login en <code>averias.html</code></li>
+    <li>Miniatura en la tarjeta «Operaciones de Piso» del login principal del WMS</li>
+  </ul>
+
+  <h2>5. Acceso y usuarios web</h2>
+  <ul>
+    <li>Opción «Guardar mi usuario en este equipo» en WMS y portales</li>
+    <li>Usuarios web consolidados sin duplicados (<code>data/web-users.json</code>)</li>
+    <li>Usuarios publicados como administrador: ENMANUEL.VASQUEZ, Luisr0</li>
+    <li>Tarjetas de acceso rápido en login: Portal de Despacho + Operaciones de Piso</li>
+  </ul>
+
+  <h2>6. Commits publicados hoy (GitHub)</h2>
+  <table>
+    <thead>
+      <tr><th>Commit</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>627e122</td><td>Agregar portal Operaciones de Piso (APK averías) con login WMS</td></tr>
+      <tr><td>e941632</td><td>Adaptar portal operaciones de piso a móvil y PC con layout responsive</td></tr>
+      <tr><td>655b1c5</td><td>Mejorar vista móvil: contenido a pantalla completa</td></tr>
+      <tr><td>3887986</td><td>Bloquear scroll del body con menú lateral abierto</td></tr>
+      <tr><td>6d4183c</td><td>Imagen de login y dashboard más alto en móvil</td></tr>
+      <tr><td>7220869</td><td>Ajustes de tamaño para celular Android</td></tr>
+      <tr><td>13eca72</td><td>Iconos visibles + botón ajustar pantalla (versión final móvil)</td></tr>
+      <tr><td>185048d / b8b0d35</td><td>Corregir selección de rol en portal de despacho web</td></tr>
+    </tbody>
+  </table>
+
+  <h2>7. URLs de acceso</h2>
+  <div class="success-box no-break">
+    <p><strong>WMS principal:</strong><br>
+    <span class="url">https://luisjoserodriguezcorripio-creator.github.io/Almacen-Central-001/</span></p>
+    <p><strong>Portal Operaciones de Piso:</strong><br>
+    <span class="url">https://luisjoserodriguezcorripio-creator.github.io/Almacen-Central-001/averias.html</span></p>
+    <p><strong>Portal de Despacho:</strong><br>
+    <span class="url">https://luisjoserodriguezcorripio-creator.github.io/Almacen-Central-001/despacho.html</span></p>
+    <p><strong>Repositorio GitHub:</strong><br>
+    <span class="url">https://github.com/luisjoserodriguezcorripio-creator/Almacen-Central-001</span></p>
+    <p><strong>Local (LAN):</strong> ejecutar <code>serve-dashboard.ps1</code> → <code>http://localhost:8080</code></p>
+  </div>
+
+  <h2>8. Próximos pasos sugeridos</h2>
+  <ul>
+    <li>Sincronización LAN / servidor entre dispositivos (datos compartidos en piso)</li>
+    <li>Fotos reales en módulo de seguridad</li>
+    <li>Integración con pistola / cámara para escaneo</li>
+    <li>Permisos REPORTA vs CORRIGE más estrictos por usuario WMS</li>
+  </ul>
+
+  <div class="footer">
+    Documento generado automáticamente — Almacén Central 001 · 300-001<br>
+    Plataforma WMS + Portales de Despacho y Operaciones de Piso
+  </div>
+
+</body>
+</html>

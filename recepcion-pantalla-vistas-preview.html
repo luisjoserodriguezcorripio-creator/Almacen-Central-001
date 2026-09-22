@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pantalla TV · Vistas preview — Recepción</title>
+  <link rel="icon" type="image/png" href="assets/img/ac001-logo.svg?v=1">
+  <style>
+    /* Crítico: visible aunque falle CSS/JS externo */
+    html, body { margin: 0; min-height: 100%; background: #0d0203; color: #fff; }
+    .rec-vp-switcher {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+      display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.5rem;
+      padding: 0.45rem 0.65rem; background: #140305;
+      border-bottom: 1px solid rgba(255,138,128,.35);
+      font-family: system-ui, sans-serif; font-size: 0.72rem;
+    }
+    .rec-vp-switcher-label { color: #ffcdd2; font-weight: 800; text-transform: uppercase; }
+    .rec-vp-switcher a, .rec-vp-switcher button {
+      border: 1px solid rgba(255,138,128,.35); background: rgba(255,255,255,.06);
+      color: #fff; border-radius: 8px; padding: 0.35rem 0.65rem;
+      font: inherit; font-weight: 700; text-decoration: none; cursor: pointer;
+    }
+    .rec-vp-switcher a.is-on, .rec-vp-switcher button.is-on {
+      background: #c62828; border-color: #ff8a80;
+    }
+    .rec-vp-fallback {
+      padding: 4rem 1rem 2rem; text-align: center; color: rgba(255,205,210,.9);
+      font-family: system-ui, sans-serif;
+    }
+  </style>
+  <link rel="stylesheet" href="css/dc-brand.css?v=11">
+  <link rel="stylesheet" href="css/ac001-brand.css?v=1">
+  <link rel="stylesheet" href="css/recepcion-display.css?v=2">
+  <link rel="stylesheet" href="css/recepcion-display-vistas-preview.css?v=2">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="rec-display-mode rec-live-on rec-vistas-preview">
+  <nav class="rec-vp-switcher" id="recVpSwitcher" aria-label="Elegir vista preview">
+    <span class="rec-vp-switcher-label">Vista pantalla TV</span>
+    <a href="?view=v1" data-rec-vp="v1">V1 · KPI + tabla</a>
+    <a href="?view=v2" data-rec-vp="v2">V2 · Personas</a>
+    <a href="?view=v3" data-rec-vp="v3">V3 · Descarga</a>
+    <a href="?view=v4" data-rec-vp="v4">V4 · Compacto</a>
+    <a href="?view=v5" data-rec-vp="v5" class="is-on">V5 · Gráfico triple</a>
+  </nav>
+
+  <noscript>
+    <p class="rec-vp-fallback">Activa JavaScript para ver las 5 vistas del preview.<br>
+    O abre cada enlace: <a href="?view=v1" style="color:#ff8a80">V1</a> ·
+    <a href="?view=v2" style="color:#ff8a80">V2</a> ·
+    <a href="?view=v3" style="color:#ff8a80">V3</a> ·
+    <a href="?view=v4" style="color:#ff8a80">V4</a> ·
+    <a href="?view=v5" style="color:#ff8a80">V5</a></p>
+  </noscript>
+
+  <div class="rec-display-waiting" hidden aria-hidden="true"></div>
+  <div id="recGlobalLiveBoard" class="rec-live-present">
+    <p class="rec-vp-fallback" id="recVpLoading">Cargando vista preview…</p>
+  </div>
+
+  <script src="js/recepcion-pantalla-vistas-preview.js?v=3"></script>
+</body>
+</html>

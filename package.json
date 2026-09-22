@@ -1,0 +1,21 @@
+{
+  "name": "almacen-central-001",
+  "version": "1.0.0",
+  "description": "Almacén Central 001 — WMS propio (luisjoserodriguezcorripio-creator)",
+  "private": true,
+  "scripts": {
+    "start": "node server/lan-server.js --port 8080",
+    "start:lan": "node server/lan-server.js --port 8080",
+    "verify": "node scripts/verify-platform.js",
+    "turnos:dev": "npm run dev --prefix turnos-qr",
+    "turnos:build": "npm run build --prefix turnos-qr"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luisjoserodriguezcorripio-creator/Almacen-Central-001.git"
+  },
+  "homepage": "https://luisjoserodriguezcorripio-creator.github.io/Almacen-Central-001/"
+}

@@ -1,0 +1,1335 @@
+/**
+ * WMS Control — Capa ejecutiva premium (toda la web)
+ * Centro de mando gerencial · no plantilla genérica
+ */
+
+:root {
+  --exec-navy: #03060e;
+  --exec-panel: #0a1220;
+  --exec-panel-2: #0f1a2c;
+  --exec-gold: #c9a962;
+  --exec-gold-soft: rgba(201, 169, 98, 0.22);
+  --exec-gold-line: linear-gradient(180deg, #e8d5a8 0%, #9a7b3c 50%, #6b5428 100%);
+  --exec-blue: #4da3ff;
+  --exec-blue-glow: rgba(77, 163, 255, 0.18);
+  --exec-border-glass: rgba(255, 255, 255, 0.09);
+  --exec-border-glow: rgba(201, 169, 98, 0.2);
+  --exec-shadow-deep: 0 24px 64px rgba(0, 0, 0, 0.42);
+  --exec-shadow-card: 0 12px 40px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --exec-radius-lg: 22px;
+  --exec-radius-md: 16px;
+  --font-display: 'DM Sans', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --ease-exec: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html[data-theme="light"] {
+  --exec-navy: #e6ecf4;
+  --exec-panel: #ffffff;
+  --exec-panel-2: #f4f7fb;
+  --exec-gold: #9a7b3c;
+  --exec-gold-soft: rgba(154, 123, 60, 0.14);
+  --exec-border-glass: rgba(15, 36, 64, 0.1);
+  --exec-border-glow: rgba(154, 123, 60, 0.25);
+  --exec-shadow-deep: 0 20px 50px rgba(15, 36, 64, 0.1);
+  --exec-shadow-card: 0 10px 32px rgba(15, 36, 64, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+/* —— Tokens globales → toda la web usa variables CSS —— */
+body.executive-ui {
+  --bg: var(--exec-navy);
+  --bg-elevated: var(--exec-panel);
+  --bg-sidebar: #081420;
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface-hover: rgba(255, 255, 255, 0.07);
+  --border: var(--exec-border-glass);
+  --text: #e8eef4;
+  --text-strong: #f8fafc;
+  --muted: #8fa3b8;
+  --accent: var(--exec-blue);
+  --accent-2: #2b6cb8;
+  --shadow: var(--exec-shadow-deep);
+  --radius: var(--exec-radius-lg);
+  background: var(--exec-navy);
+  letter-spacing: 0.01em;
+}
+
+html[data-theme="light"] body.executive-ui {
+  --bg: #e8eef5;
+  --bg-elevated: #ffffff;
+  --bg-sidebar: #f4f7fb;
+  --surface: #ffffff;
+  --surface-hover: #edf2f8;
+  --border: var(--exec-border-glass);
+  --text: #132238;
+  --text-strong: #0a1628;
+  --muted: #526880;
+  --accent: #1565c0;
+  --accent-2: #0d4d9a;
+}
+
+body.executive-ui::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+html[data-theme="light"] body.executive-ui::after {
+  opacity: 0.04;
+  mix-blend-mode: multiply;
+}
+
+.topbar-title h2,
+.gen-hero h2,
+.ops-dash-title,
+.fac-header h2,
+.lt-header h2,
+.auth-brand-title,
+.auth-heading,
+.tv-wall-title,
+.report-executive-head h3,
+.admin-modal-header h2 {
+  font-family: var(--font-display);
+}
+
+/* —— Login ejecutivo —— */
+body.executive-ui .auth-video-scrim {
+  background:
+    linear-gradient(90deg,
+      rgba(1, 2, 5, 0.72) 0%,
+      rgba(6, 16, 28, 0.68) 45%,
+      rgba(4, 10, 18, 0.85) 100%),
+    linear-gradient(0deg, rgba(1, 3, 8, 0.55) 0%, transparent 40%),
+    radial-gradient(ellipse 65% 70% at 20% 48%, rgba(1, 4, 10, 0.45) 0%, transparent 70%);
+}
+
+html[data-theme="light"] body.executive-ui .auth-video-scrim {
+  background:
+    linear-gradient(108deg, rgba(232, 238, 245, 0.94) 0%, rgba(244, 247, 251, 0.82) 42%, rgba(228, 235, 244, 0.9) 100%),
+    radial-gradient(ellipse 70% 50% at 20% 0%, rgba(154, 123, 60, 0.08), transparent 55%);
+}
+
+body.executive-ui .auth-glass-card {
+  border: 1px solid var(--exec-border-glow);
+  border-radius: var(--exec-radius-lg);
+  box-shadow: var(--exec-shadow-deep), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+}
+
+body.executive-ui .auth-hero {
+  position: relative;
+}
+
+body.executive-ui .auth-welcome-line {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+body.executive-ui .auth-brand-title.auth-site-name {
+  margin: 0 0 0.5rem;
+  font-size: clamp(2rem, 4.5vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #f8fafc 0%, var(--exec-gold) 55%, #e8d5a8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+html[data-theme="light"] body.executive-ui .auth-brand-title.auth-site-name {
+  background: linear-gradient(135deg, #0a1628 0%, var(--exec-gold) 70%, #6b5428 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+body.executive-ui .auth-brand-tag {
+  margin: 0 0 1rem;
+  letter-spacing: 0.2em;
+  color: var(--exec-gold);
+  font-weight: 700;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+}
+
+body.executive-ui .auth-role-card {
+  border-radius: var(--exec-radius-md);
+  transition: border-color 0.25s var(--ease-exec), box-shadow 0.25s var(--ease-exec), transform 0.2s var(--ease-exec);
+}
+
+body.executive-ui .auth-role-card.active {
+  border-color: var(--exec-gold-soft);
+}
+
+/* —— Bienvenida Almacén Central (app) —— */
+body.executive-ui .gen-welcome-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.65rem;
+  margin-bottom: 0.65rem;
+  padding: 0.65rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--exec-border-glow);
+  background: linear-gradient(90deg, rgba(201, 169, 98, 0.12), rgba(77, 163, 255, 0.06));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+body.executive-ui .gen-welcome-pre {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+body.executive-ui .gen-welcome-site {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2.2vw, 1.55rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--text-strong), var(--exec-gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+body.executive-ui .gen-welcome-company {
+  flex: 1 1 100%;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(201, 169, 98, 0.9);
+}
+
+html[data-theme="light"] body.executive-ui .gen-welcome-site {
+  background: linear-gradient(135deg, #0a1628, var(--exec-gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+body.executive-ui .gen-welcome-user {
+  margin-left: auto;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 640px) {
+  body.executive-ui .gen-welcome-user {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* —— Sidebar comando —— */
+body.executive-ui:not(.auth-locked) .platform-sidebar {
+  width: var(--sidebar-w);
+  border-right: 1px solid var(--exec-border-glass);
+  box-shadow: 8px 0 48px rgba(0, 0, 0, 0.35);
+  background:
+    linear-gradient(180deg, rgba(8, 14, 24, 0.97) 0%, rgba(6, 11, 20, 0.95) 100%) !important;
+}
+
+body.executive-ui:not(.auth-locked) .platform-sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--exec-gold-line);
+  z-index: 3;
+  opacity: 0.9;
+}
+
+body.executive-ui .brand-logo {
+  border-radius: 14px;
+  background: linear-gradient(145deg, #4da3ff, #1d5fae);
+  box-shadow: 0 8px 24px var(--exec-blue-glow), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  position: relative;
+}
+
+body.executive-ui .brand-logo::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  border: 1px solid var(--exec-gold-soft);
+  pointer-events: none;
+}
+
+body.executive-ui .platform-brand span {
+  color: var(--exec-gold);
+  letter-spacing: 0.2em;
+}
+
+body.executive-ui .nav-section-label {
+  letter-spacing: 0.18em;
+  font-size: 0.62rem;
+  opacity: 0.9;
+}
+
+body.executive-ui .nav-module-btn {
+  border-radius: 12px;
+  border: 1px solid transparent;
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+body.executive-ui .nav-module-btn.active {
+  background: linear-gradient(90deg, rgba(77, 163, 255, 0.14), rgba(77, 163, 255, 0.04));
+  border-color: rgba(77, 163, 255, 0.28);
+  box-shadow: inset 4px 0 0 var(--exec-gold), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  color: var(--text-strong);
+}
+
+body.executive-ui .sidebar-footer button {
+  font-family: var(--font-display);
+  border-radius: 12px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+body.executive-ui .sidebar-footer button:hover {
+  border-color: var(--exec-gold-soft);
+}
+
+/* —— Topbar sala de control —— */
+body.executive-ui .platform-topbar {
+  border-bottom: 1px solid var(--exec-border-glass);
+  box-shadow: 0 1px 0 rgba(201, 169, 98, 0.08), 0 16px 40px rgba(0, 0, 0, 0.2);
+}
+
+body.executive-ui .topbar-title h2 {
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  font-size: clamp(1.2rem, 2.2vw, 1.5rem);
+}
+
+body.executive-ui .topbar-title h2::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 1.1em;
+  margin-right: 0.55rem;
+  vertical-align: -0.12em;
+  border-radius: 2px;
+  background: var(--exec-gold-line);
+}
+
+body.executive-ui .live-clock {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.03em;
+  color: rgba(203, 213, 225, 0.72);
+  border-color: rgba(201, 169, 98, 0.12);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+body.executive-ui .data-chip {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 8px;
+}
+
+body.executive-ui .role-badge {
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+}
+
+/* —— Tarjetas KPI y widgets —— */
+body.executive-ui .kpi-card,
+body.executive-ui .widget,
+body.executive-ui .general-card,
+body.executive-ui .report-block,
+body.executive-ui .ops-kpi,
+body.executive-ui .ops-panel,
+body.executive-ui .fac-kpi,
+body.executive-ui .fac-panel,
+body.executive-ui .lt-kpi,
+body.executive-ui .lt-panel {
+  border-radius: var(--exec-radius-md);
+  border: 1px solid var(--exec-border-glass);
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.05) 0%, var(--exec-panel) 38%);
+  box-shadow: var(--exec-shadow-card);
+  position: relative;
+  overflow: hidden;
+}
+
+html[data-theme="light"] body.executive-ui .kpi-card,
+html[data-theme="light"] body.executive-ui .widget,
+html[data-theme="light"] body.executive-ui .general-card,
+html[data-theme="light"] body.executive-ui .ops-kpi,
+html[data-theme="light"] body.executive-ui .fac-kpi {
+  background: linear-gradient(165deg, #ffffff 0%, var(--exec-panel-2) 100%);
+}
+
+body.executive-ui .kpi-card::after,
+body.executive-ui .widget::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 48px;
+  height: 48px;
+  background: radial-gradient(circle at 100% 0%, var(--exec-gold-soft), transparent 70%);
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+body.executive-ui .kpi-card::before {
+  height: 2px;
+  background: linear-gradient(90deg, var(--exec-gold), var(--exec-blue), transparent);
+  opacity: 1;
+}
+
+body.executive-ui .kpi-card .label {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+body.executive-ui .kpi-card .kpi-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+body.executive-ui .widget h3 {
+  font-family: var(--font-display);
+  letter-spacing: 0.12em;
+}
+
+/* —— Dashboard general —— */
+body.executive-ui #module-general .gen-hero {
+  border-radius: var(--exec-radius-lg);
+  border: 1px solid var(--exec-border-glow);
+  background:
+    linear-gradient(135deg, rgba(201, 169, 98, 0.1) 0%, transparent 42%),
+    linear-gradient(225deg, rgba(77, 163, 255, 0.12) 0%, transparent 45%),
+    var(--exec-panel);
+  box-shadow: var(--exec-shadow-deep);
+}
+
+body.executive-ui #module-general .gen-hero::before {
+  background: radial-gradient(circle, rgba(201, 169, 98, 0.15), transparent 70%);
+}
+
+body.executive-ui #module-general .gen-hero-eyebrow {
+  color: var(--exec-gold);
+  letter-spacing: 0.2em;
+}
+
+body.executive-ui #module-general .gen-hero-eyebrow::before {
+  background: var(--exec-gold);
+  box-shadow: 0 0 12px var(--exec-gold-soft);
+}
+
+body.executive-ui #module-general .gen-card {
+  border-radius: var(--exec-radius-lg);
+  background: linear-gradient(168deg, rgba(255, 255, 255, 0.04) 0%, var(--exec-panel) 55%);
+}
+
+body.executive-ui #module-general .gen-card-accent {
+  height: 3px;
+  background: linear-gradient(90deg, var(--exec-gold), var(--exec-blue), transparent) !important;
+}
+
+body.executive-ui #module-general .gen-card--interactive:hover {
+  border-color: var(--exec-border-glow);
+  box-shadow: var(--exec-shadow-deep), 0 0 40px var(--exec-blue-glow);
+}
+
+body.executive-ui #module-general .gen-status-item {
+  border-radius: var(--exec-radius-md);
+  background: var(--exec-panel);
+  border: 1px solid var(--exec-border-glass);
+}
+
+body.executive-ui #module-general .gen-status-item.is-live {
+  border-color: rgba(61, 211, 154, 0.35);
+  box-shadow: 0 0 0 1px rgba(61, 211, 154, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+body.executive-ui #module-general .gen-metric {
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--exec-border-glass);
+}
+
+html[data-theme="light"] body.executive-ui #module-general .gen-metric {
+  background: var(--exec-panel-2);
+}
+
+body.executive-ui #module-general .gen-metric-value {
+  font-family: var(--font-display);
+}
+
+/* ═══ Botones ejecutivos (toda la web) ═══ */
+body.executive-ui .btn,
+body.executive-ui .btn-sm,
+body.executive-ui .sidebar-footer button,
+body.executive-ui .admin-tab-btn {
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  border-radius: 12px;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform 0.2s var(--ease-exec),
+    box-shadow 0.25s var(--ease-exec),
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+body.executive-ui .btn::before,
+body.executive-ui .btn-primary::before,
+body.executive-ui .btn-ghost::before,
+body.executive-ui .btn-tv::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Primario — acento institucional + línea dorada */
+body.executive-ui .btn-primary {
+  color: #f8fafc !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, transparent 40%),
+    linear-gradient(135deg, #3b8fd9 0%, #2563b8 45%, #1a4a8c 100%) !important;
+  box-shadow:
+    0 10px 28px rgba(37, 99, 235, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.15) !important;
+}
+
+body.executive-ui .btn-primary::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--exec-gold), transparent);
+  pointer-events: none;
+}
+
+body.executive-ui .btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow:
+    0 14px 36px rgba(37, 99, 235, 0.45),
+    0 0 24px rgba(201, 169, 98, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+
+body.executive-ui .btn-primary:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+html[data-theme="light"] body.executive-ui .btn-primary {
+  color: #ffffff !important;
+  box-shadow: 0 8px 24px rgba(21, 101, 192, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Secundario — contorno ejecutivo */
+body.executive-ui .btn:not(.btn-primary):not(.btn-ghost):not(.btn-icon):not(.btn-warn):not(.btn-danger):not(.auth-role-card):not(.nav-module-btn):not(.admin-tab-btn):not(.tv-seg) {
+  color: var(--text) !important;
+  background: linear-gradient(180deg, var(--exec-panel-2), var(--exec-panel)) !important;
+  border: 1px solid var(--exec-border-glass) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+}
+
+body.executive-ui .btn:not(.btn-primary):not(.btn-ghost):hover:not(:disabled) {
+  border-color: var(--exec-gold-soft) !important;
+  color: var(--text-strong) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25), 0 0 16px rgba(201, 169, 98, 0.1) !important;
+}
+
+/* Fantasma — cristal */
+body.executive-ui .btn-ghost {
+  color: var(--muted) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid var(--exec-border-glass) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  text-transform: uppercase;
+  font-size: 0.72rem;
+}
+
+body.executive-ui .btn-ghost:hover:not(:disabled) {
+  color: var(--text-strong) !important;
+  border-color: rgba(201, 169, 98, 0.45) !important;
+  background: rgba(201, 169, 98, 0.08) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* TV — dorado distintivo */
+body.executive-ui .btn-tv,
+body.executive-ui #module-general .btn-tv {
+  color: var(--exec-gold) !important;
+  background: linear-gradient(135deg, rgba(201, 169, 98, 0.14), rgba(77, 163, 255, 0.08)) !important;
+  border: 1px solid rgba(201, 169, 98, 0.45) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  text-transform: uppercase;
+}
+
+body.executive-ui .btn-tv:hover:not(:disabled) {
+  color: #f8fafc !important;
+  background: linear-gradient(135deg, rgba(201, 169, 98, 0.35), rgba(77, 163, 255, 0.2)) !important;
+  border-color: var(--exec-gold) !important;
+  box-shadow: 0 8px 28px rgba(201, 169, 98, 0.25) !important;
+}
+
+/* Advertencia / peligro */
+body.executive-ui .btn-warn {
+  background: linear-gradient(135deg, rgba(201, 169, 98, 0.2), rgba(154, 114, 0, 0.12)) !important;
+  border: 1px solid rgba(201, 169, 98, 0.5) !important;
+  color: #f5e6c8 !important;
+}
+
+html[data-theme="light"] body.executive-ui .btn-warn {
+  color: var(--warning) !important;
+}
+
+body.executive-ui .btn-danger {
+  background: linear-gradient(135deg, rgba(184, 50, 72, 0.2), rgba(120, 30, 45, 0.15)) !important;
+  border: 1px solid rgba(184, 50, 72, 0.45) !important;
+}
+
+body.executive-ui .btn-sm {
+  min-height: 34px;
+  padding: 0 0.85rem;
+  font-size: 0.68rem;
+  border-radius: 10px;
+}
+
+body.executive-ui .btn-icon {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 1rem;
+  background: var(--exec-panel-2) !important;
+  border: 1px solid var(--exec-border-glass) !important;
+  color: var(--muted) !important;
+}
+
+body.executive-ui .btn-icon:hover:not(:disabled) {
+  color: var(--text-strong) !important;
+  border-color: var(--exec-gold-soft) !important;
+}
+
+/* Sidebar footer */
+body.executive-ui .sidebar-footer button {
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  background: linear-gradient(180deg, var(--exec-panel), var(--exec-panel-2)) !important;
+  border: 1px solid var(--exec-border-glass) !important;
+  color: var(--muted) !important;
+}
+
+body.executive-ui .sidebar-footer button:hover {
+  color: var(--text-strong) !important;
+  border-color: var(--exec-gold-soft) !important;
+  background: rgba(201, 169, 98, 0.08) !important;
+}
+
+/* Enlace tipo botón en tarjetas */
+body.executive-ui .gen-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4em 0.75em;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+body.executive-ui .gen-link:hover {
+  border-color: var(--exec-gold-soft);
+  background: rgba(201, 169, 98, 0.08);
+}
+
+body.executive-ui .auth-role-card {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: inherit;
+}
+
+body.executive-ui .auth-role-card strong {
+  font-family: var(--font-display);
+}
+
+body.executive-ui #authSubmit.btn-primary {
+  width: 100%;
+  min-height: 48px;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+}
+
+/* —— IA y reportes —— */
+body.executive-ui .ai-insights-bar {
+  border-radius: var(--exec-radius-md);
+  border: 1px solid rgba(77, 163, 255, 0.25);
+  background:
+    linear-gradient(135deg, rgba(77, 163, 255, 0.1), rgba(201, 169, 98, 0.05)),
+    var(--exec-panel);
+  box-shadow: var(--exec-shadow-card);
+}
+
+body.executive-ui .ai-badge {
+  background: linear-gradient(135deg, var(--exec-gold), #a08040);
+  color: #1a1206;
+  letter-spacing: 0.12em;
+}
+
+body.executive-ui .exec-hero {
+  border-radius: var(--exec-radius-lg);
+  border-color: var(--exec-border-glow);
+}
+
+body.executive-ui .report-executive-head h3 {
+  letter-spacing: -0.03em;
+}
+
+body.executive-ui .report-block {
+  border-radius: var(--exec-radius-md);
+}
+
+body.executive-ui .report-block h4 {
+  font-family: var(--font-display);
+  letter-spacing: 0.14em;
+}
+
+/* —— Tablas —— */
+body.executive-ui .data-table th {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  background: linear-gradient(180deg, var(--exec-panel-2), var(--exec-panel));
+  border-bottom: 1px solid var(--exec-border-glow);
+}
+
+body.executive-ui .data-table-wrap {
+  border-radius: var(--exec-radius-md);
+  border: 1px solid var(--exec-border-glass);
+  overflow: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+}
+
+/* —— Admin modal —— */
+body.executive-ui .admin-modal-panel {
+  border-radius: var(--exec-radius-lg);
+  border: 1px solid var(--exec-border-glow);
+  box-shadow: var(--exec-shadow-deep);
+}
+
+body.executive-ui .admin-tab-btn.active {
+  box-shadow: inset 0 -2px 0 var(--exec-gold);
+}
+
+/* —— Modo TV —— */
+body.executive-ui.tv-mode .tv-wall-brand,
+body.executive-ui.tv-mode .tv-slide-kpis,
+body.executive-ui.tv-mode .tv-slide-chart,
+body.executive-ui.tv-mode .tv-slide-foot,
+body.executive-ui.tv-mode .tv-carousel-foot {
+  border-radius: var(--exec-radius-md);
+  border: 1px solid var(--exec-border-glass);
+  box-shadow: var(--exec-shadow-card);
+}
+
+body.executive-ui.tv-mode .tv-wall-title {
+  font-family: var(--font-display);
+  background: linear-gradient(135deg, #f8fafc 0%, var(--exec-gold) 120%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+html[data-theme="light"] body.executive-ui.tv-mode .tv-wall-title {
+  background: linear-gradient(135deg, #0a1628 0%, #6b5428 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+body.executive-ui.tv-mode .tv-pill {
+  font-family: var(--font-display);
+  letter-spacing: 0.12em;
+}
+
+body.executive-ui.tv-mode .tv-seg-label {
+  font-family: var(--font-display);
+}
+
+/* —— Toasts —— */
+body.executive-ui .toast {
+  border-radius: var(--exec-radius-md);
+  font-family: var(--font-display);
+  border: 1px solid var(--exec-border-glass);
+}
+
+/* —— Operaciones KPI tint —— */
+body.executive-ui .ops-kpi-open {
+  border-color: rgba(59, 130, 246, 0.35);
+}
+
+body.executive-ui .ops-dash-eyebrow,
+body.executive-ui .fac-eyebrow,
+body.executive-ui .lt-eyebrow {
+  color: var(--exec-gold);
+  letter-spacing: 0.16em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.executive-ui .gen-card--interactive:hover,
+  body.executive-ui .general-card:hover {
+    transform: none;
+  }
+}
+
+/* —— Fondo app (capa gestos) —— */
+body.executive-ui:not(.auth-locked) .platform-app::before {
+  background:
+    radial-gradient(ellipse 100% 70% at 72% -18%, rgba(201, 169, 98, 0.08), transparent 52%),
+    radial-gradient(ellipse 85% 55% at -8% 42%, rgba(77, 163, 255, 0.12), transparent 48%),
+    radial-gradient(ellipse 65% 45% at 95% 88%, rgba(99, 102, 241, 0.06), transparent 42%),
+    linear-gradient(165deg, #020408 0%, #060e18 38%, #03060e 100%) !important;
+}
+
+html[data-theme="light"] body.executive-ui:not(.auth-locked) .platform-app::before {
+  background:
+    radial-gradient(ellipse 100% 70% at 72% -18%, rgba(154, 123, 60, 0.07), transparent 52%),
+    radial-gradient(ellipse 85% 55% at -8% 42%, rgba(21, 101, 192, 0.09), transparent 48%),
+    linear-gradient(165deg, #dce4f0 0%, #f4f7fb 48%, #e8eef5 100%) !important;
+}
+
+body.executive-ui .filter-group label {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.executive-ui .chip-live {
+  font-family: var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+}
+
+body.executive-ui .platform-content {
+  max-width: 1680px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+body.executive-ui .empty-state-icon {
+  border-radius: 18px;
+  border-color: var(--exec-border-glow);
+  background: linear-gradient(145deg, rgba(201, 169, 98, 0.12), rgba(77, 163, 255, 0.08));
+}
+
+/* ═══════════════════════════════════════════════════════════
+   WEB ENTERA — módulos, admin, IA, utilidades
+   ═══════════════════════════════════════════════════════════ */
+
+body.executive-ui .module-view {
+  animation: execModuleIn 0.45s var(--ease-exec);
+}
+
+@keyframes execModuleIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+body.executive-ui .filters {
+  padding: 0.85rem 1rem;
+  margin-top: 0.5rem;
+  border-radius: var(--exec-radius-md);
+  border: 1px solid var(--exec-border-glass);
+  background: linear-gradient(180deg, var(--exec-panel-2), var(--exec-panel));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+body.executive-ui .topbar-title p {
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+}
+
+body.executive-ui .nav-submodule-list button {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+body.executive-ui .nav-submodule-list button.active {
+  border-color: var(--exec-border-glow);
+  background: rgba(201, 169, 98, 0.08);
+}
+
+/* Paneles universales (cualquier módulo) */
+body.executive-ui .module-view .widget,
+body.executive-ui .module-view .kpi-grid .kpi-card,
+body.executive-ui .empty-state-v2,
+body.executive-ui .general-note,
+body.executive-ui .module-empty,
+body.executive-ui .export-panel,
+body.executive-ui .ops-dashboard,
+body.executive-ui .fac-dashboard,
+body.executive-ui .lt-dashboard,
+body.executive-ui .report-executive {
+  position: relative;
+}
+
+body.executive-ui .empty-state-v2,
+body.executive-ui .module-empty {
+  border-radius: var(--exec-radius-lg) !important;
+  border: 1px dashed var(--exec-border-glow) !important;
+  background: linear-gradient(165deg, var(--exec-panel-2), var(--exec-panel)) !important;
+  box-shadow: var(--exec-shadow-card);
+}
+
+body.executive-ui .module-empty-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+body.executive-ui .drop-zone-admin,
+body.executive-ui .drop-zone-prod,
+body.executive-ui .drop-zone-ops,
+body.executive-ui .drop-zone-linea,
+body.executive-ui .drop-zone-fac {
+  border-radius: var(--exec-radius-md);
+  border-width: 2px;
+  border-style: dashed;
+  background: var(--exec-panel-2);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+
+body.executive-ui .drop-zone-admin:hover,
+body.executive-ui .drop-zone-prod:hover,
+body.executive-ui .drop-zone-ops:hover,
+body.executive-ui .drop-zone-linea:hover {
+  border-color: var(--exec-gold-soft);
+  box-shadow: 0 0 24px var(--exec-blue-glow);
+}
+
+/* Productividad */
+body.executive-ui .matrix-table th,
+body.executive-ui .sortable-table th,
+body.executive-ui .excel-style th {
+  font-family: var(--font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  background: linear-gradient(180deg, var(--exec-panel-2), var(--exec-panel)) !important;
+  border-bottom: 1px solid var(--exec-border-glow) !important;
+}
+
+body.executive-ui .matrix-wrap,
+body.executive-ui .ops-table-wrap,
+body.executive-ui .fac-metas-table-wrap {
+  border-radius: var(--exec-radius-md);
+  border: 1px solid var(--exec-border-glass);
+  box-shadow: var(--exec-shadow-card);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+}
+
+body.executive-ui .perf-tag,
+body.executive-ui .tag-success,
+body.executive-ui .tag-warn,
+body.executive-ui .tag-danger,
+body.executive-ui .sem-ok,
+body.executive-ui .sem-warn,
+body.executive-ui .sem-danger,
+body.executive-ui .sem-neutral,
+body.executive-ui .module-pill,
+body.executive-ui .module-badge {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* Operaciones — vista completa */
+body.executive-ui .ops-dashboard {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+body.executive-ui .ops-dash-header {
+  border-bottom-color: var(--exec-border-glow);
+  padding-bottom: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+body.executive-ui .ops-date-filter {
+  border-radius: var(--exec-radius-md);
+  border: 1px solid var(--exec-border-glass);
+  background: var(--exec-panel);
+  box-shadow: var(--exec-shadow-card);
+}
+
+body.executive-ui .ops-section-badge {
+  background: rgba(201, 169, 98, 0.12);
+  color: var(--exec-gold);
+  font-family: var(--font-display);
+  letter-spacing: 0.06em;
+}
+
+body.executive-ui .ops-bar-row {
+  border-radius: 8px;
+}
+
+body.executive-ui .ops-data-table th {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+}
+
+/* Facturas — vista completa */
+body.executive-ui .fac-dashboard {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+body.executive-ui .fac-header {
+  border-bottom: 1px solid var(--exec-border-glow);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+body.executive-ui .fac-tc-prominent,
+body.executive-ui .fac-filter-row,
+body.executive-ui .fac-tc-row {
+  border-radius: var(--exec-radius-md);
+  border: 1px solid var(--exec-border-glass);
+  background: var(--exec-panel);
+  box-shadow: var(--exec-shadow-card);
+}
+
+body.executive-ui .fac-tc-badge {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--exec-gold);
+}
+
+body.executive-ui .fac-chart-panel {
+  border-radius: var(--exec-radius-md);
+  padding: 1rem;
+  border: 1px solid var(--exec-border-glass);
+  background: var(--exec-panel);
+}
+
+body.executive-ui .fac-compliance-table th,
+body.executive-ui .fac-detail-table th,
+body.executive-ui .fac-metas-table th {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.7rem;
+}
+
+/* Línea de trabajo — vista completa */
+body.executive-ui .lt-dashboard {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+body.executive-ui .lt-header {
+  border-bottom: 1px solid var(--exec-border-glow);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+}
+
+body.executive-ui .lt-filters {
+  border-radius: var(--exec-radius-md);
+  box-shadow: var(--exec-shadow-card);
+}
+
+body.executive-ui .lt-user-card {
+  border-radius: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+body.executive-ui .lt-user-card.has-pending {
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.2), var(--exec-shadow-card);
+}
+
+body.executive-ui .lt-table th {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.7rem;
+}
+
+/* Reportes */
+body.executive-ui .report-executive {
+  max-width: 1480px;
+  margin: 0 auto;
+}
+
+body.executive-ui .report-executive-head {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--exec-border-glow);
+}
+
+body.executive-ui .report-blocks-grid .report-block {
+  border-top: 2px solid transparent;
+  border-image: linear-gradient(90deg, var(--exec-gold), var(--exec-blue), transparent) 1;
+}
+
+body.executive-ui .export-actions .btn {
+  font-family: var(--font-display);
+}
+
+/* Administración — modal completo */
+body.executive-ui .admin-modal-header {
+  border-bottom: 1px solid var(--exec-border-glow);
+  background: linear-gradient(180deg, var(--exec-panel-2), var(--exec-panel));
+}
+
+body.executive-ui .admin-modal-header h2::before {
+  content: '◆ ';
+  color: var(--exec-gold);
+  font-size: 0.85em;
+}
+
+body.executive-ui .admin-tab-btn {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+body.executive-ui .admin-log-item,
+body.executive-ui .admin-check-item,
+body.executive-ui .admin-module-status-card,
+body.executive-ui .admin-preview,
+body.executive-ui .admin-alert {
+  border-radius: 12px;
+}
+
+body.executive-ui .admin-preview.ok {
+  border-color: rgba(61, 211, 154, 0.35);
+}
+
+body.executive-ui .admin-status-tag {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+body.executive-ui .admin-subtitle {
+  font-family: var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: var(--exec-gold);
+}
+
+body.executive-ui .admin-storage-table th {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+/* Asistente IA — drawer */
+body.executive-ui .ai-drawer {
+  border-left: 1px solid var(--exec-border-glow);
+  background: linear-gradient(180deg, var(--exec-panel-2), var(--exec-panel));
+}
+
+body.executive-ui .ai-drawer-header h2 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+body.executive-ui .ai-drawer-header h2::after {
+  content: ' · Ejecutivo';
+  font-size: 0.65em;
+  font-weight: 600;
+  color: var(--exec-gold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+body.executive-ui .ai-msg {
+  border-radius: 14px;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+body.executive-ui .ai-msg.bot {
+  border-color: var(--exec-border-glass);
+  background: var(--exec-panel-2);
+}
+
+body.executive-ui .ai-critical-card {
+  border-radius: 12px;
+  border-color: var(--exec-border-glass);
+}
+
+body.executive-ui .ai-insights-head strong {
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+/* Atajos y utilidades */
+body.executive-ui .shortcuts-panel h2 {
+  font-family: var(--font-display);
+}
+
+body.executive-ui .shortcuts-panel h2::before {
+  content: '⌨ ';
+  opacity: 0.7;
+}
+
+body.executive-ui .status-msg {
+  font-family: var(--font-display);
+  border-radius: 12px;
+}
+
+
+/* Dashboard general — badges y pie */
+body.executive-ui .gen-badge {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.25em 0.55em;
+  border-radius: 6px;
+}
+
+body.executive-ui .gen-badge--live {
+  background: rgba(61, 211, 154, 0.15);
+  color: var(--success);
+  border: 1px solid rgba(61, 211, 154, 0.3);
+}
+
+body.executive-ui .gen-badge--empty {
+  background: var(--exec-panel-2);
+  color: var(--muted);
+  border: 1px solid var(--exec-border-glass);
+}
+
+
+body.executive-ui .gen-card-icon {
+  filter: drop-shadow(0 4px 12px var(--exec-blue-glow));
+}
+
+body.executive-ui .gen-insight strong {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Modo TV — slides y KPIs completos */
+body.executive-ui.tv-mode .tv-slide {
+  border-radius: 0;
+}
+
+body.executive-ui.tv-mode .tv-kpi-trio .tv-kpi,
+body.executive-ui.tv-mode .tv-kpi-trio .tv-kpi-card,
+body.executive-ui.tv-mode .tv-kpi-empty {
+  border-radius: 14px;
+  font-family: var(--font-display);
+}
+
+body.executive-ui.tv-mode .tv-kpi-val,
+body.executive-ui.tv-mode .tv-kpi-lbl {
+  font-family: var(--font-display);
+}
+
+body.executive-ui.tv-mode .tv-carousel-foot {
+  border-top: none;
+}
+
+body.executive-ui.tv-mode.tv-unified-active .platform-topbar {
+  display: none !important;
+}
+
+body.executive-ui.tv-mode .platform-content {
+  max-width: none;
+}
+
+/* Auth — campos y hints */
+body.executive-ui .auth-field-input {
+  border-radius: 12px;
+  border-color: var(--exec-border-glass);
+  background: var(--exec-panel-2);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+body.executive-ui .auth-heading {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+body.executive-ui .auth-subheading {
+  line-height: 1.55;
+}
+
+body.executive-ui .auth-hint {
+  border-left: 2px solid var(--exec-gold-soft);
+  padding-left: 0.65rem;
+}
+
+body.executive-ui .noscript-msg {
+  background: var(--danger);
+  color: #fff;
+  font-family: var(--font-display);
+}
+
+html[data-theme="light"] body.executive-ui .filters {
+  background: linear-gradient(180deg, #ffffff, var(--exec-panel-2));
+}
+
+html[data-theme="light"] body.executive-ui .ai-drawer {
+  background: #ffffff;
+}
+
+@media (max-width: 1100px) {
+  body.executive-ui .topbar-title h2::before {
+    display: none;
+  }
+  body.executive-ui .filters {
+    border-radius: 12px;
+  }
+}

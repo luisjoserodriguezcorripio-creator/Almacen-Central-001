@@ -1,0 +1,1070 @@
+/* Operaciones de Piso — móvil + PC/tablet */
+
+/* ── Base móvil (prioridad piso / teléfono) ── */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body.averias-drawer-open {
+  overflow: hidden;
+}
+
+body.averias-dash-view {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.averias-app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+  font-family: 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.averias-app #mainApp {
+  flex: 1;
+  min-height: 0;
+  max-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.averias-app .app-shell {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.averias-app .module-content {
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 12px clamp(12px, 3vw, 20px) calc(20px + env(safe-area-inset-bottom, 0px));
+}
+
+.averias-app .app-toolbar {
+  padding: max(10px, env(safe-area-inset-top, 0px)) 12px 10px;
+  min-height: 52px;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+.averias-app .btn-menu {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+}
+
+.averias-app .btn-toolbar-logout {
+  min-height: 44px;
+  padding: 10px 14px;
+  touch-action: manipulation;
+}
+
+.averias-app .toolbar-title {
+  font-size: clamp(0.9rem, 3.5vw, 1.05rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Inputs táctiles — evita zoom iOS */
+.averias-app input,
+.averias-app select,
+.averias-app textarea,
+.averias-app .btn,
+.averias-app .btn-action,
+.averias-app .severity-btn,
+.averias-app .btn-area,
+.averias-app .btn-correct-incidence {
+  font-size: 16px;
+  touch-action: manipulation;
+}
+
+.averias-app .form-field input,
+.averias-app .form-field select,
+.averias-app .form-field textarea {
+  min-height: 48px;
+  padding: 12px 14px;
+  width: 100%;
+}
+
+.averias-app .form-field textarea {
+  min-height: 96px;
+}
+
+.averias-app .btn-action,
+.averias-app .btn-primary,
+.averias-app .btn-secondary {
+  min-height: 48px;
+  width: 100%;
+}
+
+.averias-app .severity-buttons {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.averias-app .severity-btn {
+  min-height: 48px;
+  padding: 12px;
+}
+
+.averias-app .area-buttons {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.averias-app .btn-area {
+  min-height: 52px;
+  padding: 14px;
+}
+
+.averias-app .dashboard-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.averias-app .stat-card {
+  padding: 14px 10px;
+}
+
+.averias-app .stat-number {
+  font-size: clamp(1.5rem, 6vw, 2.25rem);
+}
+
+.averias-app .welcome-title {
+  font-size: clamp(1.65rem, 7vw, 2.1rem);
+}
+
+.averias-app .welcome-question {
+  font-size: clamp(1.1rem, 4.5vw, 1.35rem);
+}
+
+.averias-app .dash-kpi-banner {
+  text-align: center;
+  padding: 16px;
+  background: #2a2a2a;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+/* Drawer móvil — oculto; solo overlay al abrir ☰ */
+@media (max-width: 1099px) {
+  .averias-app #mainApp {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .averias-app .app-shell {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  .averias-app .drawer {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: min(320px, 100vw) !important;
+    max-width: 100vw !important;
+    transform: translate3d(-105%, 0, 0) !important;
+    transition: transform 0.28s ease;
+    z-index: 1500 !important;
+    box-shadow: none;
+  }
+
+  .averias-app .drawer.open {
+    transform: translate3d(0, 0, 0) !important;
+    box-shadow: 8px 0 40px rgba(0, 0, 0, 0.55);
+  }
+
+  .averias-app .drawer-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 1400 !important;
+  }
+
+  .averias-app .btn-menu {
+    display: inline-flex !important;
+  }
+
+  /* Contenido más grande en celular */
+  .averias-app .module-content {
+    padding: 14px 16px calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .averias-app .module-panel h3 {
+    font-size: 1.4rem !important;
+    margin-bottom: 14px !important;
+    line-height: 1.25;
+  }
+
+  .averias-app .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .averias-app .stat-card {
+    padding: 20px 14px;
+    min-height: 96px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .averias-app .stat-number {
+    font-size: clamp(2rem, 12vw, 3rem) !important;
+    line-height: 1.1;
+  }
+
+  .averias-app .stat-label {
+    font-size: 0.8rem;
+    margin-top: 8px;
+  }
+
+  .averias-app .action-buttons {
+    gap: 14px;
+  }
+
+  .averias-app .btn-action {
+    min-height: 56px;
+    font-size: 1.05rem;
+    padding: 18px 20px;
+    letter-spacing: 0.02em;
+  }
+
+  .averias-app .btn-menu {
+    font-size: 26px;
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  .averias-app .app-toolbar {
+    min-height: 56px;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .averias-app .toolbar-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+
+  .averias-app .btn-toolbar-logout {
+    font-size: 0.9rem;
+    padding: 10px 16px;
+  }
+
+  /* Iconos más visibles en móvil (texto y botones sin cambiar) */
+  .averias-app .drawer-icon-wrap {
+    width: 52px;
+    height: 52px;
+  }
+
+  .averias-app .drawer-icon-wrap svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .averias-app .btn-menu {
+    font-size: 28px;
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  .averias-app .welcome-hint-icon {
+    font-size: 1.35rem;
+  }
+
+  .averias-app .btn-sync-data {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px 10px;
+    margin-right: 4px;
+    border: 2px solid rgba(96, 165, 250, 0.35);
+    border-radius: 10px;
+    background: rgba(30, 58, 138, 0.25);
+    color: #93c5fd;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    touch-action: manipulation;
+    flex-shrink: 0;
+  }
+
+  .averias-app .btn-sync-data:active {
+    transform: scale(0.96);
+  }
+
+  .averias-app .btn-sync-data.cloud-active {
+    border-color: rgba(63, 185, 80, 0.55);
+    background: rgba(46, 125, 50, 0.22);
+    color: #81c784;
+  }
+
+  .averias-app .btn-sync-data.sync-live {
+    box-shadow: 0 0 12px rgba(63, 185, 80, 0.45);
+    animation: avSyncPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes avSyncPulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(63, 185, 80, 0.35); }
+    50% { box-shadow: 0 0 16px rgba(63, 185, 80, 0.65); }
+  }
+
+  .averias-app .av-sync-live {
+    flex-shrink: 0;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #3fb950;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(63, 185, 80, 0.15);
+    border: 1px solid rgba(63, 185, 80, 0.35);
+    animation: avSyncPulse 2s ease-in-out infinite;
+  }
+
+  .averias-app .av-sync-status-line {
+  display: none !important;
+  margin: 0;
+  padding: 0;
+  height: 0;
+  overflow: hidden;
+  border: none;
+}
+
+.averias-app .av-sync-status-ok {
+  color: #8b949e;
+  background: rgba(63, 185, 80, 0.06);
+}
+
+.averias-app .av-sync-status-err {
+  color: #f85149;
+  background: rgba(248, 81, 73, 0.1);
+}
+
+.averias-app .av-sync-live.is-pulse {
+    animation: avSyncPulse 1s ease-in-out infinite;
+    color: #56d364;
+  }
+
+  .averias-app .av-sync-live[hidden] {
+    display: none !important;
+  }
+
+  .averias-app .lan-sync-badge {
+    margin-right: 6px;
+    font-size: 0.65rem;
+    padding: 3px 8px;
+  }
+
+  .averias-app .av-sync-banner {
+    flex-shrink: 0;
+    margin: 0;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: #ffb74d;
+    background: rgba(255, 152, 0, 0.12);
+    border-bottom: 1px solid rgba(255, 152, 0, 0.25);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+  }
+
+  .averias-app .av-sync-banner-text {
+    flex: 1 1 200px;
+  }
+
+  .averias-app .av-sync-banner-btn {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #ff9800;
+    color: #1a1208;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .averias-app .av-sync-banner-hint {
+    flex: 1 1 100%;
+    font-size: 0.75rem;
+    opacity: 0.9;
+  }
+
+  .averias-app .av-cloud-modal[hidden] {
+    display: none !important;
+  }
+
+  .averias-app .av-cloud-modal:not([hidden]) {
+    display: flex;
+  }
+
+  .averias-app .av-cloud-modal-content {
+    max-width: 420px;
+    text-align: left;
+  }
+
+  .averias-app .av-cloud-help {
+    margin: 0 0 10px;
+    font-size: 0.88rem;
+    color: #c9d1d9;
+  }
+
+  .averias-app .av-cloud-steps {
+    margin: 0 0 12px 18px;
+    padding: 0;
+    font-size: 0.82rem;
+    color: #8b949e;
+  }
+
+  .averias-app .av-cloud-steps a {
+    color: #58a6ff;
+  }
+
+  .averias-app .av-cloud-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.8rem;
+    color: #8b949e;
+  }
+
+  .averias-app .av-cloud-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.25);
+    color: #e6edf3;
+    font-size: 0.9rem;
+  }
+
+  .averias-app .av-cloud-note {
+    margin: 0 0 12px;
+    font-size: 0.75rem;
+    color: #8b949e;
+    line-height: 1.4;
+  }
+
+  .averias-app .av-cloud-status {
+    margin: 10px 0 0;
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  .averias-app .av-cloud-status.ok {
+    color: #3fb950;
+  }
+
+  .averias-app .av-cloud-status.err {
+    color: #f85149;
+  }
+
+  .averias-app .av-sync-banner[hidden] {
+    display: none !important;
+  }
+
+  .averias-app .btn-fit-screen {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px 10px;
+    margin-right: 6px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #c9d1d9;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+    touch-action: manipulation;
+    flex-shrink: 0;
+  }
+
+  .averias-app .btn-fit-screen.active {
+    border-color: rgba(63, 185, 80, 0.65);
+    background: rgba(63, 185, 80, 0.18);
+    color: #3fb950;
+  }
+
+  .averias-app .app-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .averias-app .toolbar-title {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Modo normal — scroll, tamaños originales */
+  .averias-app.averias-fit-normal .module-content {
+    display: block;
+  }
+
+  .averias-app.averias-fit-normal .module-panel:not(.hidden) {
+    display: block;
+  }
+
+  .averias-app.averias-fit-normal .module-panel:not(.hidden) > .sub-panel:not(.hidden) {
+    display: block;
+    min-height: auto;
+  }
+
+  .averias-app.averias-fit-normal .dashboard-grid {
+    flex: none;
+    min-height: auto;
+    margin-bottom: 16px;
+  }
+
+  .averias-app.averias-fit-normal .stat-card {
+    height: auto;
+    min-height: 96px;
+  }
+
+  .averias-app.averias-fit-normal .action-buttons {
+    flex: none;
+    min-height: auto;
+  }
+
+  .averias-app.averias-fit-normal .btn-action {
+    flex: none;
+    min-height: 56px;
+    max-height: none;
+  }
+
+  /* Modo pantalla completa — reparte altura según el celular */
+  .averias-app.averias-fit-screen {
+    --av-ui-scale: 1;
+  }
+
+  .averias-app.averias-fit-screen .module-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .averias-app.averias-fit-screen .module-panel:not(.hidden) {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .averias-app.averias-fit-screen .module-panel:not(.hidden) > .sub-panel:not(.hidden) {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(
+      (100dvh - 56px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))
+      * var(--av-ui-scale, 1)
+    );
+    gap: calc(10px * var(--av-ui-scale, 1));
+  }
+
+  .averias-app.averias-fit-screen .module-panel:not(.hidden) > .sub-panel:not(.hidden) > h3 {
+    flex-shrink: 0;
+    margin-bottom: 4px !important;
+    font-size: calc(1.35rem * var(--av-ui-scale, 1)) !important;
+  }
+
+  .averias-app.averias-fit-screen .dashboard-grid {
+    flex: 1 1 42%;
+    min-height: 34vh;
+    grid-template-rows: 1fr 1fr;
+    align-content: stretch;
+    gap: calc(12px * var(--av-ui-scale, 1));
+    margin-bottom: 0;
+  }
+
+  .averias-app.averias-fit-screen .stat-card {
+    min-height: 0;
+    height: 100%;
+    padding: calc(16px * var(--av-ui-scale, 1)) 12px;
+  }
+
+  .averias-app.averias-fit-screen .stat-number {
+    font-size: calc(clamp(1.75rem, 9vmin, 2.75rem) * var(--av-ui-scale, 1)) !important;
+  }
+
+  .averias-app.averias-fit-screen .stat-label {
+    font-size: calc(0.78rem * var(--av-ui-scale, 1));
+  }
+
+  .averias-app.averias-fit-screen .dash-kpi-banner {
+    flex-shrink: 0;
+    padding: calc(16px * var(--av-ui-scale, 1)) 14px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .averias-app.averias-fit-screen .dash-kpi-banner > div:last-child {
+    font-size: calc(clamp(1.75rem, 10vmin, 2.5rem) * var(--av-ui-scale, 1)) !important;
+  }
+
+  .averias-app.averias-fit-screen .action-buttons {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    gap: calc(12px * var(--av-ui-scale, 1));
+    min-height: 28vh;
+    padding-bottom: 4px;
+  }
+
+  .averias-app.averias-fit-screen .btn-action {
+    flex: 1 1 0;
+    min-height: calc(52px * var(--av-ui-scale, 1));
+    max-height: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(1rem * var(--av-ui-scale, 1));
+    padding: calc(14px * var(--av-ui-scale, 1)) 18px;
+    border-radius: 14px;
+  }
+}
+
+/* Drawer móvil — reglas base */
+.averias-app .drawer {
+  width: min(320px, 88vw);
+  max-width: 100%;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  z-index: 1200;
+}
+
+.averias-app .drawer-item {
+  min-height: 56px;
+  padding: 12px 14px;
+  touch-action: manipulation;
+}
+
+.averias-app .drawer-overlay {
+  z-index: 1100;
+}
+
+/* Modal — pantalla completa en móvil */
+.averias-app .modal {
+  position: fixed !important;
+  inset: 0 !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  max-height: 100dvh !important;
+  transform: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)) !important;
+  background: rgba(0, 0, 0, 0.88) !important;
+  z-index: 3000 !important;
+}
+
+.averias-app .modal-content {
+  width: min(100%, 400px);
+  max-width: 100%;
+}
+
+.averias-app .modal-btn {
+  min-height: 48px;
+}
+
+.averias-app .equipment-check-row .si-no-btn {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.averias-app .checklist-item {
+  min-height: 52px;
+  padding: 12px 14px;
+}
+
+.averias-app .toggle-switch {
+  min-width: 48px;
+  min-height: 28px;
+  flex-shrink: 0;
+}
+
+.averias-app .incidence-card {
+  padding: 14px;
+}
+
+.averias-app .filter-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.averias-app .filter-row select {
+  min-height: 48px;
+  width: 100%;
+}
+
+/* ── Teléfono pequeño ── */
+@media (max-width: 380px) {
+  .averias-app .drawer {
+    width: min(320px, 92vw) !important;
+  }
+}
+
+/* ── Teléfono landscape / phablet ── */
+@media (min-width: 600px) and (max-width: 1099px) {
+  .averias-app .severity-buttons {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .averias-app .area-buttons {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .averias-app .dashboard-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .averias-app .action-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .averias-app.averias-fit-screen .action-buttons {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .averias-app .filter-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .averias-app .filter-row select {
+    flex: 1;
+    min-width: 140px;
+  }
+}
+
+/* ── Tablet ── */
+@media (min-width: 768px) {
+  .averias-app .module-content {
+    padding: 20px clamp(20px, 4vw, 32px) 28px;
+  }
+
+  .averias-app .welcome-screen {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .averias-app .sub-panel {
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  .averias-app .action-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+
+  .averias-app .modal.show {
+    align-items: center;
+  }
+
+  .averias-app .modal-content {
+    border-radius: 20px;
+  }
+}
+
+/* ── PC / pantalla grande — menú lateral fijo (solo pantallas anchas) ── */
+@media (min-width: 1100px) {
+  body.averias-dash-view {
+    overflow: hidden;
+  }
+
+  .averias-app #mainApp {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .averias-app .drawer-overlay {
+    display: none !important;
+  }
+
+  .averias-app .drawer {
+    position: relative;
+    transform: translateX(0) !important;
+    width: min(280px, 26vw);
+    min-width: 240px;
+    max-width: 300px;
+    flex-shrink: 0;
+    height: auto;
+    max-height: 100dvh;
+    border-right: 1px solid #333;
+    box-shadow: none;
+  }
+
+  .averias-app .btn-menu {
+    display: none;
+  }
+
+  .averias-app .btn-fit-screen {
+    display: none !important;
+  }
+
+  .averias-app .btn-sync-data {
+    display: none !important;
+  }
+
+  .averias-app .app-shell {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .averias-app .module-content {
+    padding: 24px clamp(24px, 3vw, 48px) 32px;
+  }
+
+  .averias-app .module-panel > .sub-panel:not(.hidden) {
+    max-width: min(960px, 100%);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .averias-app .dashboard-grid {
+    gap: 16px;
+  }
+
+  .averias-app .stat-card {
+    padding: 22px 16px;
+  }
+
+  .averias-app .welcome-screen {
+    max-width: 880px;
+  }
+
+  .averias-app .welcome-hero {
+    padding: 32px 28px;
+  }
+
+  /* Dos columnas en formularios largos (equipos) */
+  .averias-app #equipmentFormPanel .form-field:nth-child(-n+6) {
+    display: inline-block;
+    width: calc(50% - 8px);
+    vertical-align: top;
+    margin-right: 8px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .averias-app .module-content {
+    display: block;
+  }
+
+  .averias-app .module-panel > .sub-panel:not(.hidden) {
+    max-width: 1040px;
+  }
+
+  .averias-app .incidences-list-grid,
+  .averias-app #incidencesList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 12px;
+    align-items: start;
+  }
+
+  .averias-app #equipmentListContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+}
+
+/* Login del portal — móvil y PC */
+@media (max-width: 899px) {
+  body.auth-locked .av-auth-overlay {
+    pointer-events: auto;
+  }
+
+  body.auth-locked .av-auth-overlay .auth-layout,
+  body.auth-locked .av-auth-overlay .auth-stack {
+    pointer-events: auto;
+  }
+
+  .av-auth-overlay .auth-layout {
+    max-width: min(100%, 440px);
+    width: 100%;
+  }
+
+  .av-auth-hero {
+    display: none;
+  }
+
+  .av-auth-glass {
+    padding: 1.25rem;
+  }
+}
+
+@media (min-width: 900px) {
+  .av-auth-overlay .auth-glass-card .auth-field-input {
+    min-height: 48px;
+  }
+}
+
+/* Hover solo donde hay puntero fino */
+@media (hover: none) {
+  .averias-app .stat-card:hover,
+  .averias-app .btn-action:hover,
+  .averias-app .incidence-card:hover {
+    transform: none;
+  }
+}
+
+#modal.averias-app.modal {
+  position: fixed !important;
+  z-index: 99999 !important;
+}
+
+#modal.averias-app.modal[hidden] {
+  display: none !important;
+}
+
+.averias-app .reported-work-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.averias-app .reported-work-title {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #e6edf3;
+}
+
+.averias-app .reported-work-hint {
+  margin: 0 0 12px;
+  font-size: 0.82rem;
+  color: #8b949e;
+  line-height: 1.4;
+}
+
+.averias-app .reported-work-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 420px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.averias-app .reported-work-empty {
+  color: #8b949e;
+  text-align: center;
+  padding: 20px 12px;
+  font-size: 0.9rem;
+}
+
+.averias-app .reported-work-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.averias-app .btn-edit-incidence {
+  flex: 1 1 140px;
+  min-height: 44px;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 16px;
+  touch-action: manipulation;
+}
+
+.averias-app .btn-correct-inline {
+  flex: 1 1 140px;
+  margin-top: 0;
+  min-height: 44px;
+  font-size: 16px;
+}
+
+.averias-app .reported-work-section--done {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.averias-app .av-record-dates {
+  margin: 6px 0 4px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.averias-app .av-date-closed {
+  color: #3fb950 !important;
+  font-weight: 600;
+}
+
+.averias-app .av-status-badge {
+  display: inline-block;
+  margin: 4px 0 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.averias-app .av-status-done {
+  background: rgba(63, 185, 80, 0.18);
+  color: #3fb950;
+  border: 1px solid rgba(63, 185, 80, 0.35);
+}
+
+.averias-app .incidence-card.completed {
+  opacity: 0.92;
+  border-color: rgba(63, 185, 80, 0.25);
+}
+
+body.av-modal-open {
+  overflow: hidden;
+}

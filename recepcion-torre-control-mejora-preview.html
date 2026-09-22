@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mejora · Radar de patio — Torre de control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/dc-brand.css?v=1">
+  <link rel="stylesheet" href="css/ac001-brand.css?v=1">
+  <link rel="stylesheet" href="css/recepcion-vistas-banco-logistica.css?v=2">
+  <link rel="stylesheet" href="css/recepcion-torre-control-preview.css?v=9">
+  <link rel="stylesheet" href="css/recepcion-torre-control-mejora.css?v=1">
+</head>
+<body class="rbl-preview rbl-theme-f rbl-tc-standalone rbl-mejora-preview">
+
+  <p class="rbl-mejora-banner"><strong>Nueva mejora</strong> · Radar de patio + filtros en manifiesto · Vista previa</p>
+
+  <button type="button" class="rbl-hub-btn" id="rblHubBtn" aria-label="Abrir menú" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="rbl-drawer-backdrop" id="rblDrawerBd" hidden></div>
+  <aside class="rbl-drawer" id="rblDrawer" aria-label="Navegación torre de control">
+    <div class="rbl-drawer-brand">
+      <img class="jc-logo-img rbl-drawer-logo" src="assets/img/ac001-logo.svg?v=1" alt="AC" width="40" height="40">
+      <p>Recepción · Almacén Central</p>
+    </div>
+    <nav class="rbl-drawer-nav">
+      <button type="button" class="rbl-drawer-link is-on" data-f-screen="ops">Operaciones</button>
+      <button type="button" class="rbl-drawer-link" data-f-screen="hist">Historia</button>
+      <button type="button" class="rbl-drawer-link" data-f-screen="cfg">Configuraciones</button>
+    </nav>
+    <div class="rbl-drawer-foot">Turno AM · María Ramos</div>
+  </aside>
+
+  <div class="rbl-stage">
+    <section class="rbl-view rbl-f is-on">
+      <div class="rbl-f-wrap">
+        <header class="rbl-f-hero">
+          <div class="rbl-f-hero-inner">
+            <div class="rbl-f-logo">
+              <img class="jc-logo-img jc-logo-img--hero rbl-f-logo-img" src="assets/img/ac001-logo.svg?v=1" alt="AC" width="48" height="48">
+              <div class="rbl-f-logo-text">
+                <h1>Gestión de Recepción y Ubicación</h1>
+                <p>Almacén Central 001 · Patio de contenedores</p>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="rbl-f-screen is-on" data-f-screen="ops">
+          <div class="rbl-kpi-grid">
+            <div class="rbl-kpi">
+              <div class="rbl-kpi-icon rbl-kpi-icon--blue">
+                <img class="rbl-kpi-icon-img" src="assets/img/kpi-contenedor.svg?v=2" alt="" width="52" height="52">
+              </div>
+              <div><span class="rbl-kpi-num">8</span><span class="rbl-kpi-lbl">Contenedores activos</span><span class="rbl-kpi-sub">En seguimiento hoy</span></div>
+            </div>
+            <div class="rbl-kpi">
+              <div class="rbl-kpi-icon rbl-kpi-icon--amber">
+                <img class="rbl-kpi-icon-img" src="assets/img/kpi-jaula.svg?v=2" alt="" width="52" height="52">
+              </div>
+              <div><span class="rbl-kpi-num">5</span><span class="rbl-kpi-lbl">Muelles ocupados</span><span class="rbl-kpi-sub">J9 · J12 · J15 · J77 · J3</span></div>
+            </div>
+            <div class="rbl-kpi">
+              <div class="rbl-kpi-icon rbl-kpi-icon--teal">
+                <img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-paletas-gen.png?v=1" alt="" width="52" height="52">
+              </div>
+              <div><span class="rbl-kpi-num">129</span><span class="rbl-kpi-lbl">Paletas recibidas</span><span class="rbl-kpi-sub">Acumulado del día</span></div>
+            </div>
+            <div class="rbl-kpi">
+              <div class="rbl-kpi-icon rbl-kpi-icon--navy">
+                <svg class="rbl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+              </div>
+              <div><span class="rbl-kpi-num">3</span><span class="rbl-kpi-lbl">Pend. validar</span><span class="rbl-kpi-sub">Prioridad patio</span></div>
+            </div>
+            <button type="button" class="rbl-kpi rbl-kpi--action" id="rblBtnShare">
+              <div class="rbl-kpi-icon rbl-kpi-icon--cast">
+                <img class="rbl-kpi-icon-img" src="assets/img/kpi-pantalla.svg?v=2" alt="" width="52" height="52">
+              </div>
+              <div><span class="rbl-kpi-lbl rbl-kpi-lbl--action" id="rblShareLbl">Compartir pantalla</span><span class="rbl-kpi-sub" id="rblShareSub">TV recepción · en vivo</span></div>
+            </button>
+          </div>
+
+          <div class="rbl-pulse-bar">
+            <div class="rbl-pulse-inner">
+              <span class="rbl-pulse-live"><span class="rbl-pulse-dot"></span> En vivo</span>
+              <span class="rbl-pulse-item">Turno <strong>AM</strong> · María Ramos</span>
+              <span class="rbl-pulse-item">Última acción <strong>10:18</strong> · Validación REC-0008</span>
+              <span class="rbl-pulse-alert" id="rblPulseAlert">1 sin muelle asignado</span>
+            </div>
+          </div>
+
+          <div class="rbl-dock-radar">
+            <div class="rbl-dock-card">
+              <div class="rbl-dock-head">
+                <div>
+                  <h3>Radar de patio</h3>
+                  <span>Muelles · clic para filtrar manifiesto</span>
+                </div>
+                <div class="rbl-dock-legend">
+                  <span><i class="is-busy"></i>Ocupado</span>
+                  <span><i class="is-done"></i>Entrada OK</span>
+                  <span><i class="is-free"></i>Libre</span>
+                </div>
+              </div>
+              <div class="rbl-dock-grid" id="rblDockGrid"></div>
+            </div>
+          </div>
+
+          <div class="rbl-f-grid">
+            <div class="rbl-card">
+              <div class="rbl-card-head"><h3>Manifiesto de recepción</h3><span id="rblManifestMeta">8 registros · 10:24 a.m.</span></div>
+              <div class="rbl-manifest-filters" id="rblManifestFilters">
+                <span class="rbl-mf-label">Ver</span>
+                <button type="button" class="rbl-mf-chip is-on" data-filter="all">Todos</button>
+                <button type="button" class="rbl-mf-chip" data-filter="no-muelle">Sin muelle</button>
+                <button type="button" class="rbl-mf-chip" data-filter="pend-val">Pend. validar</button>
+                <button type="button" class="rbl-mf-chip" data-filter="pend-ent">Pend. entrada</button>
+                <button type="button" class="rbl-mf-chip" data-filter="done">Entrada OK</button>
+                <span class="rbl-mf-count" id="rblMfCount">8 visibles</span>
+              </div>
+              <div class="rbl-table-wrap" style="max-height:340px"><table class="rbl-table" id="tblF"></table></div>
+            </div>
+            <div class="rbl-card rbl-f-form">
+              <div class="rbl-card-head"><h3>Nuevo contenedor</h3><span class="rbl-reg">REC-0009</span></div>
+              <div class="rbl-card-body">
+                <div class="rbl-f-form-row">
+                  <div class="rbl-field"><label>Fecha</label><input type="date" value="2026-06-20" readonly></div>
+                  <div class="rbl-field"><label>Tipo</label><select><option>Local</option></select></div>
+                </div>
+                <div class="rbl-field"><label>Contenedor</label><input type="text" value="COR-45864564" readonly></div>
+                <div class="rbl-field"><label>Descripción</label><input type="text" value="GILLETTE" readonly></div>
+                <div class="rbl-f-form-row">
+                  <div class="rbl-field"><label>Paletas</label><input type="number" value="18" readonly></div>
+                  <div class="rbl-field"><label>Muelle</label><input type="text" value="J77" readonly></div>
+                </div>
+                <button type="button" class="rbl-f-submit">Registrar contenedor</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="rbl-tv-overlay" id="rblTvOverlay" hidden aria-hidden="true">
+    <div class="rbl-tv-toolbar">
+      <span class="rbl-tv-live"><span class="rbl-tv-dot"></span> Vista TV</span>
+      <button type="button" class="rbl-tv-close" id="rblTvClose">Cerrar</button>
+      <a class="rbl-tv-open" href="recepcion-pantalla-preview.html" target="_blank" rel="noopener">Monitor TV</a>
+    </div>
+    <div class="rbl-tv-frame" id="rblTvFrame"></div>
+  </div>
+
+  <script src="js/recepcion-torre-control-preview.js?v=5"></script>
+  <script src="js/recepcion-torre-control-mejora-preview.js?v=1"></script>
+</body>
+</html>

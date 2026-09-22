@@ -1,0 +1,366 @@
+/* Gestos y fondo ejecutivo — WMS Control */
+
+:root {
+  --gesture-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --gesture-spring: cubic-bezier(0.34, 1.25, 0.64, 1);
+  --bg-mesh-1: rgba(46, 152, 255, 0.16);
+  --bg-mesh-2: rgba(61, 211, 154, 0.1);
+  --bg-mesh-3: rgba(99, 102, 241, 0.08);
+}
+
+html[data-theme="light"] {
+  --bg-mesh-1: rgba(21, 101, 192, 0.1);
+  --bg-mesh-2: rgba(8, 122, 86, 0.07);
+  --bg-mesh-3: rgba(99, 102, 241, 0.04);
+}
+
+/* —— Fondo ambiente (app) —— */
+body:not(.auth-locked) .platform-app {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+}
+
+body:not(.auth-locked) .platform-app::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 100% 70% at 72% -18%, var(--bg-mesh-1), transparent 52%),
+    radial-gradient(ellipse 85% 55% at -8% 42%, var(--bg-mesh-2), transparent 48%),
+    radial-gradient(ellipse 65% 45% at 95% 88%, var(--bg-mesh-3), transparent 42%),
+    linear-gradient(165deg, #03060c 0%, #060d16 38%, #050810 100%);
+}
+
+html[data-theme="light"] body:not(.auth-locked) .platform-app::before {
+  background:
+    radial-gradient(ellipse 100% 70% at 72% -18%, var(--bg-mesh-1), transparent 52%),
+    radial-gradient(ellipse 85% 55% at -8% 42%, var(--bg-mesh-2), transparent 48%),
+    radial-gradient(ellipse 65% 45% at 95% 88%, var(--bg-mesh-3), transparent 42%),
+    linear-gradient(165deg, #dce6f2 0%, #f2f6fb 48%, #e8eef6 100%);
+}
+
+body:not(.auth-locked) .platform-app::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 75% 65% at 50% 35%, #000 20%, transparent 72%);
+}
+
+html[data-theme="light"] body:not(.auth-locked) .platform-app::after {
+  opacity: 0.5;
+  background-image:
+    linear-gradient(rgba(15, 30, 60, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 30, 60, 0.04) 1px, transparent 1px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body:not(.auth-locked) .platform-app::before {
+    animation: ambientGlow 18s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes ambientGlow {
+  0% { filter: hue-rotate(0deg) brightness(1); }
+  100% { filter: hue-rotate(8deg) brightness(1.04); }
+}
+
+body:not(.auth-locked) .platform-sidebar {
+  position: fixed;
+  z-index: 100;
+  background:
+    linear-gradient(180deg, rgba(7, 13, 20, 0.94) 0%, rgba(10, 16, 24, 0.88) 100%);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 4px 0 32px rgba(0, 0, 0, 0.25);
+}
+
+html[data-theme="light"] body:not(.auth-locked) .platform-sidebar {
+  background: linear-gradient(180deg, #ffffff 0%, #f6f9fc 100%);
+  border-right-color: rgba(15, 36, 64, 0.1);
+  box-shadow: 4px 0 24px rgba(15, 36, 64, 0.06);
+}
+
+body:not(.auth-locked) .platform-main {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+body:not(.auth-locked) .platform-content {
+  position: relative;
+}
+
+body:not(.auth-locked) .platform-topbar {
+  background: rgba(10, 16, 24, 0.72);
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+html[data-theme="light"] body:not(.auth-locked) .platform-topbar {
+  background: rgba(255, 255, 255, 0.78);
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+/* —— Ripple profesional —— */
+.gesture-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: scale(0);
+  opacity: 0.55;
+}
+
+.gesture-ripple-primary {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 70%);
+  animation: gestureRippleCore 0.62s var(--gesture-ease) forwards;
+}
+
+.gesture-ripple-ring {
+  border: 2px solid rgba(94, 179, 255, 0.35);
+  background: transparent;
+  opacity: 0.4;
+  animation: gestureRippleRing 0.75s var(--gesture-ease) forwards;
+}
+
+.btn-primary .gesture-ripple-primary,
+.tv-exit-btn .gesture-ripple-primary {
+  background: radial-gradient(circle, rgba(4, 16, 24, 0.2) 0%, transparent 70%);
+}
+
+.btn-primary .gesture-ripple-ring {
+  border-color: rgba(4, 16, 24, 0.2);
+}
+
+@keyframes gestureRippleCore {
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@keyframes gestureRippleRing {
+  to {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+/* Presión en tarjetas / chips */
+.gen-card--interactive.is-pressed,
+.gen-status-item.is-live.is-pressed {
+  transform: scale(0.985) !important;
+  transition: transform 0.12s var(--gesture-ease) !important;
+}
+
+.gen-card--interactive.is-released {
+  animation: gestureCardPop 0.42s var(--gesture-spring);
+}
+
+@keyframes gestureCardPop {
+  0% { transform: scale(0.97); }
+  55% { transform: scale(1.01); }
+  100% { transform: scale(1); }
+}
+
+.nav-module-btn.is-touch-active,
+.nav-submodule-list button.is-touch-active {
+  transform: translateX(4px);
+  background: rgba(94, 179, 255, 0.14);
+  box-shadow: inset 3px 0 0 var(--accent);
+  transition: transform 0.2s var(--gesture-ease), background 0.2s ease;
+}
+
+/* —— Swipe con arrastre —— */
+.gesture-swipe-track {
+  will-change: transform;
+  transition: transform 0.38s var(--gesture-spring);
+}
+
+.gesture-swipe-track.is-dragging {
+  transition: none;
+}
+
+.gesture-swipe-track.is-snap-back {
+  transition: transform 0.45s var(--gesture-spring);
+}
+
+.gesture-swipe-zone {
+  position: relative;
+  touch-action: pan-y;
+}
+
+.gesture-swipe-indicator {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.gesture-swipe-indicator.is-visible {
+  opacity: 1;
+}
+
+.gesture-swipe-chevron {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.35rem;
+  font-weight: 300;
+  color: var(--accent);
+  background: rgba(94, 179, 255, 0.12);
+  border: 1px solid rgba(94, 179, 255, 0.28);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transform: scale(0.85);
+  transition: transform 0.25s var(--gesture-spring), opacity 0.2s ease;
+  opacity: 0.4;
+}
+
+.gesture-swipe-chevron.is-active {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.gesture-swipe-chevron--left.is-active {
+  animation: gestureChevronLeft 0.5s var(--gesture-spring);
+}
+
+.gesture-swipe-chevron--right.is-active {
+  animation: gestureChevronRight 0.5s var(--gesture-spring);
+}
+
+@keyframes gestureChevronLeft {
+  0%, 100% { transform: translateX(0) scale(1); }
+  50% { transform: translateX(-6px) scale(1.05); }
+}
+
+@keyframes gestureChevronRight {
+  0%, 100% { transform: translateX(0) scale(1); }
+  50% { transform: translateX(6px) scale(1.05); }
+}
+
+.gen-dashboard.gen-swipe-left,
+.gen-dashboard.gen-swipe-right {
+  animation: none;
+}
+
+/* Pulso al confirmar swipe */
+.gesture-flash-ok {
+  animation: gestureFlashOk 0.45s var(--gesture-ease);
+}
+
+@keyframes gestureFlashOk {
+  0% { box-shadow: inset 0 0 0 0 rgba(94, 179, 255, 0); }
+  40% { box-shadow: inset 0 0 0 2px rgba(94, 179, 255, 0.35); }
+  100% { box-shadow: inset 0 0 0 0 rgba(94, 179, 255, 0); }
+}
+
+/* —— Login: gestos al elegir área/rol —— */
+.auth-role-picker.role-area-pulse {
+  animation: authRoleAreaPulse 0.55s var(--gesture-spring);
+}
+
+@keyframes authRoleAreaPulse {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.015); }
+  100% { transform: scale(1); }
+}
+
+.auth-role-feedback {
+  min-height: 1.35rem;
+  margin: 0 0 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.28s var(--gesture-ease), transform 0.28s var(--gesture-ease);
+}
+
+.auth-role-feedback.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.auth-role-card.role-select-in,
+.desp-auth-role-card.role-select-in {
+  animation: authRoleSelectIn 0.42s var(--gesture-spring);
+}
+
+@keyframes authRoleSelectIn {
+  0% { transform: scale(0.96); }
+  55% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+.auth-role-card .role-ripple--administrador,
+.auth-role-card .role-ripple--admin,
+.desp-auth-role-card .role-ripple--administrador,
+.desp-auth-role-card .role-ripple--admin { background: rgba(94, 179, 255, 0.5) !important; }
+.auth-role-card .role-ripple-ring--administrador,
+.auth-role-card .role-ripple-ring--admin,
+.desp-auth-role-card .role-ripple-ring--administrador,
+.desp-auth-role-card .role-ripple-ring--admin { border-color: rgba(94, 179, 255, 0.55) !important; }
+
+.auth-role-card .role-ripple--supervisor,
+.desp-auth-role-card .role-ripple--supervisor { background: rgba(255, 209, 102, 0.48) !important; }
+.auth-role-card .role-ripple-ring--supervisor,
+.desp-auth-role-card .role-ripple-ring--supervisor { border-color: rgba(255, 209, 102, 0.55) !important; }
+
+.auth-role-card .role-ripple--validador,
+.desp-auth-role-card .role-ripple--validador { background: rgba(206, 147, 216, 0.48) !important; }
+.auth-role-card .role-ripple-ring--validador,
+.desp-auth-role-card .role-ripple-ring--validador { border-color: rgba(206, 147, 216, 0.55) !important; }
+
+.auth-role-card .role-ripple--operador,
+.desp-auth-role-card .role-ripple--operador { background: rgba(110, 231, 183, 0.45) !important; }
+.auth-role-card .role-ripple-ring--operador,
+.desp-auth-role-card .role-ripple-ring--operador { border-color: rgba(110, 231, 183, 0.5) !important; }
+
+.auth-role-card .role-ripple--colaborador,
+.desp-auth-role-card .role-ripple--colaborador { background: rgba(144, 202, 249, 0.48) !important; }
+.auth-role-card .role-ripple-ring--colaborador,
+.desp-auth-role-card .role-ripple-ring--colaborador { border-color: rgba(144, 202, 249, 0.55) !important; }
+
+.auth-role-card .role-ripple--preparador,
+.desp-auth-role-card .role-ripple--preparador,
+.desp-auth-role-card .btn-ripple.role-ripple--preparador { background: rgba(255, 183, 77, 0.48) !important; }
+.auth-role-card .role-ripple-ring--preparador,
+.desp-auth-role-card .role-ripple-ring--preparador { border-color: rgba(255, 183, 77, 0.55) !important; }
+
+.desp-auth-role-feedback {
+  color: #ffb74d;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gesture-swipe-track,
+  .gesture-ripple,
+  .gen-card--interactive.is-released,
+  body:not(.auth-locked) .platform-app::before,
+  .auth-role-picker.role-area-pulse,
+  .auth-role-card.role-select-in,
+  .desp-auth-role-card.role-select-in {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}

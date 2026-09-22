@@ -1,0 +1,175 @@
+/* Control Patio — pantalla TV */
+
+body.rec-display-mode {
+  margin: 0;
+  background: #0d0203;
+  color: #fff;
+  font-family: "DM Sans", system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+.rec-display-waiting {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #0d0203;
+  z-index: 5;
+}
+
+.rec-display-wait-inner {
+  text-align: center;
+  max-width: 34rem;
+  padding: 2rem;
+}
+
+.rec-display-wait-title {
+  color: #ffcdd2;
+  margin: 0.5rem 0;
+}
+
+.rec-display-wait-text {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.rec-display-wait-sub {
+  margin: 0.35rem 0 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 205, 210, 0.7);
+}
+
+body.rec-live-on .rec-display-waiting {
+  display: none;
+}
+
+.rec-present-shell {
+  min-height: 100vh;
+  padding: clamp(0.5rem, 1.5vw, 1.2rem);
+  box-sizing: border-box;
+}
+
+.rec-present-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid rgba(255, 138, 128, 0.25);
+}
+
+.rec-present-eyebrow {
+  margin: 0;
+  color: #ffcdd2;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.rec-present-title {
+  margin: 0.15rem 0 0;
+  font-size: clamp(1.2rem, 2.5vw, 2rem);
+  color: #fff;
+}
+
+.rec-present-kpis {
+  margin-left: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+}
+
+.rec-present-kpis strong {
+  color: #fff;
+  font-size: 1.15em;
+}
+
+.rec-present-table-wrap {
+  overflow: auto;
+}
+
+.rec-present-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: clamp(0.78rem, 1.35vw, 1.35rem);
+}
+
+.rec-present-table th,
+.rec-present-table td {
+  padding: clamp(0.35rem, 0.7vw, 0.65rem);
+  border-bottom: 1px solid rgba(255, 138, 128, 0.18);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.rec-present-table th {
+  color: #ffcdd2;
+  font-size: 0.72em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.rec-present-contenedor {
+  font-weight: 800;
+  color: #fff;
+}
+
+.rec-present-desc {
+  white-space: normal;
+}
+
+.rec-present-badge {
+  display: inline-flex;
+  min-width: 4.8rem;
+  justify-content: center;
+  padding: 0.15rem 0.35rem;
+  border-radius: 8px;
+  font-size: 0.72em;
+  font-weight: 800;
+}
+
+.rec-present-badge--ok {
+  background: #2e7d32;
+}
+
+.rec-present-badge--pend {
+  background: #c62828;
+}
+
+.rec-present-tipo {
+  display: inline-block;
+  padding: 0.12rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.68em;
+  font-weight: 800;
+}
+
+.rec-present-tipo--importado {
+  color: #ffd54f;
+  border: 1px solid rgba(255, 213, 79, 0.45);
+}
+
+.rec-present-tipo--local {
+  color: #a5d6a7;
+  border: 1px solid rgba(129, 199, 132, 0.45);
+}
+
+.rec-present-empty {
+  text-align: center;
+  padding: 2rem !important;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.rec-live-present[hidden] {
+  display: none !important;
+}

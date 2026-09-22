@@ -1,0 +1,34 @@
+{
+  "id": "./turnos.html",
+  "name": "Turnos Chofer — Almacén Central DC",
+  "short_name": "Turnos Chofer",
+  "description": "Solicite su turno y reciba alertas cuando lo convoquen.",
+  "start_url": "./turnos.html?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "orientation": "portrait-primary",
+  "background_color": "#002a5c",
+  "theme_color": "#003882",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "assets/img/jc-logo-64.png",
+      "sizes": "64x64",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/icon-turnos-portal.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/icon-turnos-portal.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

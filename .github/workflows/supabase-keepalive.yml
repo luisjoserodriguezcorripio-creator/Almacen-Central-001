@@ -1,0 +1,55 @@
+# Mantiene activo el proyecto Supabase Free (evita pausa por inactividad ~7 días)
+# Solo hace lecturas ligeras REST — no sube de plan.
+
+name: Supabase Free keep-alive
+
+on:
+  schedule:
+    # Martes y viernes 14:00 UTC
+    - cron: "0 14 * * 2,5"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout config
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            data/site-config.json
+          sparse-checkout-cone-mode: false
+
+      - name: Ping Supabase (REST read)
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          import json, urllib.request, ssl, sys
+          from pathlib import Path
+          raw = Path('data/site-config.json').read_bytes()
+          if raw.startswith(b'\xef\xbb\xbf'):
+              raw = raw[3:]
+          cfg = json.loads(raw)
+          sb = cfg.get('supabase') or {}
+          if not sb.get('enabled') or not sb.get('url') or not sb.get('anonKey'):
+              print('Supabase no configurado; skip')
+              sys.exit(0)
+          if not (sb.get('freeTier') or sb.get('preferPoll')):
+              print('AVISO: freeTier/preferPoll no activos en site-config')
+          base = str(sb['url']).rstrip('/')
+          url = base + '/rest/v1/web_snapshots?select=module&limit=1'
+          req = urllib.request.Request(url, headers={
+              'apikey': sb['anonKey'],
+              'Authorization': 'Bearer ' + sb['anonKey'],
+              'Accept': 'application/json',
+              'User-Agent': 'almacen-dc-supabase-keepalive'
+          })
+          ctx = ssl.create_default_context()
+          with urllib.request.urlopen(req, timeout=30, context=ctx) as res:
+              body = res.read(200)
+              print('OK HTTP', res.status, body[:120])
+          print('freeTier=', sb.get('freeTier'), 'preferPoll=', sb.get('preferPoll'))
+          PY

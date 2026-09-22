@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="woodLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8c896"/>
+      <stop offset="40%" stop-color="#c9a66b"/>
+      <stop offset="100%" stop-color="#9a7348"/>
+    </linearGradient>
+    <linearGradient id="woodDark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#b8894f"/>
+      <stop offset="100%" stop-color="#7a5632"/>
+    </linearGradient>
+    <linearGradient id="boxFace" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d4b896"/>
+      <stop offset="100%" stop-color="#a8845c"/>
+    </linearGradient>
+    <linearGradient id="boxSide" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8f6840"/>
+      <stop offset="100%" stop-color="#6b4c2e"/>
+    </linearGradient>
+    <linearGradient id="wrapShine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0.55"/>
+      <stop offset="45%" stop-color="#fff" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0.25"/>
+    </linearGradient>
+    <filter id="palShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#3e2723" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <ellipse cx="64" cy="112" rx="44" ry="7" fill="#000" opacity="0.14"/>
+
+  <g filter="url(#palShadow)">
+    <!-- paleta principal (vista 3/4) -->
+    <path d="M14 78 L58 62 L102 78 L58 94 Z" fill="url(#woodLight)" stroke="#7a5632" stroke-width="0.8"/>
+    <path d="M58 62 L102 78 L102 84 L58 68 Z" fill="url(#woodDark)"/>
+    <!-- tablas superiores -->
+    <path d="M18 74 L54 60 L90 74" stroke="#8d6b43" stroke-width="1.2" opacity="0.5"/>
+    <path d="M20 78 L56 64 L92 78" stroke="#f5deb3" stroke-width="0.8" opacity="0.45"/>
+    <!-- blocks / stringers -->
+    <rect x="22" y="78" width="7" height="10" rx="0.5" fill="#8b6914"/>
+    <rect x="48" y="72" width="7" height="16" rx="0.5" fill="#8b6914"/>
+    <rect x="78" y="78" width="7" height="10" rx="0.5" fill="#8b6914"/>
+
+    <!-- cajas apiladas encima -->
+    <path d="M30 52 L50 44 L70 52 L50 60 Z" fill="url(#boxFace)" stroke="#7a5632" stroke-width="0.7"/>
+    <path d="M50 44 L70 52 L70 64 L50 56 Z" fill="url(#boxSide)"/>
+    <path d="M30 52 L50 60 L50 72 L30 64 Z" fill="#c4a574" stroke="#7a5632" stroke-width="0.7"/>
+    <path d="M50 60 L70 64 L70 76 L50 72 Z" fill="#a8845c"/>
+    <path d="M30 64 L50 72 L50 84 L30 76 Z" fill="url(#boxFace)" stroke="#7a5632" stroke-width="0.7"/>
+    <path d="M50 72 L70 76 L70 88 L50 84 Z" fill="url(#boxSide)"/>
+
+    <!-- texto CARGO -->
+    <text x="40" y="58" font-family="Arial,sans-serif" font-size="5" font-weight="700" fill="#4e342e" opacity="0.85">CARGO</text>
+    <text x="38" y="74" font-family="Arial,sans-serif" font-size="5" font-weight="700" fill="#4e342e" opacity="0.85">CARGO</text>
+
+    <!-- shrink wrap -->
+    <path d="M26 46 Q50 36 74 46 L74 90 Q50 98 26 90 Z" fill="url(#wrapShine)" stroke="rgba(255,255,255,0.35)" stroke-width="0.8"/>
+    <path d="M28 48 Q50 40 72 48" stroke="#fff" stroke-width="1.2" opacity="0.35" fill="none"/>
+    <path d="M30 82 Q50 88 70 82" stroke="#fff" stroke-width="0.8" opacity="0.2" fill="none"/>
+
+    <!-- paleta vacía atrás -->
+    <path d="M78 58 L104 68 L104 74 L78 64 Z" fill="#c9a66b" opacity="0.85"/>
+    <path d="M78 58 L104 68 L104 72 L78 62 Z" fill="#9a7348" opacity="0.9"/>
+    <path d="M82 64 L100 72" stroke="#7a5632" stroke-width="0.8" opacity="0.4"/>
+  </g>
+</svg>

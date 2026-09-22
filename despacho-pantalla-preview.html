@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Vista previa local — pantalla validador">
+  <meta name="theme-color" content="#050810">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>Vista previa — Pantalla validador</title>
+  <script src="js/relay-bootstrap.js?v=2"></script>
+  <link rel="icon" type="image/png" href="assets/img/ac001-logo.svg?v=1">
+  <link rel="stylesheet" href="css/dc-brand.css?v=11">
+  <link rel="stylesheet" href="css/ac001-brand.css?v=1">
+  <link rel="stylesheet" href="css/despacho-dashboard.css?v=50">
+  <link rel="stylesheet" href="css/despacho-display.css?v=32">
+  <link rel="stylesheet" href="css/despacho-display-lista.css?v=21">
+  <link rel="stylesheet" href="css/despacho-display-lista-bar-n.css?v=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      var base = Date.now();
+      function ago(min) {
+        return new Date(base - min * 60000).toISOString();
+      }
+      function ped(id, idc, cliente, jaula, estado, validador, minsAgo) {
+        var reg = ago(minsAgo + 45);
+        var ts = ago(minsAgo);
+        var hist = [
+          { at: ts, usuario: validador, panel: 'validador', desde: estado === 'pendiente_carga' ? null : (estado === 'en_validacion' ? 'pendiente_carga' : 'en_validacion'), hacia: estado, nota: 'Cambio demo' }
+        ];
+        if (estado !== 'pendiente_carga') {
+          hist.push({ at: ago(minsAgo + 12), usuario: validador, panel: 'validador', desde: 'pendiente_carga', hacia: 'en_validacion', nota: 'Validado demo' });
+        }
+        hist.push({ at: reg, usuario: 'Preparador', panel: 'preparador', desde: null, hacia: 'pendiente_carga', nota: 'Registro demo' });
+        return {
+          id: id, idc: idc, cliente: cliente, jaula: jaula, estado: estado,
+          seguimientoValidador: true, visibleValidador: true, validadorAsignado: validador,
+          createdAt: reg, updatedAt: ts, updatedBy: validador, historial: hist
+        };
+      }
+      var now = new Date().toISOString();
+      var demo = {
+        module: 'despacho',
+        version: 1,
+        updatedAt: now,
+        liveShare: null,
+        liveShareLista: { active: true, updatedAt: now, sharedBy: 'Vista previa local' },
+        pedidos: [
+          ped('demo_1', 'IDC-001392435', 'FRANCO RODRIGUEZ', 'SOJ19B', 'pendiente_carga', 'José P.', 8),
+          ped('demo_2', 'IDC-001392436', 'TIENDA ROSALEX EIRL', 'SO09 J1B', 'pendiente_carga', 'José P.', 22),
+          ped('demo_3', 'IDC-001392437', 'SUPERMERCADO JOSE LUIS', 'SOJ20A', 'en_validacion', 'Franklin M.', 15),
+          ped('demo_4', 'IDC-001392438', 'DISTRIBUIDORA NORTE', 'B-12', 'en_validacion', 'Kelvin P.', 5),
+          ped('demo_5', 'IDC-001392439', 'FARMACIA CENTRAL', 'A-07', 'listo_despacho', 'Francisco Gil', 35),
+          ped('demo_6', 'IDC-001392440', 'INVERSIONES SUR', 'C-03', 'listo_despacho', 'Ramon M.', 18),
+          ped('demo_7', 'IDC-001392441', 'COMERCIAL ESTRELLA', 'D-15', 'listo_despacho', 'José P.', 42),
+          ped('demo_8', 'IDC-001392442', 'MEGA STORE', 'E-02', 'listo_despacho', 'Eduardo L.', 28),
+          ped('demo_9', 'IDC-001392443', 'PLAZA CENTRO', 'F-11', 'en_validacion', 'Raul M.', 11),
+          ped('demo_10', 'IDC-001392444', 'MINIMARKET SUR', 'G-04', 'listo_despacho', 'Raul M.', 3)
+        ]
+      };
+      try {
+        localStorage.setItem('almacen_platform_data_despacho', JSON.stringify(demo));
+      } catch (e) { /* noop */ }
+    })();
+  </script>
+</head>
+<body class="desp-display-mode">
+  <noscript><p class="desp-display-noscript">Activa JavaScript para la vista previa.</p></noscript>
+  <div class="desp-display-waiting" id="despDisplayWaiting" aria-live="polite" hidden>
+    <div class="desp-display-wait-inner">
+      <h1 class="desp-display-wait-title">Cargando vista previa…</h1>
+    </div>
+  </div>
+  <script src="js/panel-core.js"></script>
+  <script src="js/platform-despacho-store.js?v=66"></script>
+  <script src="js/platform-despacho-display.js?v=1"></script>
+  <script src="js/platform-despacho-present-lista.js?v=37"></script>
+  <script src="js/platform-despacho-display-app.js?v=4"></script>
+  <script>
+    (function () {
+      var q = '?v=lista';
+      if (location.search !== q) {
+        location.replace(location.pathname + q);
+      }
+    })();
+  </script>
+</body>
+</html>

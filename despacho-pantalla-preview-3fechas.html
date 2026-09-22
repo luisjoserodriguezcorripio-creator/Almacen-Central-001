@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vista general — Pantalla TV validador (propuesta)</title>
+  <link rel="stylesheet" href="css/dc-brand.css?v=11">
+  <link rel="stylesheet" href="css/ac001-brand.css?v=1">
+  <link rel="stylesheet" href="css/despacho-dashboard.css?v=50">
+  <link rel="stylesheet" href="css/despacho-display.css?v=32">
+  <link rel="stylesheet" href="css/despacho-display-lista.css?v=24">
+  <link rel="stylesheet" href="css/despacho-display-lista-bar-n.css?v=1">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body.desp-display-mode.desp-preview-3fechas {
+      margin: 0;
+      background: #050810;
+      font-family: "DM Sans", system-ui, sans-serif;
+    }
+    body.desp-preview-3fechas .desp-lista-present-inner {
+      --desp-table-fs: clamp(0.95rem, 1.65vmin, 2.5rem);
+    }
+    body.desp-preview-3fechas .desp-lista-present-col-idc { width: 12%; }
+    body.desp-preview-3fechas .desp-lista-present-col-cliente { width: 20%; }
+    body.desp-preview-3fechas .desp-lista-present-col-jaula { width: 5%; }
+    body.desp-preview-3fechas .desp-lista-present-col-validador { width: 9%; }
+    body.desp-preview-3fechas .desp-lista-present-col-estado { width: 14%; }
+    body.desp-preview-3fechas .desp-lista-present-col-f1,
+    body.desp-preview-3fechas .desp-lista-present-col-f2,
+    body.desp-preview-3fechas .desp-lista-present-col-f3 { width: 13.33%; }
+    body.desp-preview-3fechas .desp-lista-present-table th,
+    body.desp-preview-3fechas .desp-lista-present-table td {
+      font-size: 1.15em;
+      line-height: 1.15;
+      padding-left: clamp(0.2rem, 0.45vw, 0.55rem) !important;
+      padding-right: clamp(0.2rem, 0.45vw, 0.55rem) !important;
+      overflow: visible;
+      white-space: nowrap;
+    }
+    body.desp-preview-3fechas .desp-lista-present-table td .desp-lista-present-estado,
+    body.desp-preview-3fechas .desp-lista-present-table td .desp-lista-present-validador-pill {
+      font-size: 1em;
+    }
+    body.desp-preview-3fechas .desp-lista-present-th-fecha-etapa {
+      text-transform: none;
+      letter-spacing: 0.02em;
+    }
+    body.desp-preview-3fechas .desp-lista-present-fecha-etapa {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    body.desp-preview-3fechas .desp-lista-present-fecha-etapa--empty {
+      color: rgba(255,255,255,0.28);
+      font-weight: 600;
+    }
+    body.desp-preview-3fechas .desp-lista-present-fecha-etapa--pendiente { color: #ff8a80; }
+    body.desp-preview-3fechas .desp-lista-present-fecha-etapa--validado { color: #ffd54f; }
+    body.desp-preview-3fechas .desp-lista-present-fecha-etapa--cargado { color: #69f0ae; }
+    body.desp-preview-3fechas .desp-lista-present-estado-cell-only { vertical-align: middle; }
+    /* Gráfico validadores = mismo tamaño que columna Cliente (1.15 × --desp-table-fs) */
+    body.desp-preview-3fechas .desp-val-chart-row {
+      font-size: calc(var(--desp-table-fs) * 1.15) !important;
+      grid-template-columns: minmax(7rem, 16vmin) minmax(0, 1fr);
+      line-height: 1.15;
+    }
+    body.desp-preview-3fechas .desp-val-chart-name,
+    body.desp-preview-3fechas .desp-val-chart-seg-num,
+    body.desp-preview-3fechas .desp-val-chart-ultima {
+      font-size: 1em !important;
+      line-height: 1.15;
+    }
+    body.desp-preview-3fechas .desp-val-chart-seg-num {
+      min-width: 1.5em;
+    }
+    body.desp-preview-3fechas .desp-val-chart-bar-line {
+      height: clamp(0.55rem, 1.05vmin, 1.35rem);
+    }
+    body.desp-preview-3fechas .desp-val-chart-bars {
+      gap: clamp(0.18rem, 0.32vh, 0.32rem);
+    }
+  </style>
+</head>
+<body class="desp-display-mode desp-preview-3fechas desp-live-lista-on">
+  <div class="desp-live-present-lista" id="despGlobalLiveLista">
+    <div class="desp-lista-present-shell">
+      <div class="desp-lista-present-inner">
+
+        <div class="desp-lista-present-toolbar">
+          <!-- KPIs -->
+          <div class="desp-lista-present-kpis" role="group" aria-label="Totales por estado">
+            <div class="desp-lista-present-kpi desp-lista-present-kpi--pendiente">
+              <span class="desp-lista-present-kpi-iconbox" aria-hidden="true">
+                <svg class="desp-estado-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+              </span>
+              <span class="desp-lista-present-kpi-num">3</span>
+              <span class="desp-lista-present-kpi-lbl">Pendiente por validar</span>
+            </div>
+            <div class="desp-lista-present-kpi desp-lista-present-kpi--validado">
+              <span class="desp-lista-present-kpi-iconbox" aria-hidden="true">
+                <svg class="desp-estado-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+              </span>
+              <span class="desp-lista-present-kpi-num">2</span>
+              <span class="desp-lista-present-kpi-lbl">Validado</span>
+            </div>
+            <div class="desp-lista-present-kpi desp-lista-present-kpi--cargado">
+              <span class="desp-lista-present-kpi-iconbox" aria-hidden="true">
+                <svg class="desp-estado-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18h2"/><path d="M19 18h2v-3.34a1 1 0 0 0-.76-.97L19 13V9a1 1 0 0 0-1-1h-3"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+              </span>
+              <span class="desp-lista-present-kpi-num">5</span>
+              <span class="desp-lista-present-kpi-lbl">Cargado</span>
+            </div>
+          </div>
+
+          <!-- Barras validadores (productividad: más arriba, menos abajo) -->
+          <aside class="desp-val-resumen desp-val-resumen--solo-barras" aria-label="Resumen validadores por productividad">
+            <div class="desp-val-chart-rows" id="previewChart"></div>
+          </aside>
+        </div>
+
+        <!-- Tabla con 3 columnas de fecha -->
+        <div class="desp-lista-present-table-wrap">
+          <table class="desp-lista-present-table" aria-label="Lista IDC en seguimiento validador">
+            <colgroup>
+              <col class="desp-lista-present-col-idc">
+              <col class="desp-lista-present-col-cliente">
+              <col class="desp-lista-present-col-jaula">
+              <col class="desp-lista-present-col-validador">
+              <col class="desp-lista-present-col-estado">
+              <col class="desp-lista-present-col-f1">
+              <col class="desp-lista-present-col-f2">
+              <col class="desp-lista-present-col-f3">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>IDC</th>
+                <th>Cliente</th>
+                <th>Jaula</th>
+                <th>Validador</th>
+                <th class="desp-lista-present-th-estado">Estado</th>
+                <th class="desp-lista-present-th-fecha-etapa">Registro IDC</th>
+                <th class="desp-lista-present-th-fecha-etapa">Validado</th>
+                <th class="desp-lista-present-th-fecha-etapa">Cargado</th>
+              </tr>
+            </thead>
+            <tbody id="previewRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var rows = [
+        { idc: 'IDC-001392435', cliente: 'FRANCO RODRIGUEZ', jaula: 'SOJ19B', val: 'José P.', est: 'Pend. por validar', cls: 'red', f1: '16/6 8:42 a. m.', f2: '—', f3: '—', c1: 'pendiente', c2: 'empty', c3: 'empty' },
+        { idc: 'IDC-001392436', cliente: 'TIENDA ROSALEX EIRL', jaula: 'SO09J1B', val: 'José P.', est: 'Pend. por validar', cls: 'red', f1: '16/6 8:10 a. m.', f2: '—', f3: '—', c1: 'pendiente', c2: 'empty', c3: 'empty' },
+        { idc: 'IDC-001392441', cliente: 'COMERCIAL ESTRELLA', jaula: 'D-15', val: 'Kelvin P.', est: 'Pend. por validar', cls: 'red', f1: '16/6 7:55 a. m.', f2: '—', f3: '—', c1: 'pendiente', c2: 'empty', c3: 'empty' },
+        { idc: 'IDC-001392437', cliente: 'SUPERMERCADO JOSE LUIS', jaula: 'SOJ20A', val: 'Franklin M.', est: 'Validado', cls: 'yellow', f1: '16/6 7:15 a. m.', f2: '16/6 9:03 a. m.', f3: '—', c1: 'pendiente', c2: 'validado', c3: 'empty' },
+        { idc: 'IDC-001392443', cliente: 'PLAZA CENTRO', jaula: 'F-11', val: 'Raul M.', est: 'Validado', cls: 'yellow', f1: '16/6 6:48 a. m.', f2: '16/6 8:30 a. m.', f3: '—', c1: 'pendiente', c2: 'validado', c3: 'empty' },
+        { idc: 'IDC-001392439', cliente: 'FARMACIA CENTRAL', jaula: 'A-07', val: 'Francisco Gil', est: 'Cargado', cls: 'green', f1: '16/6 6:20 a. m.', f2: '16/6 8:05 a. m.', f3: '16/6 10:18 a. m.', c1: 'pendiente', c2: 'validado', c3: 'cargado' },
+        { idc: 'IDC-001392440', cliente: 'INVERSIONES SUR', jaula: 'C-03', val: 'Ramon M.', est: 'Cargado', cls: 'green', f1: '16/6 5:55 a. m.', f2: '16/6 7:40 a. m.', f3: '16/6 9:52 a. m.', c1: 'pendiente', c2: 'validado', c3: 'cargado' },
+        { idc: 'IDC-001392438', cliente: 'MEGA STORE', jaula: 'E-02', val: 'José P.', est: 'Cargado', cls: 'green', f1: '16/6 5:30 a. m.', f2: '16/6 7:10 a. m.', f3: '16/6 9:05 a. m.', c1: 'pendiente', c2: 'validado', c3: 'cargado' },
+        { idc: 'IDC-001392442', cliente: 'DISTRIBUIDORA NORTE', jaula: 'B-12', val: 'José P.', est: 'Cargado', cls: 'green', f1: '16/6 5:12 a. m.', f2: '16/6 6:50 a. m.', f3: '16/6 8:40 a. m.', c1: 'pendiente', c2: 'validado', c3: 'cargado' },
+        { idc: 'IDC-001392444', cliente: 'MINIMARKET SUR', jaula: 'G-04', val: 'Eduardo L.', est: 'Cargado', cls: 'green', f1: '16/6 4:58 a. m.', f2: '16/6 6:22 a. m.', f3: '16/6 8:15 a. m.', c1: 'pendiente', c2: 'validado', c3: 'cargado' }
+      ];
+      function cellFecha(txt, cls) {
+        return '<td class="desp-lista-present-fecha-etapa desp-lista-present-fecha-etapa--' + cls + '">' + txt + '</td>';
+      }
+      document.getElementById('previewRows').innerHTML = rows.map(function (r) {
+        return '<tr>' +
+          '<td class="desp-lista-present-idc">' + r.idc + '</td>' +
+          '<td class="desp-lista-present-cliente">' + r.cliente + '</td>' +
+          '<td class="desp-lista-present-jaula">' + r.jaula + '</td>' +
+          '<td class="desp-lista-present-validador"><span class="desp-lista-present-validador-pill">' + r.val + '</span></td>' +
+          '<td class="desp-lista-present-estado-cell-only"><span class="desp-lista-present-estado desp-lista-present-estado--' + r.cls + '">' + r.est + '</span></td>' +
+          cellFecha(r.f1, r.c1) + cellFecha(r.f2, r.c2) + cellFecha(r.f3, r.c3) +
+          '</tr>';
+      }).join('');
+
+      function barFlexClass(n) {
+        n = Math.max(0, Math.min(250, Math.round(n || 0)));
+        return 'desp-bar-n-' + n;
+      }
+      function renderBarFlex(value, scaleMax, kind) {
+        var v = Math.max(0, Math.min(scaleMax, value || 0));
+        var rest = Math.max(0, scaleMax - v);
+        var html = '<div class="desp-val-chart-bar-line desp-val-chart-bar-line--flex">';
+        if (v > 0) {
+          html += '<span class="desp-val-chart-bar-fill desp-val-chart-bar-fill--' + kind + ' ' + barFlexClass(v) + '"></span>';
+        }
+        if (rest > 0) {
+          html += '<span class="desp-val-chart-bar-rest ' + barFlexClass(rest) + '"></span>';
+        }
+        html += '</div>';
+        return html;
+      }
+      function aggregateProductividad(tableRows) {
+        var map = Object.create(null);
+        tableRows.forEach(function (r) {
+          if (r.est !== 'Validado' && r.est !== 'Cargado') return;
+          if (!map[r.val]) map[r.val] = { nombre: r.val, validado: 0, cargado: 0 };
+          if (r.est === 'Validado') map[r.val].validado += 1;
+          if (r.est === 'Cargado') map[r.val].cargado += 1;
+        });
+        return Object.keys(map).map(function (k) { return map[k]; }).sort(function (a, b) {
+          var ta = a.validado + a.cargado;
+          var tb = b.validado + b.cargado;
+          if (tb !== ta) return tb - ta;
+          return String(a.nombre).localeCompare(String(b.nombre), 'es');
+        });
+      }
+      function renderChart(tableRows) {
+        var filas = aggregateProductividad(tableRows);
+        var scaleMax = 10;
+        document.getElementById('previewChart').innerHTML = filas.map(function (r) {
+          return '<div class="desp-val-chart-row">' +
+            '<span class="desp-val-chart-name">' + r.nombre + '</span>' +
+            '<div class="desp-val-chart-bars" role="img" aria-label="' + r.nombre + ': ' +
+            r.validado + ' validados, ' + r.cargado + ' cargados, productividad ' + (r.validado + r.cargado) + '">' +
+            '<div class="desp-val-chart-bar-row">' +
+            renderBarFlex(r.cargado, scaleMax, 'cargado') +
+            '<span class="desp-val-chart-seg-num desp-val-chart-seg-num--cargado">' + r.cargado + '</span></div>' +
+            '<div class="desp-val-chart-bar-row">' +
+            renderBarFlex(r.validado, scaleMax, 'validado') +
+            '<span class="desp-val-chart-seg-num desp-val-chart-seg-num--validado">' + r.validado + '</span></div>' +
+            '</div></div>';
+        }).join('');
+      }
+      renderChart(rows);
+    })();
+  </script>
+</body>
+</html>

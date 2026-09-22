@@ -1,0 +1,876 @@
+/**
+ * Pantalla externa — estilos fullscreen (TV / monitor grande)
+ */
+body.desp-display-mode {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #03060e;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: #e8eef4;
+  overflow: hidden;
+}
+
+body.desp-display-mode.desp-live-present-on,
+body.desp-display-mode.desp-live-lista-on {
+  overflow: hidden;
+}
+
+/* —— Tema elegante pantalla código de barras —— */
+body.desp-display-mode.desp-live-present-on {
+  background: #040810;
+}
+
+body.desp-display-mode.desp-live-present-on::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  animation: despPresentBgPulse 8s ease-in-out infinite;
+  background:
+    radial-gradient(ellipse 90% 70% at 100% 0%, rgba(255, 152, 0, 0.2), transparent 52%),
+    radial-gradient(ellipse 70% 55% at 0% 100%, rgba(255, 152, 0, 0.12), transparent 48%),
+    radial-gradient(ellipse 55% 45% at 50% 42%, rgba(42, 62, 110, 0.32), transparent 68%),
+    linear-gradient(160deg, #050a14 0%, #0c1628 42%, #08101e 72%, #040810 100%);
+}
+
+@keyframes despPresentBgPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.92; }
+}
+
+@keyframes despPresentShimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes despPresentOrbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.55; }
+  50% { transform: translate(12px, -18px) scale(1.08); opacity: 0.75; }
+}
+
+@keyframes despPresentBadgePulse {
+  0%, 100% { box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35), 0 0 0 0 rgba(86, 211, 100, 0.25); }
+  50% { box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4), 0 0 20px rgba(86, 211, 100, 0.18); }
+}
+
+body.desp-display-mode .desp-present-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+body.desp-display-mode .desp-present-ambient[hidden] {
+  display: none !important;
+}
+
+body.desp-display-mode .desp-present-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  animation: despPresentOrbFloat 12s ease-in-out infinite;
+}
+
+body.desp-display-mode .desp-present-orb--1 {
+  width: 280px;
+  height: 280px;
+  top: 8%;
+  left: -4%;
+  background: rgba(255, 152, 0, 0.14);
+  animation-delay: 0s;
+}
+
+body.desp-display-mode .desp-present-orb--2 {
+  width: 220px;
+  height: 220px;
+  bottom: 12%;
+  right: 6%;
+  background: rgba(255, 152, 0, 0.1);
+  animation-delay: -4s;
+}
+
+body.desp-display-mode .desp-present-orb--3 {
+  width: 160px;
+  height: 160px;
+  top: 42%;
+  right: 18%;
+  background: rgba(59, 130, 246, 0.08);
+  animation-delay: -7s;
+}
+
+body.desp-display-mode .desp-present-frame-accent {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border: 2px solid rgba(255, 152, 0, 0.22);
+  opacity: 0.65;
+}
+
+body.desp-display-mode .desp-present-frame-accent--tl {
+  top: 1.5rem;
+  left: 1.5rem;
+  border-right: none;
+  border-bottom: none;
+  border-radius: 12px 0 0 0;
+}
+
+body.desp-display-mode .desp-present-frame-accent--br {
+  bottom: 1.5rem;
+  right: 1.5rem;
+  border-left: none;
+  border-top: none;
+  border-radius: 0 0 12px 0;
+}
+
+body.desp-display-mode.desp-live-present-on::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  background-image:
+    linear-gradient(rgba(255, 152, 0, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 152, 0, 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 75% 70% at 50% 48%, #000 20%, transparent 72%);
+  -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 48%, #000 20%, transparent 72%);
+}
+
+.desp-display-noscript {
+  padding: 2rem;
+  text-align: center;
+}
+
+.desp-display-waiting {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255, 152, 0, 0.08), transparent 55%),
+    #03060e;
+}
+
+.desp-display-waiting[hidden] {
+  display: none !important;
+}
+
+.desp-display-wait-inner {
+  text-align: center;
+  max-width: 420px;
+}
+
+.desp-display-wait-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+  opacity: 0.85;
+}
+
+.desp-display-wait-title {
+  margin: 0 0 0.65rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.desp-display-wait-text {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: #8fa3b8;
+}
+
+.desp-display-wait-hint {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #6b7c8f;
+  line-height: 1.45;
+}
+
+/* —— Presentación barcode en vivo —— */
+body.desp-display-mode .desp-live-present {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  background: transparent;
+}
+
+body.desp-display-mode .desp-present-shell,
+body.desp-display-mode .desp-present-shell--tv {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  max-height: 100dvh;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  border-bottom: none;
+  background: transparent;
+  overflow: hidden;
+}
+
+body.desp-display-mode .desp-present-brand {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.5rem;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 220px;
+  padding: 0.55rem 1rem 0.55rem 0.65rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(10, 16, 32, 0.92), rgba(6, 10, 22, 0.78));
+  border: 1px solid rgba(255, 152, 0, 0.35);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.42),
+    0 0 32px rgba(255, 152, 0, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  pointer-events: none;
+}
+
+body.desp-display-mode .desp-present-brand::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.5), transparent 40%, rgba(255, 183, 77, 0.25));
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+}
+
+body.desp-display-mode .desp-present-brand[hidden] {
+  display: none !important;
+}
+
+body.desp-display-mode .desp-present-brand-logo {
+  display: block;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 2px 10px rgba(255, 152, 0, 0.35));
+}
+
+body.desp-display-mode .desp-present-brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  text-align: left;
+  line-height: 1.12;
+  flex: 1;
+  min-width: 0;
+}
+
+body.desp-display-mode .desp-present-brand-name {
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #f2f6fa;
+  white-space: nowrap;
+}
+
+body.desp-display-mode .desp-present-brand-sub {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ff9800;
+  opacity: 0.95;
+  white-space: nowrap;
+}
+
+body.desp-display-mode .desp-present-inner,
+body.desp-display-mode .desp-present-inner--tv {
+  flex: 1;
+  width: 100%;
+  max-width: 1600px;
+  min-height: 0;
+  height: 100%;
+  max-height: 100dvh;
+  margin: 0 auto;
+  padding: clamp(2.65rem, 7vh, 3.35rem) clamp(0.45rem, 1.5vw, 1.1rem) clamp(0.25rem, 0.8vh, 0.5rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+body.desp-display-mode .desp-present-badge {
+  display: none !important;
+}
+
+body.desp-display-mode .desp-present-dot {
+  width: 9px;
+  height: 9px;
+  box-shadow: 0 0 10px rgba(86, 211, 100, 0.65);
+}
+
+body.desp-display-mode .desp-present-grid,
+body.desp-display-mode .desp-present-grid--tv {
+  flex: 1 1 0;
+  width: 100%;
+  min-height: 0;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: stretch;
+  text-align: center;
+  gap: 0;
+  overflow: visible;
+}
+
+body.desp-display-mode .desp-present-content {
+  width: min(98vw, 1080px);
+  max-width: 100%;
+  flex: 1 1 0;
+  min-height: 0;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: clamp(0.45rem, 1vh, 0.75rem);
+}
+
+body.desp-display-mode .desp-present-stage {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: clamp(0.5rem, 1vh, 0.85rem);
+  border-radius: clamp(16px, 2vw, 24px);
+  background:
+    linear-gradient(155deg, rgba(14, 22, 40, 0.96), rgba(7, 12, 24, 0.92)),
+    linear-gradient(180deg, rgba(255, 152, 0, 0.04) 0%, transparent 35%);
+  border: 1px solid rgba(255, 152, 0, 0.3);
+  box-shadow:
+    0 32px 100px rgba(0, 0, 0, 0.58),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 0 100px rgba(255, 152, 0, 0.1);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  overflow: visible;
+}
+
+body.desp-display-mode .desp-present-corner {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-color: rgba(255, 152, 0, 0.55);
+  border-style: solid;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+body.desp-display-mode .desp-present-corner--tl {
+  top: 14px;
+  left: 14px;
+  border-width: 2px 0 0 2px;
+  border-radius: 6px 0 0 0;
+}
+
+body.desp-display-mode .desp-present-corner--tr {
+  top: 14px;
+  right: 14px;
+  border-width: 2px 2px 0 0;
+  border-radius: 0 6px 0 0;
+}
+
+body.desp-display-mode .desp-present-corner--bl {
+  bottom: 14px;
+  left: 14px;
+  border-width: 0 0 2px 2px;
+  border-radius: 0 0 0 6px;
+}
+
+body.desp-display-mode .desp-present-corner--br {
+  bottom: 14px;
+  right: 14px;
+  border-width: 0 2px 2px 0;
+  border-radius: 0 0 6px 0;
+}
+
+body.desp-display-mode .desp-present-stage::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 152, 0, 0.2) 15%,
+    rgba(255, 183, 77, 0.85) 50%,
+    rgba(255, 152, 0, 0.2) 85%,
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: despPresentShimmer 4s linear infinite;
+  pointer-events: none;
+}
+
+body.desp-display-mode .desp-present-stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 152, 0, 0.06), transparent 55%);
+  pointer-events: none;
+}
+
+body.desp-display-mode .desp-present-barcode-wrap,
+body.desp-display-mode .desp-present-barcode-wrap--tv {
+  position: relative;
+  flex: 1 1 0;
+  width: 100%;
+  min-height: clamp(140px, 22vh, 220px);
+  max-height: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: clamp(0.5rem, 1vh, 0.75rem) clamp(0.65rem, 1.5vw, 1.1rem);
+  border-radius: clamp(14px, 1.6vw, 18px);
+  background:
+    linear-gradient(180deg, #ffffff 0%, #faf7f2 48%, #f3efe8 100%);
+  border: 1px solid rgba(255, 152, 0, 0.22);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(255, 255, 255, 0.75) inset,
+    0 4px 0 rgba(255, 152, 0, 0.12);
+  box-sizing: border-box;
+}
+
+body.desp-display-mode .desp-present-scan-tag {
+  font-size: clamp(0.62rem, 1.1vw, 0.72rem);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 152, 0, 0.75);
+}
+
+body.desp-display-mode .desp-present-barcode.desp-barcode-img,
+body.desp-display-mode .desp-present-barcode.desp-barcode-img--tv,
+body.desp-display-mode .desp-present-barcode.desp-barcode-img--hq {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(98%, 1480px);
+  max-height: min(52vh, 920px);
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  filter: contrast(1.06);
+}
+
+body.desp-display-mode .desp-present-meta,
+body.desp-display-mode .desp-present-meta--tv {
+  position: relative;
+  z-index: 3;
+  flex: 0 0 auto;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.2rem, 0.55vh, 0.45rem);
+  width: 100%;
+  padding: clamp(0.45rem, 1vh, 0.75rem) clamp(0.5rem, 2vw, 1rem);
+  border-radius: clamp(12px, 1.5vw, 18px);
+  background: rgba(8, 14, 28, 0.72);
+  border: 1px solid rgba(255, 152, 0, 0.22);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  transform: none !important;
+}
+
+body.desp-display-mode .desp-present-meta-divider {
+  width: min(280px, 70%);
+  height: 1px;
+  margin-bottom: 0.15rem;
+  background: linear-gradient(90deg, transparent, rgba(255, 152, 0, 0.45), transparent);
+}
+
+body.desp-display-mode .desp-present-label {
+  margin: 0;
+  font-size: clamp(0.82rem, 1.6vmin, 1rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #c8d4e4;
+}
+
+body.desp-display-mode .desp-present-idc {
+  margin: 0;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1.05;
+  word-break: break-word;
+}
+
+body.desp-display-mode .desp-present-idc-value {
+  display: inline-block;
+  padding: 0.1em 0.4em;
+  font-size: clamp(2.1rem, min(8.5vmin, 5.8vw), 5rem);
+  font-variant-numeric: tabular-nums;
+  text-transform: none;
+  color: #ffffff;
+  text-shadow:
+    0 0 24px rgba(255, 152, 0, 0.45),
+    0 2px 4px rgba(0, 0, 0, 0.65);
+}
+
+@media (min-width: 1600px) {
+  body.desp-display-mode .desp-present-idc-value {
+    font-size: clamp(2.35rem, min(7.5vmin, 4.2vw), 5.25rem);
+  }
+}
+
+@media (max-height: 780px) {
+  body.desp-display-mode .desp-present-idc-value {
+    font-size: clamp(1.95rem, min(8vmin, 5.2vw), 3.75rem);
+  }
+}
+
+body.desp-display-mode .desp-present-ref-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
+  margin-top: 0.15rem;
+}
+
+body.desp-display-mode .desp-present-ref-label {
+  margin: 0;
+  font-size: clamp(0.82rem, 1.6vmin, 1rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #c8d4e4;
+}
+
+body.desp-display-mode .desp-present-jaula {
+  margin: 0;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+}
+
+body.desp-display-mode .desp-present-jaula-value {
+  display: inline-block;
+  padding: 0.28em 0.85em;
+  font-size: clamp(1.1rem, 3vmin, 2rem);
+  color: #ffcc80;
+  background: rgba(255, 152, 0, 0.12);
+  border: 1px solid rgba(255, 152, 0, 0.32);
+  border-radius: 999px;
+  box-shadow: 0 0 20px rgba(255, 152, 0, 0.15);
+  min-width: min(220px, 65vw);
+  max-width: 92vw;
+  word-break: break-word;
+}
+
+body.desp-display-mode .desp-present-jaula-value--empty {
+  color: #6b7c8f;
+  background: rgba(107, 124, 143, 0.12);
+  border-color: rgba(107, 124, 143, 0.28);
+  box-shadow: none;
+  font-size: clamp(1.1rem, 2.4vw, 1.65rem);
+}
+
+body.desp-display-mode .desp-present-jaula strong {
+  font-size: inherit;
+  color: inherit;
+}
+
+body.desp-display-mode .desp-present-estado-wrap {
+  display: none !important;
+}
+
+body.desp-display-mode .desp-present-estado-wrap .desp-present-estado,
+body.desp-display-mode .desp-present-estado-wrap .desp-badge {
+  font-size: clamp(0.9rem, 1.8vw, 1.2rem);
+  padding: 0.45em 0.95em;
+}
+
+body.desp-display-mode .desp-present-by {
+  margin: 0;
+  font-size: clamp(0.85rem, 1.5vmin, 1.05rem);
+  font-weight: 600;
+  color: #b8c8dc;
+  letter-spacing: 0.03em;
+  padding-top: 0.25rem;
+}
+
+body.desp-display-mode .desp-present-by-label {
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.78em;
+  color: #7a8fa6;
+}
+
+@media (max-height: 780px) {
+  body.desp-display-mode .desp-present-inner--tv {
+    padding-top: 3.35rem;
+  }
+
+  body.desp-display-mode .desp-present-stage {
+    padding: 0.55rem 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.desp-display-mode.desp-live-present-on::before,
+  body.desp-display-mode .desp-present-orb,
+  body.desp-display-mode .desp-present-badge,
+  body.desp-display-mode .desp-present-stage::before {
+    animation: none !important;
+  }
+}
+
+/* Menos GPU en PCs con varias ventanas TV del barcode IDC */
+body.desp-display-mode.desp-live-present-on::before,
+body.desp-display-mode .desp-present-orb {
+  animation: none !important;
+}
+
+body.desp-display-mode .desp-present-stage,
+body.desp-display-mode .desp-present-brand {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+body.desp-display-view-barcode .desp-live-present-lista {
+  display: none !important;
+}
+
+body.desp-display-view-lista .desp-live-present {
+  display: none !important;
+}
+
+/* —— Lista validadores —— */
+body.desp-display-mode .desp-live-present-lista {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+}
+
+body.desp-display-mode .desp-lista-present-shell {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border-bottom: none;
+}
+
+body.desp-display-mode .desp-lista-present-inner {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: none;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(0.2rem, 0.45vh, 0.35rem) clamp(0.45rem, 1.2vw, 0.75rem);
+  box-sizing: border-box;
+}
+
+body.desp-display-mode .desp-lista-present-toolbar {
+  flex-shrink: 0;
+  margin-bottom: clamp(0.15rem, 0.35vh, 0.25rem);
+}
+
+body.desp-display-mode .desp-lista-present-toolbar .desp-val-resumen {
+  flex: 1 1 62%;
+  width: auto;
+  max-width: none;
+  padding: clamp(0.28rem, 0.55vh, 0.38rem) clamp(0.35rem, 0.8vw, 0.48rem);
+  gap: clamp(0.12rem, 0.3vh, 0.2rem);
+}
+
+body.desp-display-mode .desp-lista-present-toolbar-left {
+  gap: clamp(0.25rem, 0.6vw, 0.4rem) clamp(0.35rem, 0.8vw, 0.5rem);
+}
+
+body.desp-display-mode .desp-lista-present-title {
+  font-size: clamp(0.62rem, 1.1vw, 0.78rem);
+}
+
+body.desp-display-mode .desp-lista-present-kpis {
+  flex: 0 1 38%;
+  width: auto;
+  gap: clamp(0.35rem, 0.75vw, 0.5rem);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+body.desp-display-mode:not(.desp-live-lista-on) .desp-lista-present-kpi {
+  min-height: auto;
+}
+
+body.desp-display-mode .desp-val-resumen {
+  flex: 1 1 62%;
+  max-width: none;
+  width: auto;
+}
+
+body.desp-display-mode .desp-val-resumen-title {
+  font-size: clamp(0.62rem, 1.1vw, 0.74rem);
+}
+
+body.desp-display-mode .desp-val-resumen-legend {
+  font-size: clamp(0.58rem, 1vw, 0.66rem);
+}
+
+body.desp-display-mode:not(.desp-live-lista-on) .desp-val-chart-row {
+  font-size: clamp(0.62rem, 1.05vw, 0.72rem);
+}
+
+body.desp-display-mode .desp-val-chart-name {
+  font-size: inherit;
+}
+
+body.desp-display-mode .desp-val-chart-bar-line {
+  height: clamp(0.34rem, 0.65vh, 0.42rem);
+}
+
+body.desp-display-mode .desp-val-chart-rows {
+  gap: clamp(0.15rem, 0.35vh, 0.22rem) clamp(0.35rem, 0.8vw, 0.5rem);
+}
+
+body.desp-display-mode .desp-val-resumen-foot {
+  font-size: clamp(0.58rem, 1vw, 0.66rem);
+  padding-top: clamp(0.12rem, 0.25vh, 0.18rem);
+}
+
+body.desp-display-mode .desp-val-chart-rows {
+  max-height: none;
+  overflow: visible;
+  grid-template-columns: 1fr 1fr;
+}
+
+body.desp-display-mode .desp-lista-present-totales {
+  display: none !important;
+}
+
+body.desp-display-mode .desp-lista-present-total {
+  padding: clamp(0.4rem, 0.9vh, 0.55rem) clamp(0.55rem, 1.2vw, 0.75rem);
+}
+
+body.desp-display-mode .desp-lista-present-total-num {
+  font-size: clamp(1.25rem, 2.4vw, 1.65rem);
+}
+
+body.desp-display-mode .desp-lista-present-total-lbl {
+  font-size: clamp(0.58rem, 1.1vw, 0.68rem);
+}
+
+body.desp-display-mode .desp-lista-present-total-icon .desp-estado-icon {
+  width: clamp(0.9rem, 1.6vw, 1.1rem);
+  height: clamp(0.9rem, 1.6vw, 1.1rem);
+}
+
+body.desp-display-mode .desp-lista-present-table-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+body.desp-display-mode .desp-lista-present-table {
+  font-size: clamp(0.82rem, 1.45vw, 0.98rem);
+}
+
+body.desp-display-mode .desp-lista-present-table th {
+  font-size: clamp(0.62rem, 1.15vw, 0.74rem);
+  padding: clamp(0.28rem, 0.55vh, 0.38rem) clamp(0.45rem, 1vw, 0.65rem);
+}
+
+body.desp-display-mode .desp-lista-present-table td {
+  padding: clamp(0.22rem, 0.45vh, 0.32rem) clamp(0.45rem, 1vw, 0.65rem);
+  vertical-align: middle;
+}
+
+body.desp-display-mode .desp-lista-present-estado {
+  padding: 0.18rem 0.42rem;
+  font-size: clamp(0.68rem, 1.15vw, 0.78rem);
+  gap: 0.25rem;
+}
+
+body.desp-display-mode .desp-lista-present-estado-stack {
+  gap: 0.12rem;
+}
+
+body.desp-display-mode .desp-lista-present-etapas--grid {
+  gap: 0.08rem 0.25rem;
+}
+
+body.desp-display-mode .desp-lista-present-etapa {
+  font-size: clamp(0.58rem, 1vw, 0.72rem);
+}
+
+body.desp-display-mode .desp-lista-present-idc {
+  font-size: clamp(0.88rem, 1.55vw, 1.02rem);
+}
+
+body.desp-display-mode .desp-lista-present-validador-pill {
+  padding: 0.1rem 0.35rem;
+  font-size: 0.85em;
+}
+
+body.desp-display-mode:not(.desp-live-lista-on) .desp-lista-present-kpi-iconbox {
+  width: clamp(1.45rem, 2.8vw, 1.85rem);
+  height: clamp(1.45rem, 2.8vw, 1.85rem);
+}
+
+body.desp-display-mode:not(.desp-live-lista-on) .desp-lista-present-kpi-num {
+  font-size: clamp(1.45rem, 2.8vw, 1.85rem);
+  width: auto;
+  height: auto;
+}
+
+body.desp-display-mode:not(.desp-live-lista-on) .desp-lista-present-kpi-lbl {
+  font-size: clamp(0.48rem, 0.9vw, 0.58rem);
+}
+
+body.desp-display-mode:not(.desp-live-lista-on) .desp-lista-present-kpi {
+  padding: clamp(0.22rem, 0.45vh, 0.3rem) clamp(0.28rem, 0.6vw, 0.36rem);
+}

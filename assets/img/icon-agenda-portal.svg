@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="ag" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0ea5e9"/>
+      <stop offset="0.55" stop-color="#0369a1"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+    <linearGradient id="agSh" x1="18" y1="14" x2="46" y2="50" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#e0f2fe" stop-opacity="0.88"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#ag)"/>
+  <rect x="14" y="12" width="36" height="40" rx="6" fill="url(#agSh)"/>
+  <rect x="14" y="12" width="36" height="11" rx="6" fill="#0284c7"/>
+  <rect x="14" y="17" width="36" height="6" fill="#0284c7"/>
+  <circle cx="22" cy="16.5" r="2" fill="#bae6fd"/>
+  <circle cx="32" cy="16.5" r="2" fill="#bae6fd"/>
+  <circle cx="42" cy="16.5" r="2" fill="#bae6fd"/>
+  <path d="M20 30h8M20 36h12M20 42h10" stroke="#0369a1" stroke-width="2.2" stroke-linecap="round"/>
+  <rect x="34" y="28" width="10" height="10" rx="2.5" fill="#0d9488" opacity="0.18" stroke="#0f766e" stroke-width="1.5"/>
+  <path d="M36.5 33.5l2 2 4.5-5" stroke="#0f766e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="34" y="40" width="10" height="6" rx="2" fill="#0369a1" opacity="0.12"/>
+</svg>

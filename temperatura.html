@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Monitoreo de temperatura en tiempo real — Almacén Central 001">
+  <meta name="theme-color" content="#050810">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:* http://127.0.0.1:* http://192.168.0.0/16 http://10.0.0.0/8 https://api.jsonbin.io https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com; img-src 'self' data: https://challenges.cloudflare.com; media-src 'self'; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Monitoreo de Temperatura — Almacén Central 001</title>
+  <script src="js/relay-bootstrap.js?v=1"></script>
+  <link rel="icon" type="image/png" href="assets/img/ac001-logo.svg?v=1">
+  <link rel="stylesheet" href="css/platform.css?v=32">
+  <link rel="stylesheet" href="css/auth-cinematic.css?v=19">
+  <link rel="stylesheet" href="css/auth-security.css?v=3">
+  <link rel="stylesheet" href="css/auth-portals-layout.css?v=10">
+  <link rel="stylesheet" href="css/dc-brand.css?v=11">
+  <link rel="stylesheet" href="css/ac001-brand.css?v=1">
+  <link rel="stylesheet" href="css/averias-auth.css?v=6">
+  <link rel="stylesheet" href="css/averias-portal.css?v=9">
+  <link rel="stylesheet" href="css/averias-responsive.css?v=13">
+  <link rel="stylesheet" href="css/temperatura-portal.css?v=4">
+  <link rel="stylesheet" href="css/temperatura-auth.css?v=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="auth-locked executive-ui">
+  <noscript><p class="noscript-msg">Activa JavaScript para usar el monitoreo de temperatura.</p></noscript>
+
+  <div class="auth-overlay av-auth-overlay" id="tempAuthOverlay" role="dialog" aria-labelledby="tempAuthTitle">
+    <div class="auth-video-wrap av-auth-bg-wrap" aria-hidden="true">
+      <div class="auth-video-scrim av-auth-scrim"></div>
+    </div>
+    <div class="auth-layout">
+      <aside class="auth-hero av-auth-hero">
+        <div class="auth-hero-panel desp-auth-hero-panel">
+          <header class="auth-hero-head">
+            <img class="jc-logo-img jc-logo-img--hero auth-hero-logo-img" src="assets/img/ac001-logo.svg?v=1" alt="AC" width="52" height="52">
+            <div class="auth-hero-head-text">
+              <p class="auth-welcome-line">Portal independiente</p>
+              <h1 class="desp-auth-brand-title">Temperatura · DC</h1>
+            </div>
+          </header>
+          <p class="av-auth-tag">Monitoreo en vivo · 6 áreas · Alertas automáticas</p>
+          <p class="av-auth-desc">Verificación de temperatura para Almacén, Cuarto frío, Naves 1–3 y Área de avería. Todos los usuarios ven los mismos datos actualizados al instante vía Supabase Realtime.</p>
+          <div class="av-auth-steps" aria-label="Áreas">
+            <span class="av-auth-step">Almacén</span>
+            <span class="av-auth-step">Cuarto frío</span>
+            <span class="av-auth-step">Naves</span>
+            <span class="av-auth-step">Avería</span>
+          </div>
+          <a href="index.html" class="av-auth-back">← Volver al centro de mando WMS</a>
+        </div>
+      </aside>
+      <div class="auth-stack">
+        <div class="auth-glass-card av-auth-glass">
+          <form id="tempAuthForm" class="auth-form" novalidate action="#" method="post">
+            <h2 id="tempAuthTitle" class="auth-heading desp-auth-heading">Acceso monitoreo de temperatura</h2>
+            <p class="auth-subheading desp-auth-subheading">Usuario y contraseña del WMS</p>
+            <div class="auth-field">
+              <label for="tempAuthUsername">Usuario asignado</label>
+              <input id="tempAuthUsername" class="auth-field-input" type="text" autocomplete="username" maxlength="64" required>
+            </div>
+            <label class="auth-remember" for="tempAuthRememberUser">
+              <input type="checkbox" id="tempAuthRememberUser" checked>
+              <span>Guardar mi usuario en este equipo</span>
+            </label>
+            <div class="auth-field auth-field-password">
+              <label for="tempAuthPassword">Contraseña</label>
+              <input id="tempAuthPassword" class="auth-field-input" type="password" autocomplete="current-password" maxlength="128" required>
+              <button type="button" class="auth-pwd-toggle" id="tempBtnTogglePassword" aria-label="Mostrar contraseña">Ver</button>
+            </div>
+            <button type="submit" class="btn btn-primary" id="tempAuthSubmit">Entrar al monitoreo</button>
+            <p id="tempAuthError" class="av-auth-error" role="alert" aria-live="polite" hidden></p>
+          </form>
+        </div>
+        <nav class="auth-hub-links" aria-label="Otros portales">
+          <a href="index.html" class="auth-hub-link auth-hub-link--wms">Control de Mando 001</a>
+          <a href="temperatura-auditor.html" class="auth-hub-link" target="_blank" rel="noopener">Vista auditor (QR)</a>
+          <a href="averias.html" class="auth-hub-link">Operaciones de piso</a>
+          <a href="inventario.html" class="auth-hub-link">Inventario RF</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <div class="temp-app averias-app is-hidden" id="tempApp" aria-hidden="true" inert>
+    <div id="tempMainApp" class="screen" aria-label="Monitoreo de temperatura">
+      <div class="drawer-overlay" id="tempDrawerOverlay"></div>
+      <nav class="drawer" id="tempDrawer">
+        <div class="drawer-header">
+          <h2>Almacén Central</h2>
+          <div class="drawer-app-name">Warehouse App DC</div>
+          <p>Monitoreo de temperatura</p>
+          <div class="drawer-user" id="tempDrawerUser"></div>
+        </div>
+        <div class="drawer-menu-label">MÓDULOS</div>
+        <div class="drawer-menu">
+          <button type="button" class="drawer-item" data-module="home">
+            <span class="drawer-icon-wrap home"><svg viewBox="0 0 24 24"><path d="M3 10.5L12 4l9 6.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-9.5z"/></svg></span>
+            <span class="drawer-item-text">
+              <span class="drawer-item-title">Inicio</span>
+              <span class="drawer-item-desc">Tablón de noticias</span>
+            </span>
+          </button>
+          <button type="button" class="drawer-item active" data-module="dashboard">
+            <span class="drawer-icon-wrap temperature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg></span>
+            <span class="drawer-item-text">
+              <span class="drawer-item-title">Dashboard</span>
+              <span class="drawer-item-desc">Temperatura en vivo por área</span>
+            </span>
+          </button>
+          <button type="button" class="drawer-item" data-module="register">
+            <span class="drawer-icon-wrap pallets"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+            <span class="drawer-item-text">
+              <span class="drawer-item-title">Registrar</span>
+              <span class="drawer-item-desc">Entrada manual de lectura</span>
+            </span>
+          </button>
+          <button type="button" class="drawer-item" data-module="history">
+            <span class="drawer-icon-wrap damages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span>
+            <span class="drawer-item-text">
+              <span class="drawer-item-title">Historial</span>
+              <span class="drawer-item-desc">Registros con fecha y hora</span>
+            </span>
+          </button>
+          <button type="button" class="drawer-item" data-module="alerts">
+            <span class="drawer-icon-wrap security"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+            <span class="drawer-item-text">
+              <span class="drawer-item-title">Alertas</span>
+              <span class="drawer-item-desc">Anomalías fuera de rango</span>
+            </span>
+          </button>
+          <button type="button" class="drawer-item" data-module="charts">
+            <span class="drawer-icon-wrap audit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
+            <span class="drawer-item-text">
+              <span class="drawer-item-title">Gráficas</span>
+              <span class="drawer-item-desc">Tendencia últimas 24 h</span>
+            </span>
+          </button>
+        </div>
+      </nav>
+
+      <button type="button" class="temp-corner-menu av-corner-menu" id="tempBtnMenu" aria-label="Menú">☰</button>
+
+      <header class="header temp-app-header" id="tempAppHeader">
+        <h1 id="tempPageTitle">Dashboard de Temperatura</h1>
+        <div class="user-info" id="tempHeaderSync">En vivo</div>
+      </header>
+
+      <main class="content temp-main">
+        <div class="temp-view" id="tempViewHome"></div>
+        <div class="temp-view" id="tempViewDashboard" hidden></div>
+        <div class="temp-view" id="tempViewRegister" hidden></div>
+        <div class="temp-view" id="tempViewHistory" hidden></div>
+        <div class="temp-view" id="tempViewAlerts" hidden></div>
+        <div class="temp-view" id="tempViewCharts" hidden></div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/panel-core.js?v=17"></script>
+  <script src="js/platform-security.js?v=6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/platform-supabase.js?v=4"></script>
+  <script src="js/platform-supabase-realtime.js?v=1"></script>
+  <script src="js/platform-supabase-bridge.js?v=5"></script>
+  <script src="js/platform-realtime-badge.js?v=5"></script>
+  <script src="js/platform-store.js"></script>
+  <script src="js/platform-admin.js?v=14"></script>
+  <script src="js/platform-registry-cloud-sync.js?v=2"></script>
+  <script src="js/platform-web-users.js?v=19"></script>
+  <script src="js/platform-toast.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+  <script src="js/platform-temperature-core.js?v=2"></script>
+  <script src="js/platform-temperature-sync.js?v=3"></script>
+  <script src="js/platform-temperature-ui.js?v=5"></script>
+  <script src="js/platform-temperature-app.js?v=5"></script>
+</body>
+</html>

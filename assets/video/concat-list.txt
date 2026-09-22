@@ -1,0 +1,5 @@
+file 'clip-racks.mp4'
+file 'clip-forklift-rack-a.mp4'
+file 'clip-forklift-rack-b.mp4'
+file 'clip-forklift-rack-c.mp4'
+file 'clip-inventory.mp4'

@@ -1,0 +1,97 @@
+/* Portal Temperatura — login usable en PC y móvil */
+
+body.auth-locked .auth-overlay#tempAuthOverlay {
+  pointer-events: auto !important;
+  touch-action: manipulation;
+}
+
+#tempAuthOverlay .auth-layout,
+#tempAuthOverlay .auth-stack,
+#tempAuthOverlay .auth-glass-card,
+#tempAuthOverlay .auth-form,
+#tempAuthOverlay .auth-hub-links,
+#tempAuthOverlay .auth-hub-link,
+#tempAuthOverlay .auth-field,
+#tempAuthOverlay .auth-field-input,
+#tempAuthOverlay .auth-remember,
+#tempAuthOverlay .auth-remember input,
+#tempAuthOverlay .auth-pwd-toggle,
+#tempAuthOverlay .btn,
+#tempAuthOverlay .auth-human-verify,
+#tempAuthOverlay .auth-human-verify * {
+  pointer-events: auto !important;
+}
+
+#tempAuthOverlay .auth-video-wrap,
+#tempAuthOverlay .av-auth-bg-wrap,
+#tempAuthOverlay .av-auth-bg-wrap::before,
+#tempAuthOverlay .av-auth-scrim {
+  pointer-events: none !important;
+}
+
+#tempAuthOverlay .auth-stack {
+  position: relative;
+  z-index: 12;
+}
+
+#tempAuthOverlay .auth-glass-card {
+  position: relative;
+  z-index: 13;
+}
+
+#tempAuthSubmit {
+  position: relative;
+  z-index: 14;
+  pointer-events: auto;
+  cursor: pointer;
+  width: 100%;
+  min-height: 48px;
+}
+
+#tempAuthSubmit.is-loading {
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+@media (min-width: 901px) {
+  #tempAuthOverlay .auth-layout {
+    align-items: start;
+    gap: 1.25rem;
+  }
+
+  #tempAuthOverlay .auth-hero {
+    position: relative;
+    z-index: 1;
+    pointer-events: auto;
+  }
+
+  #tempAuthOverlay .auth-stack {
+    position: sticky;
+    top: max(1rem, env(safe-area-inset-top, 0px));
+  }
+}
+
+@media (max-width: 900px) {
+  body.auth-locked #tempAuthOverlay {
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding:
+      max(0.85rem, env(safe-area-inset-top, 0px))
+      max(0.85rem, env(safe-area-inset-right, 0px))
+      max(0.85rem, env(safe-area-inset-bottom, 0px))
+      max(0.85rem, env(safe-area-inset-left, 0px));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #tempAuthOverlay .auth-layout {
+    grid-template-columns: 1fr;
+    max-width: min(100%, 440px);
+    width: 100%;
+    padding: 0.5rem 0 1rem;
+  }
+
+  #tempAuthOverlay .av-auth-hero {
+    display: none;
+  }
+}

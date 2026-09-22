@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Vista de auditoría — monitoreo de temperatura — Almacén Central 001">
+  <meta name="theme-color" content="#f0f4f8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co; img-src 'self' data:; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Auditoría de Temperatura — Almacén Central 001</title>
+  <script src="js/relay-bootstrap.js?v=1"></script>
+  <link rel="icon" type="image/png" href="assets/img/ac001-logo.svg?v=1">
+  <link rel="stylesheet" href="css/dc-brand.css?v=11">
+  <link rel="stylesheet" href="css/ac001-brand.css?v=1">
+  <link rel="stylesheet" href="css/temperatura-auditor.css?v=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="temp-auditor-page">
+  <noscript><p class="temp-auditor-noscript">Activa JavaScript para ver el informe de temperaturas.</p></noscript>
+
+  <div class="temp-auditor-shell" id="tempAuditorApp">
+    <header class="temp-auditor-header">
+      <div class="temp-auditor-brand">
+        <img class="jc-logo-img" src="assets/img/ac001-logo.svg?v=1" alt="Almacén Central AC" width="48" height="48">
+        <div>
+          <p class="temp-auditor-eyebrow">Almacén Central 001 · Solo lectura</p>
+          <h1>Auditoría de temperatura</h1>
+          <p class="temp-auditor-sub">Resultados en vivo, historial de lecturas y alertas registradas</p>
+        </div>
+      </div>
+      <div class="temp-auditor-header-meta">
+        <span class="temp-auditor-sync" id="tempAuditorSync" title="Estado de sincronización">Conectando…</span>
+        <button type="button" class="temp-auditor-btn temp-auditor-btn--ghost" id="tempAuditorRefresh" title="Actualizar datos">Actualizar</button>
+        <button type="button" class="temp-auditor-btn temp-auditor-btn--accent" id="tempAuditorExport">Exportar CSV</button>
+      </div>
+    </header>
+
+    <nav class="temp-auditor-nav" aria-label="Secciones del informe">
+      <button type="button" class="temp-auditor-tab is-active" data-temp-aud-tab="overview">Vista general</button>
+      <button type="button" class="temp-auditor-tab" data-temp-aud-tab="history">Historial</button>
+      <button type="button" class="temp-auditor-tab" data-temp-aud-tab="alerts">Alertas</button>
+    </nav>
+
+    <main class="temp-auditor-main">
+      <section class="temp-auditor-panel" id="tempAuditorOverview" data-temp-aud-panel="overview"></section>
+      <section class="temp-auditor-panel is-hidden" id="tempAuditorHistory" data-temp-aud-panel="history" hidden></section>
+      <section class="temp-auditor-panel is-hidden" id="tempAuditorAlerts" data-temp-aud-panel="alerts" hidden></section>
+    </main>
+
+    <footer class="temp-auditor-foot">
+      <p>Vista de auditoría · acceso por código QR · datos sincronizados desde el monitoreo oficial del almacén.</p>
+      <p class="temp-auditor-foot-updated" id="tempAuditorUpdated">—</p>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/platform-supabase.js?v=4"></script>
+  <script src="js/platform-supabase-realtime.js?v=1"></script>
+  <script src="js/platform-temperature-core.js?v=2"></script>
+  <script src="js/platform-temperature-sync.js?v=3"></script>
+  <script src="js/platform-temperature-auditor.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,354 @@
+/* Preview — pantalla TV recepción (vistas propuestas · mismo tema rec-display) */
+
+body.rec-vistas-preview {
+  margin: 0;
+  min-height: 100vh;
+}
+
+body.rec-vistas-preview.rec-live-on .rec-display-waiting {
+  display: none;
+}
+
+/* Barra selector (solo preview, no va a producción) */
+.rec-vp-switcher {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  padding: 0.45rem 0.65rem;
+  background: rgba(20, 3, 5, 0.96);
+  border-bottom: 1px solid rgba(255, 138, 128, 0.35);
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 0.72rem;
+}
+
+.rec-vp-switcher-label {
+  color: #ffcdd2;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-right: 0.25rem;
+}
+
+.rec-vp-switcher button {
+  appearance: none;
+  border: 1px solid rgba(255, 138, 128, 0.35);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.88);
+  border-radius: 8px;
+  padding: 0.35rem 0.65rem;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rec-vp-switcher button:hover {
+  background: rgba(198, 40, 40, 0.25);
+}
+
+.rec-vp-switcher button.is-on {
+  background: linear-gradient(180deg, #ef5350, #c62828);
+  border-color: #ff8a80;
+  color: #fff;
+}
+
+.rec-vp-switcher-note {
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.68rem;
+}
+
+body.rec-vistas-preview .rec-present-shell {
+  padding-top: calc(clamp(0.5rem, 1.5vw, 1.2rem) + 2.6rem);
+}
+
+/* —— Toolbar KPI + gráfico —— */
+.rec-tv-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(14rem, 22vw);
+  gap: clamp(0.5rem, 1vw, 0.85rem);
+  margin-bottom: 0.65rem;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .rec-tv-toolbar {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rec-tv-kpis {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(0.35rem, 0.65vw, 0.55rem);
+}
+
+@media (max-width: 1100px) {
+  .rec-tv-kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.rec-tv-kpi {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: clamp(0.35rem, 0.7vw, 0.55rem) clamp(0.4rem, 0.75vw, 0.65rem);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 138, 128, 0.22);
+  background: rgba(255, 255, 255, 0.04);
+  min-width: 0;
+}
+
+.rec-tv-kpi-icon {
+  flex-shrink: 0;
+  width: clamp(1.65rem, 2.8vw, 2.35rem);
+  height: clamp(1.65rem, 2.8vw, 2.35rem);
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+}
+
+.rec-tv-kpi--desc .rec-tv-kpi-icon { background: rgba(239, 83, 80, 0.2); }
+.rec-tv-kpi--tipo .rec-tv-kpi-icon { background: rgba(255, 213, 79, 0.18); }
+.rec-tv-kpi--val .rec-tv-kpi-icon { background: rgba(255, 183, 77, 0.2); }
+.rec-tv-kpi--ent .rec-tv-kpi-icon { background: rgba(129, 199, 132, 0.18); }
+.rec-tv-kpi--ubi .rec-tv-kpi-icon { background: rgba(77, 182, 172, 0.18); }
+
+.rec-tv-kpi-body {
+  min-width: 0;
+}
+
+.rec-tv-kpi-num {
+  display: block;
+  font-weight: 800;
+  font-size: clamp(1rem, 1.85vw, 1.55rem);
+  line-height: 1.05;
+  color: #fff;
+}
+
+.rec-tv-kpi-lbl {
+  display: block;
+  font-size: clamp(0.48rem, 0.85vw, 0.62rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(255, 205, 210, 0.88);
+  line-height: 1.15;
+}
+
+.rec-tv-kpi-sub {
+  display: block;
+  font-size: clamp(0.5rem, 0.78vw, 0.58rem);
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 0.08rem;
+}
+
+.rec-tv-kpi--desc .rec-tv-kpi-num { color: #ff8a80; }
+.rec-tv-kpi--val .rec-tv-kpi-num { color: #ffd54f; }
+.rec-tv-kpi--ent .rec-tv-kpi-num { color: #a5d6a7; }
+.rec-tv-kpi--ubi .rec-tv-kpi-num { color: #80cbc4; }
+
+/* Gráfico operadores */
+.rec-tv-chart {
+  border: 1px solid rgba(255, 138, 128, 0.22);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: clamp(0.35rem, 0.65vw, 0.55rem) clamp(0.45rem, 0.8vw, 0.65rem);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.rec-tv-chart-title {
+  margin: 0 0 0.35rem;
+  font-size: clamp(0.52rem, 0.85vw, 0.62rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #ffcdd2;
+}
+
+.rec-tv-chart-rows {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.22rem, 0.4vh, 0.32rem);
+  flex: 1;
+  justify-content: center;
+}
+
+.rec-tv-chart-row {
+  display: grid;
+  grid-template-columns: minmax(4.5rem, 28%) minmax(0, 1fr) auto;
+  gap: 0.35rem;
+  align-items: center;
+  font-size: clamp(0.58rem, 0.95vw, 0.72rem);
+}
+
+.rec-tv-chart-name {
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rec-tv-chart-bar {
+  height: clamp(0.38rem, 0.75vh, 0.55rem);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.rec-tv-chart-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #c62828, #ef5350);
+}
+
+.rec-tv-chart-fill--val { background: linear-gradient(90deg, #f57f17, #ffd54f); }
+.rec-tv-chart-fill--ubi { background: linear-gradient(90deg, #00695c, #4db6ac); }
+
+.rec-tv-chart-num {
+  font-weight: 800;
+  color: #fff;
+  min-width: 1.25em;
+  text-align: right;
+}
+
+/* Tabla compacta (vistas nuevas) */
+.rec-present-table--tv {
+  font-size: clamp(0.62rem, 1.05vw, 0.95rem);
+}
+
+.rec-present-table--tv th {
+  font-size: 0.62em;
+  padding: clamp(0.28rem, 0.5vw, 0.45rem) clamp(0.2rem, 0.35vw, 0.35rem);
+}
+
+.rec-present-table--tv td {
+  padding: clamp(0.28rem, 0.5vw, 0.42rem) clamp(0.2rem, 0.35vw, 0.35rem);
+}
+
+.rec-present-table--dense {
+  font-size: clamp(0.55rem, 0.92vw, 0.82rem);
+}
+
+.rec-present-person {
+  display: inline-block;
+  max-width: 100%;
+  padding: 0.1rem 0.35rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 138, 128, 0.2);
+  font-size: 0.92em;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rec-present-person--na {
+  color: rgba(255, 255, 255, 0.35);
+  border-color: transparent;
+  background: transparent;
+  font-weight: 600;
+}
+
+.rec-present-fecha-etapa {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.92em;
+}
+
+.rec-present-fecha-etapa--empty {
+  color: rgba(255, 255, 255, 0.28);
+  font-weight: 600;
+}
+
+.rec-present-fecha-etapa--desc { color: #ff8a80; }
+.rec-present-fecha-etapa--val { color: #ffd54f; }
+.rec-present-fecha-etapa--ent { color: #a5d6a7; }
+.rec-present-fecha-etapa--ubi { color: #80cbc4; }
+
+.rec-present-descarga-block {
+  text-align: left;
+  white-space: normal;
+  line-height: 1.25;
+}
+
+.rec-present-descarga-block strong {
+  display: block;
+  color: #fff;
+  font-size: 1.02em;
+}
+
+.rec-present-descarga-block span {
+  display: block;
+  font-size: 0.88em;
+  color: rgba(255, 205, 210, 0.85);
+}
+
+.rec-present-descarga-block em {
+  display: block;
+  font-style: normal;
+  font-size: 0.82em;
+  color: rgba(255, 255, 255, 0.62);
+  margin-top: 0.12rem;
+}
+
+/* V2 — columnas personas */
+.rec-present-table--people th,
+.rec-present-table--people td {
+  font-size: clamp(0.58rem, 0.98vw, 0.88rem);
+}
+
+/* V3 — bloque descarga ancho */
+.rec-present-table--block .rec-col-descarga { width: 14%; }
+.rec-present-table--block .rec-col-cont { width: 10%; }
+.rec-present-table--block .rec-col-tipo { width: 7%; }
+.rec-present-table--block .rec-col-div { width: 8%; }
+.rec-present-table--block .rec-col-desc { width: 11%; }
+.rec-present-table--block .rec-col-pal { width: 5%; }
+.rec-present-table--block .rec-col-muelle { width: 5%; }
+.rec-present-table--block .rec-col-person { width: 7%; }
+.rec-present-table--block .rec-col-fecha { width: 8%; }
+.rec-present-table--block .rec-col-status { width: 5%; }
+
+/* V4 — ultra compacto */
+body.rec-vp-v4 .rec-present-table--tv {
+  font-size: clamp(0.5rem, 0.82vw, 0.72rem);
+}
+
+body.rec-vp-v4 .rec-tv-kpi-num {
+  font-size: clamp(0.85rem, 1.45vw, 1.2rem);
+}
+
+body.rec-vp-v4 .rec-tv-kpi-lbl {
+  font-size: clamp(0.42rem, 0.72vw, 0.52rem);
+}
+
+/* V5 — gráfico triple (3 secciones) */
+.rec-tv-chart--triple .rec-tv-chart-section {
+  margin-bottom: 0.35rem;
+}
+
+.rec-tv-chart--triple .rec-tv-chart-section:last-child {
+  margin-bottom: 0;
+}
+
+.rec-tv-chart-section-lbl {
+  font-size: clamp(0.48rem, 0.72vw, 0.55rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 138, 128, 0.75);
+  margin-bottom: 0.15rem;
+}

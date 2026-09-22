@@ -1,0 +1,1085 @@
+{
+    "version":  1,
+    "templates":  [
+                      {
+                          "id":  "supervisor_inventario-1",
+                          "puesto":  "supervisor_inventario",
+                          "numero":  1,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Realizar Ponche y acomodar inicio de labores",
+                          "minutos":  2
+                      },
+                      {
+                          "id":  "supervisor_inventario-2",
+                          "puesto":  "supervisor_inventario",
+                          "numero":  2,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Validar bandeja de correos y solicitudes",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "supervisor_inventario-3",
+                          "puesto":  "supervisor_inventario",
+                          "numero":  3,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Reubicar paletas borradas",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "supervisor_inventario-4",
+                          "puesto":  "supervisor_inventario",
+                          "numero":  4,
+                          "frecuencia":  "SEMANAL",
+                          "actividad":  "Realizar reporte de vencimiento",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "supervisor_inventario-5",
+                          "puesto":  "supervisor_inventario",
+                          "numero":  5,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Eliminar 100 Reservas diarias",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "supervisor_inventario-6",
+                          "puesto":  "supervisor_inventario",
+                          "numero":  6,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Realizar identificación de los SKU próximos a vencer",
+                          "minutos":  45
+                      },
+                      {
+                          "id":  "supervisor_inventario-7",
+                          "puesto":  "supervisor_inventario",
+                          "numero":  7,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Actualizar seguimiento total de trabajos sistema",
+                          "minutos":  20
+                      },
+                      {
+                          "id":  "supervisor_inventario-8",
+                          "puesto":  "supervisor_inventario",
+                          "numero":  8,
+                          "frecuencia":  "INTER_DIARIA",
+                          "actividad":  "Realizar diarios a SKU vencidos",
+                          "minutos":  45
+                      },
+                      {
+                          "id":  "supervisor_inventario-9",
+                          "puesto":  "supervisor_inventario",
+                          "numero":  9,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Verificar las ubicaciones fijas",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "supervisor_inventario-10",
+                          "puesto":  "supervisor_inventario",
+                          "numero":  10,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Realizar reporte de SKU que no se pueden comercializar",
+                          "minutos":  45
+                      },
+                      {
+                          "id":  "supervisor_inventario-11",
+                          "puesto":  "supervisor_inventario",
+                          "numero":  11,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Acuracidad de tramerias",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "supervisor_inventario-12",
+                          "puesto":  "supervisor_inventario",
+                          "numero":  12,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Actualizar Reporte de avería diario.",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "supervisor_inventario-13",
+                          "puesto":  "supervisor_inventario",
+                          "numero":  13,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Transferir CPH con empaque averiados",
+                          "minutos":  25
+                      },
+                      {
+                          "id":  "supervisor_inventario-14",
+                          "puesto":  "supervisor_inventario",
+                          "numero":  14,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Trabajar las solicitudes de productos para donacion",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "supervisor_inventario-15",
+                          "puesto":  "supervisor_inventario",
+                          "numero":  15,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Realizar las notas de debito",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "supervisor_inventario-16",
+                          "puesto":  "supervisor_inventario",
+                          "numero":  16,
+                          "frecuencia":  "INTER_DIARIA",
+                          "actividad":  "Acompañar proceso de reciclaje",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "digitadora_inventario-1",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  1,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Realizar Ponche y acomodar inicio de labores",
+                          "minutos":  3
+                      },
+                      {
+                          "id":  "digitadora_inventario-2",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  2,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Descargar 10 SKUs del conteo ciclico",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "digitadora_inventario-3",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  3,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Solicitar Conteo del inventario ciclico",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "digitadora_inventario-4",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  4,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Seguimiento de error de pedidos",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "digitadora_inventario-5",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  5,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Digitar Inventario ciclico",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "digitadora_inventario-6",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  6,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Acurasidad de tramerias",
+                          "minutos":  20
+                      },
+                      {
+                          "id":  "digitadora_inventario-7",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  7,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Notificar IDC abierto",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "digitadora_inventario-8",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  8,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Notificar OV en remisión",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "digitadora_inventario-9",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  9,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Notificar OT Abiertas",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "digitadora_inventario-10",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  10,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Notificar TR pendientes por usuarios",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "digitadora_inventario-11",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  11,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Notificar Matrículas sin ubicar",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "digitadora_inventario-12",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  12,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Notificar TR pendientes de Matrículas sin ubicar",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "digitadora_inventario-13",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  13,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Realizar proceso de ubicación de productos",
+                          "minutos":  45
+                      },
+                      {
+                          "id":  "digitadora_inventario-14",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  14,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Cancelar las OV en BO",
+                          "minutos":  45
+                      },
+                      {
+                          "id":  "digitadora_inventario-15",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  15,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Facturar y despachar valores cero",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "digitadora_inventario-16",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  16,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Conciliar facturas despachadas",
+                          "minutos":  50
+                      },
+                      {
+                          "id":  "digitadora_inventario-17",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  17,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Auditoria de pasillo",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "digitadora_inventario-18",
+                          "puesto":  "digitadora_inventario",
+                          "numero":  18,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Inventerio Ciclico de frio",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "coordinador_almacen-1",
+                          "puesto":  "coordinador_almacen",
+                          "numero":  1,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Ronda De Control",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "coordinador_almacen-2",
+                          "puesto":  "coordinador_almacen",
+                          "numero":  2,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Revisar Reporte seguimiento operaciones",
+                          "minutos":  40
+                      },
+                      {
+                          "id":  "coordinador_almacen-3",
+                          "puesto":  "coordinador_almacen",
+                          "numero":  3,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Revisar Jaulas Identificadas",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "coordinador_almacen-4",
+                          "puesto":  "coordinador_almacen",
+                          "numero":  4,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Auditoria Al Turno A, foco 5s",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "coordinador_almacen-5",
+                          "puesto":  "coordinador_almacen",
+                          "numero":  5,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Revisar Agendas De Mis Colaboradores",
+                          "minutos":  20
+                      },
+                      {
+                          "id":  "coordinador_almacen-6",
+                          "puesto":  "coordinador_almacen",
+                          "numero":  6,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Revisar Correos",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "coordinador_almacen-7",
+                          "puesto":  "coordinador_almacen",
+                          "numero":  7,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Llenar Dashboard De Central",
+                          "minutos":  45
+                      },
+                      {
+                          "id":  "coordinador_almacen-8",
+                          "puesto":  "coordinador_almacen",
+                          "numero":  8,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Llenar Seguimiento De OV Vencidas",
+                          "minutos":  20
+                      },
+                      {
+                          "id":  "coordinador_almacen-9",
+                          "puesto":  "coordinador_almacen",
+                          "numero":  9,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Dar Seguimiento a OV Vencidas",
+                          "minutos":  45
+                      },
+                      {
+                          "id":  "coordinador_almacen-10",
+                          "puesto":  "coordinador_almacen",
+                          "numero":  10,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Revisar Resultados de Acuracidad",
+                          "minutos":  20
+                      },
+                      {
+                          "id":  "coordinador_almacen-11",
+                          "puesto":  "coordinador_almacen",
+                          "numero":  11,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Realizar CFR Nivel De Servicio",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "coordinador_almacen-12",
+                          "puesto":  "coordinador_almacen",
+                          "numero":  12,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Investigar SKU No facturados",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "coordinador_almacen-13",
+                          "puesto":  "coordinador_almacen",
+                          "numero":  13,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Realizar un Diario De Vencimiento",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "coordinador_almacen-14",
+                          "puesto":  "coordinador_almacen",
+                          "numero":  14,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Enviar Correos De Fecha Cortas a las distintas Marcas",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "coordinador_almacen-15",
+                          "puesto":  "coordinador_almacen",
+                          "numero":  15,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Seguimiento de errores de pedidos",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "auxiliar_despacho-1",
+                          "puesto":  "auxiliar_despacho",
+                          "numero":  1,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Realizar Ponche y acomodar inicio de labores",
+                          "minutos":  2
+                      },
+                      {
+                          "id":  "auxiliar_despacho-2",
+                          "puesto":  "auxiliar_despacho",
+                          "numero":  2,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Validar bandeja de correos y solicitudes",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "auxiliar_despacho-3",
+                          "puesto":  "auxiliar_despacho",
+                          "numero":  3,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Abrir el almacén",
+                          "minutos":  2
+                      },
+                      {
+                          "id":  "auxiliar_despacho-4",
+                          "puesto":  "auxiliar_despacho",
+                          "numero":  4,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Preparar Reunión Matinal",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "auxiliar_despacho-5",
+                          "puesto":  "auxiliar_despacho",
+                          "numero":  5,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Impatir Reunión Matinal",
+                          "minutos":  20
+                      },
+                      {
+                          "id":  "auxiliar_despacho-6",
+                          "puesto":  "auxiliar_despacho",
+                          "numero":  6,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Colocar una jaula con más de 150 líneas",
+                          "minutos":  10
+                      },
+                      {
+                          "id":  "auxiliar_despacho-7",
+                          "puesto":  "auxiliar_despacho",
+                          "numero":  7,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Dividir los KA por contenedores",
+                          "minutos":  20
+                      },
+                      {
+                          "id":  "auxiliar_despacho-8",
+                          "puesto":  "auxiliar_despacho",
+                          "numero":  8,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Analizar el sugerido",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "auxiliar_despacho-9",
+                          "puesto":  "auxiliar_despacho",
+                          "numero":  9,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Colocar 50% en el seguimiento",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "auxiliar_despacho-10",
+                          "puesto":  "auxiliar_despacho",
+                          "numero":  10,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Revisar la planilla de pedidos vencidos",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "auxiliar_despacho-11",
+                          "puesto":  "auxiliar_despacho",
+                          "numero":  11,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Facturar todos los KA",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "auxiliar_despacho-12",
+                          "puesto":  "auxiliar_despacho",
+                          "numero":  12,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Colocar BO de KA",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "auxiliar_despacho-13",
+                          "puesto":  "auxiliar_despacho",
+                          "numero":  13,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Arquear 2 IDC a Despachar al azar reglas de oro",
+                          "minutos":  45
+                      },
+                      {
+                          "id":  "auxiliar_despacho-14",
+                          "puesto":  "auxiliar_despacho",
+                          "numero":  14,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Dar seguimiento a todos los IDC pendientes colocados",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "auxiliar_despacho-15",
+                          "puesto":  "auxiliar_despacho",
+                          "numero":  15,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Facturar todos los IDC colocados",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "auxiliar_despacho-16",
+                          "puesto":  "auxiliar_despacho",
+                          "numero":  16,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Entregar al turno B",
+                          "minutos":  5
+                      },
+                      {
+                          "id":  "auxiliar_despacho-17",
+                          "puesto":  "auxiliar_despacho",
+                          "numero":  17,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Participar en la reunión de los lideres",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "supervisor_despacho-1",
+                          "puesto":  "supervisor_despacho",
+                          "numero":  1,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Realizar Ponche y acomodar inicio de labores",
+                          "minutos":  2
+                      },
+                      {
+                          "id":  "supervisor_despacho-2",
+                          "puesto":  "supervisor_despacho",
+                          "numero":  2,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Validar bandeja de correos y solicitudes",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "supervisor_despacho-3",
+                          "puesto":  "supervisor_despacho",
+                          "numero":  3,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Recibir cambio de turno",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "supervisor_despacho-4",
+                          "puesto":  "supervisor_despacho",
+                          "numero":  4,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Impatir Reunión Vespertina",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "supervisor_despacho-5",
+                          "puesto":  "supervisor_despacho",
+                          "numero":  5,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Verificar cuantos contenedores hay para KA",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "supervisor_despacho-6",
+                          "puesto":  "supervisor_despacho",
+                          "numero":  6,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Designar validadores a despachar KA",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "supervisor_despacho-7",
+                          "puesto":  "supervisor_despacho",
+                          "numero":  7,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Gestionar contenedores pendientes para los KA",
+                          "minutos":  20
+                      },
+                      {
+                          "id":  "supervisor_despacho-8",
+                          "puesto":  "supervisor_despacho",
+                          "numero":  8,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Colocar un IDC con 150 líneas o más",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "supervisor_despacho-9",
+                          "puesto":  "supervisor_despacho",
+                          "numero":  9,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Analizar el sugerido y vencidos pendientes por facturar",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "supervisor_despacho-10",
+                          "puesto":  "supervisor_despacho",
+                          "numero":  10,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Colocar en el seguimiento los IDC faltantes del plan",
+                          "minutos":  45
+                      },
+                      {
+                          "id":  "supervisor_despacho-11",
+                          "puesto":  "supervisor_despacho",
+                          "numero":  11,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Monitear productividad de los saca pedidos",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "supervisor_despacho-12",
+                          "puesto":  "supervisor_despacho",
+                          "numero":  12,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Facturar todo lo pendiente colocado",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "supervisor_despacho-13",
+                          "puesto":  "supervisor_despacho",
+                          "numero":  13,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Realizar reporte BO con sus comentarios",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "supervisor_despacho-14",
+                          "puesto":  "supervisor_despacho",
+                          "numero":  14,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Gestionar 5s a todos los pasillos",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "supervisor_despacho-15",
+                          "puesto":  "supervisor_despacho",
+                          "numero":  15,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Verificar que todos los equipos estén guardados",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "supervisor_despacho-16",
+                          "puesto":  "supervisor_despacho",
+                          "numero":  16,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Verificar personal con trabajos pendientes a finalizar",
+                          "minutos":  20
+                      },
+                      {
+                          "id":  "supervisor_despacho-17",
+                          "puesto":  "supervisor_despacho",
+                          "numero":  17,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Cerrar el almacén",
+                          "minutos":  5
+                      },
+                      {
+                          "id":  "supervisor_validadores-1",
+                          "puesto":  "supervisor_validadores",
+                          "numero":  1,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Realizar ponchado",
+                          "minutos":  2
+                      },
+                      {
+                          "id":  "supervisor_validadores-2",
+                          "puesto":  "supervisor_validadores",
+                          "numero":  2,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Seguimiento de Estatus de Carga e Identificar todas las OV Facturadas de días anteriores",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "supervisor_validadores-3",
+                          "puesto":  "supervisor_validadores",
+                          "numero":  3,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Distribuir las distintas facturas por orden de FIFO",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "supervisor_validadores-4",
+                          "puesto":  "supervisor_validadores",
+                          "numero":  4,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Realizar 3 auditorias al azar cargas validadas",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "supervisor_validadores-5",
+                          "puesto":  "supervisor_validadores",
+                          "numero":  5,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Garantizar las 5s de los dueños de cada jaula",
+                          "minutos":  45
+                      },
+                      {
+                          "id":  "supervisor_validadores-6",
+                          "puesto":  "supervisor_validadores",
+                          "numero":  6,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Clasificar por marcas familia",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "supervisor_validadores-7",
+                          "puesto":  "supervisor_validadores",
+                          "numero":  7,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Garantizar que todas las paletas estén en su carril",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "supervisor_validadores-8",
+                          "puesto":  "supervisor_validadores",
+                          "numero":  8,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Garantizar que solo estén los chóferes que van a cargar",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "supervisor_validadores-9",
+                          "puesto":  "supervisor_validadores",
+                          "numero":  9,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Garantizar que los validadores coloquen lo esquineros",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "supervisor_validadores-10",
+                          "puesto":  "supervisor_validadores",
+                          "numero":  10,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Garantizar distribución de uñeros por orden de prioridades",
+                          "minutos":  45
+                      },
+                      {
+                          "id":  "supervisor_validadores-11",
+                          "puesto":  "supervisor_validadores",
+                          "numero":  11,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Participar en la reunión de cambio de turno",
+                          "minutos":  20
+                      },
+                      {
+                          "id":  "supervisor_devoluciones-1",
+                          "puesto":  "supervisor_devoluciones",
+                          "numero":  1,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Realizar ponchado",
+                          "minutos":  2
+                      },
+                      {
+                          "id":  "supervisor_devoluciones-2",
+                          "puesto":  "supervisor_devoluciones",
+                          "numero":  2,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Revisar reporte de devoluciones del día anterior/organizar tareas del día",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "supervisor_devoluciones-3",
+                          "puesto":  "supervisor_devoluciones",
+                          "numero":  3,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Distribución de tareas al auxiliar UC",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "supervisor_devoluciones-4",
+                          "puesto":  "supervisor_devoluciones",
+                          "numero":  4,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Verificar clasificación (SKU para reubicar pickup/rack, SKU enviar a reempaque, SKU Fecha corta/vencidos enviar a control)",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "supervisor_devoluciones-5",
+                          "puesto":  "supervisor_devoluciones",
+                          "numero":  5,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Enviar paletas vacías al área de paletas/moladas",
+                          "minutos":  45
+                      },
+                      {
+                          "id":  "supervisor_devoluciones-6",
+                          "puesto":  "supervisor_devoluciones",
+                          "numero":  6,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Enviar retorno al área de Racks zona de validadores",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "supervisor_devoluciones-7",
+                          "puesto":  "supervisor_devoluciones",
+                          "numero":  7,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Coordinar prioridades con el coordiandor de despacho",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "supervisor_devoluciones-8",
+                          "puesto":  "supervisor_devoluciones",
+                          "numero":  8,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Participar en reunión de cambio de turno",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "supervisor_devoluciones-9",
+                          "puesto":  "supervisor_devoluciones",
+                          "numero":  9,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Realizar conteo de cierre de turno y enviar a control",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "supervisor_devoluciones-10",
+                          "puesto":  "supervisor_devoluciones",
+                          "numero":  10,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Validar orden y limpieza del área como cierre final",
+                          "minutos":  45
+                      },
+                      {
+                          "id":  "supervisor_devoluciones-11",
+                          "puesto":  "supervisor_devoluciones",
+                          "numero":  11,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Completar formulario de SKU recibidos",
+                          "minutos":  20
+                      },
+                      {
+                          "id":  "coordinador_recepcion-1",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  1,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Realizar ronda en piso",
+                          "minutos":  20
+                      },
+                      {
+                          "id":  "coordinador_recepcion-2",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  2,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Cerrar acciones levantadas en reunion de líderes del dia anterior",
+                          "minutos":  45
+                      },
+                      {
+                          "id":  "coordinador_recepcion-3",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  3,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Validar los contenedores en patio y rampa",
+                          "minutos":  10
+                      },
+                      {
+                          "id":  "coordinador_recepcion-4",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  4,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Verificar el area de reparacion de paletas",
+                          "minutos":  10
+                      },
+                      {
+                          "id":  "coordinador_recepcion-5",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  5,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Confirmar disponibilidad de pallets a reparar",
+                          "minutos":  25
+                      },
+                      {
+                          "id":  "coordinador_recepcion-6",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  6,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Gestionar contenedor para pallets",
+                          "minutos":  25
+                      },
+                      {
+                          "id":  "coordinador_recepcion-7",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  7,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Gestionar rampa para descarga",
+                          "minutos":  20
+                      },
+                      {
+                          "id":  "coordinador_recepcion-8",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  8,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Despacho de pallets descartados",
+                          "minutos":  120
+                      },
+                      {
+                          "id":  "coordinador_recepcion-9",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  9,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Reunion diaria de lideres",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "coordinador_recepcion-10",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  10,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Asignacion descarga contenedor santiago",
+                          "minutos":  25
+                      },
+                      {
+                          "id":  "coordinador_recepcion-11",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  11,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Revisar y compartir el plan de recepcion de contenedores con el equipo.",
+                          "minutos":  10
+                      },
+                      {
+                          "id":  "coordinador_recepcion-12",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  12,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Reunión de inicio con equipo",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "coordinador_recepcion-13",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  13,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Verificación equipos (montacargas, RF)",
+                          "minutos":  10
+                      },
+                      {
+                          "id":  "coordinador_recepcion-14",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  14,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Auditoria de recepcion (2 Local y 1 Imp)",
+                          "minutos":  20
+                      },
+                      {
+                          "id":  "coordinador_recepcion-15",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  15,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Auditar proceso de reporte de rotura",
+                          "minutos":  20
+                      },
+                      {
+                          "id":  "coordinador_recepcion-16",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  16,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Auditar proceso de validacion.",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "coordinador_recepcion-17",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  17,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Auditar proceso de registro en sistema",
+                          "minutos":  30
+                      },
+                      {
+                          "id":  "coordinador_recepcion-18",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  18,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Auditar 5S asignaciones por área recepción",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "coordinador_recepcion-19",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  19,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Gestion de indicencias",
+                          "minutos":  20
+                      },
+                      {
+                          "id":  "coordinador_recepcion-20",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  20,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Retroalimentación al equipo",
+                          "minutos":  5
+                      },
+                      {
+                          "id":  "coordinador_recepcion-21",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  21,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Actualización indicadores",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "coordinador_recepcion-22",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  22,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Actualizar reporte indicadores",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "coordinador_recepcion-23",
+                          "puesto":  "coordinador_recepcion",
+                          "numero":  23,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Planificación día siguiente",
+                          "minutos":  10
+                      },
+                      {
+                          "id":  "supervisora_oficina-1",
+                          "puesto":  "supervisora_oficina",
+                          "numero":  1,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Validacion de Facturas",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "supervisora_oficina-2",
+                          "puesto":  "supervisora_oficina",
+                          "numero":  2,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Facturas Recibidas Manual",
+                          "minutos":  80
+                      },
+                      {
+                          "id":  "supervisora_oficina-3",
+                          "puesto":  "supervisora_oficina",
+                          "numero":  3,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Facturas Recibidas en la Mascota",
+                          "minutos":  60
+                      },
+                      {
+                          "id":  "supervisora_oficina-4",
+                          "puesto":  "supervisora_oficina",
+                          "numero":  4,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Validacion de Facturas Pagos Por Tran.",
+                          "minutos":  15
+                      },
+                      {
+                          "id":  "supervisora_oficina-5",
+                          "puesto":  "supervisora_oficina",
+                          "numero":  5,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Cuadre de Caja Chica",
+                          "minutos":  40
+                      },
+                      {
+                          "id":  "supervisora_oficina-6",
+                          "puesto":  "supervisora_oficina",
+                          "numero":  6,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Retencion de CCN",
+                          "minutos":  5
+                      },
+                      {
+                          "id":  "supervisora_oficina-7",
+                          "puesto":  "supervisora_oficina",
+                          "numero":  7,
+                          "frecuencia":  "DIARIA",
+                          "actividad":  "Reunion Equipo Creditos y Cobros",
+                          "minutos":  60
+                      }
+                  ]
+}

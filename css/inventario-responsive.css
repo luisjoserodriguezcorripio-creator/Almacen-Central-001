@@ -1,0 +1,275 @@
+/* Inventario RF — pantalla completa (Zebra, Honeywell, móvil) */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html.inv-rf-viewport,
+html.inv-rf-viewport body {
+  height: 100%;
+  overflow: hidden;
+}
+
+html.inv-rf-viewport body.inv-dash-view {
+  background: var(--corp-canvas, #F4F6F9);
+}
+
+/* ── Shell APK: ocupa todo el viewport ── */
+body.inv-dash-view {
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+.inv-app-shell:not(.is-hidden) {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding:
+    env(safe-area-inset-top, 0px)
+    env(safe-area-inset-right, 0px)
+    env(safe-area-inset-bottom, 0px)
+    env(safe-area-inset-left, 0px);
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.inv-app-shell > .inv-phone {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: none;
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.inv-app-shell > .inv-phone[hidden] {
+  display: none !important;
+}
+
+.inv-app-shell .inv-body {
+  flex: 1;
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+
+.inv-app-shell .inv-nav {
+  flex-shrink: 0;
+  padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+}
+
+.inv-app-shell .inv-swipe-zone {
+  flex-shrink: 0;
+}
+
+/* Badge nube dentro del shell */
+.inv-app-shell .inv-cloud-badge {
+  position: absolute;
+  top: max(6px, env(safe-area-inset-top, 0px));
+  right: max(8px, env(safe-area-inset-right, 0px));
+  z-index: 60;
+  font-size: 11px;
+  padding: 5px 10px;
+}
+
+/* ── Controles táctiles (lectores y teléfonos) ── */
+html.inv-rf-viewport,
+.inv-rf-device {
+  --inv-fs-xs: 15px;
+  --inv-fs-sm: 16px;
+  --inv-fs-base: 18px;
+  --inv-fs-md: 20px;
+  --inv-fs-lg: 22px;
+  --inv-fs-xl: 24px;
+  --inv-fs-display: 36px;
+}
+
+.inv-rf-device .inv-field,
+.inv-rf-device .inv-btn,
+.inv-rf-device .inv-nav button,
+.inv-rf-device .inv-mode,
+.inv-rf-device .inv-admin-row,
+.inv-rf-device .inv-role {
+  touch-action: manipulation;
+}
+
+.inv-rf-device .inv-field,
+.inv-rf-device .inv-btn {
+  font-size: var(--inv-fs-base);
+  min-height: 50px;
+}
+
+.inv-rf-device .inv-nav button {
+  min-height: 50px;
+  font-size: var(--inv-fs-sm);
+  padding: 12px 10px;
+}
+
+.inv-rf-device .inv-swipe-track {
+  height: 52px;
+}
+
+.inv-rf-device .inv-swipe-thumb {
+  width: 48px;
+  height: 48px;
+}
+
+.inv-rf-device .inv-pickup-qty-btns button {
+  min-height: 56px;
+}
+
+/* Conteo: una tarjeta activa a pantalla completa */
+.inv-rf-device #invViewCount .inv-body {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+}
+
+.inv-rf-device #invViewCount .inv-card {
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 0;
+  min-height: 0;
+}
+
+.inv-rf-device #invViewCount .inv-card.active {
+  display: flex;
+}
+
+.inv-rf-device #invViewCount .inv-excel:not(.show) {
+  display: none !important;
+}
+
+.inv-rf-device #invViewCount .inv-excel.show {
+  flex-shrink: 0;
+  margin-bottom: 8px;
+}
+
+/* Modo conteo: tarjetas más grandes */
+.inv-rf-device .inv-mode {
+  min-height: 72px;
+  padding: 18px 16px;
+}
+
+.inv-rf-device .inv-mode h3 {
+  font-size: var(--inv-fs-lg);
+}
+
+.inv-rf-device .inv-card h2 {
+  font-size: var(--inv-fs-xl);
+}
+
+.inv-rf-device .inv-step-title {
+  font-size: var(--inv-fs-xl);
+}
+
+.inv-rf-device .inv-step-counter {
+  font-size: var(--inv-fs-lg);
+}
+
+/* Login auth: mantener imagen + panel hero en web (móvil y PC) — sin modo blanco plano */
+
+html.inv-rf-viewport .inv-app-shell > .inv-phone,
+html.inv-rf-viewport .inv-app-shell .inv-body {
+  background: var(--corp-canvas, #F4F6F9);
+}
+
+html.inv-rf-viewport .inv-swipe-hint,
+html.inv-rf-viewport .inv-swipe-track {
+  color: var(--inv-text-secondary, #263238);
+}
+
+html.inv-rf-viewport .inv-cloud-badge {
+  font-size: 14px;
+  font-weight: 800;
+  background: rgba(21, 32, 43, 0.88);
+  color: #ECEFF1;
+}
+
+html.inv-rf-viewport .inv-cloud-badge--live {
+  color: #A5D6A7;
+}
+
+/* Toast sobre nav inferior */
+.inv-rf-device .inv-toast {
+  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Escáneres industriales (pantallas estrechas / bajas) */
+@media (max-width: 480px), (max-height: 640px) {
+  .inv-app-shell .inv-header {
+    padding: 12px 14px 10px;
+  }
+
+  .inv-login-roles {
+    flex-direction: column;
+  }
+
+  .inv-role {
+    min-height: 128px;
+  }
+}
+
+/* Landscape en lectores (TC57, CK65, etc.) */
+@media (orientation: landscape) and (max-height: 520px) {
+  .inv-app-shell .inv-header {
+    padding: 8px 12px;
+  }
+
+  .inv-app-shell .inv-instr {
+    font-size: var(--inv-fs-sm);
+    margin-top: 4px;
+  }
+
+  .inv-rf-device #invViewCount .inv-body {
+    padding: 8px 12px;
+  }
+
+  .inv-rf-device .inv-swipe-zone {
+    padding: 8px 12px 10px;
+  }
+
+  .inv-rf-device .inv-swipe-hint {
+    margin-bottom: 6px;
+    font-size: var(--inv-fs-xs);
+  }
+
+  .inv-rf-device .inv-card h2 {
+    font-size: var(--inv-fs-lg);
+  }
+}
+
+/* PC ancho: marco opcional centrado (solo ratón, no táctil) */
+@media (min-width: 900px) and (min-height: 700px) and (pointer: fine) and (hover: hover) {
+  html:not(.inv-rf-viewport) body.inv-dash-view {
+    background: #121820;
+  }
+
+  html:not(.inv-rf-viewport) .inv-app-shell:not(.is-hidden) {
+    position: relative;
+    inset: auto;
+    justify-content: center;
+    align-items: center;
+    padding: 24px 16px;
+    max-height: none;
+  }
+
+  html:not(.inv-rf-viewport) .inv-app-shell > .inv-phone {
+    max-width: 420px;
+    min-height: min(92dvh, 860px);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  }
+}

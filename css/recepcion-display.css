@@ -187,8 +187,8 @@ body.rec-live-on .rec-display-waiting {
 body.rec-display-mode .jc-logo-img,
 body.rec-display-mode img.jc-logo-img,
 .rec-present-shell .jc-logo-img--present {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   object-fit: contain;
   background: #fff;

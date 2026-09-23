@@ -23,9 +23,14 @@ body.executive-ui {
 .hub-board__eyebrow,
 .auth-portal-badge,
 .brand-title,
-.auth-brand-title,
-.auth-portals-title {
+.auth-brand-title {
   font-family: var(--font-display);
+}
+
+.auth-portals-title {
+  font-family: var(--font-ui) !important;
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 /* Logo monograma 001 */
@@ -67,10 +72,14 @@ body.auth-locked:has(.auth-layout--hub-news) .auth-video-scrim {
 }
 
 .hub-board__title,
-.auth-hero-panel .auth-brand-title,
-.auth-portals-title {
+.auth-hero-panel .auth-brand-title {
   letter-spacing: -0.03em;
   color: var(--ac001-sand) !important;
+}
+
+.auth-portals-title {
+  letter-spacing: 0.01em;
+  color: #f1f5f9 !important;
 }
 
 .hub-board__code {

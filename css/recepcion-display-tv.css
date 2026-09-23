@@ -21,8 +21,8 @@
   margin-left: auto;
   padding: 0.45rem 0.65rem;
   border-radius: 12px;
-  border: 1px solid rgba(255, 138, 128, 0.28);
-  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(200, 16, 46, 0.22);
+  background: #f8fafc;
 }
 
 .rec-present-date-label {
@@ -30,14 +30,14 @@
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: rgba(255, 205, 210, 0.9);
+  color: #c8102e;
 }
 
 .rec-present-date-input {
   min-height: 2.15rem;
   padding: 0.25rem 0.55rem;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(15, 23, 42, 0.2);
   background: #fff;
   color: #0f172a;
   font: inherit;
@@ -46,7 +46,7 @@
 }
 
 .rec-present-date-input:focus {
-  outline: 2px solid rgba(255, 138, 128, 0.55);
+  outline: 2px solid rgba(200, 16, 46, 0.4);
   outline-offset: 1px;
 }
 
@@ -54,9 +54,9 @@
   min-height: 2.15rem;
   padding: 0 0.75rem;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.06);
-  color: #ffebee;
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  background: #ffffff;
+  color: #0f172a;
   font: inherit;
   font-size: 0.82rem;
   font-weight: 700;
@@ -64,12 +64,13 @@
 }
 
 .rec-present-date-btn:hover {
-  background: rgba(255, 138, 128, 0.18);
+  background: #fff1f2;
+  border-color: rgba(200, 16, 46, 0.35);
 }
 
 .rec-present-date-btn.is-active {
-  border-color: rgba(255, 138, 128, 0.55);
-  background: rgba(255, 138, 128, 0.22);
+  border-color: rgba(200, 16, 46, 0.55);
+  background: #c8102e;
   color: #fff;
 }
 
@@ -101,8 +102,8 @@
   gap: 0.45rem;
   padding: clamp(0.35rem, 0.7vw, 0.55rem) clamp(0.4rem, 0.75vw, 0.65rem);
   border-radius: 12px;
-  border: 1px solid rgba(255, 138, 128, 0.22);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #f8fafc;
   min-width: 0;
 }
 
@@ -122,33 +123,33 @@
 .rec-tv-kpi--ent .rec-tv-kpi-icon { background: rgba(129, 199, 132, 0.18); }
 .rec-tv-kpi--ubi .rec-tv-kpi-icon { background: rgba(77, 182, 172, 0.18); }
 
-.rec-tv-kpi-num {
-  display: block;
-  font-weight: 800;
-  font-size: clamp(1rem, 1.85vw, 1.55rem);
-  line-height: 1.05;
-  color: #fff;
-}
-
 .rec-tv-kpi-lbl {
   display: block;
   font-size: clamp(0.48rem, 0.85vw, 0.62rem);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: rgba(255, 205, 210, 0.88);
+  color: #64748b;
   line-height: 1.15;
 }
 
-.rec-tv-kpi--desc .rec-tv-kpi-num { color: #ff8a80; }
-.rec-tv-kpi--val .rec-tv-kpi-num { color: #ffd54f; }
-.rec-tv-kpi--ent .rec-tv-kpi-num { color: #a5d6a7; }
-.rec-tv-kpi--ubi .rec-tv-kpi-num { color: #80cbc4; }
+.rec-tv-kpi-num {
+  display: block;
+  font-weight: 800;
+  font-size: clamp(1rem, 1.85vw, 1.55rem);
+  line-height: 1.05;
+  color: #0f172a;
+}
+
+.rec-tv-kpi--desc .rec-tv-kpi-num { color: #c8102e; }
+.rec-tv-kpi--val .rec-tv-kpi-num { color: #b45309; }
+.rec-tv-kpi--ent .rec-tv-kpi-num { color: #15803d; }
+.rec-tv-kpi--ubi .rec-tv-kpi-num { color: #0f766e; }
 
 .rec-tv-chart {
-  border: 1px solid rgba(255, 138, 128, 0.22);
+  border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
+  background: #f8fafc;
   padding: clamp(0.35rem, 0.65vw, 0.55rem) clamp(0.45rem, 0.8vw, 0.65rem);
   display: flex;
   flex-direction: column;
@@ -161,7 +162,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #ffcdd2;
+  color: #c8102e;
 }
 
 .rec-tv-chart-rows {
@@ -179,7 +180,7 @@
 }
 
 .rec-tv-chart-name {
-  color: rgba(255, 255, 255, 0.82);
+  color: #334155;
   font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
@@ -189,28 +190,28 @@
 .rec-tv-chart-bar {
   height: clamp(0.38rem, 0.75vh, 0.55rem);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.08);
   overflow: hidden;
 }
 
 .rec-tv-chart-fill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #c62828, #ef5350);
+  background: linear-gradient(90deg, #8b0a1a, #c8102e);
 }
 
-.rec-tv-chart-fill--val { background: linear-gradient(90deg, #f57f17, #ffd54f); }
-.rec-tv-chart-fill--ubi { background: linear-gradient(90deg, #00695c, #4db6ac); }
+.rec-tv-chart-fill--val { background: linear-gradient(90deg, #b45309, #f59e0b); }
+.rec-tv-chart-fill--ubi { background: linear-gradient(90deg, #0f766e, #14b8a6); }
 
 .rec-tv-chart-num {
   font-weight: 800;
-  color: #fff;
+  color: #0f172a;
   min-width: 1.25em;
   text-align: right;
 }
 
 .rec-tv-chart-empty {
-  color: rgba(255, 255, 255, 0.35);
+  color: #94a3b8;
   font-size: 0.72em;
   padding: 0.2rem 0;
 }
@@ -228,7 +229,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: rgba(255, 138, 128, 0.75);
+  color: #c8102e;
   margin-bottom: 0.15rem;
 }
 
@@ -250,18 +251,18 @@
   max-width: 100%;
   padding: 0.1rem 0.35rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 138, 128, 0.2);
+  background: #f1f5f9;
+  border: 1px solid rgba(15, 23, 42, 0.12);
   font-size: 0.92em;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.9);
+  color: #0f172a;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .rec-present-person--na {
-  color: rgba(255, 255, 255, 0.35);
+  color: #94a3b8;
   border-color: transparent;
   background: transparent;
   font-weight: 600;
@@ -273,11 +274,11 @@
   font-size: 0.92em;
 }
 
-.rec-present-fecha-etapa--empty { color: rgba(255, 255, 255, 0.28); font-weight: 600; }
-.rec-present-fecha-etapa--desc { color: #ff8a80; }
-.rec-present-fecha-etapa--val { color: #ffd54f; }
-.rec-present-fecha-etapa--ent { color: #a5d6a7; }
-.rec-present-fecha-etapa--ubi { color: #80cbc4; }
+.rec-present-fecha-etapa--empty { color: #94a3b8; font-weight: 600; }
+.rec-present-fecha-etapa--desc { color: #c8102e; }
+.rec-present-fecha-etapa--val { color: #b45309; }
+.rec-present-fecha-etapa--ent { color: #15803d; }
+.rec-present-fecha-etapa--ubi { color: #0f766e; }
 
 .rec-present-sub {
   margin: 0.2rem 0 0;
@@ -285,7 +286,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 205, 210, 0.75);
+  color: #c8102e;
 }
 
 .rec-present-shell--tv .rec-present-table-wrap {

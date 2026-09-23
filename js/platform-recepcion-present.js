@@ -294,8 +294,8 @@
     mountEl.innerHTML =
       '<div class="rec-present-shell rec-present-shell--tv">' +
       '<header class="rec-present-header">' +
-      '<img class="jc-logo-img jc-logo-img--present" src="assets/img/ac001-logo.svg?v=1" alt="AC" width="44" height="44">' +
-      '<div class="rec-present-header-copy"><p class="rec-present-eyebrow">Almacén Central 001 · EN VIVO</p>' +
+      '<img class="jc-logo-img jc-logo-img--present" src="assets/img/dc-logo.svg?v=1" alt="DC Corripio" width="44" height="44">' +
+      '<div class="rec-present-header-copy"><p class="rec-present-eyebrow">Almacén Central DC · EN VIVO</p>' +
       '<h1 class="rec-present-title">Gestión de Recepción y Ubicación</h1>' +
       '<p class="rec-present-sub">Recepción de contenedores</p></div>' +
       renderDateFilter(view.ymd) +

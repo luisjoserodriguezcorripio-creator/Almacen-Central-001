@@ -6,12 +6,12 @@ img.jc-logo-img {
   flex-shrink: 0;
   object-fit: contain;
   border-radius: 50%;
-  background: transparent !important;
+  background: #fff !important;
   border: none !important;
   box-shadow:
-    0 8px 22px rgba(198, 40, 40, 0.42),
-    0 2px 8px rgba(0, 0, 0, 0.28);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    0 8px 22px rgba(200, 16, 46, 0.28),
+    0 2px 8px rgba(0, 0, 0, 0.12);
+  filter: none;
 }
 
 .jc-logo-img--hero,

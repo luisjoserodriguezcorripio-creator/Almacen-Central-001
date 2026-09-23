@@ -1,9 +1,9 @@
-/* Control Patio — pantalla TV */
+/* Control Patio — pantalla TV (fondo blanco, alta visibilidad) */
 
 body.rec-display-mode {
   margin: 0;
-  background: #0d0203;
-  color: #fff;
+  background: #ffffff;
+  color: #0f172a;
   font-family: "DM Sans", system-ui, sans-serif;
   min-height: 100vh;
 }
@@ -13,7 +13,7 @@ body.rec-display-mode {
   inset: 0;
   display: grid;
   place-items: center;
-  background: #0d0203;
+  background: #ffffff;
   z-index: 5;
 }
 
@@ -24,12 +24,12 @@ body.rec-display-mode {
 }
 
 .rec-display-wait-title {
-  color: #ffcdd2;
+  color: #0f172a;
   margin: 0.5rem 0;
 }
 
 .rec-display-wait-text {
-  color: rgba(255, 255, 255, 0.78);
+  color: #475569;
 }
 
 .rec-display-wait-sub {
@@ -38,7 +38,7 @@ body.rec-display-mode {
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255, 205, 210, 0.7);
+  color: #c8102e;
 }
 
 body.rec-live-on .rec-display-waiting {
@@ -49,6 +49,7 @@ body.rec-live-on .rec-display-waiting {
   min-height: 100vh;
   padding: clamp(0.5rem, 1.5vw, 1.2rem);
   box-sizing: border-box;
+  background: #ffffff;
 }
 
 .rec-present-header {
@@ -58,12 +59,12 @@ body.rec-live-on .rec-display-waiting {
   gap: 1rem;
   margin-bottom: 0.75rem;
   padding-bottom: 0.65rem;
-  border-bottom: 1px solid rgba(255, 138, 128, 0.25);
+  border-bottom: 1px solid rgba(200, 16, 46, 0.2);
 }
 
 .rec-present-eyebrow {
   margin: 0;
-  color: #ffcdd2;
+  color: #c8102e;
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -73,7 +74,7 @@ body.rec-live-on .rec-display-waiting {
 .rec-present-title {
   margin: 0.15rem 0 0;
   font-size: clamp(1.2rem, 2.5vw, 2rem);
-  color: #fff;
+  color: #0f172a;
 }
 
 .rec-present-kpis {
@@ -81,12 +82,12 @@ body.rec-live-on .rec-display-waiting {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  color: rgba(255, 255, 255, 0.82);
+  color: #334155;
   font-size: clamp(0.85rem, 1.4vw, 1.1rem);
 }
 
 .rec-present-kpis strong {
-  color: #fff;
+  color: #0f172a;
   font-size: 1.15em;
 }
 
@@ -104,24 +105,26 @@ body.rec-live-on .rec-display-waiting {
 .rec-present-table th,
 .rec-present-table td {
   padding: clamp(0.35rem, 0.7vw, 0.65rem);
-  border-bottom: 1px solid rgba(255, 138, 128, 0.18);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.1);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: center;
   vertical-align: middle;
+  color: #1e293b;
 }
 
 .rec-present-table th {
-  color: #ffcdd2;
+  color: #c8102e;
   font-size: 0.72em;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  background: #f8fafc;
 }
 
 .rec-present-contenedor {
   font-weight: 800;
-  color: #fff;
+  color: #0f172a;
 }
 
 .rec-present-desc {
@@ -136,14 +139,15 @@ body.rec-live-on .rec-display-waiting {
   border-radius: 8px;
   font-size: 0.72em;
   font-weight: 800;
+  color: #fff;
 }
 
 .rec-present-badge--ok {
-  background: #2e7d32;
+  background: #15803d;
 }
 
 .rec-present-badge--pend {
-  background: #c62828;
+  background: #c8102e;
 }
 
 .rec-present-tipo {
@@ -155,21 +159,33 @@ body.rec-live-on .rec-display-waiting {
 }
 
 .rec-present-tipo--importado {
-  color: #ffd54f;
-  border: 1px solid rgba(255, 213, 79, 0.45);
+  color: #b45309;
+  border: 1px solid rgba(180, 83, 9, 0.4);
+  background: #fffbeb;
 }
 
 .rec-present-tipo--local {
-  color: #a5d6a7;
-  border: 1px solid rgba(129, 199, 132, 0.45);
+  color: #15803d;
+  border: 1px solid rgba(21, 128, 61, 0.35);
+  background: #f0fdf4;
 }
 
 .rec-present-empty {
   text-align: center;
   padding: 2rem !important;
-  color: rgba(255, 255, 255, 0.55);
+  color: #64748b;
 }
 
 .rec-live-present[hidden] {
   display: none !important;
+}
+
+/* Logo DC Corripio en pantalla clara */
+body.rec-display-mode .jc-logo-img,
+body.rec-display-mode img.jc-logo-img {
+  border-radius: 50%;
+  box-shadow:
+    0 6px 18px rgba(200, 16, 46, 0.22),
+    0 0 0 2px rgba(200, 16, 46, 0.18);
+  background: #fff;
 }

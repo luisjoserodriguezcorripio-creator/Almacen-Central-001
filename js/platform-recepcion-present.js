@@ -4,15 +4,83 @@
 (function (global) {
   'use strict';
 
+  var FILTER_KEY = 'rec_present_date_filter';
+  var TZ = 'America/Santo_Domingo';
+
   var esc = global.PanelCore ? global.PanelCore.esc : function (s) {
     return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   };
 
   var bound = false;
+  var filterBound = false;
   var mountEl = null;
   var lastSig = '';
+  var dateFilter = null; // '' = todas, 'YYYY-MM-DD' = día
 
   function S() { return global.PlatformRecepcionStore; }
+
+  function todayYmd() {
+    try {
+      return new Intl.DateTimeFormat('en-CA', {
+        timeZone: TZ,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).format(new Date());
+    } catch (e) {
+      return new Date().toISOString().slice(0, 10);
+    }
+  }
+
+  function isoToYmd(iso) {
+    if (!iso) return '';
+    var raw = String(iso);
+    if (/^\d{4}-\d{2}-\d{2}/.test(raw)) return raw.slice(0, 10);
+    var d = new Date(raw);
+    if (isNaN(d.getTime())) return '';
+    try {
+      return new Intl.DateTimeFormat('en-CA', {
+        timeZone: TZ,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).format(d);
+    } catch (e) {
+      return d.toISOString().slice(0, 10);
+    }
+  }
+
+  function getDateFilter() {
+    if (dateFilter !== null) return dateFilter;
+    try {
+      var saved = sessionStorage.getItem(FILTER_KEY);
+      if (saved === 'all' || saved === '') dateFilter = '';
+      else if (saved && /^\d{4}-\d{2}-\d{2}$/.test(saved)) dateFilter = saved;
+      else dateFilter = todayYmd();
+    } catch (e) {
+      dateFilter = todayYmd();
+    }
+    return dateFilter;
+  }
+
+  function setDateFilter(value) {
+    if (value === 'all' || value === '' || value == null) dateFilter = '';
+    else dateFilter = String(value).slice(0, 10);
+    try {
+      sessionStorage.setItem(FILTER_KEY, dateFilter === '' ? 'all' : dateFilter);
+    } catch (e) { /* noop */ }
+  }
+
+  function containerDateYmd(c) {
+    return isoToYmd(c.atDescargado || c.fecha || c.createdAt || '');
+  }
+
+  function filterByFecha(list, ymd) {
+    if (!ymd) return (list || []).slice();
+    return (list || []).filter(function (c) {
+      return containerDateYmd(c) === ymd;
+    });
+  }
 
   function badge(val) {
     if (val === 'ok') return '<span class="rec-present-badge rec-present-badge--ok">OK</span>';
@@ -102,6 +170,21 @@
       '</div></div>';
   }
 
+  function renderDateFilter(ymd) {
+    var today = todayYmd();
+    var isAll = !ymd;
+    var isToday = ymd === today;
+    return '<div class="rec-present-date-filter" role="search">' +
+      '<label class="rec-present-date-label" for="recPresentDateFilter">Fecha</label>' +
+      '<input type="date" id="recPresentDateFilter" class="rec-present-date-input" ' +
+      'value="' + esc(ymd || '') + '" aria-label="Filtrar por fecha de registro">' +
+      '<button type="button" class="rec-present-date-btn' + (isToday ? ' is-active' : '') +
+      '" data-rec-date="today">Hoy</button>' +
+      '<button type="button" class="rec-present-date-btn' + (isAll ? ' is-active' : '') +
+      '" data-rec-date="all">Todas</button>' +
+      '</div>';
+  }
+
   function renderToolbar(counts, chart) {
     return '<div class="rec-tv-toolbar">' +
       '<div class="rec-tv-kpis" role="group" aria-label="Resumen recepción">' +
@@ -129,7 +212,7 @@
       '</aside></div>';
   }
 
-  function signature(share, contenedores, counts) {
+  function signature(share, contenedores, counts, ymd) {
     if (!share || !share.active) return '';
     var rows = (contenedores || []).map(function (c) {
       return [
@@ -139,14 +222,17 @@
       ].join(':');
     }).join('|');
     var c = counts || {};
-    return share.updatedAt + '::' + [
+    return share.updatedAt + '::' + String(ymd || 'all') + '::' + [
       c.total, c.validado, c.conEntrada, c.conUbicado
     ].join(',') + '::' + rows;
   }
 
-  function renderRows(contenedores) {
+  function renderRows(contenedores, ymd) {
     if (!contenedores.length) {
-      return '<tr><td colspan="17" class="rec-present-empty">Sin contenedores en seguimiento.</td></tr>';
+      var msg = ymd
+        ? 'Sin contenedores registrados en la fecha seleccionada.'
+        : 'Sin contenedores en seguimiento.';
+      return '<tr><td colspan="17" class="rec-present-empty">' + esc(msg) + '</td></tr>';
     }
     return contenedores.map(function (c) {
       return '<tr>' +
@@ -171,6 +257,19 @@
     }).join('');
   }
 
+  function getFilteredView(data) {
+    var store = S();
+    var activos = store.getContenedoresActivos(data.contenedores);
+    var ymd = getDateFilter();
+    var filtrados = filterByFecha(activos, ymd);
+    return {
+      ymd: ymd,
+      contenedores: filtrados,
+      counts: store.countResumen(filtrados),
+      chart: buildChartStats(filtrados)
+    };
+  }
+
   function renderMount(share, data) {
     if (!mountEl) return;
     var store = S();
@@ -186,9 +285,7 @@
     }
 
     data = data || store.load();
-    var contenedores = store.getContenedoresActivos(data.contenedores);
-    var counts = store.countResumen(data.contenedores);
-    var chart = buildChartStats(contenedores);
+    var view = getFilteredView(data);
 
     mountEl.hidden = false;
     mountEl.setAttribute('aria-hidden', 'false');
@@ -198,10 +295,12 @@
       '<div class="rec-present-shell rec-present-shell--tv">' +
       '<header class="rec-present-header">' +
       '<img class="jc-logo-img jc-logo-img--present" src="assets/img/ac001-logo.svg?v=1" alt="AC" width="44" height="44">' +
-      '<div><p class="rec-present-eyebrow">Almacén Central 001 · EN VIVO</p>' +
+      '<div class="rec-present-header-copy"><p class="rec-present-eyebrow">Almacén Central 001 · EN VIVO</p>' +
       '<h1 class="rec-present-title">Gestión de Recepción y Ubicación</h1>' +
-      '<p class="rec-present-sub">Recepción de contenedores</p></div></header>' +
-      renderToolbar(counts, chart) +
+      '<p class="rec-present-sub">Recepción de contenedores</p></div>' +
+      renderDateFilter(view.ymd) +
+      '</header>' +
+      renderToolbar(view.counts, view.chart) +
       '<div class="rec-present-table-wrap">' +
       '<table class="rec-present-table rec-present-table--tv" aria-label="Manifiesto recepción en vivo">' +
       '<thead><tr>' +
@@ -209,12 +308,12 @@
       '<th>Op. sentado</th><th>Validador</th><th>Entrada</th><th>Ubicador</th>' +
       '<th>Descargado</th><th>Validado</th><th>Entrada</th><th>Ubicado</th>' +
       '<th>Val.</th><th>Ent.</th><th>Ubi.</th>' +
-      '</tr></thead><tbody>' + renderRows(contenedores) + '</tbody></table></div></div>';
+      '</tr></thead><tbody>' + renderRows(view.contenedores, view.ymd) + '</tbody></table></div></div>';
 
-    lastSig = signature(share, contenedores, counts);
+    lastSig = signature(share, view.contenedores, view.counts, view.ymd);
   }
 
-  function refreshFromStore() {
+  function refreshFromStore(force) {
     var store = S();
     if (!store) return;
     var data = store.load();
@@ -223,10 +322,9 @@
       renderMount(null);
       return;
     }
-    var contenedores = store.getContenedoresActivos(data.contenedores);
-    var counts = store.countResumen(data.contenedores);
-    var sig = signature(share, contenedores, counts);
-    if (sig === lastSig) return;
+    var view = getFilteredView(data);
+    var sig = signature(share, view.contenedores, view.counts, view.ymd);
+    if (!force && sig === lastSig) return;
     renderMount(share, data);
   }
 
@@ -244,13 +342,35 @@
     return mountEl;
   }
 
+  function bindFilterEvents() {
+    if (filterBound) return;
+    filterBound = true;
+    document.addEventListener('change', function (ev) {
+      var t = ev.target;
+      if (!t || t.id !== 'recPresentDateFilter') return;
+      setDateFilter(t.value || '');
+      refreshFromStore(true);
+    });
+    document.addEventListener('click', function (ev) {
+      var btn = ev.target && ev.target.closest ? ev.target.closest('[data-rec-date]') : null;
+      if (!btn || !mountEl || !mountEl.contains(btn)) return;
+      var mode = btn.getAttribute('data-rec-date');
+      if (mode === 'today') setDateFilter(todayYmd());
+      else if (mode === 'all') setDateFilter('');
+      else return;
+      refreshFromStore(true);
+    });
+  }
+
   function bind(opts) {
     if (bound) return;
     bound = true;
     opts = opts || {};
     ensureMount();
+    bindFilterEvents();
+    getDateFilter();
 
-    function onUpdate() { refreshFromStore(); }
+    function onUpdate() { refreshFromStore(false); }
 
     global.addEventListener('recepcion-updated', onUpdate);
     global.addEventListener('recepcion-live-board', onUpdate);
@@ -262,12 +382,12 @@
       bc.onmessage = function () { onUpdate(); };
     }
 
-    if (opts.displayMode) refreshFromStore();
+    if (opts.displayMode) refreshFromStore(true);
   }
 
   global.PlatformRecepcionPresent = {
     bind: bind,
-    refresh: refreshFromStore,
+    refresh: function () { refreshFromStore(true); },
     render: renderMount
   };
 })(typeof window !== 'undefined' ? window : this);

@@ -180,7 +180,7 @@ body.rec-live-on .rec-display-waiting {
   display: none !important;
 }
 
-/* Logo DC Corripio en pantalla clara */
+/* Logo AC en pantalla clara */
 body.rec-display-mode .jc-logo-img,
 body.rec-display-mode img.jc-logo-img {
   border-radius: 50%;

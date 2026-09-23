@@ -1,22 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Almacén Central DC">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Almacén Central AC">
   <defs>
-    <linearGradient id="ac001-ring" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="ac-ring" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#e11d2e"/>
       <stop offset="55%" stop-color="#c8102e"/>
       <stop offset="100%" stop-color="#8b0a1a"/>
     </linearGradient>
-    <linearGradient id="ac001-face" x1="18%" y1="0%" x2="82%" y2="100%">
+    <linearGradient id="ac-face" x1="18%" y1="0%" x2="82%" y2="100%">
       <stop offset="0%" stop-color="#ffffff"/>
       <stop offset="100%" stop-color="#f3f4f6"/>
     </linearGradient>
   </defs>
-  <circle cx="64" cy="64" r="60" fill="url(#ac001-face)" stroke="url(#ac001-ring)" stroke-width="7"/>
-  <circle cx="64" cy="64" r="52" fill="none" stroke="#c8102e" stroke-width="1.5" opacity="0.35"/>
-  <text x="64" y="78" text-anchor="middle" fill="#c8102e"
-    font-family="Arial Black, Impact, Arial, sans-serif"
-    font-size="48" font-weight="900" letter-spacing="2">DC</text>
-  <path d="M28 92 H100" stroke="#c8102e" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
-  <text x="64" y="108" text-anchor="middle" fill="#4b5563"
-    font-family="Arial, Helvetica, sans-serif"
-    font-size="9" font-weight="700" letter-spacing="2.5">CORRIPIO</text>
+  <circle cx="64" cy="64" r="60" fill="url(#ac-face)" stroke="url(#ac-ring)" stroke-width="7"/>
+  <circle cx="64" cy="64" r="51" fill="none" stroke="#c8102e" stroke-width="1.5" opacity="0.28"/>
+  <text x="64" y="82" text-anchor="middle" fill="#c8102e"
+    font-family="Arial Black, Impact, Arial, Helvetica, sans-serif"
+    font-size="58" font-weight="900" letter-spacing="1">AC</text>
 </svg>

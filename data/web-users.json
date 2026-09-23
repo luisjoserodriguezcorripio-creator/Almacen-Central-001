@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-20T12:00:00.000Z",
+  "updatedAt": "2026-09-23T12:55:00.000Z",
   "users": [
     {
       "id": "u_enmanuel_vasquez",
@@ -17,7 +17,7 @@
       "username": "Luisr0",
       "name": "Luis R.",
       "role": "administrador",
-      "passwordHash": "1f2f22f172e3529b358064fda210ff44c7c7f5a7efc1736ab059f2a1f376273a",
+      "passwordHash": "a8ffef0576b53a79c84409727674ee096bf2d67961aa9ebd613f2b06a2fc423c",
       "areas": [],
       "active": true,
       "extraPermissions": []

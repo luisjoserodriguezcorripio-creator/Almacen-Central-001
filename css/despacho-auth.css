@@ -486,3 +486,172 @@ body.auth-locked .desp-auth-overlay .auth-form {
     grid-template-columns: 1fr;
   }
 }
+
+/* ——— Login despacho: fondo blanco + tipografía web legible ——— */
+.desp-auth-overlay.auth-overlay {
+  background: #ffffff !important;
+}
+
+.desp-auth-overlay .desp-auth-bg-wrap {
+  background: #ffffff !important;
+}
+
+.desp-auth-overlay .desp-auth-bg-wrap::before {
+  display: none !important;
+  animation: none !important;
+}
+
+.desp-auth-overlay .desp-auth-scrim,
+.desp-auth-overlay .auth-video-scrim {
+  background: #ffffff !important;
+}
+
+.desp-auth-overlay .auth-hero-panel,
+.desp-auth-overlay .desp-auth-hero-panel,
+.desp-auth-overlay .auth-glass-card,
+.desp-auth-overlay .desp-auth-glass {
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: #0f172a !important;
+}
+
+.desp-auth-overlay .auth-welcome-line,
+.desp-auth-overlay .desp-auth-tag {
+  color: #c2410c !important;
+  font-size: 0.95rem !important;
+}
+
+.desp-auth-overlay .desp-auth-brand-title,
+.desp-auth-overlay .auth-heading,
+.desp-auth-overlay .desp-auth-heading,
+.desp-auth-overlay .auth-hero-panel .auth-brand-title {
+  color: #0f172a !important;
+  font-size: clamp(1.65rem, 2.6vw, 2.15rem) !important;
+}
+
+.desp-auth-overlay .desp-auth-desc,
+.desp-auth-overlay .auth-subheading,
+.desp-auth-overlay .desp-auth-subheading,
+.desp-auth-overlay .desp-auth-hint,
+.desp-auth-overlay .auth-hint,
+.desp-auth-overlay .auth-field label {
+  color: #334155 !important;
+  font-size: 1.05rem !important;
+  line-height: 1.55 !important;
+}
+
+.desp-auth-overlay .auth-field label {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.45rem !important;
+}
+
+.desp-auth-overlay .desp-auth-step {
+  background: #f8fafc !important;
+  border-color: rgba(15, 23, 42, 0.14) !important;
+  color: #1e293b !important;
+  font-size: 0.88rem !important;
+}
+
+.desp-auth-overlay .desp-auth-back {
+  color: #1d4ed8 !important;
+  font-size: 1rem !important;
+}
+
+.desp-auth-overlay .desp-auth-back:hover {
+  color: #1e3a8a !important;
+}
+
+.desp-auth-overlay .auth-role-card,
+.desp-auth-overlay .desp-auth-role-card {
+  background: #f8fafc !important;
+  border: 1px solid rgba(15, 23, 42, 0.14) !important;
+  color: #0f172a !important;
+}
+
+.desp-auth-overlay .auth-role-card strong,
+.desp-auth-overlay .desp-auth-role-card strong {
+  color: #0f172a !important;
+  font-size: 1.1rem !important;
+}
+
+.desp-auth-overlay .auth-role-card .role-desc,
+.desp-auth-overlay .desp-auth-role-card .role-desc {
+  color: #475569 !important;
+  font-size: 0.95rem !important;
+}
+
+.desp-auth-overlay .desp-auth-role-card.active,
+.desp-auth-overlay .desp-auth-role-input:checked + .desp-auth-role-card {
+  background: #fff7ed !important;
+  border-color: #ea580c !important;
+  box-shadow: 0 0 0 1px rgba(234, 88, 12, 0.25) !important;
+}
+
+.desp-auth-overlay .auth-field-input,
+.desp-auth-overlay input.auth-field-input,
+.desp-auth-overlay input[type="text"],
+.desp-auth-overlay input[type="password"],
+.desp-auth-overlay input[type="number"],
+body.executive-ui .desp-auth-overlay .auth-field-input {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  caret-color: #0f172a !important;
+  border: 1.5px solid rgba(15, 23, 42, 0.22) !important;
+  font-size: 1.15rem !important;
+  min-height: 54px !important;
+  line-height: 1.4 !important;
+  box-shadow: none !important;
+}
+
+.desp-auth-overlay .auth-field-input::placeholder,
+.desp-auth-overlay input.auth-field-input::placeholder {
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+  opacity: 1 !important;
+  font-size: 1.05rem !important;
+}
+
+.desp-auth-overlay .auth-field-input:focus,
+body.executive-ui .desp-auth-overlay .auth-field-input:focus {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border-color: #ea580c !important;
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.2) !important;
+  outline: none !important;
+}
+
+.desp-auth-overlay .auth-toggle-pass,
+.desp-auth-overlay .auth-pass-toggle {
+  color: #1d4ed8 !important;
+  font-size: 1rem !important;
+}
+
+.desp-auth-overlay .auth-remember,
+.desp-auth-overlay .auth-check,
+.desp-auth-overlay label[for*="Remember"],
+.desp-auth-overlay .auth-human-verify,
+.desp-auth-overlay .auth-human-verify label,
+.desp-auth-overlay .auth-human-verify span {
+  color: #334155 !important;
+  font-size: 1rem !important;
+}
+
+.desp-auth-overlay #despAuthSubmit,
+.desp-auth-overlay .btn-primary {
+  min-height: 54px !important;
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+}
+
+.desp-auth-overlay .desp-auth-error,
+.desp-auth-overlay .auth-error {
+  color: #b91c1c !important;
+  font-size: 1rem !important;
+  background: #fef2f2 !important;
+}

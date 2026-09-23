@@ -33,9 +33,38 @@
     if (global.PlatformRecepcionPresent) global.PlatformRecepcionPresent.refresh();
   }
 
+  function setMenuOpen(open) {
+    var drawer = document.getElementById('recTvDrawer');
+    var bd = document.getElementById('recTvDrawerBd');
+    var btn = document.getElementById('recTvMenuOpen');
+    if (!drawer) return;
+    drawer.hidden = !open;
+    if (bd) bd.hidden = !open;
+    if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  function bindMenu() {
+    document.addEventListener('click', function (ev) {
+      var t = ev.target;
+      if (!t) return;
+      if (t.id === 'recTvMenuOpen' || (t.closest && t.closest('#recTvMenuOpen'))) {
+        setMenuOpen(true);
+        return;
+      }
+      if (t.id === 'recTvMenuClose' || t.id === 'recTvDrawerBd' ||
+          (t.closest && (t.closest('#recTvMenuClose') || t.id === 'recTvDrawerBd'))) {
+        setMenuOpen(false);
+      }
+    });
+    document.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape') setMenuOpen(false);
+    });
+  }
+
   function init() {
     waitingEl = document.getElementById('recDisplayWaiting');
     document.body.classList.add('rec-display-mode');
+    bindMenu();
     if (global.PlatformRecepcionPresent) {
       global.PlatformRecepcionPresent.bind({ displayMode: true });
     }

@@ -11,12 +11,38 @@
   <link rel="icon" type="image/png" href="assets/img/ac001-logo.svg?v=3">
   <link rel="stylesheet" href="css/dc-brand.css?v=11">
   <link rel="stylesheet" href="css/ac001-brand.css?v=1">
-  <link rel="stylesheet" href="css/recepcion-display.css?v=6">
-  <link rel="stylesheet" href="css/recepcion-display-tv.css?v=6">
+  <link rel="stylesheet" href="css/recepcion-display.css?v=7">
+  <link rel="stylesheet" href="css/recepcion-display-tv.css?v=7">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body class="rec-display-mode">
   <noscript><p class="rec-display-wait-text">Activa JavaScript para la pantalla externa.</p></noscript>
+
+  <div class="rec-tv-menubar rec-tv-menubar--fixed" role="navigation" aria-label="Menú de pantalla">
+    <button type="button" class="rec-tv-menu-btn" id="recTvMenuOpen" aria-expanded="false" aria-controls="recTvDrawer">
+      <span class="rec-tv-menu-btn-icon" aria-hidden="true">☰</span> Menú
+    </button>
+    <p class="rec-tv-menubar-title">Almacén Central AC</p>
+  </div>
+  <button type="button" class="rec-tv-drawer-backdrop" id="recTvDrawerBd" hidden aria-label="Cerrar menú"></button>
+  <aside class="rec-tv-drawer" id="recTvDrawer" hidden aria-label="Menú de navegación">
+    <div class="rec-tv-drawer-head">
+      <div class="rec-tv-drawer-brand">
+        <img src="assets/img/ac001-logo.svg?v=3" alt="AC" width="36" height="36">
+        <span>Menú AC</span>
+      </div>
+      <button type="button" class="rec-tv-drawer-close" id="recTvMenuClose" aria-label="Cerrar">×</button>
+    </div>
+    <nav class="rec-tv-drawer-nav">
+      <a class="rec-tv-drawer-link" href="index.html">Inicio · Control de mando</a>
+      <a class="rec-tv-drawer-link" href="recepcion.html">Portal Recepción</a>
+      <a class="rec-tv-drawer-link is-active" href="recepcion-pantalla.html">Pantalla TV · En vivo</a>
+      <a class="rec-tv-drawer-link" href="despacho.html">Portal Despacho</a>
+      <a class="rec-tv-drawer-link" href="agenda.html">Agenda operativa</a>
+      <a class="rec-tv-drawer-link" href="inventario.html">Inventario</a>
+    </nav>
+    <div class="rec-tv-drawer-foot">Gestión de Recepción y Ubicación</div>
+  </aside>
 
   <div class="rec-display-waiting" id="recDisplayWaiting" aria-live="polite">
     <div class="rec-display-wait-inner">
@@ -29,8 +55,8 @@
 
   <script src="js/panel-core.js"></script>
   <script src="js/platform-recepcion-store.js?v=10"></script>
-  <script src="js/platform-recepcion-present.js?v=12"></script>
+  <script src="js/platform-recepcion-present.js?v=13"></script>
   <script src="js/platform-wake-lock.js?v=1"></script>
-  <script src="js/platform-recepcion-display-app.js?v=2"></script>
+  <script src="js/platform-recepcion-display-app.js?v=3"></script>
 </body>
 </html>

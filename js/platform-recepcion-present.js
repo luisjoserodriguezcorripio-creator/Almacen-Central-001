@@ -272,7 +272,6 @@
       '<span>Desde</span>' +
       '<input type="date" id="recPresentDateDesde" class="rec-present-date-input" ' +
       'value="' + esc(r.desde || '') + '" aria-label="Fecha desde"></label>' +
-      '<span class="rec-present-date-dash" aria-hidden="true"></span>' +
       '<label class="rec-present-date-field" for="recPresentDateHasta">' +
       '<span>Hasta</span>' +
       '<input type="date" id="recPresentDateHasta" class="rec-present-date-input" ' +
@@ -399,10 +398,11 @@
     mountEl.innerHTML =
       '<div class="rec-present-shell rec-present-shell--tv">' +
       '<header class="rec-present-header">' +
+      '<div class="rec-present-header-brand">' +
       '<img class="jc-logo-img jc-logo-img--present" src="assets/img/ac001-logo.svg?v=3" alt="AC" width="48" height="48">' +
       '<div class="rec-present-header-copy"><p class="rec-present-eyebrow">Almacén Central AC · EN VIVO</p>' +
       '<h1 class="rec-present-title">Gestión de Recepción y Ubicación</h1>' +
-      '<p class="rec-present-sub">Recepción de contenedores</p></div>' +
+      '<p class="rec-present-sub">Recepción de contenedores</p></div></div>' +
       renderDateFilter(view.range) +
       '</header>' +
       renderToolbar(view.counts, view.chart) +

@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="css/dc-brand.css?v=11">
   <link rel="stylesheet" href="css/ac001-brand.css?v=1">
   <link rel="stylesheet" href="css/recepcion-display.css?v=8">
-  <link rel="stylesheet" href="css/recepcion-display-tv.css?v=8">
+  <link rel="stylesheet" href="css/recepcion-display-tv.css?v=9">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body class="rec-display-mode">
@@ -28,20 +28,17 @@
   <aside class="rec-tv-drawer" id="recTvDrawer" hidden aria-label="Menú de navegación">
     <div class="rec-tv-drawer-head">
       <div class="rec-tv-drawer-brand">
-        <img src="assets/img/ac001-logo.svg?v=4" alt="AC" width="36" height="36">
-        <span>Menú AC</span>
+        <img src="assets/img/ac001-logo.svg?v=4" alt="AC" width="40" height="40">
+        <p class="rec-tv-drawer-brand-label">Recepción · Almacén Central</p>
       </div>
       <button type="button" class="rec-tv-drawer-close" id="recTvMenuClose" aria-label="Cerrar">×</button>
     </div>
     <nav class="rec-tv-drawer-nav">
-      <a class="rec-tv-drawer-link" href="index.html">Inicio · Control de mando</a>
-      <a class="rec-tv-drawer-link" href="recepcion.html">Portal Recepción</a>
-      <a class="rec-tv-drawer-link is-active" href="recepcion-pantalla.html">Pantalla TV · En vivo</a>
-      <a class="rec-tv-drawer-link" href="despacho.html">Portal Despacho</a>
-      <a class="rec-tv-drawer-link" href="agenda.html">Agenda operativa</a>
-      <a class="rec-tv-drawer-link" href="inventario.html">Inventario</a>
+      <a class="rec-tv-drawer-link is-active" href="recepcion.html#ops">Operaciones</a>
+      <a class="rec-tv-drawer-link" href="recepcion.html#hist">Historia</a>
+      <a class="rec-tv-drawer-link" href="recepcion.html#cfg">Configuraciones</a>
     </nav>
-    <div class="rec-tv-drawer-foot">Gestión de Recepción y Ubicación</div>
+    <div class="rec-tv-drawer-foot">Pantalla TV · En vivo</div>
   </aside>
 
   <div class="rec-display-waiting" id="recDisplayWaiting" aria-live="polite">

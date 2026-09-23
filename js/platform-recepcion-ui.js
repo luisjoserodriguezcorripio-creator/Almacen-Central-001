@@ -487,6 +487,13 @@
         var screenId = screenBtn.getAttribute('data-rec-screen');
         if (screenId) {
           setRecScreen(root, screenId);
+          try {
+            if (global.history && global.history.replaceState) {
+              global.history.replaceState(null, '', '#' + screenId);
+            } else if (global.location) {
+              global.location.hash = screenId;
+            }
+          } catch (e) { /* noop */ }
           closeRecDrawer(root);
         }
         return;
@@ -543,6 +550,11 @@
     root.__recAppCallbacks = callbacks;
     root.__recAppUser = user;
     bindAppEventsOnce(root);
+
+    var hash = String((global.location && global.location.hash) || '').replace(/^#/, '');
+    if (hash === 'ops' || hash === 'hist' || hash === 'cfg') {
+      setRecScreen(root, hash);
+    }
 
     var form = root.querySelector('#recRegistroForm');
     if (form && !form.__recFormBound) {

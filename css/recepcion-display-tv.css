@@ -211,7 +211,7 @@ body.rec-live-on .rec-live-present {
   position: fixed;
   inset: 0;
   z-index: 80;
-  background: rgba(15, 23, 42, 0.45);
+  background: rgba(2, 6, 23, 0.62);
   border: 0;
   padding: 0;
   cursor: pointer;
@@ -226,17 +226,18 @@ body.rec-live-on .rec-live-present {
   top: 0;
   left: 0;
   z-index: 90;
-  width: min(18.5rem, 88vw);
+  width: min(18.75rem, 88vw);
   height: 100%;
   margin: 0;
-  padding: 0;
+  padding: 1.15rem 0 0;
   border: 0;
-  border-right: 1px solid rgba(200, 16, 46, 0.2);
-  background: #fff;
-  box-shadow: 8px 0 28px rgba(15, 23, 42, 0.18);
+  border-right: 1px solid rgba(239, 68, 68, 0.35);
+  background: linear-gradient(180deg, #0a1220 0%, #0f172a 55%, #111827 100%);
+  box-shadow: 8px 0 40px rgba(0, 0, 0, 0.45);
   display: flex;
   flex-direction: column;
   transform: translateX(0);
+  color: #fff;
 }
 
 .rec-tv-drawer[hidden] {
@@ -245,68 +246,94 @@ body.rec-live-on .rec-live-present {
 
 .rec-tv-drawer-head {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 0.5rem;
-  padding: 0.9rem 1rem;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 0 1.05rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 0.55rem;
 }
 
 .rec-tv-drawer-brand {
   display: flex;
-  align-items: center;
-  gap: 0.55rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
   font-weight: 800;
-  color: #0f172a;
+  color: #fff;
+}
+
+.rec-tv-drawer-brand img {
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(200, 16, 46, 0.35);
+}
+
+.rec-tv-drawer-brand-label {
+  margin: 0;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(147, 197, 253, 0.75);
 }
 
 .rec-tv-drawer-close {
   min-width: 2.1rem;
   min-height: 2.1rem;
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  background: #f8fafc;
-  color: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
   font-size: 1.15rem;
   font-weight: 700;
   cursor: pointer;
 }
 
+.rec-tv-drawer-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
 .rec-tv-drawer-nav {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  padding: 0.75rem;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
   overflow: auto;
+  flex: 1;
 }
 
 .rec-tv-drawer-link {
   display: block;
-  padding: 0.7rem 0.8rem;
-  border-radius: 8px;
-  color: #0f172a;
+  padding: 0.75rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  color: rgba(255, 255, 255, 0.78);
   text-decoration: none;
   font-weight: 700;
-  font-size: 0.92rem;
+  font-size: 0.82rem;
+  background: transparent;
 }
 
 .rec-tv-drawer-link:hover {
-  background: #fff1f2;
-  color: #c8102e;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
 }
 
 .rec-tv-drawer-link.is-active {
-  background: #c8102e;
+  background: linear-gradient(90deg, rgba(127, 29, 29, 0.5), rgba(185, 28, 28, 0.2));
+  border-color: rgba(248, 113, 113, 0.45);
   color: #fff;
+  box-shadow: inset 3px 0 0 #ef4444;
 }
 
 .rec-tv-drawer-foot {
   margin-top: auto;
-  padding: 0.85rem 1rem;
-  border-top: 1px solid #e2e8f0;
+  padding: 0.85rem 1.05rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
+  color: rgba(148, 163, 184, 0.9);
 }
 
 @media (max-width: 720px) {

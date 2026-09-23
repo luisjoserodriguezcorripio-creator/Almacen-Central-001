@@ -399,7 +399,7 @@
     mountEl.innerHTML =
       '<div class="rec-present-shell rec-present-shell--tv">' +
       '<header class="rec-present-header">' +
-      '<img class="jc-logo-img jc-logo-img--present" src="assets/img/ac001-logo.svg?v=2" alt="AC" width="44" height="44">' +
+      '<img class="jc-logo-img jc-logo-img--present" src="assets/img/ac001-logo.svg?v=3" alt="AC" width="48" height="48">' +
       '<div class="rec-present-header-copy"><p class="rec-present-eyebrow">Almacén Central AC · EN VIVO</p>' +
       '<h1 class="rec-present-title">Gestión de Recepción y Ubicación</h1>' +
       '<p class="rec-present-sub">Recepción de contenedores</p></div>' +

@@ -182,10 +182,14 @@ body.rec-live-on .rec-display-waiting {
 
 /* Logo AC en pantalla clara */
 body.rec-display-mode .jc-logo-img,
-body.rec-display-mode img.jc-logo-img {
+body.rec-display-mode img.jc-logo-img,
+.rec-present-shell .jc-logo-img--present {
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
+  object-fit: contain;
+  background: #fff;
   box-shadow:
     0 6px 18px rgba(200, 16, 46, 0.22),
     0 0 0 2px rgba(200, 16, 46, 0.18);
-  background: #fff;
 }

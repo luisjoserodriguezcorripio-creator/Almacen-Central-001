@@ -1,18 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Almacén Central AC">
+ï»¿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Almacen Central AC">
   <defs>
-    <linearGradient id="dc-ring" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="acRing" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#e11d2e"/>
       <stop offset="55%" stop-color="#c8102e"/>
       <stop offset="100%" stop-color="#8b0a1a"/>
     </linearGradient>
-    <linearGradient id="dc-face" x1="18%" y1="0%" x2="82%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#f3f4f6"/>
-    </linearGradient>
   </defs>
-  <circle cx="64" cy="64" r="60" fill="url(#dc-face)" stroke="url(#dc-ring)" stroke-width="7"/>
-  <circle cx="64" cy="64" r="51" fill="none" stroke="#c8102e" stroke-width="1.5" opacity="0.28"/>
-  <text x="64" y="82" text-anchor="middle" fill="#c8102e"
-    font-family="Arial Black, Impact, Arial, Helvetica, sans-serif"
-    font-size="58" font-weight="900" letter-spacing="1">AC</text>
+  <circle cx="64" cy="64" r="60" fill="#ffffff" stroke="url(#acRing)" stroke-width="8"/>
+  <path fill="#c8102e" d="M18 94 L38 30 H46 L66 94 H54 L50.2 80 H33.8 L30 94 Z M36.2 68 H47.8 L42 48 Z"/>
+  <path fill="none" stroke="#c8102e" stroke-width="12" stroke-linecap="round" d="M108 42 C100 30 88 26 76 28 C60 32 52 46 52 64 C52 82 60 96 76 100 C88 102 100 98 108 86"/>
 </svg>

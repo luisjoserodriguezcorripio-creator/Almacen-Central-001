@@ -4,7 +4,7 @@
 (function (global) {
   'use strict';
 
-  var FILTER_KEY = 'rec_present_date_filter';
+  var FILTER_KEY = 'rec_present_date_range';
   var TZ = 'America/Santo_Domingo';
 
   var esc = global.PanelCore ? global.PanelCore.esc : function (s) {
@@ -15,7 +15,8 @@
   var filterBound = false;
   var mountEl = null;
   var lastSig = '';
-  var dateFilter = null; // '' = todas, 'YYYY-MM-DD' = día
+  /** @type {{desde:string,hasta:string}|null} vacío = todas */
+  var dateRange = null;
 
   function S() { return global.PlatformRecepcionStore; }
 
@@ -50,35 +51,121 @@
     }
   }
 
-  function getDateFilter() {
-    if (dateFilter !== null) return dateFilter;
-    try {
-      var saved = sessionStorage.getItem(FILTER_KEY);
-      if (saved === 'all' || saved === '') dateFilter = '';
-      else if (saved && /^\d{4}-\d{2}-\d{2}$/.test(saved)) dateFilter = saved;
-      else dateFilter = todayYmd();
-    } catch (e) {
-      dateFilter = todayYmd();
-    }
-    return dateFilter;
+  function addDaysYmd(ymd, days) {
+    var d = new Date(ymd + 'T12:00:00');
+    d.setDate(d.getDate() + days);
+    return isoToYmd(d.toISOString());
   }
 
-  function setDateFilter(value) {
-    if (value === 'all' || value === '' || value == null) dateFilter = '';
-    else dateFilter = String(value).slice(0, 10);
+  function startOfWeekYmd(ymd) {
+    var d = new Date(ymd + 'T12:00:00');
+    var day = d.getDay();
+    var diff = day === 0 ? -6 : 1 - day;
+    d.setDate(d.getDate() + diff);
+    return isoToYmd(d.toISOString());
+  }
+
+  function startOfMonthYmd(ymd) {
+    return String(ymd).slice(0, 8) + '01';
+  }
+
+  function normalizeRange(desde, hasta) {
+    desde = (desde && /^\d{4}-\d{2}-\d{2}$/.test(desde)) ? desde : '';
+    hasta = (hasta && /^\d{4}-\d{2}-\d{2}$/.test(hasta)) ? hasta : '';
+    if (desde && hasta && desde > hasta) {
+      var tmp = desde;
+      desde = hasta;
+      hasta = tmp;
+    }
+    return { desde: desde, hasta: hasta };
+  }
+
+  function rangeKey(r) {
+    if (!r || (!r.desde && !r.hasta)) return 'all';
+    return (r.desde || '') + '|' + (r.hasta || '');
+  }
+
+  function getDateRange() {
+    if (dateRange !== null) return dateRange;
+    var today = todayYmd();
     try {
-      sessionStorage.setItem(FILTER_KEY, dateFilter === '' ? 'all' : dateFilter);
+      var saved = sessionStorage.getItem(FILTER_KEY);
+      if (!saved || saved === 'all') {
+        dateRange = { desde: '', hasta: '' };
+      } else if (/^\d{4}-\d{2}-\d{2}\|\d{4}-\d{2}-\d{2}$/.test(saved) ||
+                 /^\d{4}-\d{2}-\d{2}\|$/.test(saved) ||
+                 /^\|\d{4}-\d{2}-\d{2}$/.test(saved)) {
+        var parts = saved.split('|');
+        dateRange = normalizeRange(parts[0], parts[1]);
+      } else if (/^\d{4}-\d{2}-\d{2}$/.test(saved)) {
+        dateRange = { desde: saved, hasta: saved };
+      } else {
+        dateRange = { desde: today, hasta: today };
+      }
+    } catch (e) {
+      dateRange = { desde: today, hasta: today };
+    }
+    return dateRange;
+  }
+
+  function setDateRange(desde, hasta) {
+    dateRange = normalizeRange(desde, hasta);
+    try {
+      sessionStorage.setItem(FILTER_KEY, rangeKey(dateRange));
     } catch (e) { /* noop */ }
+  }
+
+  function applyPreset(mode) {
+    var today = todayYmd();
+    if (mode === 'today') setDateRange(today, today);
+    else if (mode === 'week') setDateRange(startOfWeekYmd(today), today);
+    else if (mode === '7d') setDateRange(addDaysYmd(today, -6), today);
+    else if (mode === 'month') setDateRange(startOfMonthYmd(today), today);
+    else if (mode === 'all') setDateRange('', '');
+  }
+
+  function activePreset(r) {
+    var today = todayYmd();
+    if (!r.desde && !r.hasta) return 'all';
+    if (r.desde === today && r.hasta === today) return 'today';
+    if (r.desde === startOfWeekYmd(today) && r.hasta === today) return 'week';
+    if (r.desde === addDaysYmd(today, -6) && r.hasta === today) return '7d';
+    if (r.desde === startOfMonthYmd(today) && r.hasta === today) return 'month';
+    return '';
+  }
+
+  function fmtHintYmd(ymd) {
+    if (!ymd) return '—';
+    var p = ymd.split('-');
+    var months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    return Number(p[2]) + ' ' + months[Number(p[1]) - 1] + ' ' + p[0];
+  }
+
+  function rangeHint(r) {
+    if (!r.desde && !r.hasta) return 'Se muestran todos los registros';
+    if (r.desde && r.hasta && r.desde === r.hasta) {
+      return 'Se muestran registros del ' + fmtHintYmd(r.desde);
+    }
+    if (r.desde && r.hasta) {
+      return 'Se muestran registros del ' + fmtHintYmd(r.desde) + ' al ' + fmtHintYmd(r.hasta);
+    }
+    if (r.desde) return 'Se muestran registros desde ' + fmtHintYmd(r.desde);
+    return 'Se muestran registros hasta ' + fmtHintYmd(r.hasta);
   }
 
   function containerDateYmd(c) {
     return isoToYmd(c.atDescargado || c.fecha || c.createdAt || '');
   }
 
-  function filterByFecha(list, ymd) {
-    if (!ymd) return (list || []).slice();
+  function filterByRango(list, range) {
+    var r = range || { desde: '', hasta: '' };
+    if (!r.desde && !r.hasta) return (list || []).slice();
     return (list || []).filter(function (c) {
-      return containerDateYmd(c) === ymd;
+      var d = containerDateYmd(c);
+      if (!d) return false;
+      if (r.desde && d < r.desde) return false;
+      if (r.hasta && d > r.hasta) return false;
+      return true;
     });
   }
 
@@ -170,18 +257,35 @@
       '</div></div>';
   }
 
-  function renderDateFilter(ymd) {
-    var today = todayYmd();
-    var isAll = !ymd;
-    var isToday = ymd === today;
+  function renderDateFilter(range) {
+    var r = range || { desde: '', hasta: '' };
+    var preset = activePreset(r);
+    function btn(mode, label) {
+      return '<button type="button" class="rec-present-date-btn' +
+        (preset === mode ? ' is-active' : '') +
+        '" data-rec-date="' + mode + '">' + label + '</button>';
+    }
     return '<div class="rec-present-date-filter" role="search">' +
-      '<label class="rec-present-date-label" for="recPresentDateFilter">Fecha</label>' +
-      '<input type="date" id="recPresentDateFilter" class="rec-present-date-input" ' +
-      'value="' + esc(ymd || '') + '" aria-label="Filtrar por fecha de registro">' +
-      '<button type="button" class="rec-present-date-btn' + (isToday ? ' is-active' : '') +
-      '" data-rec-date="today">Hoy</button>' +
-      '<button type="button" class="rec-present-date-btn' + (isAll ? ' is-active' : '') +
-      '" data-rec-date="all">Todas</button>' +
+      '<p class="rec-present-date-label">Rango de fecha</p>' +
+      '<div class="rec-present-date-range-row">' +
+      '<label class="rec-present-date-field" for="recPresentDateDesde">' +
+      '<span>Desde</span>' +
+      '<input type="date" id="recPresentDateDesde" class="rec-present-date-input" ' +
+      'value="' + esc(r.desde || '') + '" aria-label="Fecha desde"></label>' +
+      '<span class="rec-present-date-dash" aria-hidden="true"></span>' +
+      '<label class="rec-present-date-field" for="recPresentDateHasta">' +
+      '<span>Hasta</span>' +
+      '<input type="date" id="recPresentDateHasta" class="rec-present-date-input" ' +
+      'value="' + esc(r.hasta || '') + '" aria-label="Fecha hasta"></label>' +
+      '</div>' +
+      '<div class="rec-present-date-presets">' +
+      btn('today', 'Hoy') +
+      btn('week', 'Esta semana') +
+      btn('7d', 'Últimos 7 días') +
+      btn('month', 'Este mes') +
+      btn('all', 'Todas') +
+      '</div>' +
+      '<p class="rec-present-date-hint">' + esc(rangeHint(r)) + '</p>' +
       '</div>';
   }
 
@@ -212,7 +316,7 @@
       '</aside></div>';
   }
 
-  function signature(share, contenedores, counts, ymd) {
+  function signature(share, contenedores, counts, range) {
     if (!share || !share.active) return '';
     var rows = (contenedores || []).map(function (c) {
       return [
@@ -222,15 +326,16 @@
       ].join(':');
     }).join('|');
     var c = counts || {};
-    return share.updatedAt + '::' + String(ymd || 'all') + '::' + [
+    return share.updatedAt + '::' + rangeKey(range) + '::' + [
       c.total, c.validado, c.conEntrada, c.conUbicado
     ].join(',') + '::' + rows;
   }
 
-  function renderRows(contenedores, ymd) {
+  function renderRows(contenedores, range) {
     if (!contenedores.length) {
-      var msg = ymd
-        ? 'Sin contenedores registrados en la fecha seleccionada.'
+      var hasRange = range && (range.desde || range.hasta);
+      var msg = hasRange
+        ? 'Sin contenedores registrados en el rango seleccionado.'
         : 'Sin contenedores en seguimiento.';
       return '<tr><td colspan="17" class="rec-present-empty">' + esc(msg) + '</td></tr>';
     }
@@ -260,10 +365,10 @@
   function getFilteredView(data) {
     var store = S();
     var activos = store.getContenedoresActivos(data.contenedores);
-    var ymd = getDateFilter();
-    var filtrados = filterByFecha(activos, ymd);
+    var range = getDateRange();
+    var filtrados = filterByRango(activos, range);
     return {
-      ymd: ymd,
+      range: range,
       contenedores: filtrados,
       counts: store.countResumen(filtrados),
       chart: buildChartStats(filtrados)
@@ -298,7 +403,7 @@
       '<div class="rec-present-header-copy"><p class="rec-present-eyebrow">Almacén Central AC · EN VIVO</p>' +
       '<h1 class="rec-present-title">Gestión de Recepción y Ubicación</h1>' +
       '<p class="rec-present-sub">Recepción de contenedores</p></div>' +
-      renderDateFilter(view.ymd) +
+      renderDateFilter(view.range) +
       '</header>' +
       renderToolbar(view.counts, view.chart) +
       '<div class="rec-present-table-wrap">' +
@@ -308,9 +413,9 @@
       '<th>Op. sentado</th><th>Validador</th><th>Entrada</th><th>Ubicador</th>' +
       '<th>Descargado</th><th>Validado</th><th>Entrada</th><th>Ubicado</th>' +
       '<th>Val.</th><th>Ent.</th><th>Ubi.</th>' +
-      '</tr></thead><tbody>' + renderRows(view.contenedores, view.ymd) + '</tbody></table></div></div>';
+      '</tr></thead><tbody>' + renderRows(view.contenedores, view.range) + '</tbody></table></div></div>';
 
-    lastSig = signature(share, view.contenedores, view.counts, view.ymd);
+    lastSig = signature(share, view.contenedores, view.counts, view.range);
   }
 
   function refreshFromStore(force) {
@@ -323,7 +428,7 @@
       return;
     }
     var view = getFilteredView(data);
-    var sig = signature(share, view.contenedores, view.counts, view.ymd);
+    var sig = signature(share, view.contenedores, view.counts, view.range);
     if (!force && sig === lastSig) return;
     renderMount(share, data);
   }
@@ -347,17 +452,21 @@
     filterBound = true;
     document.addEventListener('change', function (ev) {
       var t = ev.target;
-      if (!t || t.id !== 'recPresentDateFilter') return;
-      setDateFilter(t.value || '');
+      if (!t || (t.id !== 'recPresentDateDesde' && t.id !== 'recPresentDateHasta')) return;
+      var desdeEl = document.getElementById('recPresentDateDesde');
+      var hastaEl = document.getElementById('recPresentDateHasta');
+      setDateRange(
+        desdeEl ? desdeEl.value : '',
+        hastaEl ? hastaEl.value : ''
+      );
       refreshFromStore(true);
     });
     document.addEventListener('click', function (ev) {
       var btn = ev.target && ev.target.closest ? ev.target.closest('[data-rec-date]') : null;
       if (!btn || !mountEl || !mountEl.contains(btn)) return;
       var mode = btn.getAttribute('data-rec-date');
-      if (mode === 'today') setDateFilter(todayYmd());
-      else if (mode === 'all') setDateFilter('');
-      else return;
+      if (!mode) return;
+      applyPreset(mode);
       refreshFromStore(true);
     });
   }
@@ -368,7 +477,7 @@
     opts = opts || {};
     ensureMount();
     bindFilterEvents();
-    getDateFilter();
+    getDateRange();
 
     function onUpdate() { refreshFromStore(false); }
 

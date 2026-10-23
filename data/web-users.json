@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-23T12:55:00.000Z",
+  "updatedAt": "2026-10-23T20:33:59.283Z",
   "users": [
     {
       "id": "u_enmanuel_vasquez",
@@ -37,77 +37,95 @@
       "username": "SAMUEL.CORDERO",
       "name": "Samuel Cordero",
       "role": "validador",
-      "passwordHash": "72d63f420a92223ab53e511119b07095b6c90f06b134270a97548e6a476be974",
+      "passwordHash": "e7042ac7d09c7bc41c8cfa5749e41858f6980643bc0db1a83cc793d3e24d3f77",
       "areas": [],
       "active": true,
-      "extraPermissions": ["reportes.view", "export.data", "filter.apply"]
+      "extraPermissions": [
+        "reportes.view",
+        "export.data",
+        "filter.apply"
+      ]
     },
     {
       "id": "u_anthony_sanchez",
       "username": "ANTHONY.SANCHEZ",
       "name": "Anthony Jose Sanchez",
       "role": "validador",
-      "passwordHash": "e6d1ff6a2766ee5d246579eb70e7a4e0747dc5d6de569dac256727b5e1871b72",
+      "passwordHash": "e7042ac7d09c7bc41c8cfa5749e41858f6980643bc0db1a83cc793d3e24d3f77",
       "areas": [],
       "active": true,
-      "extraPermissions": ["reportes.view", "export.data", "filter.apply"]
+      "extraPermissions": [
+        "reportes.view",
+        "export.data",
+        "filter.apply"
+      ]
     },
     {
       "id": "u_maria_ramos",
       "username": "MARIA.RAMOS",
       "name": "Maria Ramos",
       "role": "colaborador",
-      "passwordHash": "1f716d570d3f228c9b8fa3b09d761c2d7d1f68a47173c2dbc712a18249ebe688",
+      "passwordHash": "e7042ac7d09c7bc41c8cfa5749e41858f6980643bc0db1a83cc793d3e24d3f77",
       "areas": [],
       "active": true,
-      "extraPermissions": ["agenda.all"]
+      "extraPermissions": [
+        "agenda.all"
+      ]
     },
     {
       "id": "u_elizabeth_cruz",
       "username": "ELIZABETH.CRUZ",
       "name": "Elizabeth Cruz",
       "role": "colaborador",
-      "passwordHash": "ff11e71736272725259c5ff7c2d57c5bd60ab49727a1358183b9b17507dda92e",
+      "passwordHash": "e7042ac7d09c7bc41c8cfa5749e41858f6980643bc0db1a83cc793d3e24d3f77",
       "areas": [],
       "active": true,
-      "extraPermissions": ["agenda.all"]
+      "extraPermissions": [
+        "agenda.all"
+      ]
     },
     {
       "id": "u_luis_jose",
       "username": "LUIS.JOSE",
       "name": "Luis Jose de Jesus",
       "role": "colaborador",
-      "passwordHash": "43de121dbca467a7e9dcc23270871bcebef01dab17724895ef3fb03f67e914b7",
+      "passwordHash": "e7042ac7d09c7bc41c8cfa5749e41858f6980643bc0db1a83cc793d3e24d3f77",
       "areas": [],
       "active": true,
-      "extraPermissions": ["agenda.all"]
+      "extraPermissions": [
+        "agenda.all"
+      ]
     },
     {
       "id": "u_claudia_santos",
       "username": "CLAUDIA.SANTOS",
       "name": "Claudia de los Santos",
       "role": "colaborador",
-      "passwordHash": "8c4e64ed00953552690a568cea93f828f432b38e0f7a5e8847d0b93889dc4c93",
+      "passwordHash": "e7042ac7d09c7bc41c8cfa5749e41858f6980643bc0db1a83cc793d3e24d3f77",
       "areas": [],
       "active": true,
-      "extraPermissions": ["agenda.all"]
+      "extraPermissions": [
+        "agenda.all"
+      ]
     },
     {
       "id": "u_jiomalliry_cruz",
       "username": "JIOMALLIRY.CRUZ",
       "name": "Jiomalliry de la Cruz",
       "role": "colaborador",
-      "passwordHash": "417a858336cd740c342eb1cffcf3c3c3ddb794cb801c0821c067fcad919504ad",
+      "passwordHash": "e7042ac7d09c7bc41c8cfa5749e41858f6980643bc0db1a83cc793d3e24d3f77",
       "areas": [],
       "active": true,
-      "extraPermissions": ["agenda.all"]
+      "extraPermissions": [
+        "agenda.all"
+      ]
     },
     {
       "id": "u_modesto_andres",
       "username": "MODESTO.ANDRES",
       "name": "Modesto Andres",
       "role": "supervisor",
-      "passwordHash": "92d94e48793e03fa2f66e6d3b4922e20221ea9faefcd31866aceae1a2bfb5c76",
+      "passwordHash": "e7042ac7d09c7bc41c8cfa5749e41858f6980643bc0db1a83cc793d3e24d3f77",
       "areas": [],
       "active": true,
       "extraPermissions": []

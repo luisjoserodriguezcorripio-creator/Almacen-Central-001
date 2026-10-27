@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-23T20:33:59.283Z",
+  "updatedAt": "2026-10-27T14:28:35.899Z",
   "users": [
     {
       "id": "u_enmanuel_vasquez",
@@ -129,6 +129,18 @@
       "areas": [],
       "active": true,
       "extraPermissions": []
+    },
+    {
+      "id": "u_jose_pichardo",
+      "username": "JOSE.PICHARDO",
+      "name": "José Pichardo",
+      "role": "colaborador",
+      "passwordHash": "e7042ac7d09c7bc41c8cfa5749e41858f6980643bc0db1a83cc793d3e24d3f77",
+      "areas": [],
+      "active": true,
+      "extraPermissions": [
+        "agenda.all"
+      ]
     }
   ]
 }

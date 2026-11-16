@@ -34,7 +34,7 @@
   <link rel="stylesheet" href="css/auth-portals-layout.css?v=11">
   <link rel="stylesheet" href="css/dc-brand.css?v=11">
   <link rel="stylesheet" href="css/ac001-brand.css?v=1">
-  <link rel="stylesheet" href="css/inventario-portal.css?v=14">
+  <link rel="stylesheet" href="css/inventario-portal.css?v=15">
   <link rel="stylesheet" href="css/inventario-responsive.css?v=5">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -198,7 +198,12 @@
           <span class="inv-mode-badge" id="invModeBadge">PICKUP</span>
         </div>
         <p class="inv-instr" id="invInstr">Escanee la ubicación</p>
+        <div class="inv-rack-banner" id="invRackBanner" hidden>RACK</div>
         <div class="inv-prog"><div class="inv-prog-bar" id="invProgBar"></div></div>
+        <label class="inv-continuous" id="invContinuousWrap">
+          <input type="checkbox" id="invContinuousMode">
+          <span>Modo continuo (guardar por escaneo en cantidad)</span>
+        </label>
       </div>
       <div class="inv-body">
         <div class="inv-excel" id="invExcelBox">
@@ -332,6 +337,7 @@
       </div>
       <div class="inv-cam-frame" id="invCamFrame">
         <video id="invCamVideo" muted playsinline></video>
+        <div id="invCamHtml5" class="inv-cam-html5" hidden></div>
         <div class="inv-cam-reticle" aria-hidden="true"></div>
       </div>
       <p class="inv-cam-hint" id="invCamHint">Apunte al código de barras de la ubicación</p>
@@ -344,8 +350,8 @@
   <script src="js/platform-supabase.js?v=4"></script>
   <script src="js/platform-supabase-realtime.js?v=1"></script>
   <script src="js/platform-supabase-bridge.js?v=4"></script>
-  <script src="js/platform-inventario-core.js?v=2"></script>
+  <script src="js/platform-inventario-core.js?v=3"></script>
   <script src="js/platform-inventario-sync.js?v=6"></script>
-  <script src="js/platform-inventario-app.js?v=11"></script>
+  <script src="js/platform-inventario-app.js?v=12"></script>
 </body>
 </html>

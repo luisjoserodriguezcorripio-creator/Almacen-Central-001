@@ -26,7 +26,9 @@
     camStream: null,
     camDetector: null,
     camTimer: null,
-    camBusy: false
+    camBusy: false,
+    continuous: false,
+    html5Qr: null
   };
 
   var CAM_HINTS = {
@@ -267,6 +269,25 @@
     $('invPickupHint').hidden = mode !== 'pickup';
     $('invExcelBox').classList.toggle('show', step === 5);
 
+    var rackBanner = $('invRackBanner');
+    if (rackBanner) {
+      if (f.loc && mode === 'pallet') {
+        var rb = CORE.rackPassBanner(f.loc, state.countRound);
+        rackBanner.hidden = false;
+        rackBanner.textContent = rb.text;
+        rackBanner.className = 'inv-rack-banner' + (rb.passes >= 2 ? ' inv-rack-banner--double' : '');
+      } else if (f.loc && mode !== 'pickup') {
+        rackBanner.hidden = false;
+        rackBanner.textContent = 'Ubicación ' + f.loc + ' · Conteo #' + state.countRound;
+        rackBanner.className = 'inv-rack-banner';
+      } else {
+        rackBanner.hidden = true;
+      }
+    }
+    var contWrap = $('invContinuousWrap');
+    if (contWrap) contWrap.hidden = false;
+    if ($('invContinuousMode')) $('invContinuousMode').checked = !!state.continuous;
+
     document.querySelectorAll('.inv-scan-actions').forEach(function (el) {
       var card = el.closest('.inv-card');
       var show = !!card && card.classList.contains('active') && !isHardwareScannerUa();
@@ -276,7 +297,9 @@
     var hint = $('invSwipeHint');
     var labelR = $('invSwipeLabelR');
     if (step === 5) {
-      hint.textContent = 'Arrastre hacia la derecha ▶▶ para GUARDAR';
+      hint.textContent = state.continuous
+        ? 'Modo continuo: escanee para GUARDAR y seguir · o deslice ▶'
+        : 'Arrastre hacia la derecha ▶▶ para GUARDAR';
       labelR.textContent = 'GUARDAR ▶';
     } else if (step === 3 || step === 4) {
       hint.textContent = 'Arrastre hacia la derecha ▶▶ para OMITIR';
@@ -355,6 +378,16 @@
     }
     state.camDetector = null;
     state.camBusy = false;
+    if (state.html5Qr) {
+      try {
+        var stopper = state.html5Qr.stop ? state.html5Qr.stop() : null;
+        if (stopper && stopper.then) stopper.catch(function () { /* noop */ });
+      } catch (e0) { /* noop */ }
+      try {
+        if (state.html5Qr.clear) state.html5Qr.clear();
+      } catch (e1) { /* noop */ }
+      state.html5Qr = null;
+    }
     if (state.camStream) {
       try {
         state.camStream.getTracks().forEach(function (t) { t.stop(); });
@@ -365,10 +398,52 @@
     if (video) {
       try { video.pause(); } catch (e2) { /* noop */ }
       video.srcObject = null;
+      video.hidden = false;
+    }
+    var fallbackBox = $('invCamHtml5');
+    if (fallbackBox) {
+      fallbackBox.hidden = true;
+      fallbackBox.innerHTML = '';
     }
     var overlay = $('invCamOverlay');
     if (overlay) overlay.hidden = true;
     state.camTarget = null;
+  }
+
+  function loadHtml5Qrcode() {
+    return new Promise(function (resolve, reject) {
+      if (global.Html5Qrcode) {
+        resolve(global.Html5Qrcode);
+        return;
+      }
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js';
+      s.onload = function () {
+        if (global.Html5Qrcode) resolve(global.Html5Qrcode);
+        else reject(new Error('Html5Qrcode unavailable'));
+      };
+      s.onerror = function () { reject(new Error('cdn')); };
+      document.head.appendChild(s);
+    });
+  }
+
+  function startHtml5Fallback() {
+    var box = $('invCamHtml5');
+    var video = $('invCamVideo');
+    if (!box) return Promise.reject(new Error('no box'));
+    if (video) video.hidden = true;
+    box.hidden = false;
+    box.innerHTML = '';
+    return loadHtml5Qrcode().then(function (Html5Qrcode) {
+      var scanner = new Html5Qrcode('invCamHtml5');
+      state.html5Qr = scanner;
+      return scanner.start(
+        { facingMode: 'environment' },
+        { fps: 8, qrbox: { width: 260, height: 140 }, aspectRatio: 1.7 },
+        function (decoded) { onCameraCode(decoded); },
+        function () { /* ignore frame misses */ }
+      );
+    });
   }
 
   function onCameraCode(raw) {
@@ -428,16 +503,28 @@
             formats: ['code_128', 'code_39', 'ean_13', 'ean_8', 'upc_a', 'upc_e', 'qr_code', 'itf', 'codabar']
           });
           startDetectLoop(video);
+          return;
         } catch (e) {
           state.camDetector = null;
-          toast('Cámara lista. Si no lee solo, escriba el código.', 'ok');
         }
-      } else {
-        toast('Cámara lista. Escriba el código si el lector no está disponible en este navegador.', 'ok');
       }
+      // Safari / navegadores sin BarcodeDetector
+      try { media.getTracks().forEach(function (t) { t.stop(); }); } catch (e2) { /* noop */ }
+      state.camStream = null;
+      if (video) video.srcObject = null;
+      startHtml5Fallback().then(function () {
+        toast('Cámara lista (modo compatibilidad)', 'ok');
+      }).catch(function () {
+        stopCamera();
+        toast('No se pudo iniciar el lector de cámara. Escriba el código.', 'err');
+      });
     }).catch(function () {
-      stopCamera();
-      toast('No se pudo abrir la cámara. Revise permisos o escriba el código.', 'err');
+      startHtml5Fallback().then(function () {
+        toast('Cámara lista (modo compatibilidad)', 'ok');
+      }).catch(function () {
+        stopCamera();
+        toast('No se pudo abrir la cámara. Revise permisos o escriba el código.', 'err');
+      });
     });
   }
 
@@ -447,8 +534,9 @@
     var f = state.fields;
 
     if (state.step === 1) {
-      if (state.mode === 'pickup' && !CORE.isValidPickupLocation(code)) {
-        toast('No es pickup — solo ubicaciones que terminan en 1', 'err');
+      var locCheck = CORE.validateLocationForMode(state.mode, code);
+      if (!locCheck.ok) {
+        toast(locCheck.message || 'Ubicación no válida', 'err');
         return;
       }
       f.loc = code;
@@ -466,7 +554,9 @@
         state.flowIndex = state.flowSteps.indexOf(2);
         state.step = 2;
         applyCountStep();
-        toast('Ubicación OK · Conteo #' + state.countRound, 'ok');
+        var banner = CORE.rackPassBanner(code, state.countRound);
+        var extra = state.mode === 'pallet' ? (' · ' + banner.tipo) : '';
+        toast('Ubicación OK · Conteo #' + state.countRound + extra, 'ok');
       });
     } else if (state.step === 2) {
       SYNC.lookupPairCode(code).then(function (pair) {
@@ -500,18 +590,32 @@
       advanceStep();
       toast('Vencimiento OK', 'ok');
     } else if (state.step === 5) {
+      if (state.continuous) {
+        // Modo continuo APK: un escaneo en cantidad guarda y sigue en el mismo rack
+        if (!f.prod) {
+          toast('Primero escanee el artículo', 'err');
+          return;
+        }
+        saveEntry({ keepGoing: true });
+        return;
+      }
       f.qty = String((parseInt(f.qty, 10) || 0) + 1);
       applyCountStep();
+      toast('Cantidad: ' + f.qty);
     }
   }
 
-  function saveEntry() {
+  function saveEntry(opts) {
+    opts = opts || {};
     var f = state.fields;
     var u = state.user;
     if (!u) { toast('Sesión expirada', 'err'); return; }
+    if (!f.loc) { toast('Falta ubicación', 'err'); return; }
+    if (!f.prod && String(f.qty) !== '0') { toast('Falta artículo', 'err'); return; }
     var unit = state.mode === 'pickup' && state.pickupUnit === 'unit' ? 'UND' : 'CJ';
     var dbl = CORE.isDoubleRackLocation(f.loc);
     var passes = dbl === true ? 2 : 1;
+    var banner = CORE.rackPassBanner(f.loc, state.countRound);
 
     SYNC.insertEntry({
       barcode: f.prod,
@@ -525,22 +629,29 @@
       expirationDate: f.exp,
       userId: u.employeeId,
       countMode: CORE.MODE_DB[state.mode] || 'PICKUP',
-      rackPassIndex: passes >= 2 ? ((state.countRound - 1) % 2) + 1 : 1,
+      rackPassIndex: passes >= 2 ? banner.lectura : 1,
       rackPassesTotal: passes,
       countNumber: state.countRound
     }).then(function (res) {
       if (!res.ok) { toast('Error al guardar', 'err'); return; }
       var msg = res.offline ? 'Guardado local (sin conexión)' : 'Guardado en la nube';
-      toast(msg + ' · ' + f.qty + ' ' + unit, 'ok');
+      var passTxt = passes >= 2 ? (' · Lectura ' + banner.lectura + '/2') : '';
+      toast(msg + ' · ' + f.qty + ' ' + unit + passTxt, 'ok');
       f.prod = '';
       f.mat = '';
       f.exp = '';
       f.qty = '1';
       f.prodName = '';
+      f.expectedQty = 0;
+      state.catalogMat = '';
+      // Mantener countRound de la ubicación; se recalcula al reescanear ubicación
       state.flowIndex = state.flowSteps.indexOf(2);
       state.step = 2;
       applyCountStep();
       renderAdminStats();
+      if (opts.keepGoing && isPhoneViewport() && state.continuous) {
+        global.setTimeout(function () { openCamera('prod'); }, 350);
+      }
     }).catch(function () {
       toast('Error al guardar en la nube', 'err');
     });
@@ -754,6 +865,15 @@
     });
     $('invCamClose') && $('invCamClose').addEventListener('click', stopCamera);
     $('invCamStop') && $('invCamStop').addEventListener('click', stopCamera);
+    $('invContinuousMode') && $('invContinuousMode').addEventListener('change', function () {
+      state.continuous = !!$('invContinuousMode').checked;
+      try { global.sessionStorage.setItem('invContinuous', state.continuous ? '1' : '0'); } catch (e) { /* noop */ }
+      toast(state.continuous ? 'Modo continuo activado' : 'Modo continuo desactivado', 'ok');
+      applyCountStep();
+    });
+    try {
+      state.continuous = global.sessionStorage.getItem('invContinuous') === '1';
+    } catch (eCont) { /* noop */ }
 
     function bindScanEnter(id, target) {
       var el = $(id);

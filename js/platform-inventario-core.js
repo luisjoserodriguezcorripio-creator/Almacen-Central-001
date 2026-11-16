@@ -65,6 +65,53 @@
     return code.length > 0 && code.slice(-1) === '1';
   }
 
+  /** Ubicaciones de rack/altura: no permitir nivel 1 (pickup). */
+  function isValidRackLocation(code) {
+    code = String(code || '').trim();
+    if (!code || code === '0') return false;
+    var level = levelFromLocation(code);
+    if (level === '1') return false;
+    return true;
+  }
+
+  function validateLocationForMode(mode, code) {
+    code = String(code || '').trim();
+    if (mode === 'pickup') {
+      if (!isValidPickupLocation(code)) {
+        return { ok: false, message: 'No es pickup — solo ubicaciones que terminan en 1. Use 0 si está vacía.' };
+      }
+      return { ok: true };
+    }
+    if (mode === 'pallet') {
+      if (!isValidRackLocation(code)) {
+        return {
+          ok: false,
+          message: code.slice(-1) === '1'
+            ? (code + ' es nivel 1 (pickup). En rack use niveles 2 a 5.')
+            : 'Ubicación no válida para conteo de rack.'
+        };
+      }
+      return { ok: true };
+    }
+    // piso / cuadre: cualquier ubicación no vacía
+    if (!code) return { ok: false, message: 'Escanee o escriba la ubicación' };
+    return { ok: true };
+  }
+
+  function rackPassBanner(location, countRound) {
+    var dbl = isDoubleRackLocation(location);
+    var passes = dbl === true ? 2 : 1;
+    var round = Math.max(1, parseInt(countRound, 10) || 1);
+    var lectura = passes >= 2 ? ((round - 1) % 2) + 1 : 1;
+    var tipo = dbl === true ? 'RACK DOBLE (2 vueltas)' : (dbl === false ? 'RACK SENCILLO (1 vuelta)' : 'RACK');
+    return {
+      tipo: tipo,
+      passes: passes,
+      lectura: lectura,
+      text: tipo + ' · Lectura ' + lectura + ' de ' + passes
+    };
+  }
+
   function flowStepsForMode(mode) {
     return mode === 'pickup' ? [1, 2, 4, 5] : [1, 2, 3, 4, 5];
   }
@@ -171,6 +218,9 @@
     rackTypeLabel: rackTypeLabel,
     levelFromLocation: levelFromLocation,
     isValidPickupLocation: isValidPickupLocation,
+    isValidRackLocation: isValidRackLocation,
+    validateLocationForMode: validateLocationForMode,
+    rackPassBanner: rackPassBanner,
     flowStepsForMode: flowStepsForMode,
     buildEntryPayload: buildEntryPayload,
     entryMeta: entryMeta,

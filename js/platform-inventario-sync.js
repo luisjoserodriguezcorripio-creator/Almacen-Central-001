@@ -6,6 +6,8 @@
 
   var CACHE_USERS = 'inv_dc_users_cache';
   var CACHE_ENTRIES = 'inv_dc_entries_cache';
+  var CACHE_DIRECTED = 'inv_dc_directed_plan_v1';
+  var CACHE_DIRECTED_META = 'inv_dc_directed_meta_v1';
   var DEFAULT_USERS = [
     { employeeId: '51192', displayName: 'Jansel Castro', role: 'COUNT', active: true, adminPin: '' },
     { employeeId: '51963', displayName: 'Luis José Rodríguez Ruíz', role: 'COUNT', active: true, adminPin: '' },
@@ -319,6 +321,133 @@
     });
   }
 
+  function getDirectedPlan() {
+    var rows = readCache(CACHE_DIRECTED, []) || [];
+    var meta = readCache(CACHE_DIRECTED_META, {}) || {};
+    return Promise.resolve({ rows: rows, meta: meta });
+  }
+
+  function publishDirectedPlan(rows, meta) {
+    var list = (rows || []).map(function (r, i) {
+      return {
+        id: r.id || ('d' + i + '-' + Date.now()),
+        location: String(r.location || r.loc || '').trim(),
+        barcode: String(r.barcode || r.code || '').trim(),
+        product: String(r.product || r.productName || '').trim(),
+        expectedQty: Number(r.expectedQty != null ? r.expectedQty : (r.qtyCj != null ? r.qtyCj : r.expected)) || 0,
+        matricula: String(r.matricula || '').trim(),
+        status: r.status || 'pending',
+        countedQty: r.countedQty != null ? r.countedQty : null,
+        countedAt: r.countedAt || null,
+        countedBy: r.countedBy || ''
+      };
+    }).filter(function (r) { return r.location && r.barcode; });
+    var m = Object.assign({
+      publishedAt: new Date().toISOString(),
+      count: list.length
+    }, meta || {});
+    writeCache(CACHE_DIRECTED, list);
+    writeCache(CACHE_DIRECTED_META, m);
+    notify('directed', { rows: list, meta: m });
+
+    var client = sb();
+    if (!client) {
+      return Promise.resolve({ ok: true, offline: true, rows: list, meta: m });
+    }
+    // Tabla opcional: inv_directed_plan (si no existe, queda solo local + JSON)
+    return client.from('inv_directed_plan').delete().neq('id', '__none__')
+      .then(function (delRes) {
+        if (delRes && delRes.error) {
+          return { ok: true, offline: true, cloudError: delRes.error.message, rows: list, meta: m };
+        }
+        if (!list.length) return { ok: true, offline: false, rows: list, meta: m };
+        var payload = list.map(function (r) {
+          return {
+            id: r.id,
+            location: r.location,
+            barcode: r.barcode,
+            product_name: r.product,
+            expected_qty: r.expectedQty,
+            matricula: r.matricula,
+            status: r.status,
+            counted_qty: r.countedQty,
+            counted_at: r.countedAt,
+            counted_by: r.countedBy
+          };
+        });
+        return client.from('inv_directed_plan').insert(payload).then(function (res) {
+          if (res.error) {
+            return { ok: true, offline: true, cloudError: res.error.message, rows: list, meta: m };
+          }
+          return { ok: true, offline: false, rows: list, meta: m };
+        });
+      })
+      .catch(function (err) {
+        return { ok: true, offline: true, cloudError: err && err.message, rows: list, meta: m };
+      });
+  }
+
+  function patchDirectedLine(id, patch) {
+    return getDirectedPlan().then(function (plan) {
+      var rows = (plan.rows || []).map(function (r) {
+        if (r.id !== id) return r;
+        return Object.assign({}, r, patch || {});
+      });
+      writeCache(CACHE_DIRECTED, rows);
+      notify('directed', { rows: rows, meta: plan.meta });
+      var client = sb();
+      if (!client) return { ok: true, offline: true, rows: rows };
+      var row = rows.find(function (r) { return r.id === id; });
+      if (!row) return { ok: true, offline: true, rows: rows };
+      return client.from('inv_directed_plan').upsert({
+        id: row.id,
+        location: row.location,
+        barcode: row.barcode,
+        product_name: row.product,
+        expected_qty: row.expectedQty,
+        matricula: row.matricula,
+        status: row.status,
+        counted_qty: row.countedQty,
+        counted_at: row.countedAt,
+        counted_by: row.countedBy
+      }).then(function (res) {
+        if (res.error) return { ok: true, offline: true, rows: rows };
+        return { ok: true, offline: false, rows: rows };
+      }).catch(function () {
+        return { ok: true, offline: true, rows: rows };
+      });
+    });
+  }
+
+  function pullDirectedPlanFromCloud() {
+    var client = sb();
+    if (!client) return getDirectedPlan();
+    return client.from('inv_directed_plan').select('*').order('location')
+      .then(function (res) {
+        if (res.error || !res.data) return getDirectedPlan();
+        var rows = (res.data || []).map(function (r) {
+          return {
+            id: r.id,
+            location: r.location,
+            barcode: r.barcode,
+            product: r.product_name || '',
+            expectedQty: r.expected_qty || 0,
+            matricula: r.matricula || '',
+            status: r.status || 'pending',
+            countedQty: r.counted_qty,
+            countedAt: r.counted_at,
+            countedBy: r.counted_by || ''
+          };
+        });
+        var meta = { publishedAt: new Date().toISOString(), count: rows.length, source: 'cloud' };
+        writeCache(CACHE_DIRECTED, rows);
+        writeCache(CACHE_DIRECTED_META, meta);
+        notify('directed', { rows: rows, meta: meta });
+        return { rows: rows, meta: meta };
+      })
+      .catch(function () { return getDirectedPlan(); });
+  }
+
   function init() {
     return (global.PlatformSupabase ? global.PlatformSupabase.init() : Promise.resolve(false))
       .then(function () {
@@ -340,6 +469,10 @@
     countRoundForLocation: countRoundForLocation,
     insertEntry: insertEntry,
     deleteAllEntries: deleteAllEntries,
+    getDirectedPlan: getDirectedPlan,
+    publishDirectedPlan: publishDirectedPlan,
+    patchDirectedLine: patchDirectedLine,
+    pullDirectedPlanFromCloud: pullDirectedPlanFromCloud,
     isOnline: function () {
       return global.PlatformSupabase && global.PlatformSupabase.isConnected();
     }

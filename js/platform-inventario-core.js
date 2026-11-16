@@ -13,8 +13,8 @@
   };
   var RACK_PREFIX = /^[A-Za-z](\d{3})$/i;
 
-  var MODE_LABELS = { pickup: 'PICKUP', pallet: 'RACK', cuadre: 'PISO' };
-  var MODE_DB = { pickup: 'PICKUP', pallet: 'ALTURA', cuadre: 'CUADRE_UBICACIONES' };
+  var MODE_LABELS = { pickup: 'PICKUP', pallet: 'RACK', dirigido: 'DIRIGIDO' };
+  var MODE_DB = { pickup: 'PICKUP', pallet: 'ALTURA', dirigido: 'DIRIGIDO' };
 
   function pasilloFromLocation(location) {
     var parts = String(location || '').trim().split('-');
@@ -93,9 +93,23 @@
       }
       return { ok: true };
     }
-    // piso / cuadre: cualquier ubicación no vacía
+    // dirigido / otros: cualquier ubicación no vacía
     if (!code) return { ok: false, message: 'Escanee o escriba la ubicación' };
     return { ok: true };
+  }
+
+  function normLoc(s) {
+    return String(s || '').trim().toUpperCase().replace(/\s+/g, '');
+  }
+
+  function normBarcode(s) {
+    var c = String(s || '').trim().replace(/\s+/g, '');
+    if (/^N\d/i.test(c)) c = c.slice(1);
+    return c.replace(/^0+(?=\d)/, function (m) { return m.length > 1 ? '' : m; });
+  }
+
+  function directedLineKey(row) {
+    return normLoc(row && row.location) + '|' + normBarcode(row && row.barcode);
   }
 
   function rackPassBanner(location, countRound) {
@@ -221,6 +235,9 @@
     isValidRackLocation: isValidRackLocation,
     validateLocationForMode: validateLocationForMode,
     rackPassBanner: rackPassBanner,
+    normLoc: normLoc,
+    normBarcode: normBarcode,
+    directedLineKey: directedLineKey,
     flowStepsForMode: flowStepsForMode,
     buildEntryPayload: buildEntryPayload,
     entryMeta: entryMeta,

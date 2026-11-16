@@ -28,7 +28,12 @@
     camTimer: null,
     camBusy: false,
     continuous: false,
-    html5Qr: null
+    html5Qr: null,
+    directedRows: [],
+    directedMeta: {},
+    directedDraft: [],
+    directedActiveId: null,
+    dirCamTarget: null
   };
 
   var CAM_HINTS = {
@@ -72,13 +77,27 @@
 
   function setView(view) {
     state.view = view;
-    ['login', 'mode', 'count', 'admin', 'records'].forEach(function (v) {
-      var el = $('invView' + v.charAt(0).toUpperCase() + v.slice(1));
+    var map = {
+      login: 'invViewLogin',
+      mode: 'invViewMode',
+      count: 'invViewCount',
+      admin: 'invViewAdmin',
+      records: 'invViewRecords',
+      directed: 'invViewDirected',
+      directedCount: 'invViewDirectedCount'
+    };
+    Object.keys(map).forEach(function (v) {
+      var el = $(map[v]);
       if (el) el.hidden = v !== view;
     });
     if (view === 'records') renderRecords();
-    if (view === 'admin') renderAdminStats();
+    if (view === 'admin') {
+      renderAdminStats();
+      renderDirectedAdmin();
+    }
     if (view === 'count') applyCountStep();
+    if (view === 'directed') loadDirectedPlan(false);
+    if (view === 'directedCount') fillDirectedActive();
     updateCloudBadge();
   }
 
@@ -205,11 +224,424 @@
   function pickMode(mode) {
     state.mode = mode;
     try { global.sessionStorage.setItem('invCountMode', mode); } catch (e) { /* noop */ }
+    if (mode === 'dirigido') {
+      global.setTimeout(function () { setView('directed'); }, 120);
+      return;
+    }
     state.flowSteps = CORE.flowStepsForMode(mode);
     state.flowIndex = 0;
     state.step = state.flowSteps[0];
     resetCountFields(true);
     global.setTimeout(function () { setView('count'); }, 120);
+  }
+
+  function dirStatusLabel(status) {
+    if (status === 'ok') return '<span class="inv-dir-status inv-dir-status--ok">OK</span>';
+    if (status === 'bad') return '<span class="inv-dir-status inv-dir-status--bad">DIFERENCIA</span>';
+    if (status === 'open') return '<span class="inv-dir-status inv-dir-status--open">EN CURSO</span>';
+    return '<span class="inv-dir-status inv-dir-status--pending">PENDIENTE</span>';
+  }
+
+  function applyDirectedPlan(plan) {
+    state.directedRows = (plan && plan.rows) || [];
+    state.directedMeta = (plan && plan.meta) || {};
+    if (!state.directedActiveId && state.directedRows.length) {
+      var first = state.directedRows.find(function (r) { return r.status !== 'ok'; });
+      state.directedActiveId = (first || state.directedRows[0]).id;
+    }
+    renderDirectedQueue();
+    renderDirectedAdmin();
+    fillDirectedActive();
+  }
+
+  function loadDirectedPlan(preferCloud) {
+    var loader = preferCloud && SYNC.pullDirectedPlanFromCloud
+      ? SYNC.pullDirectedPlanFromCloud()
+      : SYNC.getDirectedPlan();
+    return loader.then(function (plan) {
+      applyDirectedPlan(plan);
+      return plan;
+    }).catch(function () {
+      applyDirectedPlan({ rows: [], meta: {} });
+    });
+  }
+
+  function renderDirectedQueue() {
+    var rows = state.directedRows || [];
+    var pend = rows.filter(function (r) { return r.status !== 'ok'; }).length;
+    var ok = rows.filter(function (r) { return r.status === 'ok'; }).length;
+    var hint = $('invDirectedHint');
+    var meta = $('invDirectedMeta');
+    if (hint) {
+      hint.textContent = rows.length
+        ? (pend + ' pendientes de ' + rows.length + ' líneas')
+        : 'Sin plan publicado. Admin carga Excel en PC o importe JSON.';
+    }
+    if (meta) {
+      meta.hidden = !rows.length;
+      if ($('invDirLines')) $('invDirLines').textContent = String(rows.length);
+      if ($('invDirPend')) $('invDirPend').textContent = String(pend);
+      if ($('invDirOk')) $('invDirOk').textContent = String(ok);
+    }
+    var list = $('invDirectedQueue');
+    if (!list) return;
+    if (!rows.length) {
+      list.innerHTML = '<p class="inv-empty">Sin líneas en la cola.</p>';
+      return;
+    }
+    list.innerHTML = rows.map(function (r) {
+      var cls = 'inv-dir-queue-item';
+      if (r.id === state.directedActiveId) cls += ' is-active';
+      if (r.status === 'ok') cls += ' is-ok';
+      if (r.status === 'bad') cls += ' is-bad';
+      return '<div class="' + cls + '" data-dir-id="' + esc(r.id) + '">' +
+        '<strong>' + esc(r.location) + '</strong>' +
+        '<span>' + esc(r.barcode) + ' · esp. ' + esc(r.expectedQty) + ' CJ · ' + esc(r.product || '') +
+        ' · ' + dirStatusLabel(r.status) + '</span></div>';
+    }).join('');
+    list.querySelectorAll('[data-dir-id]').forEach(function (el) {
+      el.addEventListener('click', function () {
+        state.directedActiveId = el.getAttribute('data-dir-id');
+        setView('directedCount');
+      });
+    });
+  }
+
+  function activeDirectedRow() {
+    return (state.directedRows || []).find(function (r) { return r.id === state.directedActiveId; }) || null;
+  }
+
+  function fillDirectedActive() {
+    var r = activeDirectedRow();
+    if ($('invDirActiveLoc')) $('invDirActiveLoc').textContent = r ? r.location : '—';
+    if ($('invDirActiveMeta')) {
+      $('invDirActiveMeta').textContent = r
+        ? (r.barcode + ' · ' + (r.product || 'Producto') + ' · esperado ' + r.expectedQty + ' CJ')
+        : 'Seleccione una línea en la cola';
+    }
+    if ($('invDirLoc')) $('invDirLoc').value = '';
+    if ($('invDirCode')) $('invDirCode').value = '';
+    if ($('invDirQty')) $('invDirQty').value = '';
+    ['invDirLoc', 'invDirCode', 'invDirQty'].forEach(function (id) {
+      var el = $(id);
+      if (el) el.classList.remove('inv-field--ok', 'inv-field--bad');
+    });
+    if ($('invDirMsg')) {
+      $('invDirMsg').textContent = r
+        ? 'Valide los 3 datos contra el Excel publicado.'
+        : 'Abra la cola y elija una línea.';
+      $('invDirMsg').style.color = '#607080';
+    }
+    updateDirectedChips();
+  }
+
+  function updateDirectedChips() {
+    var r = activeDirectedRow();
+    var locEl = $('invDirLoc');
+    var codeEl = $('invDirCode');
+    var qtyEl = $('invDirQty');
+    var chips = $('invDirChips');
+    if (!chips) return;
+    if (!r) {
+      chips.innerHTML =
+        '<span class="inv-dir-chip wait">Ubicación</span>' +
+        '<span class="inv-dir-chip wait">Código</span>' +
+        '<span class="inv-dir-chip wait">Cantidad</span>';
+      return;
+    }
+    var locOk = locEl && locEl.value && CORE.normLoc(locEl.value) === CORE.normLoc(r.location);
+    var codeOk = codeEl && codeEl.value && CORE.normBarcode(codeEl.value) === CORE.normBarcode(r.barcode);
+    var qtyRaw = qtyEl ? qtyEl.value : '';
+    var qtyOk = qtyRaw !== '' && Number(qtyRaw) === Number(r.expectedQty);
+    var qtyDiff = qtyRaw !== '' && Number(qtyRaw) !== Number(r.expectedQty);
+    chips.innerHTML =
+      '<span class="inv-dir-chip ' + (locOk ? 'ok' : 'wait') + '">' + (locOk ? '✓ Ubicación' : 'Ubicación') + '</span>' +
+      '<span class="inv-dir-chip ' + (codeOk ? 'ok' : 'wait') + '">' + (codeOk ? '✓ Código' : 'Código') + '</span>' +
+      '<span class="inv-dir-chip ' + (qtyOk ? 'ok' : (qtyDiff ? 'bad' : 'wait')) + '">' +
+      (qtyOk ? '✓ Cantidad' : (qtyDiff ? '≠ Cantidad' : 'Cantidad')) + '</span>';
+    if (locEl) {
+      locEl.classList.toggle('inv-field--ok', !!locEl.value && locOk);
+      locEl.classList.toggle('inv-field--bad', !!locEl.value && !locOk);
+    }
+    if (codeEl) {
+      codeEl.classList.toggle('inv-field--ok', !!codeEl.value && codeOk);
+      codeEl.classList.toggle('inv-field--bad', !!codeEl.value && !codeOk);
+    }
+    if (qtyEl) {
+      qtyEl.classList.toggle('inv-field--ok', qtyRaw !== '' && qtyOk);
+      qtyEl.classList.toggle('inv-field--bad', qtyRaw !== '' && !qtyOk);
+    }
+  }
+
+  function validateDirectedSave() {
+    var r = activeDirectedRow();
+    var u = state.user;
+    if (!r) { toast('Seleccione una línea', 'err'); return; }
+    if (!u) { toast('Sesión expirada', 'err'); return; }
+    updateDirectedChips();
+    var locVal = ($('invDirLoc') && $('invDirLoc').value) || '';
+    var codeVal = ($('invDirCode') && $('invDirCode').value) || '';
+    var qtyRaw = ($('invDirQty') && $('invDirQty').value) || '';
+    var locOk = CORE.normLoc(locVal) === CORE.normLoc(r.location);
+    var codeOk = CORE.normBarcode(codeVal) === CORE.normBarcode(r.barcode);
+    if (!locOk || !codeOk || qtyRaw === '') {
+      if ($('invDirMsg')) {
+        $('invDirMsg').textContent = 'Complete ubicación, código y cantidad válidos.';
+        $('invDirMsg').style.color = '#c62828';
+      }
+      toast('Validación incompleta', 'err');
+      return;
+    }
+    var qty = Number(qtyRaw);
+    var status = qty === Number(r.expectedQty) ? 'ok' : 'bad';
+    var patch = {
+      status: status,
+      countedQty: qty,
+      countedAt: new Date().toISOString(),
+      countedBy: u.employeeId || u.displayName || ''
+    };
+    SYNC.patchDirectedLine(r.id, patch).then(function (res) {
+      state.directedRows = (res && res.rows) || state.directedRows;
+      if ($('invDirMsg')) {
+        if (status === 'ok') {
+          $('invDirMsg').textContent = 'OK · coincide con el Excel. Pasa a la siguiente.';
+          $('invDirMsg').style.color = '#2e7d32';
+        } else {
+          $('invDirMsg').textContent = 'Diferencia · esperado ' + r.expectedQty + ' · contado ' + qty + '.';
+          $('invDirMsg').style.color = '#c62828';
+        }
+      }
+      toast(status === 'ok' ? 'Línea OK' : 'Diferencia registrada', status === 'ok' ? 'ok' : 'err');
+      // También guarda en registros de conteo
+      SYNC.insertEntry({
+        barcode: r.barcode,
+        productName: r.product || '',
+        quantity: qty,
+        zone: r.location,
+        warehouse: CORE.WAREHOUSE,
+        unit: 'CJ',
+        expectedQty: r.expectedQty || 0,
+        matricula: r.matricula || '',
+        expirationDate: '',
+        userId: u.employeeId,
+        countMode: 'DIRIGIDO',
+        rackPassIndex: 1,
+        rackPassesTotal: 1,
+        countNumber: 1
+      }).catch(function () { /* noop */ });
+      renderDirectedQueue();
+      renderDirectedAdmin();
+      if (status === 'ok') {
+        global.setTimeout(function () { nextDirectedLine(); }, 450);
+      }
+    });
+  }
+
+  function nextDirectedLine() {
+    var rows = state.directedRows || [];
+    if (!rows.length) return;
+    var idx = rows.findIndex(function (r) { return r.id === state.directedActiveId; });
+    var i = idx + 1;
+    while (i < rows.length && rows[i].status === 'ok') i++;
+    if (i >= rows.length) i = rows.findIndex(function (r) { return r.status !== 'ok'; });
+    if (i < 0) i = 0;
+    state.directedActiveId = rows[i].id;
+    fillDirectedActive();
+    renderDirectedQueue();
+  }
+
+  function renderDirectedAdmin() {
+    var draft = state.directedDraft.length ? state.directedDraft : state.directedRows;
+    var body = $('invDirAdminBody');
+    var status = $('invDirAdminStatus');
+    var canPublish = !!(state.directedDraft.length || state.directedRows.length);
+    if ($('invDirPublish')) $('invDirPublish').disabled = !state.directedDraft.length;
+    if ($('invDirExportJson')) $('invDirExportJson').disabled = !canPublish;
+    if ($('invDirClearPlan')) $('invDirClearPlan').disabled = !canPublish && !state.directedDraft.length;
+    if (!body) return;
+    if (!draft.length) {
+      body.innerHTML = '<tr><td colspan="5">Sin filas</td></tr>';
+      if (status) status.textContent = 'Sin plan cargado. Columnas: ubicación · código · producto · cantidad.';
+      return;
+    }
+    var meta = state.directedDraft.length
+      ? ('Borrador: ' + draft.length + ' líneas listas para publicar.')
+      : ('Plan activo: ' + draft.length + ' líneas' + (state.directedMeta.publishedAt ? (' · ' + CORE.formatDateTime(state.directedMeta.publishedAt)) : ''));
+    if (status) status.textContent = meta;
+    body.innerHTML = draft.slice(0, 200).map(function (r) {
+      return '<tr><td>' + esc(r.location) + '</td><td>' + esc(r.barcode) + '</td><td>' +
+        esc(r.product || '—') + '</td><td>' + esc(r.expectedQty) + '</td><td>' +
+        dirStatusLabel(r.status || 'pending') + '</td></tr>';
+    }).join('');
+  }
+
+  function ensureXlsx() {
+    return new Promise(function (resolve, reject) {
+      if (global.XLSX) { resolve(global.XLSX); return; }
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+      s.onload = function () {
+        if (global.XLSX) resolve(global.XLSX);
+        else reject(new Error('SheetJS no disponible'));
+      };
+      s.onerror = function () { reject(new Error('No se pudo cargar SheetJS')); };
+      document.head.appendChild(s);
+    });
+  }
+
+  function parseDirectedExcel(file) {
+    return ensureXlsx().then(function (XLSX) {
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function (ev) {
+          try {
+            var wb = XLSX.read(ev.target.result, { type: 'array', cellDates: false });
+            var CONC = global.PlatformInventarioConciliacion;
+            if (!CONC || !CONC.parseWorkbook) {
+              reject(new Error('Parser Excel no cargado'));
+              return;
+            }
+            var parsed = CONC.parseWorkbook(wb, file.name);
+            var rows = (parsed.rows || []).map(function (r, i) {
+              return {
+                id: 'd' + i + '-' + Date.now(),
+                location: r.location,
+                barcode: r.barcode,
+                product: r.product || '',
+                expectedQty: r.qtyCj != null ? r.qtyCj : (r.expectedQty || 0),
+                matricula: r.matricula || '',
+                status: 'pending',
+                countedQty: null,
+                countedAt: null,
+                countedBy: ''
+              };
+            }).filter(function (r) { return r.location && r.barcode; });
+            resolve({ rows: rows, meta: parsed.meta || { fileName: file.name } });
+          } catch (err) {
+            reject(err);
+          }
+        };
+        reader.onerror = function () { reject(new Error('No se pudo leer el archivo')); };
+        reader.readAsArrayBuffer(file);
+      });
+    });
+  }
+
+  function onDirectedExcelPicked(file) {
+    if (!file) return;
+    if ($('invDirAdminStatus')) $('invDirAdminStatus').textContent = 'Leyendo Excel…';
+    parseDirectedExcel(file).then(function (parsed) {
+      state.directedDraft = parsed.rows || [];
+      state.directedMeta = Object.assign({}, parsed.meta || {}, { fileName: file.name });
+      renderDirectedAdmin();
+      toast(state.directedDraft.length + ' líneas cargadas del Excel', 'ok');
+    }).catch(function (err) {
+      toast((err && err.message) || 'Error al leer Excel', 'err');
+      if ($('invDirAdminStatus')) $('invDirAdminStatus').textContent = 'Error al leer el archivo.';
+    });
+  }
+
+  function publishDirectedDraft() {
+    if (!state.directedDraft.length) {
+      toast('Primero adjunte un Excel', 'err');
+      return;
+    }
+    var meta = {
+      fileName: (state.directedMeta && state.directedMeta.fileName) || '',
+      publishedBy: state.user ? state.user.employeeId : 'admin'
+    };
+    SYNC.publishDirectedPlan(state.directedDraft, meta).then(function (res) {
+      state.directedRows = (res && res.rows) || state.directedDraft;
+      state.directedMeta = (res && res.meta) || meta;
+      state.directedDraft = [];
+      state.directedActiveId = state.directedRows.length ? state.directedRows[0].id : null;
+      renderDirectedAdmin();
+      renderDirectedQueue();
+      var note = res && res.cloudError
+        ? ('Publicado en este equipo. Nube: ' + res.cloudError + ' — use Exportar JSON para celulares.')
+        : (res && res.offline
+          ? 'Publicado en este equipo. Exporte JSON e impórtelo en el celular si no comparte la misma nube.'
+          : 'Plan publicado (nube + local).');
+      if ($('invDirAdminStatus')) $('invDirAdminStatus').textContent = note;
+      toast('Plan dirigido publicado', 'ok');
+    });
+  }
+
+  function exportDirectedJson() {
+    var rows = state.directedDraft.length ? state.directedDraft : state.directedRows;
+    if (!rows.length) { toast('No hay plan para exportar', 'err'); return; }
+    var payload = {
+      type: 'ac001-inv-directed-plan',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      meta: state.directedMeta || {},
+      rows: rows
+    };
+    var blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'plan-conteo-dirigido-' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click();
+    global.setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
+    toast('JSON exportado', 'ok');
+  }
+
+  function importDirectedJson(file) {
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+      try {
+        var data = JSON.parse(ev.target.result);
+        var rows = (data && data.rows) || (Array.isArray(data) ? data : []);
+        if (!rows.length) throw new Error('JSON sin líneas');
+        SYNC.publishDirectedPlan(rows, data.meta || { source: 'import-json' }).then(function (res) {
+          applyDirectedPlan({ rows: res.rows || rows, meta: res.meta || {} });
+          toast('Plan importado: ' + (res.rows || rows).length + ' líneas', 'ok');
+          setView('directed');
+        });
+      } catch (err) {
+        toast((err && err.message) || 'JSON inválido', 'err');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function clearDirectedPlan() {
+    if (!global.confirm('¿Limpiar el plan dirigido en este equipo?')) return;
+    state.directedDraft = [];
+    SYNC.publishDirectedPlan([], { clearedAt: new Date().toISOString() }).then(function () {
+      state.directedRows = [];
+      state.directedMeta = {};
+      state.directedActiveId = null;
+      renderDirectedAdmin();
+      renderDirectedQueue();
+      fillDirectedActive();
+      toast('Plan limpiado', 'ok');
+    });
+  }
+
+  function applyDirectedTyped(target) {
+    var id = target === 'prod' ? 'invDirCode' : 'invDirLoc';
+    var el = $(id);
+    if (!el || !el.value) {
+      toast('Escriba o escanee un código', 'err');
+      return;
+    }
+    updateDirectedChips();
+    toast('Código aplicado', 'ok');
+  }
+
+  function processDirectedScan(code) {
+    code = String(code || '').trim();
+    if (!code) return;
+    var target = state.dirCamTarget || 'loc';
+    if (target === 'prod') {
+      if ($('invDirCode')) $('invDirCode').value = code;
+    } else {
+      if ($('invDirLoc')) $('invDirLoc').value = code;
+    }
+    updateDirectedChips();
+    toast('Escaneo OK', 'ok');
   }
 
   function resetCountFields(keepLoc) {
@@ -452,7 +884,8 @@
     if (!code) return;
     state.camBusy = true;
     stopCamera();
-    processScan(code);
+    if (state.view === 'directedCount') processDirectedScan(code);
+    else processScan(code);
   }
 
   function startDetectLoop(video) {
@@ -468,13 +901,14 @@
   }
 
   function openCamera(target) {
-    if (state.view !== 'count') return;
+    if (state.view !== 'count' && state.view !== 'directedCount') return;
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       toast('Este celular no permite cámara. Escriba el código y pulse Usar código.', 'err');
       return;
     }
     stopCamera();
     state.camTarget = target || 'loc';
+    if (state.view === 'directedCount') state.dirCamTarget = target || 'loc';
     var overlay = $('invCamOverlay');
     var title = $('invCamTitle');
     var hint = $('invCamHint');
@@ -832,7 +1266,7 @@
       goLoginStep1();
     });
 
-    ['invModePickup', 'invModePallet', 'invModeCuadre'].forEach(function (id) {
+    ['invModePickup', 'invModePallet', 'invModeDirigido'].forEach(function (id) {
       var el = $(id);
       if (!el) return;
       el.addEventListener('click', function () {
@@ -847,11 +1281,55 @@
     bindAll('[data-inv-nav="records"]', function () { stopCamera(); setView('records'); });
     bindAll('[data-inv-nav="count"]', function () { stopCamera(); setView('count'); });
     bindAll('[data-inv-nav="mode"]', function () { stopCamera(); setView('mode'); });
+    bindAll('[data-inv-nav="directed"]', function () { stopCamera(); setView('directed'); });
+    bindAll('[data-inv-nav="directed-count"]', function () { stopCamera(); setView('directedCount'); });
 
     bindAll('[data-inv-action="export"]', exportCsv);
     bindAll('[data-inv-action="delete-all"]', confirmDeleteAll);
     $('invBtnTestSb') && $('invBtnTestSb').addEventListener('click', testSupabase);
     $('invBtnSetupSb') && $('invBtnSetupSb').addEventListener('click', showSupabaseSetup);
+
+    $('invDirPickExcel') && $('invDirPickExcel').addEventListener('click', function () {
+      var f = $('invDirExcelFile');
+      if (f) f.click();
+    });
+    $('invDirExcelFile') && $('invDirExcelFile').addEventListener('change', function () {
+      var file = this.files && this.files[0];
+      onDirectedExcelPicked(file);
+      this.value = '';
+    });
+    $('invDirPublish') && $('invDirPublish').addEventListener('click', publishDirectedDraft);
+    $('invDirExportJson') && $('invDirExportJson').addEventListener('click', exportDirectedJson);
+    $('invDirClearPlan') && $('invDirClearPlan').addEventListener('click', clearDirectedPlan);
+    $('invDirRefresh') && $('invDirRefresh').addEventListener('click', function () {
+      loadDirectedPlan(true).then(function () { toast('Plan actualizado', 'ok'); });
+    });
+    $('invDirImportBtn') && $('invDirImportBtn').addEventListener('click', function () {
+      var f = $('invDirImportFile');
+      if (f) f.click();
+    });
+    $('invDirImportFile') && $('invDirImportFile').addEventListener('change', function () {
+      var file = this.files && this.files[0];
+      importDirectedJson(file);
+      this.value = '';
+    });
+    $('invDirValidate') && $('invDirValidate').addEventListener('click', validateDirectedSave);
+    $('invDirNext') && $('invDirNext').addEventListener('click', nextDirectedLine);
+    ['invDirLoc', 'invDirCode', 'invDirQty'].forEach(function (id) {
+      var el = $(id);
+      if (!el) return;
+      el.addEventListener('input', updateDirectedChips);
+    });
+    document.querySelectorAll('[data-inv-dir-camera]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        openCamera(btn.getAttribute('data-inv-dir-camera') || 'loc');
+      });
+    });
+    document.querySelectorAll('[data-inv-dir-apply]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        applyDirectedTyped(btn.getAttribute('data-inv-dir-apply') || 'loc');
+      });
+    });
 
     document.querySelectorAll('[data-inv-camera]').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -887,8 +1365,23 @@
     bindScanEnter('invLoc', 'loc');
     bindScanEnter('invProd', 'prod');
     bindScanEnter('invMat', 'mat');
+    function bindDirEnter(id, target) {
+      var el = $(id);
+      if (!el) return;
+      el.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        applyDirectedTyped(target);
+      });
+    }
+    bindDirEnter('invDirLoc', 'loc');
+    bindDirEnter('invDirCode', 'prod');
 
     document.addEventListener('keydown', function (e) {
+      if (state.view === 'directedCount') {
+        if (e.key === 'Escape' && (state.camStream || state.html5Qr)) { stopCamera(); e.preventDefault(); }
+        return;
+      }
       if (state.view !== 'count') return;
       if (e.key === 'Escape' && state.camStream) { stopCamera(); e.preventDefault(); return; }
       if (e.key === 'F8') { processScan('P020-012-1'); e.preventDefault(); }
@@ -900,11 +1393,12 @@
     var scanBuf = '';
     var scanTimer = null;
     document.addEventListener('keypress', function (e) {
-      if (state.view !== 'count' || state.view === undefined) return;
+      if (state.view !== 'count' && state.view !== 'directedCount') return;
       var tag = (e.target && e.target.tagName) || '';
       if (tag === 'INPUT' || tag === 'TEXTAREA') return;
       if (e.key === 'Enter' && scanBuf.length > 2) {
-        processScan(scanBuf);
+        if (state.view === 'directedCount') processDirectedScan(scanBuf);
+        else processScan(scanBuf);
         scanBuf = '';
         e.preventDefault();
         return;
@@ -938,16 +1432,20 @@
     }
     initRfViewport();
     bindEvents();
-    SYNC.onChange(function (kind) {
+    SYNC.onChange(function (kind, payload) {
       if (kind === 'sync' || kind === 'entry' || kind === 'clear') {
         if (state.view === 'records') renderRecords();
         if (state.view === 'admin') renderAdminStats();
         updateCloudBadge();
       }
+      if (kind === 'directed') {
+        applyDirectedPlan(payload || { rows: [], meta: {} });
+      }
     });
     SYNC.init().then(function () {
       updateCloudBadge();
       tryRestoreSession();
+      loadDirectedPlan(!!SYNC.isOnline());
     });
   }
 

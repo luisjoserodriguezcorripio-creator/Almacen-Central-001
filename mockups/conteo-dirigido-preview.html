@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#15202B" />
+  <title>Mockup · Conteo dirigido (reemplazo PISO)</title>
+  <style>
+    :root {
+      --bg: #0f1720;
+      --panel: #15202b;
+      --line: rgba(244, 241, 234, 0.12);
+      --text: #f4f1ea;
+      --muted: #94a3b8;
+      --navy: #1e3a5f;
+      --teal: #00897b;
+      --amber: #f0a202;
+      --ok: #22c55e;
+      --bad: #ef4444;
+      --font: "Segoe UI", "Trebuchet MS", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(ellipse 70% 40% at 10% 0%, rgba(0, 137, 123, 0.2), transparent 50%),
+        radial-gradient(ellipse 50% 40% at 100% 10%, rgba(240, 162, 2, 0.12), transparent 45%),
+        var(--bg);
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1rem 1rem 2rem;
+    }
+    .banner {
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #fde68a;
+      margin-bottom: 0.85rem;
+    }
+    h1 {
+      margin: 0 0 0.35rem;
+      font-size: 1.35rem;
+      font-weight: 800;
+    }
+    .lead {
+      margin: 0 0 1rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+      max-width: 62ch;
+    }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .flow div {
+      border-radius: 12px;
+      padding: 0.65rem 0.7rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+    .flow strong { display: block; color: var(--amber); margin-bottom: 0.2rem; font-size: 0.68rem; letter-spacing: 0.04em; }
+    .split {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 1rem;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .split, .flow { grid-template-columns: 1fr; }
+    }
+    .card {
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: linear-gradient(165deg, rgba(30, 44, 58, 0.95), rgba(21, 32, 43, 0.96));
+      padding: 0.95rem;
+    }
+    .card h2 {
+      margin: 0 0 0.55rem;
+      font-size: 0.82rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #cbd5e1;
+    }
+    .tag {
+      display: inline-block;
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 0.2rem 0.45rem;
+      border-radius: 6px;
+      background: #e3f2fd;
+      color: #1565c0;
+      margin-bottom: 0.45rem;
+    }
+    .tag.warn { background: rgba(239,68,68,0.15); color: #fecaca; }
+    .tag.ok { background: rgba(34,197,94,0.15); color: #86efac; }
+    .drop {
+      border: 1.5px dashed rgba(240,162,2,0.45);
+      border-radius: 14px;
+      padding: 1rem;
+      text-align: center;
+      background: rgba(0,0,0,0.18);
+      margin-bottom: 0.75rem;
+    }
+    .drop p { margin: 0.35rem 0 0; color: var(--muted); font-size: 0.75rem; }
+    .btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 0.65rem 0.9rem;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-primary { background: var(--teal); color: #fff; }
+    .btn-amber { background: var(--amber); color: #15202b; }
+    .btn-ghost { background: rgba(255,255,255,0.08); color: #fff; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0.55rem 0; }
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.45rem;
+      margin: 0.65rem 0;
+    }
+    .meta div {
+      border-radius: 10px;
+      padding: 0.5rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      text-align: center;
+    }
+    .meta span { display: block; font-size: 0.58rem; color: var(--muted); font-weight: 700; }
+    .meta strong { font-size: 1.05rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.72rem;
+    }
+    th, td {
+      padding: 0.45rem 0.4rem;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+    }
+    th { color: var(--muted); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .status-pill {
+      display: inline-block;
+      padding: 0.15rem 0.4rem;
+      border-radius: 999px;
+      font-size: 0.62rem;
+      font-weight: 800;
+    }
+    .s-pending { background: rgba(240,162,2,0.15); color: #fde68a; }
+    .s-ok { background: rgba(34,197,94,0.15); color: #86efac; }
+    .s-bad { background: rgba(239,68,68,0.15); color: #fecaca; }
+    .s-open { background: rgba(59,130,246,0.15); color: #93c5fd; }
+
+    /* Phone mock */
+    .phone {
+      width: min(360px, 100%);
+      margin: 0 auto;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #eceff1;
+      color: #15202b;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+      min-height: 640px;
+      display: flex;
+      flex-direction: column;
+    }
+    .ph-head {
+      background: #15202b;
+      color: #fff;
+      padding: 0.85rem 0.9rem 0.75rem;
+    }
+    .ph-head .brand { font-size: 0.72rem; font-weight: 700; opacity: 0.75; }
+    .ph-head h3 { margin: 0.25rem 0 0; font-size: 1rem; }
+    .ph-head p { margin: 0.25rem 0 0; font-size: 0.72rem; color: #94a3b8; }
+    .ph-body { padding: 0.75rem; flex: 1; overflow: auto; }
+    .mode-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 0.85rem 0.9rem;
+      margin-bottom: 0.55rem;
+      box-shadow: 0 4px 14px rgba(21,32,43,0.08);
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+    .mode-card.active { border-color: #00897b; }
+    .mode-card .badge {
+      display: inline-block;
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 0.15rem 0.4rem;
+      border-radius: 5px;
+      margin-bottom: 0.35rem;
+    }
+    .badge-pickup { background: #e0f2f1; color: #00695c; }
+    .badge-rack { background: #e8eaf6; color: #3949ab; }
+    .badge-dir { background: #fff3e0; color: #ef6c00; }
+    .badge-gone {
+      background: #ffebee;
+      color: #c62828;
+      text-decoration: line-through;
+      opacity: 0.55;
+    }
+    .mode-card h4 { margin: 0; font-size: 0.95rem; color: #1e3a5f; }
+    .mode-card p { margin: 0.3rem 0 0; font-size: 0.72rem; color: #607d8b; line-height: 1.35; }
+    .mode-card.removed {
+      opacity: 0.45;
+      filter: grayscale(0.4);
+      position: relative;
+    }
+    .mode-card.removed::after {
+      content: "ELIMINADO";
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      font-size: 0.6rem;
+      font-weight: 900;
+      color: #c62828;
+    }
+    .queue-item {
+      background: #fff;
+      border-radius: 12px;
+      padding: 0.7rem 0.75rem;
+      margin-bottom: 0.45rem;
+      border-left: 4px solid #ef6c00;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .queue-item.done { border-left-color: #22c55e; opacity: 0.75; }
+    .queue-item.active { border-left-color: #00897b; box-shadow: 0 0 0 2px rgba(0,137,123,0.25); }
+    .queue-item strong { display: block; font-size: 0.9rem; color: #15202b; }
+    .queue-item span { font-size: 0.7rem; color: #607d8b; }
+    .validate {
+      background: #fff;
+      border-radius: 14px;
+      padding: 0.8rem;
+      margin-top: 0.5rem;
+    }
+    .validate label {
+      display: block;
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: #607d8b;
+      margin: 0.45rem 0 0.2rem;
+      text-transform: uppercase;
+    }
+    .validate input {
+      width: 100%;
+      border: 2px solid #cfd8dc;
+      border-radius: 10px;
+      padding: 0.55rem 0.6rem;
+      font: inherit;
+      font-weight: 700;
+    }
+    .validate input.ok { border-color: #22c55e; background: #f0fdf4; }
+    .validate input.bad { border-color: #ef4444; background: #fef2f2; }
+    .check-row {
+      display: flex;
+      gap: 0.35rem;
+      margin-top: 0.55rem;
+      flex-wrap: wrap;
+    }
+    .chip {
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 0.25rem 0.45rem;
+      border-radius: 999px;
+    }
+    .chip.ok { background: #dcfce7; color: #166534; }
+    .chip.bad { background: #fee2e2; color: #991b1b; }
+    .chip.wait { background: #e2e8f0; color: #475569; }
+    .ph-nav {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.3rem;
+      padding: 0.55rem;
+      background: #fff;
+      border-top: 1px solid #cfd8dc;
+    }
+    .ph-nav button {
+      border: 0;
+      background: #eceff1;
+      border-radius: 10px;
+      padding: 0.55rem 0.3rem;
+      font: inherit;
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: #37474f;
+      cursor: pointer;
+    }
+    .tabs {
+      display: flex;
+      gap: 0.35rem;
+      margin-bottom: 0.65rem;
+    }
+    .tabs button {
+      flex: 1;
+      border: 0;
+      border-radius: 999px;
+      padding: 0.45rem;
+      font: inherit;
+      font-size: 0.72rem;
+      font-weight: 800;
+      background: rgba(255,255,255,0.06);
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .tabs button.on { background: var(--teal); color: #fff; }
+    .note {
+      margin-top: 0.85rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="banner">Mockup · Inventario RF · Reemplazo de Conteo Piso</div>
+    <h1>Conteo dirigido por Excel</h1>
+    <p class="lead">
+      Desde la PC adjuntas el archivo de lo que necesitas contar. En el celular desaparece <b>Conteo Piso</b>
+      y aparece <b>Conteo dirigido</b>: el contador ve la cola de ubicaciones y valida ubicación, código y cantidad.
+    </p>
+
+    <div class="flow">
+      <div><strong>1 · PC</strong>Adjuntar Excel (ubicación, código, cantidad esperada)</div>
+      <div><strong>2 · Publicar</strong>Plan del día visible para contadores</div>
+      <div><strong>3 · Celular</strong>Cola de ubicaciones a contar</div>
+      <div><strong>4 · Validar</strong>Scan ubicación → código → cantidad vs Excel</div>
+    </div>
+
+    <div class="split">
+      <!-- PC -->
+      <section class="card">
+        <h2>Escritorio · Cargar plan a contar</h2>
+        <span class="tag ok">Propuesta PC</span>
+        <div class="drop" id="dropZone">
+          <button type="button" class="btn btn-amber" id="btnLoadDemo">Adjuntar Excel (demo)</button>
+          <p>Columnas: Ubicación · Código · Producto · Cantidad (CJ)<br>También puedes pegar / simular sin archivo real en este mockup.</p>
+          <input type="file" id="fileExcel" accept=".xlsx,.xls,.csv" hidden>
+        </div>
+        <div class="meta">
+          <div><span>Líneas</span><strong id="mLines">0</strong></div>
+          <div><span>Ubicaciones</span><strong id="mLocs">0</strong></div>
+          <div><span>Pendientes</span><strong id="mPend">0</strong></div>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-primary" id="btnPublish" disabled>Publicar plan al celular</button>
+          <button type="button" class="btn btn-ghost" id="btnClear">Limpiar</button>
+        </div>
+        <div style="max-height:280px;overflow:auto;border-radius:10px;border:1px solid var(--line)">
+          <table>
+            <thead>
+              <tr>
+                <th>Ubicación</th>
+                <th>Código</th>
+                <th>Producto</th>
+                <th>Esperado</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="planBody">
+              <tr><td colspan="5" style="color:#94a3b8">Sin plan cargado</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">
+          Al publicar, el plan queda en el dispositivo (mock localStorage). En producción iría a la nube (Supabase)
+          para que todos los celulares vean la misma cola.
+        </p>
+      </section>
+
+      <!-- Phone -->
+      <section class="card">
+        <h2>Celular · Vista contador</h2>
+        <div class="tabs">
+          <button type="button" class="on" data-ph="modes">Modos</button>
+          <button type="button" data-ph="queue">Cola</button>
+          <button type="button" data-ph="count">Validar</button>
+        </div>
+
+        <div class="phone">
+          <div class="ph-head">
+            <div class="brand">Almacén Central · Inventario RF</div>
+            <h3 id="phTitle">Tipo de conteo</h3>
+            <p id="phSub">Seleccione cómo va a contar</p>
+          </div>
+
+          <div class="ph-body" id="phModes">
+            <div class="mode-card" data-pick="pickup">
+              <span class="badge badge-pickup">PICKUP</span>
+              <h4>Conteo de Pickup</h4>
+              <p>Solo nivel 1. Sin matrícula. Caja o unidad.</p>
+            </div>
+            <div class="mode-card" data-pick="rack">
+              <span class="badge badge-rack">RACK</span>
+              <h4>Conteo de Rack</h4>
+              <p>Niveles 2–5. Matrícula y vencimiento omisibles.</p>
+            </div>
+            <div class="mode-card removed" title="Se elimina">
+              <span class="badge badge-gone">PISO</span>
+              <h4>Conteo Piso</h4>
+              <p>5 pasos completos con matrícula y vencimiento opcionales.</p>
+            </div>
+            <div class="mode-card active" data-pick="dirigido" id="modeDirigido">
+              <span class="badge badge-dir">DIRIGIDO</span>
+              <h4>Conteo dirigido</h4>
+              <p>Cuenta solo lo publicado desde PC · valida ubicación, código y cantidad.</p>
+            </div>
+          </div>
+
+          <div class="ph-body hidden" id="phQueue">
+            <p style="margin:0 0 0.55rem;font-size:0.75rem;color:#546e7a;font-weight:700" id="queueHint">Sin plan publicado</p>
+            <div id="queueList"></div>
+          </div>
+
+          <div class="ph-body hidden" id="phCount">
+            <div class="queue-item active" id="activeTaskCard">
+              <strong id="activeLoc">—</strong>
+              <span id="activeMeta">Seleccione una línea en la cola</span>
+            </div>
+            <div class="validate">
+              <label>1 · Escanee / escriba ubicación</label>
+              <input id="vLoc" placeholder="Ej. P020-012-2" autocomplete="off">
+              <label>2 · Escanee / escriba código</label>
+              <input id="vCode" placeholder="Código de barras" autocomplete="off">
+              <label>3 · Cantidad contada (CJ)</label>
+              <input id="vQty" type="number" min="0" placeholder="0">
+              <div class="check-row" id="checkRow">
+                <span class="chip wait">Ubicación</span>
+                <span class="chip wait">Código</span>
+                <span class="chip wait">Cantidad</span>
+              </div>
+              <div class="btn-row" style="margin-top:0.75rem">
+                <button type="button" class="btn btn-primary" id="btnValidate" style="flex:1">Validar y guardar</button>
+                <button type="button" class="btn btn-ghost" id="btnSkip">Siguiente</button>
+              </div>
+              <p id="vMsg" style="margin:0.55rem 0 0;font-size:0.72rem;font-weight:700;color:#546e7a"></p>
+            </div>
+          </div>
+
+          <div class="ph-nav">
+            <button type="button" data-ph="modes">Modos</button>
+            <button type="button" data-ph="queue">Cola</button>
+            <button type="button" data-ph="count">Validar</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const DEMO = [
+      { loc: "P012-008-2", code: "7501234567890", product: "Galleta soda 12pk", expected: 24 },
+      { loc: "P012-008-3", code: "7509876543210", product: "Aceite vegetal 1L", expected: 18 },
+      { loc: "P015-004-2", code: "7702004001234", product: "Arroz 5lb", expected: 40 },
+      { loc: "P018-011-4", code: "8410076470123", product: "Atún agua 160g", expected: 96 },
+      { loc: "P023-002-2", code: "7501001112233", product: "Detergente 1kg", expected: 12 },
+    ];
+
+    const KEY = "ac001.inv.directedPlan.mock.v1";
+    let plan = [];
+    let activeIdx = 0;
+
+    const $ = (id) => document.getElementById(id);
+
+    function loadPlan() {
+      try {
+        const raw = localStorage.getItem(KEY);
+        if (raw) plan = JSON.parse(raw) || [];
+      } catch (e) { plan = []; }
+      if (!Array.isArray(plan)) plan = [];
+      renderAll();
+    }
+
+    function savePlan() {
+      localStorage.setItem(KEY, JSON.stringify(plan));
+    }
+
+    function stats() {
+      const locs = new Set(plan.map((r) => r.loc));
+      const pend = plan.filter((r) => r.status !== "ok" && r.status !== "bad").length;
+      $("mLines").textContent = plan.length;
+      $("mLocs").textContent = locs.size;
+      $("mPend").textContent = pend;
+    }
+
+    function statusLabel(s) {
+      if (s === "ok") return '<span class="status-pill s-ok">OK</span>';
+      if (s === "bad") return '<span class="status-pill s-bad">DIFERENCIA</span>';
+      if (s === "open") return '<span class="status-pill s-open">EN CURSO</span>';
+      return '<span class="status-pill s-pending">PENDIENTE</span>';
+    }
+
+    function renderTable() {
+      const body = $("planBody");
+      if (!plan.length) {
+        body.innerHTML = '<tr><td colspan="5" style="color:#94a3b8">Sin plan cargado</td></tr>';
+        return;
+      }
+      body.innerHTML = plan.map((r) =>
+        `<tr>
+          <td>${r.loc}</td>
+          <td>${r.code}</td>
+          <td>${r.product || "—"}</td>
+          <td>${r.expected}</td>
+          <td>${statusLabel(r.status)}</td>
+        </tr>`
+      ).join("");
+    }
+
+    function renderQueue() {
+      const list = $("queueList");
+      if (!plan.length) {
+        $("queueHint").textContent = "Sin plan publicado. Cargue Excel en PC y publique.";
+        list.innerHTML = "";
+        return;
+      }
+      const pend = plan.filter((r) => r.status !== "ok").length;
+      $("queueHint").textContent = pend + " pendientes de " + plan.length + " líneas";
+      list.innerHTML = plan.map((r, i) => {
+        const cls = i === activeIdx ? "active" : (r.status === "ok" ? "done" : "");
+        return `<div class="queue-item ${cls}" data-idx="${i}">
+          <strong>${r.loc}</strong>
+          <span>${r.code} · esp. ${r.expected} CJ · ${r.product || ""}</span>
+        </div>`;
+      }).join("");
+      list.querySelectorAll(".queue-item").forEach((el) => {
+        el.addEventListener("click", () => {
+          activeIdx = Number(el.getAttribute("data-idx")) || 0;
+          showPhone("count");
+          fillActive();
+          renderQueue();
+        });
+      });
+    }
+
+    function fillActive() {
+      const r = plan[activeIdx];
+      if (!r) {
+        $("activeLoc").textContent = "—";
+        $("activeMeta").textContent = "Seleccione una línea en la cola";
+        return;
+      }
+      r.status = r.status === "ok" || r.status === "bad" ? r.status : "open";
+      $("activeLoc").textContent = r.loc;
+      $("activeMeta").textContent = r.code + " · " + (r.product || "Producto") + " · esperado " + r.expected + " CJ";
+      $("vLoc").value = "";
+      $("vCode").value = "";
+      $("vQty").value = "";
+      $("vLoc").className = "";
+      $("vCode").className = "";
+      $("vQty").className = "";
+      $("vMsg").textContent = "Valide los 3 datos contra el Excel publicado.";
+      updateChips();
+      savePlan();
+      renderTable();
+      stats();
+    }
+
+    function norm(s) {
+      return String(s || "").trim().toUpperCase().replace(/\s+/g, "");
+    }
+    function normCode(s) {
+      return norm(s).replace(/^N(?=\d)/, "").replace(/^0+(?=\d)/, (m) => (m.length > 1 ? "" : m));
+    }
+
+    function updateChips() {
+      const r = plan[activeIdx];
+      if (!r) return;
+      const locOk = norm($("vLoc").value) && norm($("vLoc").value) === norm(r.loc);
+      const codeOk = normCode($("vCode").value) && normCode($("vCode").value) === normCode(r.code);
+      const qtyRaw = $("vQty").value;
+      const qtyOk = qtyRaw !== "" && Number(qtyRaw) === Number(r.expected);
+      const qtyDiff = qtyRaw !== "" && Number(qtyRaw) !== Number(r.expected);
+      $("checkRow").innerHTML =
+        `<span class="chip ${locOk ? "ok" : "wait"}">${locOk ? "✓ Ubicación" : "Ubicación"}</span>` +
+        `<span class="chip ${codeOk ? "ok" : "wait"}">${codeOk ? "✓ Código" : "Código"}</span>` +
+        `<span class="chip ${qtyOk ? "ok" : (qtyDiff ? "bad" : "wait")}">${qtyOk ? "✓ Cantidad" : (qtyDiff ? "≠ Cantidad" : "Cantidad")}</span>`;
+      $("vLoc").className = $("vLoc").value ? (locOk ? "ok" : "bad") : "";
+      $("vCode").className = $("vCode").value ? (codeOk ? "ok" : "bad") : "";
+      $("vQty").className = qtyRaw !== "" ? (qtyOk ? "ok" : "bad") : "";
+    }
+
+    function validateSave() {
+      const r = plan[activeIdx];
+      if (!r) return;
+      updateChips();
+      const locOk = norm($("vLoc").value) === norm(r.loc);
+      const codeOk = normCode($("vCode").value) === normCode(r.code);
+      const qty = Number($("vQty").value);
+      if (!locOk || !codeOk || $("vQty").value === "") {
+        $("vMsg").textContent = "Complete ubicación, código y cantidad válidos.";
+        $("vMsg").style.color = "#c62828";
+        return;
+      }
+      if (qty === Number(r.expected)) {
+        r.status = "ok";
+        r.counted = qty;
+        $("vMsg").textContent = "OK · coincide con el Excel. Pasa a la siguiente.";
+        $("vMsg").style.color = "#2e7d32";
+      } else {
+        r.status = "bad";
+        r.counted = qty;
+        $("vMsg").textContent = "Diferencia · esperado " + r.expected + " · contado " + qty + ". Queda marcado para revisar.";
+        $("vMsg").style.color = "#c62828";
+      }
+      savePlan();
+      renderAll();
+    }
+
+    function nextTask() {
+      if (!plan.length) return;
+      let i = activeIdx + 1;
+      while (i < plan.length && plan[i].status === "ok") i++;
+      if (i >= plan.length) i = plan.findIndex((r) => r.status !== "ok");
+      if (i < 0) i = 0;
+      activeIdx = i;
+      fillActive();
+      renderQueue();
+    }
+
+    function showPhone(which) {
+      ["modes", "queue", "count"].forEach((k) => {
+        const id = "ph" + k.charAt(0).toUpperCase() + k.slice(1);
+        $(id).classList.toggle("hidden", k !== which);
+      });
+      document.querySelectorAll(".tabs button, .ph-nav button").forEach((b) => {
+        b.classList.toggle("on", b.getAttribute("data-ph") === which);
+      });
+      if (which === "modes") {
+        $("phTitle").textContent = "Tipo de conteo";
+        $("phSub").textContent = "PISO eliminado · nuevo DIRIGIDO";
+      } else if (which === "queue") {
+        $("phTitle").textContent = "Cola dirigida";
+        $("phSub").textContent = "Ubicaciones publicadas desde PC";
+        renderQueue();
+      } else {
+        $("phTitle").textContent = "Validar línea";
+        $("phSub").textContent = "Ubicación · código · cantidad";
+        fillActive();
+      }
+    }
+
+    function renderAll() {
+      stats();
+      renderTable();
+      renderQueue();
+      $("btnPublish").disabled = !plan.length;
+    }
+
+    $("btnLoadDemo").addEventListener("click", () => {
+      plan = DEMO.map((r) => ({ ...r, status: "pending", counted: null }));
+      activeIdx = 0;
+      savePlan();
+      renderAll();
+    });
+    $("dropZone").addEventListener("click", (e) => {
+      if (e.target.id === "btnLoadDemo") return;
+      $("fileExcel").click();
+    });
+    $("fileExcel").addEventListener("change", () => {
+      // Mock: cualquier archivo carga el demo (sin parsear Excel aquí)
+      plan = DEMO.map((r) => ({ ...r, status: "pending", counted: null }));
+      activeIdx = 0;
+      savePlan();
+      renderAll();
+    });
+    $("btnPublish").addEventListener("click", () => {
+      savePlan();
+      showPhone("queue");
+      alert("Plan publicado al celular (mock). Abra la pestaña Cola.");
+    });
+    $("btnClear").addEventListener("click", () => {
+      plan = [];
+      activeIdx = 0;
+      localStorage.removeItem(KEY);
+      renderAll();
+      fillActive();
+    });
+    $("btnValidate").addEventListener("click", validateSave);
+    $("btnSkip").addEventListener("click", nextTask);
+    ["vLoc", "vCode", "vQty"].forEach((id) => $(id).addEventListener("input", updateChips));
+
+    document.querySelectorAll("[data-ph]").forEach((b) => {
+      b.addEventListener("click", () => showPhone(b.getAttribute("data-ph")));
+    });
+    document.querySelectorAll("[data-pick]").forEach((card) => {
+      card.addEventListener("click", () => {
+        document.querySelectorAll("[data-pick]").forEach((c) => c.classList.remove("active"));
+        card.classList.add("active");
+        if (card.getAttribute("data-pick") === "dirigido") showPhone("queue");
+      });
+    });
+
+    loadPlan();
+    showPhone("modes");
+  </script>
+</body>
+</html>

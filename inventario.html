@@ -19,7 +19,7 @@
     }
   })();
   </script>
-  <meta name="description" content="Portal Inventario RF — Conteo pickup, rack y piso en tiempo real.">
+  <meta name="description" content="Portal Inventario RF — Conteo pickup, rack y dirigido en tiempo real.">
   <meta name="theme-color" content="#15202B">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -34,7 +34,7 @@
   <link rel="stylesheet" href="css/auth-portals-layout.css?v=11">
   <link rel="stylesheet" href="css/dc-brand.css?v=11">
   <link rel="stylesheet" href="css/ac001-brand.css?v=1">
-  <link rel="stylesheet" href="css/inventario-portal.css?v=15">
+  <link rel="stylesheet" href="css/inventario-portal.css?v=16">
   <link rel="stylesheet" href="css/inventario-responsive.css?v=5">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -57,7 +57,7 @@
               <h1 class="inv-auth-brand-title">Inventario RF · DC</h1>
             </div>
           </header>
-          <p class="auth-hero-desc inv-auth-hero-desc">Conteo de inventario en almacén (pickup, rack, piso), en el navegador con datos <strong>en tiempo real</strong>.</p>
+          <p class="auth-hero-desc inv-auth-hero-desc">Conteo de inventario en almacén (pickup, rack, dirigido), en el navegador con datos <strong>en tiempo real</strong>.</p>
           <div class="inv-auth-steps" aria-label="Conteo RF">
             <span class="inv-auth-step">Pickup</span>
             <span class="inv-auth-step">Rack</span>
@@ -171,15 +171,94 @@
           <h3 class="inv-mode-title--rack">Conteo de Rack</h3>
           <p>Formato P###-###-# (niveles 2–5). Matrícula y vencimiento omisibles.</p>
         </div>
-        <div class="inv-mode" id="invModeCuadre" data-mode="cuadre">
-          <span class="inv-mode-tag inv-mode-tag--piso">PISO</span>
-          <h3 class="inv-mode-title--piso">Conteo Piso</h3>
-          <p>5 pasos completos con matrícula y vencimiento opcionales.</p>
+        <div class="inv-mode" id="invModeDirigido" data-mode="dirigido">
+          <span class="inv-mode-tag inv-mode-tag--dirigido">DIRIGIDO</span>
+          <h3 class="inv-mode-title--dirigido">Conteo dirigido</h3>
+          <p>Cuenta solo lo publicado desde PC · valida ubicación, código y cantidad.</p>
         </div>
       </div>
       <nav class="inv-nav">
         <button type="button" class="inv-btn-logout">Salir</button>
         <button type="button" data-inv-nav="admin">Admin</button>
+      </nav>
+    </div>
+
+    <!-- Cola dirigida -->
+    <div class="inv-phone" id="invViewDirected" hidden>
+      <div class="inv-header">
+        <div class="inv-header-top">
+          <div class="inv-brand">Almacén Central</div>
+          <div class="inv-header-user">
+            <div class="inv-header-name">—</div>
+          </div>
+        </div>
+        <h2 class="inv-view-subtitle">Cola dirigida</h2>
+        <p class="inv-instr" id="invDirectedHint">Sin plan publicado</p>
+        <div class="inv-dir-meta" id="invDirectedMeta" hidden>
+          <div><span>Líneas</span><strong id="invDirLines">0</strong></div>
+          <div><span>Pendientes</span><strong id="invDirPend">0</strong></div>
+          <div><span>OK</span><strong id="invDirOk">0</strong></div>
+        </div>
+      </div>
+      <div class="inv-body">
+        <div class="inv-dir-tools">
+          <button type="button" class="inv-btn inv-btn-primary" id="invDirRefresh">Actualizar plan</button>
+          <button type="button" class="inv-btn inv-btn-scan" id="invDirImportBtn">Importar JSON</button>
+          <input type="file" id="invDirImportFile" accept=".json,application/json" hidden>
+        </div>
+        <div id="invDirectedQueue"></div>
+      </div>
+      <nav class="inv-nav">
+        <button type="button" data-inv-nav="mode">Modo</button>
+        <button type="button" data-inv-nav="directed-count">Validar</button>
+        <button type="button" class="inv-btn-logout">Salir</button>
+      </nav>
+    </div>
+
+    <!-- Validar línea dirigida -->
+    <div class="inv-phone" id="invViewDirectedCount" hidden>
+      <div class="inv-header">
+        <div class="inv-header-top">
+          <div class="inv-brand">Almacén Central</div>
+          <span class="inv-mode-badge">DIRIGIDO</span>
+        </div>
+        <h2 class="inv-view-subtitle">Validar línea</h2>
+        <p class="inv-instr">Ubicación · código · cantidad vs Excel</p>
+      </div>
+      <div class="inv-body">
+        <div class="inv-dir-active" id="invDirActiveCard">
+          <strong id="invDirActiveLoc">—</strong>
+          <span id="invDirActiveMeta">Seleccione una línea en la cola</span>
+        </div>
+        <label class="inv-dir-label">1 · Ubicación</label>
+        <input class="inv-field" id="invDirLoc" inputmode="text" autocomplete="off" enterkeyhint="done" placeholder="Ej. P020-012-2">
+        <div class="inv-scan-actions">
+          <button type="button" class="inv-btn inv-btn-scan" data-inv-dir-camera="loc">📷 Escanear</button>
+          <button type="button" class="inv-btn inv-btn-primary" data-inv-dir-apply="loc">Usar código</button>
+        </div>
+        <label class="inv-dir-label">2 · Código de barras</label>
+        <input class="inv-field" id="invDirCode" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="Código de barras">
+        <div class="inv-scan-actions">
+          <button type="button" class="inv-btn inv-btn-scan" data-inv-dir-camera="prod">📷 Escanear</button>
+          <button type="button" class="inv-btn inv-btn-primary" data-inv-dir-apply="prod">Usar código</button>
+        </div>
+        <label class="inv-dir-label">3 · Cantidad contada (CJ)</label>
+        <input class="inv-field inv-field--qty" id="invDirQty" type="number" min="0" placeholder="0">
+        <div class="inv-dir-chips" id="invDirChips">
+          <span class="inv-dir-chip wait">Ubicación</span>
+          <span class="inv-dir-chip wait">Código</span>
+          <span class="inv-dir-chip wait">Cantidad</span>
+        </div>
+        <div class="inv-dir-actions">
+          <button type="button" class="inv-btn inv-btn-primary" id="invDirValidate">Validar y guardar</button>
+          <button type="button" class="inv-btn inv-btn-scan" id="invDirNext">Siguiente</button>
+        </div>
+        <p class="inv-dir-msg" id="invDirMsg">Valide los 3 datos contra el Excel publicado.</p>
+      </div>
+      <nav class="inv-nav">
+        <button type="button" data-inv-nav="directed">Cola</button>
+        <button type="button" data-inv-nav="mode">Modo</button>
+        <button type="button" class="inv-btn-logout">Salir</button>
       </nav>
     </div>
 
@@ -296,12 +375,36 @@
       <div class="inv-body" style="padding:0">
         <div class="inv-admin-row" data-inv-nav="records"><span style="font-size:20px">📋</span><div><strong>Ver registros</strong><span>Lista en tiempo real en la nube</span></div></div>
         <div class="inv-admin-row" data-inv-action="export"><span style="font-size:20px">📁</span><div><strong>Exportar CSV</strong><span>OneDrive / Excel</span></div></div>
+        <div class="inv-admin-panel" id="invAdminDirected">
+          <div class="inv-admin-panel-head">
+            <strong>Conteo dirigido · plan Excel</strong>
+            <span>PC carga Excel → publica → celulares validan</span>
+          </div>
+          <input type="file" id="invDirExcelFile" accept=".xlsx,.xls" hidden>
+          <div class="inv-dir-admin-actions">
+            <button type="button" class="inv-btn inv-btn-scan" id="invDirPickExcel">Adjuntar Excel</button>
+            <button type="button" class="inv-btn inv-btn-primary" id="invDirPublish" disabled>Publicar plan</button>
+            <button type="button" class="inv-btn inv-btn-scan" id="invDirExportJson" disabled>Exportar JSON</button>
+            <button type="button" class="inv-btn inv-btn-danger" id="invDirClearPlan" disabled>Limpiar plan</button>
+          </div>
+          <p class="inv-dir-admin-status" id="invDirAdminStatus">Sin plan cargado. Columnas: ubicación · código · producto · cantidad.</p>
+          <div class="inv-dir-admin-table-wrap">
+            <table class="inv-dir-admin-table">
+              <thead>
+                <tr><th>Ubicación</th><th>Código</th><th>Producto</th><th>Esp.</th><th>Estado</th></tr>
+              </thead>
+              <tbody id="invDirAdminBody">
+                <tr><td colspan="5">Sin filas</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
         <div class="inv-admin-row" id="invBtnTestSb"><span style="font-size:20px">🔗</span><div><strong>Probar conexión</strong><span>Verificar enlace en vivo</span></div></div>
         <div class="inv-admin-row" id="invBtnSetupSb"><span style="font-size:20px">⚙️</span><div><strong>Configurar sincronización</strong><span>URL y clave (solo este equipo)</span></div></div>
         <div class="inv-admin-row" data-inv-action="delete-all"><span style="font-size:20px">🗑️</span><div><strong>Borrar registros</strong><span>Elimina todos en la nube</span></div></div>
         <a class="inv-admin-row inv-admin-link" href="inventario-exactitud.html"><span style="font-size:20px">📊</span><div><strong>Conciliación · Exactitud</strong><span>Cuadre CJ vs conteo en vivo (escritorio)</span></div></a>
         <a class="inv-admin-row inv-admin-link" href="inventario-exactitud.html?ws=auditoria"><span style="font-size:20px">🔍</span><div><strong>Auditoría de conteo</strong><span>Solo ubicaciones REVISAR</span></div></a>
-        <div class="inv-admin-row" data-inv-nav="count"><span style="font-size:20px">📦</span><div><strong>Ir a conteo</strong><span>Modo contador</span></div></div>
+        <div class="inv-admin-row" data-inv-nav="mode"><span style="font-size:20px">📦</span><div><strong>Ir a conteo</strong><span>Modo contador</span></div></div>
       </div>
       <nav class="inv-nav">
         <button type="button" data-inv-nav="mode">Modo conteo</button>
@@ -350,8 +453,10 @@
   <script src="js/platform-supabase.js?v=4"></script>
   <script src="js/platform-supabase-realtime.js?v=1"></script>
   <script src="js/platform-supabase-bridge.js?v=4"></script>
-  <script src="js/platform-inventario-core.js?v=3"></script>
-  <script src="js/platform-inventario-sync.js?v=6"></script>
-  <script src="js/platform-inventario-app.js?v=12"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="js/platform-inventario-conciliacion.js?v=2"></script>
+  <script src="js/platform-inventario-core.js?v=4"></script>
+  <script src="js/platform-inventario-sync.js?v=7"></script>
+  <script src="js/platform-inventario-app.js?v=13"></script>
 </body>
 </html>

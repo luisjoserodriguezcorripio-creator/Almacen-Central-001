@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b2f5b" />
+  <title>Meta de Productividad de Recepción</title>
+  <link rel="stylesheet" href="../css/dimensionamiento-despacho.css?v=1" />
+  <style>
+    /* Misma visual; solo ajuste de 2 campos de plaza principales en fila */
+    .dim-plaza { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  </style>
+</head>
+<body class="dim-despacho-portal">
+  <div class="dim-shell">
+    <div style="text-align:center;font-size:0.68rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#ffe566;margin-bottom:0.55rem">
+      Mockup · Meta Productividad · Recepción
+    </div>
+
+    <section class="dim-plan">
+      <div class="dim-plan-top">
+        <h2>Plan del día</h2>
+        <span>Recepción</span>
+      </div>
+      <div class="dim-grid">
+        <div class="dim-field">
+          <label for="contenedores">Plan de contenedores (patio)</label>
+          <input id="contenedores" type="number" min="0" value="34" inputmode="numeric" />
+        </div>
+        <div class="dim-field">
+          <label for="desafioMin">Desafío mínimo</label>
+          <input id="desafioMin" type="number" min="0" value="20" inputmode="numeric" />
+        </div>
+      </div>
+      <div class="dim-plaza">
+        <div class="dim-field">
+          <label for="validadores">Validadores</label>
+          <input id="validadores" type="number" min="1" value="3" inputmode="numeric" />
+        </div>
+        <div class="dim-field">
+          <label for="ubicadores">Ubicadores MC</label>
+          <input id="ubicadores" type="number" min="1" value="2" inputmode="numeric" />
+        </div>
+        <div class="dim-field">
+          <label for="prodVal">Val. cont/h</label>
+          <input id="prodVal" type="number" min="0.1" step="0.1" value="2" inputmode="decimal" />
+        </div>
+        <div class="dim-field">
+          <label for="prodUbi">Ubi. cont/h</label>
+          <input id="prodUbi" type="number" min="0.1" step="0.1" value="1" inputmode="decimal" />
+        </div>
+      </div>
+    </section>
+
+    <section class="dim-board" aria-label="Meta de productividad recepción">
+      <header class="dim-board-head">
+        <div class="dim-board-icon" aria-hidden="true">↑</div>
+        <div>
+          <h1>Meta de Productividad de Recepción</h1>
+          <div class="dim-date" id="fechaMeta">—</div>
+        </div>
+      </header>
+
+      <div class="dim-strip">
+        <div>
+          <span>Contenedores / turno</span>
+          <strong id="totCont">—</strong>
+        </div>
+        <div>
+          <span>Cont. / hora</span>
+          <strong id="totContHora">—</strong>
+        </div>
+        <div>
+          <span>Desafío mínimo</span>
+          <strong id="totDesafio">—</strong>
+        </div>
+      </div>
+
+      <div class="dim-cards">
+        <article class="dim-card">
+          <div class="dim-card-top"><div class="dim-dot">C</div><h3>Contenedores · Plan</h3></div>
+          <div class="dim-card-body">
+            <div class="dim-metrics">
+              <div class="dim-metric">
+                <span>Contenedores<br>x turno</span>
+                <strong id="patioTurno">—</strong>
+              </div>
+              <div class="dim-metric">
+                <span>Cont. x hora</span>
+                <strong id="patioHora">—</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="dim-card">
+          <div class="dim-card-top"><div class="dim-dot">V</div><h3>Validadores</h3></div>
+          <div class="dim-card-body">
+            <div class="dim-metrics">
+              <div class="dim-metric">
+                <span>Cont. a validar<br>x turno</span>
+                <strong id="valTurno">—</strong>
+              </div>
+              <div class="dim-metric">
+                <span>Cont. x hora</span>
+                <strong id="valHora">—</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="dim-card">
+          <div class="dim-card-top"><div class="dim-dot">U</div><h3>Ubicadores MC</h3></div>
+          <div class="dim-card-body">
+            <div class="dim-metrics">
+              <div class="dim-metric">
+                <span>Prod. por MC<br>x turno</span>
+                <strong id="ubiTurno">—</strong>
+              </div>
+              <div class="dim-metric">
+                <span>Prod. por MC<br>x hora</span>
+                <strong id="ubiHora">—</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="dim-card">
+          <div class="dim-card-top"><div class="dim-dot">R</div><h3>Ritmo estándar</h3></div>
+          <div class="dim-card-body">
+            <div class="dim-metrics">
+              <div class="dim-metric">
+                <span>Validador<br>cont. x turno</span>
+                <strong id="stdVal">—</strong>
+              </div>
+              <div class="dim-metric">
+                <span>Ubicador<br>cont. x turno</span>
+                <strong id="stdUbi">—</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <footer class="dim-board-foot">
+        <p>¡Trabajemos con enfoque para alcanzar <em>nuestras metas</em>!</p>
+      </footer>
+    </section>
+  </div>
+
+  <script>
+    // Hoja Dimensionamiento Recepción:
+    // B2=Plan contenedores, B3=2 turnos, B4=7 h
+    // B5=B2/B3, B6=2 cont/h validador, B7=1 cont/h ubicador
+    // B8=B4*B6, B9=B4*B7
+    const $ = (id) => document.getElementById(id);
+    const TURNOS = 2;
+    const HORAS = 7;
+
+    function round(n) {
+      if (!Number.isFinite(n) || n < 0) return 0;
+      return Math.round(n);
+    }
+    function fmt(n) { return round(n).toLocaleString("es-DO"); }
+
+    function fechaHoy() {
+      const parts = new Intl.DateTimeFormat("es-DO", {
+        timeZone: "America/Santo_Domingo",
+        day: "2-digit", month: "2-digit", year: "numeric",
+      }).formatToParts(new Date());
+      const get = (t) => parts.find((p) => p.type === t)?.value || "";
+      return `${get("day")}-${get("month")}-${get("year")}`;
+    }
+
+    function calc() {
+      const plan = Number($("contenedores").value) || 0;       // B2
+      const desafioMin = Number($("desafioMin").value) || 0;   // Resumen F7
+      const validadores = Math.max(1, Number($("validadores").value) || 1); // B10
+      const ubicadores = Math.max(1, Number($("ubicadores").value) || 1);   // B11
+      const prodValHora = Math.max(0.1, Number($("prodVal").value) || 2);   // B6
+      const prodUbiHora = Math.max(0.1, Number($("prodUbi").value) || 1);   // B7
+
+      const contTurno = plan / TURNOS;           // B5
+      const contHora = contTurno / HORAS;        // B12
+      const prodValTurno = HORAS * prodValHora;  // B8
+      const prodUbiTurno = HORAS * prodUbiHora;  // B9
+
+      // Desafío por persona (igual lógica visual que despacho)
+      const metaVal = contTurno / validadores;
+      const metaValHora = metaVal / HORAS;
+      // Productividad que debe realizar cada montacargas ubicador
+      const metaUbi = contTurno / ubicadores;
+      const metaUbiHora = metaUbi / HORAS;
+
+      function fmtH(n) {
+        return n % 1 === 0
+          ? fmt(n)
+          : n.toLocaleString("es-DO", { maximumFractionDigits: 1, minimumFractionDigits: 1 });
+      }
+
+      $("fechaMeta").textContent = fechaHoy();
+      $("totCont").textContent = fmt(contTurno);
+      $("totContHora").textContent = fmtH(contHora);
+      $("totDesafio").textContent = fmt(desafioMin);
+
+      $("patioTurno").textContent = fmt(contTurno);
+      $("patioHora").textContent = fmtH(contHora);
+      $("valTurno").textContent = fmt(metaVal);
+      $("valHora").textContent = fmtH(metaValHora);
+      $("ubiTurno").textContent = fmt(metaUbi);
+      $("ubiHora").textContent = fmtH(metaUbiHora);
+      $("stdVal").textContent = fmt(prodValTurno);
+      $("stdUbi").textContent = fmt(prodUbiTurno);
+    }
+
+    ["contenedores", "desafioMin", "validadores", "ubicadores", "prodVal", "prodUbi"]
+      .forEach((id) => $(id).addEventListener("input", calc));
+    calc();
+  </script>
+</body>
+</html>

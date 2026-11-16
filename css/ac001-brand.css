@@ -107,6 +107,14 @@ body.auth-locked:has(.auth-layout--hub-news) .auth-video-scrim {
   border-color: rgba(245, 197, 24, 0.5);
 }
 
+.auth-portal-card--dim-recepcion .auth-portal-cta {
+  color: #f5c518 !important;
+}
+
+.auth-portal-card--dim-recepcion:hover {
+  border-color: rgba(245, 197, 24, 0.5);
+}
+
 .auth-portal-card {
   border-color: rgba(244, 241, 234, 0.12) !important;
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease, background 0.25s ease;

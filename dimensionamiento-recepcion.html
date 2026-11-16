@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Meta de Productividad de Recepción — desafío del día por rol">
+  <meta name="theme-color" content="#0b2f5b">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Meta de Productividad de Recepción — Almacén Central 001</title>
+  <link rel="icon" type="image/svg+xml" href="assets/img/ac001-logo.svg?v=4">
+  <link rel="stylesheet" href="css/dimensionamiento-despacho.css?v=1">
+</head>
+<body class="dim-despacho-portal">
+  <noscript><p style="color:#fff;text-align:center;padding:2rem">Activa JavaScript para usar Meta de Productividad de Recepción.</p></noscript>
+
+  <div class="dim-shell" role="application" aria-label="Meta de Productividad de Recepción">
+    <a class="dim-home" href="index.html">← Portales</a>
+
+    <section class="dim-plan">
+      <div class="dim-plan-top">
+        <h2>Plan del día</h2>
+        <span>Recepción</span>
+      </div>
+      <div class="dim-grid">
+        <div class="dim-field">
+          <label for="contenedores">Plan de contenedores (patio)</label>
+          <input id="contenedores" type="number" min="0" value="34" inputmode="numeric">
+        </div>
+        <div class="dim-field">
+          <label for="desafioMin">Desafío mínimo</label>
+          <input id="desafioMin" type="number" min="0" value="20" inputmode="numeric">
+        </div>
+      </div>
+      <div class="dim-plaza">
+        <div class="dim-field">
+          <label for="validadores">Validadores</label>
+          <input id="validadores" type="number" min="1" value="3" inputmode="numeric">
+        </div>
+        <div class="dim-field">
+          <label for="ubicadores">Ubicadores MC</label>
+          <input id="ubicadores" type="number" min="1" value="2" inputmode="numeric">
+        </div>
+        <div class="dim-field">
+          <label for="prodVal">Val. cont/h</label>
+          <input id="prodVal" type="number" min="0.1" step="0.1" value="2" inputmode="decimal">
+        </div>
+        <div class="dim-field">
+          <label for="prodUbi">Ubi. cont/h</label>
+          <input id="prodUbi" type="number" min="0.1" step="0.1" value="1" inputmode="decimal">
+        </div>
+      </div>
+    </section>
+
+    <section class="dim-board" aria-label="Meta de productividad de recepción">
+      <header class="dim-board-head">
+        <div class="dim-board-icon" aria-hidden="true">↑</div>
+        <div>
+          <h1>Meta de Productividad de Recepción</h1>
+          <div class="dim-date" id="fechaMeta">—</div>
+        </div>
+      </header>
+
+      <div class="dim-strip">
+        <div>
+          <span>Contenedores / turno</span>
+          <strong id="totCont">—</strong>
+        </div>
+        <div>
+          <span>Cont. / hora</span>
+          <strong id="totContHora">—</strong>
+        </div>
+        <div>
+          <span>Desafío mínimo</span>
+          <strong id="totDesafio">—</strong>
+        </div>
+      </div>
+
+      <div class="dim-cards">
+        <article class="dim-card">
+          <div class="dim-card-top"><div class="dim-dot">C</div><h3>Contenedores · Plan</h3></div>
+          <div class="dim-card-body">
+            <div class="dim-metrics">
+              <div class="dim-metric">
+                <span>Contenedores<br>x turno</span>
+                <strong id="patioTurno">—</strong>
+              </div>
+              <div class="dim-metric">
+                <span>Cont. x hora</span>
+                <strong id="patioHora">—</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="dim-card">
+          <div class="dim-card-top"><div class="dim-dot">V</div><h3>Validadores</h3></div>
+          <div class="dim-card-body">
+            <div class="dim-metrics">
+              <div class="dim-metric">
+                <span>Cont. a validar<br>x turno</span>
+                <strong id="valTurno">—</strong>
+              </div>
+              <div class="dim-metric">
+                <span>Cont. x hora</span>
+                <strong id="valHora">—</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="dim-card">
+          <div class="dim-card-top"><div class="dim-dot">U</div><h3>Ubicadores MC</h3></div>
+          <div class="dim-card-body">
+            <div class="dim-metrics">
+              <div class="dim-metric">
+                <span>Prod. por MC<br>x turno</span>
+                <strong id="ubiTurno">—</strong>
+              </div>
+              <div class="dim-metric">
+                <span>Prod. por MC<br>x hora</span>
+                <strong id="ubiHora">—</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="dim-card">
+          <div class="dim-card-top"><div class="dim-dot">R</div><h3>Ritmo estándar</h3></div>
+          <div class="dim-card-body">
+            <div class="dim-metrics">
+              <div class="dim-metric">
+                <span>Validador<br>cont. x turno</span>
+                <strong id="stdVal">—</strong>
+              </div>
+              <div class="dim-metric">
+                <span>Ubicador<br>cont. x turno</span>
+                <strong id="stdUbi">—</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <footer class="dim-board-foot">
+        <p>¡Trabajemos con enfoque para alcanzar <em>nuestras metas</em>!</p>
+      </footer>
+    </section>
+  </div>
+
+  <script src="js/platform-dimensionamiento-recepcion.js?v=1"></script>
+</body>
+</html>

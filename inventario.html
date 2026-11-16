@@ -34,7 +34,7 @@
   <link rel="stylesheet" href="css/auth-portals-layout.css?v=11">
   <link rel="stylesheet" href="css/dc-brand.css?v=11">
   <link rel="stylesheet" href="css/ac001-brand.css?v=1">
-  <link rel="stylesheet" href="css/inventario-portal.css?v=16">
+  <link rel="stylesheet" href="css/inventario-portal.css?v=17">
   <link rel="stylesheet" href="css/inventario-responsive.css?v=5">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -266,7 +266,7 @@
     <div class="inv-phone" id="invViewCount" hidden>
       <div class="inv-header">
         <div class="inv-header-top">
-          <div class="inv-brand">Almacén Central</div>
+          <div class="inv-brand inv-brand--loc" id="invCountBrand">Almacén Central</div>
           <div class="inv-header-user">
             <div class="inv-header-name">—</div>
           </div>
@@ -319,18 +319,20 @@
         <div class="inv-card" id="invCard3" style="border-color:#7E57C2">
           <span class="badge">AHORA</span>
           <h2 style="color:#7E57C2">3 · Matrícula</h2>
-          <p class="desc" id="invMatHint">Opcional — escanee, escriba u omita</p>
+          <p class="desc" id="invMatHint">Opcional — escanee, escriba o pulse Omitir</p>
           <input class="inv-field" id="invMat" inputmode="text" autocomplete="off" enterkeyhint="done" placeholder="Escanee matrícula" style="border-color:#7E57C2">
           <div class="inv-scan-actions">
             <button type="button" class="inv-btn inv-btn-scan" data-inv-camera="mat">📷 Escanear matrícula</button>
             <button type="button" class="inv-btn inv-btn-primary" data-inv-apply="mat">Usar código</button>
           </div>
+          <button type="button" class="inv-btn inv-btn-omit" id="invBtnOmitMat">Omitir matrícula</button>
         </div>
         <div class="inv-card" id="invCard4" style="border-color:#2A9D8F">
           <span class="badge">AHORA</span>
           <h2 style="color:#2A9D8F">4 · Vencimiento</h2>
-          <p class="desc">Opcional — fecha DD/MM/AAAA</p>
-          <input class="inv-field" id="invExp" placeholder="DD/MM/AAAA" style="border-color:#2A9D8F">
+          <p class="desc">Opcional — abra el calendario o pulse Omitir</p>
+          <input class="inv-field" id="invExp" type="date" style="border-color:#2A9D8F">
+          <button type="button" class="inv-btn inv-btn-omit" id="invBtnOmitExp">Omitir vencimiento</button>
         </div>
         <div class="inv-card" id="invCard5" style="border-color:#EF6C00">
           <span class="badge">AHORA</span>
@@ -457,6 +459,6 @@
   <script src="js/platform-inventario-conciliacion.js?v=2"></script>
   <script src="js/platform-inventario-core.js?v=4"></script>
   <script src="js/platform-inventario-sync.js?v=7"></script>
-  <script src="js/platform-inventario-app.js?v=13"></script>
+  <script src="js/platform-inventario-app.js?v=14"></script>
 </body>
 </html>

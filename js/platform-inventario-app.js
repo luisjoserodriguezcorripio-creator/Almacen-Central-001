@@ -690,9 +690,22 @@
     $('invLoc').value = f.loc;
     $('invProd').value = f.prod;
     $('invMat').value = f.mat;
-    $('invExp').value = f.exp;
+    if ($('invExp')) $('invExp').value = displayToIso(f.exp);
     $('invQty').value = f.qty;
     $('invPname').textContent = f.prodName || '—';
+
+    var brand = $('invCountBrand');
+    if (brand) {
+      if (f.loc) {
+        brand.textContent = f.loc;
+        brand.classList.add('is-loc');
+        brand.title = f.loc;
+      } else {
+        brand.textContent = 'Almacén Central';
+        brand.classList.remove('is-loc');
+        brand.title = '';
+      }
+    }
 
     var showPickupQty = mode === 'pickup' && step === 5;
     if ($('invPickupQtyType')) $('invPickupQtyType').hidden = !showPickupQty;
@@ -734,8 +747,8 @@
         : 'Arrastre hacia la derecha ▶▶ para GUARDAR';
       labelR.textContent = 'GUARDAR ▶';
     } else if (step === 3 || step === 4) {
-      hint.textContent = 'Arrastre hacia la derecha ▶▶ para OMITIR';
-      labelR.textContent = 'OMITIR ▶';
+      hint.textContent = 'Deslice ▶ para CONTINUAR · use el botón Omitir si no aplica';
+      labelR.textContent = 'CONTINUAR ▶';
     } else {
       hint.textContent = phone
         ? 'Use la cámara o escriba el código · Deslice ◀ para corregir'
@@ -752,9 +765,28 @@
 
     if (step === 3 && $('invMatHint')) {
       $('invMatHint').textContent = state.catalogMat
-        ? ('En sistema: ' + state.catalogMat)
-        : 'Sin matrícula en catálogo — deslice ▶ para omitir';
+        ? ('En sistema: ' + state.catalogMat + ' — o pulse Omitir')
+        : 'Opcional — escanee, escriba o pulse Omitir';
     }
+  }
+
+  function isoToDisplay(iso) {
+    var s = String(iso || '').trim();
+    if (!s) return '';
+    if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+      var p = s.slice(0, 10).split('-');
+      return p[2] + '/' + p[1] + '/' + p[0];
+    }
+    return s;
+  }
+
+  function displayToIso(d) {
+    var s = String(d || '').trim();
+    if (!s) return '';
+    if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+    var m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (!m) return '';
+    return m[3] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[1]).slice(-2);
   }
 
   function setPreviewField(id, text, hi) {
@@ -779,11 +811,46 @@
     applyCountStep();
   }
 
+  function omitMatricula() {
+    if (state.step !== 3) return;
+    state.fields.mat = '';
+    if ($('invMat')) $('invMat').value = '';
+    advanceStep();
+    toast('Matrícula omitida');
+  }
+
+  function omitVencimiento() {
+    if (state.step !== 4) return;
+    state.fields.exp = '';
+    if ($('invExp')) $('invExp').value = '';
+    advanceStep();
+    toast('Vencimiento omitido');
+  }
+
+  function syncExpFromInput() {
+    var el = $('invExp');
+    if (!el) return;
+    state.fields.exp = isoToDisplay(el.value);
+  }
+
   function swipeConfirm() {
-    if (state.step === 5) saveEntry();
-    else if (state.step === 3) { state.fields.mat = ''; advanceStep(); toast('Matrícula omitida'); }
-    else if (state.step === 4) { state.fields.exp = ''; advanceStep(); toast('Vencimiento omitido'); }
-    else if (isPhoneViewport()) {
+    if (state.step === 5) {
+      saveEntry();
+      return;
+    }
+    if (state.step === 3) {
+      state.fields.mat = ($('invMat') && $('invMat').value) || state.fields.mat || '';
+      advanceStep();
+      toast(state.fields.mat ? 'Matrícula OK' : 'Continuar sin matrícula');
+      return;
+    }
+    if (state.step === 4) {
+      syncExpFromInput();
+      advanceStep();
+      toast(state.fields.exp ? ('Vence ' + state.fields.exp) : 'Continuar sin vencimiento');
+      return;
+    }
+    if (isPhoneViewport()) {
       if (state.step === 1) applyTypedCode('loc');
       else if (state.step === 2) applyTypedCode('prod');
       else toast('Use la cámara o escriba el código');
@@ -1020,9 +1087,11 @@
       advanceStep();
       toast('Matrícula OK', 'ok');
     } else if (state.step === 4) {
-      f.exp = code.length >= 6 ? code : '31/12/2026';
+      f.exp = isoToDisplay(code.length >= 6 ? code : '');
+      if (!f.exp && /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(code)) f.exp = code;
+      if ($('invExp') && displayToIso(f.exp)) $('invExp').value = displayToIso(f.exp);
       advanceStep();
-      toast('Vencimiento OK', 'ok');
+      toast(f.exp ? ('Vencimiento OK · ' + f.exp) : 'Vencimiento vacío', 'ok');
     } else if (state.step === 5) {
       if (state.continuous) {
         // Modo continuo APK: un escaneo en cantidad guarda y sigue en el mismo rack
@@ -1276,6 +1345,19 @@
 
     $('invBtnQtyBox') && $('invBtnQtyBox').addEventListener('click', function () { setPickupUnit('box'); });
     $('invBtnQtyUnit') && $('invBtnQtyUnit').addEventListener('click', function () { setPickupUnit('unit'); });
+    $('invBtnOmitMat') && $('invBtnOmitMat').addEventListener('click', omitMatricula);
+    $('invBtnOmitExp') && $('invBtnOmitExp').addEventListener('click', omitVencimiento);
+    if ($('invExp')) {
+      $('invExp').addEventListener('change', function () {
+        syncExpFromInput();
+        applyCountStep();
+      });
+      $('invExp').addEventListener('focus', function () {
+        if (typeof this.showPicker === 'function') {
+          try { this.showPicker(); } catch (ePick) { /* noop */ }
+        }
+      });
+    }
 
     bindAll('[data-inv-nav="admin"]', function () { stopCamera(); setView('admin'); });
     bindAll('[data-inv-nav="records"]', function () { stopCamera(); setView('records'); });

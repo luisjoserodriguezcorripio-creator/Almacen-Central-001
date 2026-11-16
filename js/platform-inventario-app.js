@@ -1108,10 +1108,25 @@
     }
   }
 
+  function syncQtyFromInput() {
+    var el = $('invQty');
+    if (!el) return state.fields.qty;
+    var raw = String(el.value == null ? '' : el.value).trim();
+    if (raw === '') {
+      state.fields.qty = '0';
+      return state.fields.qty;
+    }
+    var n = parseInt(raw, 10);
+    if (isNaN(n) || n < 0) n = 0;
+    state.fields.qty = String(n);
+    return state.fields.qty;
+  }
+
   function saveEntry(opts) {
     opts = opts || {};
     var f = state.fields;
     var u = state.user;
+    syncQtyFromInput();
     if (!u) { toast('Sesión expirada', 'err'); return; }
     if (!f.loc) { toast('Falta ubicación', 'err'); return; }
     if (!f.prod && String(f.qty) !== '0') { toast('Falta artículo', 'err'); return; }
@@ -1119,11 +1134,13 @@
     var dbl = CORE.isDoubleRackLocation(f.loc);
     var passes = dbl === true ? 2 : 1;
     var banner = CORE.rackPassBanner(f.loc, state.countRound);
+    var qtyNum = parseInt(f.qty, 10);
+    if (isNaN(qtyNum) || qtyNum < 0) qtyNum = 0;
 
     SYNC.insertEntry({
       barcode: f.prod,
       productName: f.prodName || '',
-      quantity: parseInt(f.qty, 10) || 0,
+      quantity: qtyNum,
       zone: f.loc,
       warehouse: CORE.WAREHOUSE,
       unit: unit,
@@ -1139,7 +1156,7 @@
       if (!res.ok) { toast('Error al guardar', 'err'); return; }
       var msg = res.offline ? 'Guardado local (sin conexión)' : 'Guardado en la nube';
       var passTxt = passes >= 2 ? (' · Lectura ' + banner.lectura + '/2') : '';
-      toast(msg + ' · ' + f.qty + ' ' + unit + passTxt, 'ok');
+      toast(msg + ' · ' + qtyNum + ' ' + unit + passTxt, 'ok');
       f.prod = '';
       f.mat = '';
       f.exp = '';
@@ -1357,6 +1374,10 @@
           try { this.showPicker(); } catch (ePick) { /* noop */ }
         }
       });
+    }
+    if ($('invQty')) {
+      $('invQty').addEventListener('input', syncQtyFromInput);
+      $('invQty').addEventListener('change', syncQtyFromInput);
     }
 
     bindAll('[data-inv-nav="admin"]', function () { stopCamera(); setView('admin'); });

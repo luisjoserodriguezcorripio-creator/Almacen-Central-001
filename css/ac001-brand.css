@@ -91,6 +91,14 @@ body.auth-locked:has(.auth-layout--hub-news) .auth-video-scrim {
   box-shadow: 0 8px 20px rgba(224, 122, 31, 0.35);
 }
 
+.auth-portal-card--udm .auth-portal-cta {
+  color: var(--ac001-amber) !important;
+}
+
+.auth-portal-card--udm:hover {
+  border-color: rgba(240, 162, 2, 0.45);
+}
+
 .auth-portal-card {
   border-color: rgba(244, 241, 234, 0.12) !important;
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease, background 0.25s ease;

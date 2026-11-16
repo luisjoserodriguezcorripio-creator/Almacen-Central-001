@@ -1,0 +1,400 @@
+/* Portal Conversión UDM — móvil primero, marco cuadrado equilibrado */
+
+:root {
+  --udm-bg: #0b1219;
+  --udm-panel: #14202c;
+  --udm-panel-2: #1a2836;
+  --udm-line: rgba(244, 241, 234, 0.12);
+  --udm-text: #f4f1ea;
+  --udm-muted: #94a3b8;
+  --udm-amber: #f0a202;
+  --udm-steel: #1f6f8b;
+  --udm-red: #c8102e;
+  --udm-radius: 16px;
+  --udm-safe-b: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body.udm-portal {
+  font-family: "DM Sans", "Source Sans 3", system-ui, sans-serif;
+  color: var(--udm-text);
+  background:
+    radial-gradient(ellipse 70% 45% at 50% -8%, rgba(31, 111, 139, 0.32), transparent 55%),
+    radial-gradient(ellipse 50% 35% at 100% 100%, rgba(200, 16, 46, 0.16), transparent 50%),
+    var(--udm-bg);
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 0.65rem;
+}
+
+.udm-shell {
+  width: min(100%, 420px);
+  aspect-ratio: 9 / 16;
+  max-height: min(96dvh, 820px);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: 22px;
+  border: 1px solid var(--udm-line);
+  background: linear-gradient(180deg, rgba(20, 32, 44, 0.96), rgba(11, 18, 25, 0.98));
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  position: relative;
+}
+
+.udm-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: 0 0 calc(4.6rem + var(--udm-safe-b));
+  -webkit-overflow-scrolling: touch;
+}
+
+.udm-top {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.8rem 0.9rem 0.45rem;
+}
+
+.udm-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid var(--udm-red);
+  background: #fff;
+  display: grid;
+  place-items: center;
+  color: var(--udm-red);
+  font-weight: 900;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.udm-top h1 {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.udm-top p {
+  margin: 0.12rem 0 0;
+  color: var(--udm-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.udm-scan-card {
+  margin: 0.25rem 0.85rem 0.7rem;
+  padding: 0.75rem;
+  border-radius: var(--udm-radius);
+  border: 1px solid var(--udm-line);
+  background: linear-gradient(160deg, rgba(26, 40, 54, 0.95), rgba(20, 32, 44, 0.92));
+}
+
+.udm-scan-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 220px;
+  margin: 0 auto;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px dashed rgba(240, 162, 2, 0.45);
+  background: #0f172a;
+  display: grid;
+  place-items: center;
+}
+
+.udm-scan-frame video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+.udm-scan-frame.is-live video { display: block; }
+.udm-scan-frame.is-live .udm-scan-hint { display: none; }
+
+.udm-scan-frame::after {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: var(--udm-amber);
+  box-shadow: 0 0 12px rgba(240, 162, 2, 0.8);
+  animation: udmSweep 2.2s ease-in-out infinite;
+  z-index: 2;
+  pointer-events: none;
+}
+
+@keyframes udmSweep {
+  0%, 100% { top: 16%; opacity: 0.35; }
+  50% { top: 80%; opacity: 1; }
+}
+
+.udm-scan-hint {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #e2e8f0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0 0.8rem;
+}
+
+.udm-scan-hint small {
+  display: block;
+  margin-top: 0.2rem;
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.68rem;
+}
+
+.udm-row {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.65rem;
+}
+
+.udm-row input {
+  flex: 1;
+  min-width: 0;
+  height: 2.45rem;
+  border-radius: 10px;
+  border: 1px solid var(--udm-line);
+  background: #0f172a;
+  color: var(--udm-text);
+  padding: 0 0.7rem;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.udm-row input:focus {
+  outline: 2px solid rgba(240, 162, 2, 0.45);
+  border-color: var(--udm-amber);
+}
+
+.udm-btn {
+  border: 0;
+  border-radius: 10px;
+  height: 2.45rem;
+  padding: 0 0.8rem;
+  font: inherit;
+  font-weight: 800;
+  font-size: 0.78rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.udm-btn-primary { background: var(--udm-red); color: #fff; }
+.udm-btn-amber { background: var(--udm-amber); color: #111827; }
+.udm-btn-ghost {
+  background: transparent;
+  color: var(--udm-text);
+  border: 1px solid var(--udm-line);
+}
+
+.udm-meta {
+  margin: 0.35rem 0.9rem 0;
+  color: var(--udm-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.udm-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0.45rem 0.9rem 0;
+}
+
+.udm-chip {
+  border: 1px solid var(--udm-line);
+  background: rgba(255, 255, 255, 0.04);
+  color: #cbd5e1;
+  border-radius: 999px;
+  padding: 0.24rem 0.55rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.udm-chip:hover {
+  border-color: rgba(240, 162, 2, 0.5);
+  color: #fff;
+}
+
+.udm-result,
+.udm-empty {
+  margin: 0.7rem 0.9rem 0;
+  display: none;
+}
+
+.udm-result.is-on,
+.udm-empty.is-on { display: block; }
+
+.udm-product {
+  padding: 0.85rem 0.9rem;
+  border-radius: var(--udm-radius);
+  border: 1px solid var(--udm-line);
+  background: var(--udm-panel);
+}
+
+.udm-product-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.55rem;
+  align-items: flex-start;
+}
+
+.udm-sku {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--udm-amber);
+  text-transform: uppercase;
+}
+
+.udm-name {
+  margin: 0.2rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.udm-brand {
+  margin: 0.28rem 0 0;
+  color: var(--udm-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.udm-badge {
+  flex-shrink: 0;
+  border-radius: 999px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.udm-badge-alto { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+.udm-badge-medio { background: rgba(234, 179, 8, 0.18); color: #fde68a; }
+.udm-badge-bajo { background: rgba(34, 197, 94, 0.18); color: #86efac; }
+.udm-badge-na { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; }
+
+.udm-conv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+}
+
+.udm-conv {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 12px;
+  padding: 0.55rem 0.6rem;
+  background: var(--udm-panel-2);
+  border: 1px solid var(--udm-line);
+  min-width: 0;
+}
+
+.udm-conv.is-empty { opacity: 0.42; }
+
+.udm-conv-lbl {
+  display: block;
+  color: var(--udm-muted);
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.udm-conv-val {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: clamp(1.1rem, 5vw, 1.4rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.udm-conv-unit {
+  color: var(--udm-muted);
+  font-size: 0.65rem;
+  font-weight: 700;
+  margin-top: 0.15rem;
+}
+
+.udm-ladder {
+  margin: 0.65rem 0 0;
+  padding: 0.65rem 0.7rem;
+  border-radius: 12px;
+  background: rgba(31, 111, 139, 0.14);
+  border: 1px solid rgba(31, 111, 139, 0.35);
+  font-size: 0.74rem;
+  font-weight: 650;
+  line-height: 1.4;
+  color: #e2e8f0;
+}
+
+.udm-ladder strong { color: var(--udm-amber); }
+
+.udm-empty {
+  padding: 0.9rem;
+  border-radius: var(--udm-radius);
+  border: 1px dashed rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.udm-empty h3 { margin: 0 0 0.2rem; font-size: 0.9rem; }
+.udm-empty p { margin: 0; color: #fecaca; font-size: 0.76rem; }
+
+.udm-dock {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.5rem 0.65rem calc(0.5rem + var(--udm-safe-b));
+  background: rgba(11, 18, 25, 0.94);
+  border-top: 1px solid var(--udm-line);
+  display: grid;
+  grid-template-columns: 1fr 1.15fr 1fr;
+  gap: 0.35rem;
+}
+
+.udm-dock .udm-btn { width: 100%; }
+
+@media (max-width: 420px) {
+  body.udm-portal { padding: 0; }
+  .udm-shell {
+    width: 100%;
+    max-height: none;
+    min-height: 100dvh;
+    aspect-ratio: auto;
+    border-radius: 0;
+    border: 0;
+  }
+}
+
+@media (min-width: 900px) {
+  .udm-shell {
+    width: min(430px, 42vw);
+    aspect-ratio: 1 / 1.55;
+  }
+}

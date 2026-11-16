@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Portal Conversión UDM — escanea SKU y consulta unidades, cajas y pallet">
+  <meta name="theme-color" content="#0b1219">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Conversión UDM — Almacén Central 001</title>
+  <link rel="icon" type="image/png" href="assets/img/ac001-logo.svg?v=4">
+  <link rel="stylesheet" href="css/conversion-udm.css?v=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="udm-portal">
+  <noscript><p style="color:#f4f1ea;text-align:center;padding:2rem">Activa JavaScript para usar Conversión UDM.</p></noscript>
+
+  <div class="udm-shell" role="application" aria-label="Portal Conversión UDM">
+    <div class="udm-scroll">
+      <header class="udm-top">
+        <div class="udm-logo" aria-hidden="true">AC</div>
+        <div>
+          <h1>Conversión UDM</h1>
+          <p>Escanea SKU · ver unidades, cajas y pallet</p>
+        </div>
+      </header>
+
+      <section class="udm-scan-card" aria-label="Escáner">
+        <div class="udm-scan-frame" id="udmScanFrame">
+          <video id="udmVideo" muted playsinline></video>
+          <div class="udm-scan-hint">
+            Apunta al código de barras
+            <small>Cámara del celular o escribe el SKU</small>
+          </div>
+        </div>
+        <div class="udm-row">
+          <input id="udmSkuInput" type="text" inputmode="numeric" autocomplete="off" placeholder="SKU o código de barras" aria-label="SKU">
+          <button type="button" class="udm-btn udm-btn-primary" id="udmBtnLookup">Buscar</button>
+        </div>
+        <div class="udm-row">
+          <button type="button" class="udm-btn udm-btn-amber" id="udmBtnCamera" style="flex:1">Abrir cámara</button>
+          <button type="button" class="udm-btn udm-btn-ghost" id="udmBtnDemo">Demo</button>
+          <button type="button" class="udm-btn udm-btn-ghost" id="udmBtnClear">Limpiar</button>
+        </div>
+      </section>
+
+      <p class="udm-meta" id="udmMeta">Cargando catálogo…</p>
+      <div class="udm-chips" id="udmChips" aria-label="SKUs de ejemplo"></div>
+
+      <div class="udm-result" id="udmResult" aria-live="polite">
+        <article class="udm-product">
+          <div class="udm-product-top">
+            <div>
+              <p class="udm-sku" id="udmResSku">—</p>
+              <h2 class="udm-name" id="udmResName">—</h2>
+              <p class="udm-brand" id="udmResBrand">—</p>
+            </div>
+            <span class="udm-badge" id="udmResRisk">—</span>
+          </div>
+          <div class="udm-conv-grid">
+            <div class="udm-conv" id="udmC1">
+              <span class="udm-conv-lbl">Unidad × Caja</span>
+              <span class="udm-conv-val" id="udmV1">—</span>
+              <span class="udm-conv-unit">und / caja</span>
+            </div>
+            <div class="udm-conv" id="udmC2">
+              <span class="udm-conv-lbl">Cajas × Cama</span>
+              <span class="udm-conv-val" id="udmV2">—</span>
+              <span class="udm-conv-unit">cajas / cama</span>
+            </div>
+            <div class="udm-conv" id="udmC3">
+              <span class="udm-conv-lbl">Camas × Pallet</span>
+              <span class="udm-conv-val" id="udmV3">—</span>
+              <span class="udm-conv-unit">camas / pallet</span>
+            </div>
+            <div class="udm-conv" id="udmC4">
+              <span class="udm-conv-lbl">Cajas × Pallet</span>
+              <span class="udm-conv-val" id="udmV4">—</span>
+              <span class="udm-conv-unit">cajas / pallet</span>
+            </div>
+          </div>
+          <p class="udm-ladder" id="udmLadder">—</p>
+        </article>
+      </div>
+
+      <div class="udm-empty" id="udmEmpty">
+        <h3>SKU no encontrado</h3>
+        <p>Revisa el código o actualiza el Excel de conversión UDM.</p>
+      </div>
+    </div>
+
+    <nav class="udm-dock" aria-label="Acciones rápidas">
+      <button type="button" class="udm-btn udm-btn-ghost" id="udmDockHome">Inicio</button>
+      <button type="button" class="udm-btn udm-btn-primary" id="udmDockScan">Escanear</button>
+      <button type="button" class="udm-btn udm-btn-ghost" id="udmDockList">Catálogo</button>
+    </nav>
+  </div>
+
+  <script src="js/conversion-udm-catalog.js?v=1"></script>
+  <script src="js/platform-conversion-udm.js?v=1"></script>
+</body>
+</html>

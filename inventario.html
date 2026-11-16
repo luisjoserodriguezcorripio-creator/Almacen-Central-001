@@ -23,7 +23,7 @@
   <meta name="theme-color" content="#15202B">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:* http://127.0.0.1:* http://192.168.0.0/16 http://10.0.0.0/8 https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com; img-src 'self' data:; media-src 'self'; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:* http://127.0.0.1:* http://192.168.0.0/16 http://10.0.0.0/8 https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
   <title>Inventario RF — Almacén Central 001</title>
   <link rel="preload" href="assets/img/login-inventario-poster.jpg" as="image">
   <script src="js/relay-bootstrap.js?v=1"></script>
@@ -34,8 +34,8 @@
   <link rel="stylesheet" href="css/auth-portals-layout.css?v=11">
   <link rel="stylesheet" href="css/dc-brand.css?v=11">
   <link rel="stylesheet" href="css/ac001-brand.css?v=1">
-  <link rel="stylesheet" href="css/inventario-portal.css?v=13">
-  <link rel="stylesheet" href="css/inventario-responsive.css?v=4">
+  <link rel="stylesheet" href="css/inventario-portal.css?v=14">
+  <link rel="stylesheet" href="css/inventario-responsive.css?v=5">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
@@ -213,22 +213,34 @@
         <div class="inv-card active" id="invCard1" style="border-color:#00897B">
           <span class="badge">AHORA</span>
           <h2 style="color:#00897B">1 · Ubicación</h2>
-          <p class="desc">Escanee o escriba la ubicación del rack</p>
+          <p class="desc">Escanee con la cámara, el lector RF o escriba la ubicación</p>
           <p class="desc desc--accent" id="invPickupHint">Pickup: solo ubicaciones que terminan en 1. Use 0 si está vacía.</p>
-          <input class="inv-field" id="invLoc" readonly style="border-color:#00897B">
+          <input class="inv-field" id="invLoc" inputmode="text" autocomplete="off" enterkeyhint="done" placeholder="Ej. P020-012-1" style="border-color:#00897B">
+          <div class="inv-scan-actions">
+            <button type="button" class="inv-btn inv-btn-scan" data-inv-camera="loc">📷 Escanear ubicación</button>
+            <button type="button" class="inv-btn inv-btn-primary" data-inv-apply="loc">Usar código</button>
+          </div>
         </div>
         <div class="inv-card" id="invCard2" style="border-color:#3949AB">
           <span class="badge">AHORA</span>
           <h2 style="color:#3949AB">2 · Artículo</h2>
           <p class="desc">Escanee el código de barras del producto</p>
-          <input class="inv-field" id="invProd" readonly style="border-color:#3949AB">
+          <input class="inv-field" id="invProd" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="Código de barras" style="border-color:#3949AB">
+          <div class="inv-scan-actions">
+            <button type="button" class="inv-btn inv-btn-scan" data-inv-camera="prod">📷 Escanear artículo</button>
+            <button type="button" class="inv-btn inv-btn-primary" data-inv-apply="prod">Usar código</button>
+          </div>
           <div class="inv-prod-name" id="invPname">—</div>
         </div>
         <div class="inv-card" id="invCard3" style="border-color:#7E57C2">
           <span class="badge">AHORA</span>
           <h2 style="color:#7E57C2">3 · Matrícula</h2>
-          <p class="desc" id="invMatHint">Opcional — escanee o omita</p>
-          <input class="inv-field" id="invMat" readonly placeholder="Escanee matrícula" style="border-color:#7E57C2">
+          <p class="desc" id="invMatHint">Opcional — escanee, escriba u omita</p>
+          <input class="inv-field" id="invMat" inputmode="text" autocomplete="off" enterkeyhint="done" placeholder="Escanee matrícula" style="border-color:#7E57C2">
+          <div class="inv-scan-actions">
+            <button type="button" class="inv-btn inv-btn-scan" data-inv-camera="mat">📷 Escanear matrícula</button>
+            <button type="button" class="inv-btn inv-btn-primary" data-inv-apply="mat">Usar código</button>
+          </div>
         </div>
         <div class="inv-card" id="invCard4" style="border-color:#2A9D8F">
           <span class="badge">AHORA</span>
@@ -312,6 +324,21 @@
 
   <div class="inv-toast" id="invToast" role="status" aria-live="polite"></div>
 
+  <div class="inv-cam-overlay" id="invCamOverlay" hidden>
+    <div class="inv-cam-sheet" role="dialog" aria-modal="true" aria-labelledby="invCamTitle">
+      <div class="inv-cam-head">
+        <strong id="invCamTitle">Escanear código</strong>
+        <button type="button" class="inv-cam-close" id="invCamClose" aria-label="Cerrar cámara">✕</button>
+      </div>
+      <div class="inv-cam-frame" id="invCamFrame">
+        <video id="invCamVideo" muted playsinline></video>
+        <div class="inv-cam-reticle" aria-hidden="true"></div>
+      </div>
+      <p class="inv-cam-hint" id="invCamHint">Apunte al código de barras de la ubicación</p>
+      <button type="button" class="inv-btn inv-btn-danger" id="invCamStop">Cerrar cámara</button>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/platform-toast.js"></script>
   <script src="js/platform-supabase.js?v=4"></script>
@@ -319,6 +346,6 @@
   <script src="js/platform-supabase-bridge.js?v=4"></script>
   <script src="js/platform-inventario-core.js?v=2"></script>
   <script src="js/platform-inventario-sync.js?v=6"></script>
-  <script src="js/platform-inventario-app.js?v=10"></script>
+  <script src="js/platform-inventario-app.js?v=11"></script>
 </body>
 </html>

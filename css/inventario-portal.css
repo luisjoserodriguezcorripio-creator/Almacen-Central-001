@@ -230,6 +230,93 @@ body.inv-dash-view {
   text-align: center;
   letter-spacing: 0.02em;
 }
+.inv-scan-actions {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 0.45rem;
+  margin-top: 0.65rem;
+}
+.inv-btn-scan {
+  background: #00897B;
+  color: #fff;
+  border: 0;
+  font-weight: 800;
+}
+.inv-btn-scan:active { filter: brightness(0.92); }
+
+.inv-cam-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  background: rgba(7, 16, 28, 0.72);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0.75rem;
+}
+.inv-cam-overlay[hidden] { display: none !important; }
+.inv-cam-sheet {
+  width: min(440px, 100%);
+  border-radius: 18px 18px 14px 14px;
+  background: #15202B;
+  color: #fff;
+  padding: 0.85rem 0.85rem 1rem;
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.35);
+}
+.inv-cam-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+.inv-cam-head strong {
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+.inv-cam-close {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+}
+.inv-cam-frame {
+  position: relative;
+  height: min(52vh, 360px);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0b1219;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+.inv-cam-frame video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.inv-cam-reticle {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 28%;
+  height: 34%;
+  border: 2px solid #f5c518;
+  border-radius: 12px;
+  box-shadow: 0 0 0 999px rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+}
+.inv-cam-hint {
+  margin: 0.65rem 0 0.75rem;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.35;
+}
 .inv-prod-name {
   font-weight: 800;
   font-size: var(--inv-fs-md);

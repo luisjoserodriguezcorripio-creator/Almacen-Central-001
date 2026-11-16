@@ -21,8 +21,32 @@
     catalogMat: '',
     fields: { loc: '', prod: '', mat: '', exp: '', qty: '1' },
     entries: [],
-    pendingSync: 0
+    pendingSync: 0,
+    camTarget: null,
+    camStream: null,
+    camDetector: null,
+    camTimer: null,
+    camBusy: false
   };
+
+  var CAM_HINTS = {
+    loc: 'Apunte al código de la ubicación',
+    prod: 'Apunte al código de barras del artículo',
+    mat: 'Apunte al código de la matrícula'
+  };
+  var CAM_TITLES = {
+    loc: 'Escanear ubicación',
+    prod: 'Escanear artículo',
+    mat: 'Escanear matrícula'
+  };
+
+  function isHardwareScannerUa() {
+    return /Zebra|Honeywell|Intermec|Symbol|DataWedge|TC[0-9]{2}|CK[0-9]{2}|EDA[0-9]{2}|Dolphin|Nautiz|Memor/i.test(navigator.userAgent || '');
+  }
+
+  function isPhoneViewport() {
+    return document.documentElement.classList.contains('inv-rf-viewport') && !isHardwareScannerUa();
+  }
 
   function $(id) { return document.getElementById(id); }
 
@@ -210,7 +234,10 @@
     var f = state.fields;
     var total = state.flowSteps.length;
     var titles = ['Ubicación', 'Artículo', 'Matrícula', 'Vencimiento', 'Cantidad'];
-    var instr = ['Escanee la ubicación', 'Escanee el artículo', 'Matrícula u omitir', 'Vencimiento u omitir', 'Ingrese cantidad y guarde'];
+    var phone = isPhoneViewport();
+    var instr = phone
+      ? ['Escanee o escriba la ubicación', 'Escanee o escriba el artículo', 'Matrícula u omitir', 'Vencimiento u omitir', 'Ingrese cantidad y guarde']
+      : ['Escanee la ubicación', 'Escanee el artículo', 'Matrícula u omitir', 'Vencimiento u omitir', 'Ingrese cantidad y guarde'];
 
     $('invStepCounter').textContent = (state.flowIndex + 1) + '/' + total;
     $('invStepTitle').textContent = titles[step - 1];
@@ -240,6 +267,12 @@
     $('invPickupHint').hidden = mode !== 'pickup';
     $('invExcelBox').classList.toggle('show', step === 5);
 
+    document.querySelectorAll('.inv-scan-actions').forEach(function (el) {
+      var card = el.closest('.inv-card');
+      var show = !!card && card.classList.contains('active') && !isHardwareScannerUa();
+      el.hidden = !show;
+    });
+
     var hint = $('invSwipeHint');
     var labelR = $('invSwipeLabelR');
     if (step === 5) {
@@ -249,7 +282,9 @@
       hint.textContent = 'Arrastre hacia la derecha ▶▶ para OMITIR';
       labelR.textContent = 'OMITIR ▶';
     } else {
-      hint.textContent = 'Escanee con el lector · Deslice ◀ para corregir';
+      hint.textContent = phone
+        ? 'Use la cámara o escriba el código · Deslice ◀ para corregir'
+        : 'Escanee con el lector · Deslice ◀ para corregir';
       labelR.textContent = 'SIGUIENTE ▶';
     }
 
@@ -293,7 +328,117 @@
     if (state.step === 5) saveEntry();
     else if (state.step === 3) { state.fields.mat = ''; advanceStep(); toast('Matrícula omitida'); }
     else if (state.step === 4) { state.fields.exp = ''; advanceStep(); toast('Vencimiento omitido'); }
-    else toast('Escanee con el lector RF');
+    else if (isPhoneViewport()) {
+      if (state.step === 1) applyTypedCode('loc');
+      else if (state.step === 2) applyTypedCode('prod');
+      else toast('Use la cámara o escriba el código');
+    } else {
+      toast('Escanee con el lector RF');
+    }
+  }
+
+  function applyTypedCode(target) {
+    var map = { loc: 'invLoc', prod: 'invProd', mat: 'invMat' };
+    var el = $(map[target]);
+    var code = el ? String(el.value || '').trim() : '';
+    if (!code) {
+      toast(target === 'loc' ? 'Escanee o escriba la ubicación' : 'Escanee o escriba el código', 'err');
+      return;
+    }
+    processScan(code);
+  }
+
+  function stopCamera() {
+    if (state.camTimer) {
+      global.clearInterval(state.camTimer);
+      state.camTimer = null;
+    }
+    state.camDetector = null;
+    state.camBusy = false;
+    if (state.camStream) {
+      try {
+        state.camStream.getTracks().forEach(function (t) { t.stop(); });
+      } catch (e) { /* noop */ }
+      state.camStream = null;
+    }
+    var video = $('invCamVideo');
+    if (video) {
+      try { video.pause(); } catch (e2) { /* noop */ }
+      video.srcObject = null;
+    }
+    var overlay = $('invCamOverlay');
+    if (overlay) overlay.hidden = true;
+    state.camTarget = null;
+  }
+
+  function onCameraCode(raw) {
+    if (state.camBusy) return;
+    var code = String(raw || '').trim();
+    if (!code) return;
+    state.camBusy = true;
+    stopCamera();
+    processScan(code);
+  }
+
+  function startDetectLoop(video) {
+    if (!state.camDetector || !video) return;
+    state.camTimer = global.setInterval(function () {
+      if (!state.camDetector || state.camBusy) return;
+      state.camDetector.detect(video).then(function (codes) {
+        if (!codes || !codes.length) return;
+        var raw = codes[0].rawValue || codes[0].rawData || '';
+        onCameraCode(raw);
+      }).catch(function () { /* noop */ });
+    }, 650);
+  }
+
+  function openCamera(target) {
+    if (state.view !== 'count') return;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      toast('Este celular no permite cámara. Escriba el código y pulse Usar código.', 'err');
+      return;
+    }
+    stopCamera();
+    state.camTarget = target || 'loc';
+    var overlay = $('invCamOverlay');
+    var title = $('invCamTitle');
+    var hint = $('invCamHint');
+    if (title) title.textContent = CAM_TITLES[state.camTarget] || 'Escanear código';
+    if (hint) hint.textContent = CAM_HINTS[state.camTarget] || 'Apunte al código de barras';
+    if (overlay) overlay.hidden = false;
+
+    navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: { ideal: 'environment' },
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      },
+      audio: false
+    }).then(function (media) {
+      state.camStream = media;
+      var video = $('invCamVideo');
+      if (!video) return;
+      video.srcObject = media;
+      video.setAttribute('playsinline', 'true');
+      video.muted = true;
+      video.play().catch(function () { /* noop */ });
+      if (global.BarcodeDetector) {
+        try {
+          state.camDetector = new global.BarcodeDetector({
+            formats: ['code_128', 'code_39', 'ean_13', 'ean_8', 'upc_a', 'upc_e', 'qr_code', 'itf', 'codabar']
+          });
+          startDetectLoop(video);
+        } catch (e) {
+          state.camDetector = null;
+          toast('Cámara lista. Si no lee solo, escriba el código.', 'ok');
+        }
+      } else {
+        toast('Cámara lista. Escriba el código si el lector no está disponible en este navegador.', 'ok');
+      }
+    }).catch(function () {
+      stopCamera();
+      toast('No se pudo abrir la cámara. Revise permisos o escriba el código.', 'err');
+    });
   }
 
   function processScan(code) {
@@ -569,6 +714,7 @@
     }
 
     bindAll('.inv-btn-logout', function () {
+      stopCamera();
       state.user = null;
       try { global.sessionStorage.removeItem('invUser'); } catch (e) { /* noop */ }
       setAuthVisible(true);
@@ -586,18 +732,45 @@
     $('invBtnQtyBox') && $('invBtnQtyBox').addEventListener('click', function () { setPickupUnit('box'); });
     $('invBtnQtyUnit') && $('invBtnQtyUnit').addEventListener('click', function () { setPickupUnit('unit'); });
 
-    bindAll('[data-inv-nav="admin"]', function () { setView('admin'); });
-    bindAll('[data-inv-nav="records"]', function () { setView('records'); });
-    bindAll('[data-inv-nav="count"]', function () { setView('count'); });
-    bindAll('[data-inv-nav="mode"]', function () { setView('mode'); });
+    bindAll('[data-inv-nav="admin"]', function () { stopCamera(); setView('admin'); });
+    bindAll('[data-inv-nav="records"]', function () { stopCamera(); setView('records'); });
+    bindAll('[data-inv-nav="count"]', function () { stopCamera(); setView('count'); });
+    bindAll('[data-inv-nav="mode"]', function () { stopCamera(); setView('mode'); });
 
     bindAll('[data-inv-action="export"]', exportCsv);
     bindAll('[data-inv-action="delete-all"]', confirmDeleteAll);
     $('invBtnTestSb') && $('invBtnTestSb').addEventListener('click', testSupabase);
     $('invBtnSetupSb') && $('invBtnSetupSb').addEventListener('click', showSupabaseSetup);
 
+    document.querySelectorAll('[data-inv-camera]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        openCamera(btn.getAttribute('data-inv-camera') || 'loc');
+      });
+    });
+    document.querySelectorAll('[data-inv-apply]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        applyTypedCode(btn.getAttribute('data-inv-apply') || 'loc');
+      });
+    });
+    $('invCamClose') && $('invCamClose').addEventListener('click', stopCamera);
+    $('invCamStop') && $('invCamStop').addEventListener('click', stopCamera);
+
+    function bindScanEnter(id, target) {
+      var el = $(id);
+      if (!el) return;
+      el.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        applyTypedCode(target);
+      });
+    }
+    bindScanEnter('invLoc', 'loc');
+    bindScanEnter('invProd', 'prod');
+    bindScanEnter('invMat', 'mat');
+
     document.addEventListener('keydown', function (e) {
       if (state.view !== 'count') return;
+      if (e.key === 'Escape' && state.camStream) { stopCamera(); e.preventDefault(); return; }
       if (e.key === 'F8') { processScan('P020-012-1'); e.preventDefault(); }
       if (e.key === 'F7') { processScan('0'); e.preventDefault(); }
       if (e.key === 'F9') { processScan('7501234567890'); e.preventDefault(); }
@@ -608,6 +781,8 @@
     var scanTimer = null;
     document.addEventListener('keypress', function (e) {
       if (state.view !== 'count' || state.view === undefined) return;
+      var tag = (e.target && e.target.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
       if (e.key === 'Enter' && scanBuf.length > 2) {
         processScan(scanBuf);
         scanBuf = '';
@@ -622,6 +797,7 @@
     });
 
     setupSwipe();
+    global.addEventListener('pagehide', stopCamera);
   }
 
   function tryRestoreSession() {
@@ -664,6 +840,8 @@
   global.PlatformInventarioApp = {
     setView: setView,
     processScan: processScan,
-    pickMode: pickMode
+    pickMode: pickMode,
+    openCamera: openCamera,
+    stopCamera: stopCamera
   };
 })(typeof window !== 'undefined' ? window : this);

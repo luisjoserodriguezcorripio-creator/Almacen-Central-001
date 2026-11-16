@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>Mockup · Rango de fecha · Recepción AC</title>
+  <style>
+    :root {
+      --red: #c8102e;
+      --red-dark: #8b0a1a;
+      --ink: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --bg: #ffffff;
+      --chip: #f3f4f6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    }
+    .banner {
+      background: #fff7ed;
+      border-bottom: 1px solid #fed7aa;
+      color: #9a3412;
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .screen {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 24px 48px;
+    }
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 20px 22px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 240px;
+    }
+    .logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 3px solid var(--red);
+      display: grid;
+      place-items: center;
+      background: #fff;
+      flex-shrink: 0;
+    }
+    .logo strong {
+      color: var(--red);
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      line-height: 1;
+    }
+    .title {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+    .live {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .filter {
+      flex: 1;
+      min-width: 320px;
+      max-width: 520px;
+    }
+    .filter-label {
+      margin: 0 0 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #374151;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .range-row {
+      display: flex;
+      align-items: end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .field {
+      flex: 1;
+      min-width: 140px;
+    }
+    .field label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .field input {
+      width: 100%;
+      height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 10px;
+      font: inherit;
+      font-size: 0.95rem;
+      background: #fff;
+      color: var(--ink);
+    }
+    .field input:focus {
+      outline: 2px solid rgba(200, 16, 46, 0.25);
+      border-color: var(--red);
+    }
+    .dash {
+      width: 14px;
+      height: 3px;
+      background: var(--red);
+      border-radius: 2px;
+      margin-bottom: 18px;
+      flex-shrink: 0;
+    }
+    .presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .preset {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .preset:hover { border-color: #cbd5e1; background: var(--chip); }
+    .preset.is-active {
+      background: var(--red);
+      border-color: var(--red);
+      color: #fff;
+    }
+    .hint {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 28px;
+    }
+    @media (max-width: 720px) {
+      .compare { grid-template-columns: 1fr; }
+    }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 16px;
+      background: #fafafa;
+    }
+    .box h3 {
+      margin: 0 0 10px;
+      font-size: 0.95rem;
+    }
+    .box p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+    .fake-old {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .fake-old input {
+      height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 10px;
+      background: #fff;
+    }
+    .fake-old button {
+      height: 36px;
+      padding: 0 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-weight: 700;
+    }
+    .actions {
+      margin-top: 28px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .actions .note {
+      flex: 1;
+      min-width: 220px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      align-self: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="banner">MOCKUP LOCAL · No está en la web · Prueba el rango abajo</div>
+  <main class="screen">
+    <section class="header" aria-label="Vista previa barra recepción">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <div>
+            <strong>AC</strong>
+          </div>
+        </div>
+        <div>
+          <h1 class="title">Almacén Central AC</h1>
+          <p class="live">· EN VIVO</p>
+        </div>
+      </div>
+
+      <div class="filter" role="search">
+        <p class="filter-label">Rango de fecha</p>
+        <div class="range-row">
+          <div class="field">
+            <label for="desde">Desde</label>
+            <input type="date" id="desde" value="2026-09-21" />
+          </div>
+          <div class="dash" aria-hidden="true"></div>
+          <div class="field">
+            <label for="hasta">Hasta</label>
+            <input type="date" id="hasta" value="2026-09-23" />
+          </div>
+        </div>
+        <div class="presets" id="presets">
+          <button type="button" class="preset" data-preset="hoy">Hoy</button>
+          <button type="button" class="preset" data-preset="semana">Esta semana</button>
+          <button type="button" class="preset is-active" data-preset="7d">Últimos 7 días</button>
+          <button type="button" class="preset" data-preset="mes">Este mes</button>
+          <button type="button" class="preset" data-preset="todas">Todas</button>
+        </div>
+        <p class="hint" id="hint">Se muestran registros del 21 al 23 sep 2026</p>
+      </div>
+    </section>
+
+    <section class="compare">
+      <div class="box">
+        <h3>Antes</h3>
+        <p>Un solo día + Hoy / Todas.</p>
+        <div class="fake-old">
+          <input type="date" value="2026-09-21" disabled />
+          <button type="button" disabled>Hoy</button>
+          <button type="button" disabled>Todas</button>
+        </div>
+      </div>
+      <div class="box">
+        <h3>Después (esta vista)</h3>
+        <p>Desde / Hasta en la misma fila, atajos de rango y texto del período.</p>
+      </div>
+    </section>
+
+    <div class="actions">
+      <p class="note">Si te gusta este diseño, en el chat escribe <strong>sí</strong> y lo publicamos en la pantalla de recepción.</p>
+    </div>
+  </main>
+  <script>
+    (function () {
+      var desde = document.getElementById('desde');
+      var hasta = document.getElementById('hasta');
+      var hint = document.getElementById('hint');
+      var presets = document.getElementById('presets');
+      var today = '2026-09-23';
+
+      function months() {
+        return ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+      }
+      function label(iso) {
+        if (!iso) return '—';
+        var p = iso.split('-');
+        return Number(p[2]) + ' ' + months()[Number(p[1]) - 1] + ' ' + p[0];
+      }
+      function addDays(iso, n) {
+        var d = new Date(iso + 'T12:00:00');
+        d.setDate(d.getDate() + n);
+        return d.toISOString().slice(0, 10);
+      }
+      function startWeek(iso) {
+        var d = new Date(iso + 'T12:00:00');
+        var day = d.getDay();
+        var diff = day === 0 ? -6 : 1 - day;
+        d.setDate(d.getDate() + diff);
+        return d.toISOString().slice(0, 10);
+      }
+      function refreshHint(all) {
+        if (all || (!desde.value && !hasta.value)) {
+          hint.textContent = 'Se muestran todos los registros';
+          return;
+        }
+        if (desde.value === hasta.value) {
+          hint.textContent = 'Se muestran registros del ' + label(desde.value);
+          return;
+        }
+        hint.textContent = 'Se muestran registros del ' + label(desde.value) + ' al ' + label(hasta.value);
+      }
+      function setActive(name) {
+        presets.querySelectorAll('.preset').forEach(function (btn) {
+          btn.classList.toggle('is-active', btn.getAttribute('data-preset') === name);
+        });
+      }
+      presets.addEventListener('click', function (e) {
+        var btn = e.target.closest('.preset');
+        if (!btn) return;
+        var p = btn.getAttribute('data-preset');
+        setActive(p);
+        if (p === 'hoy') { desde.value = today; hasta.value = today; refreshHint(false); }
+        else if (p === 'semana') { desde.value = startWeek(today); hasta.value = today; refreshHint(false); }
+        else if (p === '7d') { desde.value = addDays(today, -6); hasta.value = today; refreshHint(false); }
+        else if (p === 'mes') { desde.value = today.slice(0, 8) + '01'; hasta.value = today; refreshHint(false); }
+        else if (p === 'todas') { desde.value = ''; hasta.value = ''; refreshHint(true); }
+      });
+      function onManual() {
+        setActive('');
+        refreshHint(false);
+      }
+      desde.addEventListener('change', onManual);
+      hasta.addEventListener('change', onManual);
+      // default visual: treat current values as custom range 21-23
+      setActive('');
+      refreshHint(false);
+    })();
+  </script>
+</body>
+</html>

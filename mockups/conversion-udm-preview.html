@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1219" />
+  <title>Mockup · Portal Conversión UDM</title>
+  <style>
+    :root {
+      --bg: #0b1219;
+      --panel: #14202c;
+      --panel-2: #1a2836;
+      --line: rgba(244, 241, 234, 0.12);
+      --text: #f4f1ea;
+      --muted: #94a3b8;
+      --amber: #f0a202;
+      --steel: #1f6f8b;
+      --red: #c8102e;
+      --ok: #22c55e;
+      --warn: #eab308;
+      --danger: #ef4444;
+      --radius: 16px;
+      --safe-b: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: "DM Sans", "Source Sans 3", system-ui, sans-serif;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(31, 111, 139, 0.35), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(200, 16, 46, 0.18), transparent 50%),
+        var(--bg);
+      color: var(--text);
+    }
+    .phone {
+      width: min(420px, 100%);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 0 0 calc(5.5rem + var(--safe-b));
+      position: relative;
+    }
+    .banner {
+      background: rgba(240, 162, 2, 0.14);
+      border-bottom: 1px solid rgba(240, 162, 2, 0.35);
+      color: #fde68a;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-align: center;
+      padding: 0.45rem 0.75rem;
+    }
+    .top {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.85rem 1rem 0.55rem;
+    }
+    .logo {
+      width: 42px; height: 42px; border-radius: 50%;
+      border: 2px solid var(--red); background: #fff;
+      display: grid; place-items: center; flex-shrink: 0;
+      color: var(--red); font-weight: 900; font-size: 0.95rem;
+    }
+    .top h1 {
+      margin: 0; font-size: 1.05rem; font-weight: 800; line-height: 1.15;
+    }
+    .top p {
+      margin: 0.15rem 0 0; color: var(--muted); font-size: 0.72rem; font-weight: 600;
+    }
+    .scan-card {
+      margin: 0.4rem 1rem 0.85rem;
+      padding: 0.9rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: linear-gradient(160deg, rgba(26, 40, 54, 0.95), rgba(20, 32, 44, 0.92));
+    }
+    .scan-frame {
+      position: relative;
+      height: 160px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px dashed rgba(240, 162, 2, 0.45);
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.45)),
+        repeating-linear-gradient(90deg, #0f172a 0 3px, #1e293b 3px 6px);
+      display: grid;
+      place-items: center;
+    }
+    .scan-frame::after {
+      content: "";
+      position: absolute; left: 8%; right: 8%; height: 2px;
+      background: var(--amber);
+      box-shadow: 0 0 12px rgba(240, 162, 2, 0.8);
+      animation: sweep 2.2s ease-in-out infinite;
+    }
+    @keyframes sweep {
+      0%, 100% { top: 18%; opacity: 0.35; }
+      50% { top: 78%; opacity: 1; }
+    }
+    .scan-hint {
+      position: relative; z-index: 1;
+      text-align: center; color: #e2e8f0; font-size: 0.82rem; font-weight: 700;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.7);
+      padding: 0 1rem;
+    }
+    .scan-hint small { display: block; margin-top: 0.25rem; color: #94a3b8; font-weight: 600; font-size: 0.7rem; }
+    .row { display: flex; gap: 0.45rem; margin-top: 0.75rem; }
+    .row input {
+      flex: 1; min-width: 0; height: 2.55rem;
+      border-radius: 10px; border: 1px solid var(--line);
+      background: #0f172a; color: var(--text);
+      padding: 0 0.75rem; font: inherit; font-weight: 600; font-size: 0.92rem;
+    }
+    .row input:focus { outline: 2px solid rgba(240, 162, 2, 0.45); border-color: var(--amber); }
+    .btn {
+      border: 0; border-radius: 10px; height: 2.55rem; padding: 0 0.9rem;
+      font: inherit; font-weight: 800; font-size: 0.82rem; cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-primary { background: var(--red); color: #fff; }
+    .btn-amber { background: var(--amber); color: #111827; }
+    .btn-ghost {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--line);
+    }
+    .chips {
+      display: flex; flex-wrap: wrap; gap: 0.35rem;
+      margin: 0.65rem 1rem 0;
+    }
+    .chip {
+      border: 1px solid var(--line); background: rgba(255,255,255,0.04);
+      color: #cbd5e1; border-radius: 999px; padding: 0.28rem 0.6rem;
+      font-size: 0.68rem; font-weight: 700; cursor: pointer;
+    }
+    .chip:hover { border-color: rgba(240,162,2,0.5); color: #fff; }
+    .meta {
+      margin: 0.55rem 1rem 0; color: var(--muted); font-size: 0.7rem; font-weight: 600;
+    }
+    .result { margin: 0.85rem 1rem 0; display: none; }
+    .result.is-on { display: block; }
+    .product {
+      padding: 0.95rem 1rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+    .product-top { display: flex; justify-content: space-between; gap: 0.6rem; align-items: flex-start; }
+    .sku {
+      margin: 0; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em;
+      color: var(--amber); text-transform: uppercase;
+    }
+    .name { margin: 0.25rem 0 0; font-size: 1rem; font-weight: 800; line-height: 1.25; }
+    .brand { margin: 0.35rem 0 0; color: var(--muted); font-size: 0.75rem; font-weight: 600; }
+    .badge {
+      flex-shrink: 0; border-radius: 999px; padding: 0.28rem 0.55rem;
+      font-size: 0.65rem; font-weight: 800; letter-spacing: 0.04em;
+    }
+    .badge-alto { background: rgba(239,68,68,0.2); color: #fca5a5; }
+    .badge-medio { background: rgba(234,179,8,0.18); color: #fde68a; }
+    .badge-bajo { background: rgba(34,197,94,0.18); color: #86efac; }
+    .badge-na { background: rgba(148,163,184,0.15); color: #cbd5e1; }
+    .conv-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;
+      margin-top: 0.85rem;
+    }
+    .conv {
+      border-radius: 12px; padding: 0.7rem 0.75rem;
+      background: var(--panel-2); border: 1px solid var(--line);
+      min-height: 4.4rem;
+    }
+    .conv.is-empty { opacity: 0.45; }
+    .conv-lbl { display: block; color: var(--muted); font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+    .conv-val { display: block; margin-top: 0.25rem; font-size: 1.35rem; font-weight: 900; letter-spacing: -0.02em; }
+    .conv-unit { color: var(--muted); font-size: 0.72rem; font-weight: 700; }
+    .ladder {
+      margin-top: 0.75rem; padding: 0.75rem 0.8rem;
+      border-radius: 12px; background: rgba(31,111,139,0.14);
+      border: 1px solid rgba(31,111,139,0.35);
+      font-size: 0.8rem; font-weight: 650; line-height: 1.45; color: #e2e8f0;
+    }
+    .ladder strong { color: var(--amber); }
+    .empty {
+      margin: 0.85rem 1rem 0; padding: 1rem; border-radius: var(--radius);
+      border: 1px dashed rgba(239,68,68,0.4); background: rgba(239,68,68,0.08);
+      display: none;
+    }
+    .empty.is-on { display: block; }
+    .empty h3 { margin: 0 0 0.25rem; font-size: 0.95rem; }
+    .empty p { margin: 0; color: #fecaca; font-size: 0.8rem; }
+    .dock {
+      position: fixed; left: 50%; transform: translateX(-50%);
+      bottom: 0; width: min(420px, 100%);
+      padding: 0.55rem 0.75rem calc(0.55rem + var(--safe-b));
+      background: rgba(11, 18, 25, 0.92); backdrop-filter: blur(10px);
+      border-top: 1px solid var(--line);
+      display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 0.4rem;
+    }
+    .dock .btn { width: 100%; }
+    .note {
+      margin: 1rem; padding: 0.75rem 0.85rem; border-radius: 12px;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--line);
+      color: var(--muted); font-size: 0.72rem; line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="banner">MOCKUP LOCAL · Portal Conversión UDM · No publicado</div>
+    <header class="top">
+      <div class="logo" aria-hidden="true">AC</div>
+      <div>
+        <h1>Conversión UDM</h1>
+        <p>Escanea SKU · ver unidades, cajas y pallet</p>
+      </div>
+    </header>
+
+    <section class="scan-card" aria-label="Escáner">
+      <div class="scan-frame">
+        <div class="scan-hint">
+          Apunta al código de barras
+          <small>En producción: cámara del celular</small>
+        </div>
+      </div>
+      <div class="row">
+        <input id="skuInput" type="text" inputmode="numeric" autocomplete="off" placeholder="SKU o código de barras" aria-label="SKU" />
+        <button type="button" class="btn btn-primary" id="btnLookup">Buscar</button>
+      </div>
+      <div class="row">
+        <button type="button" class="btn btn-amber" id="btnDemo" style="flex:1">Simular escaneo</button>
+        <button type="button" class="btn btn-ghost" id="btnClear">Limpiar</button>
+      </div>
+    </section>
+
+    <p class="meta" id="catalogMeta">Cargando catálogo…</p>
+    <div class="chips" id="sampleChips" aria-label="SKUs de ejemplo"></div>
+
+    <div class="result" id="resultCard" aria-live="polite">
+      <article class="product">
+        <div class="product-top">
+          <div>
+            <p class="sku" id="resSku">—</p>
+            <h2 class="name" id="resName">—</h2>
+            <p class="brand" id="resBrand">—</p>
+          </div>
+          <span class="badge" id="resRisk">—</span>
+        </div>
+        <div class="conv-grid">
+          <div class="conv" id="c1"><span class="conv-lbl">Unidad × Caja</span><span class="conv-val" id="v1">—</span><span class="conv-unit">und / caja</span></div>
+          <div class="conv" id="c2"><span class="conv-lbl">Cajas × Cama</span><span class="conv-val" id="v2">—</span><span class="conv-unit">cajas / cama</span></div>
+          <div class="conv" id="c3"><span class="conv-lbl">Camas × Pallet</span><span class="conv-val" id="v3">—</span><span class="conv-unit">camas / pallet</span></div>
+          <div class="conv" id="c4"><span class="conv-lbl">Cajas × Pallet</span><span class="conv-val" id="v4">—</span><span class="conv-unit">cajas / pallet</span></div>
+        </div>
+        <p class="ladder" id="resLadder">—</p>
+      </article>
+    </div>
+
+    <div class="empty" id="emptyCard">
+      <h3>SKU no encontrado</h3>
+      <p>Revisa el código o espera a que actualicen el Excel de conversión.</p>
+    </div>
+
+    <p class="note">
+      Vista previa con datos reales del Excel <strong>Proyecto Conversión UDM</strong>.
+      Se muestran celdas completas y parciales; las vacías aparecen atenuadas.
+      Cuando apruebes el mockup, lo convertimos en portal del hub AC.
+    </p>
+  </div>
+
+  <nav class="dock" aria-label="Acciones rápidas">
+    <button type="button" class="btn btn-ghost" id="dockHome">Inicio</button>
+    <button type="button" class="btn btn-primary" id="dockScan">Escanear</button>
+    <button type="button" class="btn btn-ghost" id="dockList">Catálogo</button>
+  </nav>
+
+  <script src="udm-data/catalog.js"></script>
+  <script>
+    (function () {
+      var catalog = window.UDM_CATALOG || { items: [], totals: {}, sampleSkus: [] };
+      var bySku = Object.create(null);
+      (catalog.items || []).forEach(function (item) {
+        bySku[String(item.sku).trim().toUpperCase()] = item;
+      });
+
+      var input = document.getElementById('skuInput');
+      var meta = document.getElementById('catalogMeta');
+      var chips = document.getElementById('sampleChips');
+      var result = document.getElementById('resultCard');
+      var empty = document.getElementById('emptyCard');
+
+      meta.textContent = (catalog.totals.skus || 0) + ' SKUs · ' +
+        (catalog.totals.completos || 0) + ' con conversión completa · datos del Excel UDM';
+
+      (catalog.sampleSkus || []).slice(0, 6).forEach(function (sku) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'chip';
+        b.textContent = sku;
+        b.addEventListener('click', function () {
+          input.value = sku;
+          lookup(sku);
+        });
+        chips.appendChild(b);
+      });
+
+      function fmt(n) {
+        return n == null ? '—' : String(n);
+      }
+
+      function riskClass(r) {
+        r = String(r || '').toUpperCase();
+        if (r === 'ALTO') return 'badge-alto';
+        if (r === 'MEDIO') return 'badge-medio';
+        if (r === 'BAJO') return 'badge-bajo';
+        return 'badge-na';
+      }
+
+      function setConv(id, val) {
+        var box = document.getElementById(id);
+        var el = document.getElementById('v' + id.slice(1));
+        el.textContent = fmt(val);
+        box.classList.toggle('is-empty', val == null);
+      }
+
+      function lookup(raw) {
+        var key = String(raw || '').trim().toUpperCase();
+        result.classList.remove('is-on');
+        empty.classList.remove('is-on');
+        if (!key) return;
+        var item = bySku[key];
+        if (!item) {
+          empty.classList.add('is-on');
+          return;
+        }
+        document.getElementById('resSku').textContent = item.sku;
+        document.getElementById('resName').textContent = item.name;
+        document.getElementById('resBrand').textContent =
+          [item.marca, item.unidad].filter(Boolean).join(' · ') || 'Sin marca';
+        var risk = document.getElementById('resRisk');
+        risk.textContent = item.riesgo || 'N/D';
+        risk.className = 'badge ' + riskClass(item.riesgo);
+        setConv('c1', item.unidadXCaja);
+        setConv('c2', item.cajasXCama);
+        setConv('c3', item.camasXPallet);
+        setConv('c4', item.cajasXPallet);
+
+        var parts = [];
+        if (item.unidadXCaja) parts.push('<strong>1 caja</strong> = ' + item.unidadXCaja + ' und');
+        if (item.cajasXCama) parts.push('<strong>1 cama</strong> = ' + item.cajasXCama + ' cajas');
+        if (item.camasXPallet) parts.push('<strong>1 pallet</strong> = ' + item.camasXPallet + ' camas');
+        if (item.cajasXPallet) parts.push('<strong>1 pallet</strong> = ' + item.cajasXPallet + ' cajas');
+        if (item.unidadXCaja && item.cajasXPallet) {
+          parts.push('<strong>1 pallet</strong> ≈ ' + (item.unidadXCaja * item.cajasXPallet) + ' und');
+        }
+        document.getElementById('resLadder').innerHTML = parts.length
+          ? parts.join(' · ')
+          : 'Aún sin factores de conversión completos para este SKU.';
+        result.classList.add('is-on');
+      }
+
+      function demoScan() {
+        var samples = catalog.sampleSkus || [];
+        if (!samples.length) return;
+        var sku = samples[Math.floor(Math.random() * samples.length)];
+        input.value = sku;
+        lookup(sku);
+      }
+
+      document.getElementById('btnLookup').addEventListener('click', function () { lookup(input.value); });
+      document.getElementById('btnDemo').addEventListener('click', demoScan);
+      document.getElementById('btnClear').addEventListener('click', function () {
+        input.value = '';
+        result.classList.remove('is-on');
+        empty.classList.remove('is-on');
+        input.focus();
+      });
+      document.getElementById('dockScan').addEventListener('click', function () {
+        input.focus();
+        demoScan();
+      });
+      document.getElementById('dockHome').addEventListener('click', function () {
+        window.location.href = '../index.html';
+      });
+      document.getElementById('dockList').addEventListener('click', function () {
+        if (catalog.sampleSkus && catalog.sampleSkus[0]) {
+          input.value = catalog.sampleSkus[0];
+          lookup(catalog.sampleSkus[0]);
+        }
+      });
+      input.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter') {
+          ev.preventDefault();
+          lookup(input.value);
+        }
+      });
+
+      // Auto demo for first paint
+      if (catalog.sampleSkus && catalog.sampleSkus[0]) {
+        input.value = catalog.sampleSkus[0];
+        lookup(catalog.sampleSkus[0]);
+      }
+    })();
+  </script>
+</body>
+</html>

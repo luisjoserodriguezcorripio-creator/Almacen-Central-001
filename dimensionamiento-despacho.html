@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Meta de Productividad Despacho — desafío del día por rol">
+  <meta name="theme-color" content="#0b2f5b">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Meta de Productividad · Despacho — Almacén Central 001</title>
+  <link rel="icon" type="image/svg+xml" href="assets/img/ac001-logo.svg?v=4">
+  <link rel="stylesheet" href="css/dimensionamiento-despacho.css?v=1">
+</head>
+<body class="dim-despacho-portal">
+  <noscript><p style="color:#fff;text-align:center;padding:2rem">Activa JavaScript para usar Meta de Productividad.</p></noscript>
+
+  <div class="dim-shell" role="application" aria-label="Meta de Productividad Despacho">
+    <a class="dim-home" href="index.html">← Portales</a>
+
+    <section class="dim-plan">
+      <div class="dim-plan-top">
+        <h2>Plan del día</h2>
+        <span>Despacho</span>
+      </div>
+      <div class="dim-grid">
+        <div class="dim-field">
+          <label for="cajas">Cajas</label>
+          <input id="cajas" type="number" min="0" value="35758" inputmode="numeric">
+        </div>
+        <div class="dim-field">
+          <label for="camiones">Camiones / rutas (ID de cargas)</label>
+          <input id="camiones" type="number" min="0" value="58" inputmode="numeric">
+        </div>
+      </div>
+      <div class="dim-plaza">
+        <div class="dim-field">
+          <label for="pickers">Pickers</label>
+          <input id="pickers" type="number" min="1" value="10" inputmode="numeric">
+        </div>
+        <div class="dim-field">
+          <label for="mc">MC</label>
+          <input id="mc" type="number" min="1" value="3" inputmode="numeric">
+        </div>
+        <div class="dim-field">
+          <label for="bancada">Sup. bancada</label>
+          <input id="bancada" type="number" min="1" value="2" inputmode="numeric">
+        </div>
+        <div class="dim-field">
+          <label for="desp">Desp.</label>
+          <input id="desp" type="number" min="1" value="6" inputmode="numeric">
+        </div>
+      </div>
+    </section>
+
+    <section class="dim-board" aria-label="Meta de productividad">
+      <header class="dim-board-head">
+        <div class="dim-board-icon" aria-hidden="true">↑</div>
+        <div>
+          <h1>Meta de Productividad</h1>
+          <div class="dim-date" id="fechaMeta">—</div>
+        </div>
+      </header>
+
+      <div class="dim-strip">
+        <div>
+          <span>Cajas / turno</span>
+          <strong id="totCajas">—</strong>
+        </div>
+        <div>
+          <span>Paletas / turno</span>
+          <strong id="totPaletas">—</strong>
+        </div>
+        <div>
+          <span>ID cargas / turno</span>
+          <strong id="totIdc">—</strong>
+        </div>
+      </div>
+
+      <div class="dim-cards">
+        <article class="dim-card">
+          <div class="dim-card-top"><div class="dim-dot">B</div><h3>Bancada · Supervisores</h3></div>
+          <div class="dim-card-body">
+            <div class="dim-metrics">
+              <div class="dim-metric">
+                <span>ID a liberar<br>x turno</span>
+                <strong id="bancadaTurno">—</strong>
+              </div>
+              <div class="dim-metric">
+                <span>ID x hora</span>
+                <strong id="bancadaHora">—</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="dim-card">
+          <div class="dim-card-top"><div class="dim-dot">P</div><h3>Pickeadores</h3></div>
+          <div class="dim-card-body">
+            <div class="dim-metrics">
+              <div class="dim-metric">
+                <span>Meta de cajas<br>x turno</span>
+                <strong id="pickTurno">—</strong>
+              </div>
+              <div class="dim-metric">
+                <span>Cajas x hora</span>
+                <strong id="pickHora">—</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="dim-card">
+          <div class="dim-card-top"><div class="dim-dot">M</div><h3>Montacargas</h3></div>
+          <div class="dim-card-body">
+            <div class="dim-metrics one">
+              <div class="dim-metric">
+                <span>Paletas a mover x turno</span>
+                <strong id="mcTurno">—</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="dim-card">
+          <div class="dim-card-top"><div class="dim-dot">D</div><h3>Despachadores</h3></div>
+          <div class="dim-card-body">
+            <div class="dim-metrics">
+              <div class="dim-metric">
+                <span>Camiones / ID<br>a cargar x turno</span>
+                <strong id="despTurno">—</strong>
+              </div>
+              <div class="dim-metric">
+                <span>Cargas x hora</span>
+                <strong id="despHora">—</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <footer class="dim-board-foot">
+        <p>¡Trabajemos con enfoque para alcanzar <em>nuestras metas</em>!</p>
+      </footer>
+    </section>
+  </div>
+
+  <script src="js/platform-dimensionamiento-despacho.js?v=1"></script>
+</body>
+</html>

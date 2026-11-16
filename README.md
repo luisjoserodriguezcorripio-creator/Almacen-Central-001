@@ -19,6 +19,8 @@ Plataforma web de **control ejecutivo de almacén**: importación Excel, dashboa
 | **Turnos** | Chofer y supervisor |
 | **Agenda** | Tareas diarias por puesto |
 | **Recepción** | Contenedores, validación y ubicación |
+| **Meta Productividad Despacho** | Plan del día → cajas, paletas e ID de cargas por rol |
+| **Conversión UDM** | Escaneo SKU · unidades, cajas y pallet |
 
 ## Inicio rápido
 

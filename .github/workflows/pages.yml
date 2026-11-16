@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -24,13 +24,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Preparar sitio
+        run: |
+          mkdir -p _site
+          rsync -a \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude '_site' \
+            --exclude 'node_modules' \
+            --exclude 'mockups/apk-inventario-rf' \
+            --exclude 'pages-fail-logs' \
+            --exclude 'pages-fail.zip' \
+            --exclude 'pages-job.log' \
+            ./ _site/
+
       - name: Configurar Pages
         uses: actions/configure-pages@v5
 
       - name: Subir sitio
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
       - name: Publicar
         id: deployment

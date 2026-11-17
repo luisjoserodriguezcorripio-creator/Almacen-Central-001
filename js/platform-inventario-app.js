@@ -483,28 +483,52 @@
     }).join('');
   }
 
-  function ensureXlsx() {
+  function loadScriptOnce(src) {
     return new Promise(function (resolve, reject) {
-      if (global.XLSX) { resolve(global.XLSX); return; }
+      var existing = document.querySelector('script[data-inv-src="' + src + '"]');
+      if (existing) {
+        if (existing.dataset.loaded === '1') { resolve(); return; }
+        existing.addEventListener('load', function () { resolve(); });
+        existing.addEventListener('error', function () { reject(new Error('No se pudo cargar ' + src)); });
+        return;
+      }
       var s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
-      s.onload = function () {
-        if (global.XLSX) resolve(global.XLSX);
-        else reject(new Error('SheetJS no disponible'));
-      };
-      s.onerror = function () { reject(new Error('No se pudo cargar SheetJS')); };
+      s.src = src;
+      s.async = true;
+      s.dataset.invSrc = src;
+      s.onload = function () { s.dataset.loaded = '1'; resolve(); };
+      s.onerror = function () { reject(new Error('No se pudo cargar ' + src)); };
       document.head.appendChild(s);
     });
   }
 
+  function ensureXlsx() {
+    if (global.XLSX) return Promise.resolve(global.XLSX);
+    return loadScriptOnce('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js').then(function () {
+      if (!global.XLSX) throw new Error('SheetJS no disponible');
+      return global.XLSX;
+    });
+  }
+
+  function ensureConciliacion() {
+    if (global.PlatformInventarioConciliacion && global.PlatformInventarioConciliacion.parseWorkbook) {
+      return Promise.resolve(global.PlatformInventarioConciliacion);
+    }
+    return loadScriptOnce('js/platform-inventario-conciliacion.js?v=2').then(function () {
+      if (!global.PlatformInventarioConciliacion) throw new Error('Parser Excel no cargado');
+      return global.PlatformInventarioConciliacion;
+    });
+  }
+
   function parseDirectedExcel(file) {
-    return ensureXlsx().then(function (XLSX) {
+    return Promise.all([ensureXlsx(), ensureConciliacion()]).then(function (pair) {
+      var XLSX = pair[0];
       return new Promise(function (resolve, reject) {
         var reader = new FileReader();
         reader.onload = function (ev) {
           try {
             var wb = XLSX.read(ev.target.result, { type: 'array', cellDates: false });
-            var CONC = global.PlatformInventarioConciliacion;
+            var CONC = pair[1];
             if (!CONC || !CONC.parseWorkbook) {
               reject(new Error('Parser Excel no cargado'));
               return;
@@ -1973,10 +1997,13 @@
         applyDirectedPlan(payload || { rows: [], meta: {} });
       }
     });
+    // Arranque rápido: sesión y badge primero; catálogo/plan en segundo plano
     SYNC.init().then(function () {
       updateCloudBadge();
       tryRestoreSession();
-      loadDirectedPlan(!!SYNC.isOnline());
+    }).catch(function () {
+      updateCloudBadge();
+      tryRestoreSession();
     });
   }
 

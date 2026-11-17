@@ -134,7 +134,7 @@ body.auth-locked:has(.auth-layout--hub-news) .auth-video-scrim {
 .auth-layout--hub.auth-layout--portals-only .auth-portal-icon--inventario {
   background:
     linear-gradient(135deg, rgba(0, 0, 0, 0.28), rgba(197, 165, 114, 0.22)),
-    url('../assets/img/login-inventario-poster.jpg') center 50% / cover no-repeat;
+    url('../assets/img/login-inventario-poster-sm.jpg') center 50% / cover no-repeat;
   border-color: rgba(197, 165, 114, 0.38);
 }
 
@@ -943,7 +943,7 @@ html[data-theme="light"] .auth-hub-link {
 .hub-drawer .auth-portal-card--inventario .auth-portal-icon {
   background:
     linear-gradient(135deg, rgba(0, 0, 0, 0.28), rgba(197, 165, 114, 0.22)),
-    url('../assets/img/login-inventario-poster.jpg') center 50% / cover no-repeat;
+    url('../assets/img/login-inventario-poster-sm.jpg') center 50% / cover no-repeat;
   border-color: rgba(197, 165, 114, 0.38);
 }
 .hub-drawer .auth-portal-card--despacho .auth-portal-icon--photo {

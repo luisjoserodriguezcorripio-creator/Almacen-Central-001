@@ -22,26 +22,37 @@
   <meta name="description" content="Portal Inventario RF — Conteo pickup, ubicaciones y dirigido en tiempo real.">
   <meta name="theme-color" content="#15202B">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:* http://127.0.0.1:* http://192.168.0.0/16 http://10.0.0.0/8 https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:* http://127.0.0.1:* http://192.168.0.0/16 http://10.0.0.0/8 https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
   <title>Inventario RF — Almacén Central 001</title>
-  <link rel="preload" href="assets/img/login-inventario-poster.jpg" as="image">
   <script src="js/relay-bootstrap.js?v=1"></script>
   <link rel="icon" type="image/png" href="assets/img/ac001-logo.svg?v=1">
   <link rel="stylesheet" href="css/platform.css?v=32">
-  <link rel="stylesheet" href="css/inventario-auth.css?v=5">
+  <link rel="stylesheet" href="css/inventario-auth.css?v=6">
   <link rel="stylesheet" href="css/auth-cinematic.css?v=18">
-  <link rel="stylesheet" href="css/auth-portals-layout.css?v=11">
+  <link rel="stylesheet" href="css/auth-portals-layout.css?v=12">
   <link rel="stylesheet" href="css/dc-brand.css?v=11">
   <link rel="stylesheet" href="css/ac001-brand.css?v=1">
-  <link rel="stylesheet" href="css/inventario-portal.css?v=28">
+  <link rel="stylesheet" href="css/inventario-portal.css?v=29">
   <link rel="stylesheet" href="css/inventario-responsive.css?v=7">
+  <link rel="stylesheet" href="css/perf-lite.css?v=18">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="assets/img/login-inventario-poster-sm.jpg" as="image">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@600;700&display=swap" rel="stylesheet"></noscript>
+  <script>
+  (function () {
+    try {
+      var c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      var save = !!(c && (c.saveData || /2g|slow-2g|3g/i.test(String(c.effectiveType || ''))));
+      var low = save || ((navigator.hardwareConcurrency || 8) <= 4) || ((navigator.deviceMemory || 8) <= 4);
+      if (low || document.documentElement.classList.contains('inv-rf-viewport')) {
+        document.documentElement.classList.add('perf-lite');
+      }
+    } catch (e) { /* noop */ }
+  })();
+  </script>
 </head>
 <body class="auth-locked executive-ui">
   <noscript><p class="noscript-msg">Activa JavaScript para usar Inventario RF.</p></noscript>
@@ -486,15 +497,13 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/platform-toast.js"></script>
-  <script src="js/platform-supabase.js?v=4"></script>
-  <script src="js/platform-supabase-realtime.js?v=1"></script>
-  <script src="js/platform-supabase-bridge.js?v=4"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="js/platform-inventario-conciliacion.js?v=2"></script>
-  <script src="js/platform-inventario-core.js?v=13"></script>
-  <script src="js/platform-inventario-sync.js?v=10"></script>
-  <script src="js/platform-inventario-app.js?v=28"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="js/platform-toast.js?v=2"></script>
+  <script defer src="js/platform-supabase.js?v=4"></script>
+  <script defer src="js/platform-supabase-realtime.js?v=1"></script>
+  <script defer src="js/platform-supabase-bridge.js?v=4"></script>
+  <script defer src="js/platform-inventario-core.js?v=13"></script>
+  <script defer src="js/platform-inventario-sync.js?v=11"></script>
+  <script defer src="js/platform-inventario-app.js?v=29"></script>
 </body>
 </html>

@@ -213,7 +213,21 @@
     if (cached && cached.items && cached.items.length) {
       codigosIndex = buildCodigosIndex(cached);
     }
-    codigosLoadPromise = global.fetch('data/inv-codigos-catalog.json?v=1', { cache: 'no-store' })
+    // Si hay caché local, úsala al instante y refresca en segundo plano
+    if (codigosIndex) {
+      codigosLoadPromise = Promise.resolve(codigosIndex);
+      global.fetch('data/inv-codigos-catalog.json?v=2', { cache: 'force-cache' })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (data) {
+          if (!data || !data.items) return;
+          writeCache(CACHE_CODIGOS, data);
+          codigosIndex = buildCodigosIndex(data);
+          notify('catalog', { count: codigosIndex.count });
+        })
+        .catch(function () { /* noop */ });
+      return codigosLoadPromise;
+    }
+    codigosLoadPromise = global.fetch('data/inv-codigos-catalog.json?v=2', { cache: 'force-cache' })
       .then(function (res) {
         if (!res.ok) throw new Error('Catálogo CODIGOS no disponible');
         return res.json();
@@ -406,8 +420,8 @@
     realtimeUnsub = global.PlatformSupabaseRealtime.subscribeTable({
       table: 'inv_entries',
       events: ['INSERT', 'UPDATE', 'DELETE'],
-      pollFallbackMs: 4000,
-      safetyPollMs: 10000,
+      pollFallbackMs: 8000,
+      safetyPollMs: 20000,
       pausePollOnRealtime: true,
       pull: function () {
         return fetchEntries().then(function (list) {
@@ -555,11 +569,14 @@
     return (global.PlatformSupabase ? global.PlatformSupabase.init() : Promise.resolve(false))
       .then(function () {
         bindRealtime();
-        return ensureCodigosCatalog().then(function () {
-          return fetchUsers().then(function (users) {
-            return syncAdminPinToCloud().then(function () { return users; });
-          });
-        });
+        // No bloquear el login: usuarios/catálogo en paralelo en segundo plano
+        global.setTimeout(function () {
+          ensureCodigosCatalog().catch(function () { /* noop */ });
+          fetchUsers().then(function () {
+            return syncAdminPinToCloud();
+          }).catch(function () { /* noop */ });
+        }, 0);
+        return true;
       });
   }
 

@@ -28,15 +28,22 @@ body.auth-locked .auth-overlay.inv-auth-overlay {
   inset: 0;
   z-index: 0;
   background:
-    url('../assets/img/login-inventario-poster.jpg') center 44% / cover no-repeat;
+    url('../assets/img/login-inventario-poster-sm.jpg') center 44% / cover no-repeat;
   transform: scale(1);
-  will-change: transform;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .inv-auth-bg-wrap::before {
     animation: invAuthKen 34s ease-in-out infinite alternate;
+    will-change: transform;
   }
+}
+
+html.perf-lite .inv-auth-bg-wrap::before,
+html.inv-rf-viewport .inv-auth-bg-wrap::before {
+  animation: none !important;
+  will-change: auto;
+  transform: none !important;
 }
 
 @keyframes invAuthKen {

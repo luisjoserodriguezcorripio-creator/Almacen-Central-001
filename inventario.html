@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="css/auth-portals-layout.css?v=11">
   <link rel="stylesheet" href="css/dc-brand.css?v=11">
   <link rel="stylesheet" href="css/ac001-brand.css?v=1">
-  <link rel="stylesheet" href="css/inventario-portal.css?v=25">
+  <link rel="stylesheet" href="css/inventario-portal.css?v=26">
   <link rel="stylesheet" href="css/inventario-responsive.css?v=6">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -280,6 +280,20 @@
           <span class="inv-mode-badge" id="invModeBadge">PICKUP</span>
         </div>
         <p class="inv-instr" id="invInstr">Escanee la ubicación</p>
+        <div class="inv-count-context" id="invCountContext" hidden>
+          <div class="inv-count-context-row">
+            <span class="inv-count-context-k">Ubicación</span>
+            <span class="inv-count-context-v" id="invCtxLoc">—</span>
+          </div>
+          <div class="inv-count-context-row">
+            <span class="inv-count-context-k">Código</span>
+            <span class="inv-count-context-v" id="invCtxCode">—</span>
+          </div>
+          <div class="inv-count-context-row inv-count-context-row--desc">
+            <span class="inv-count-context-k">Descripción</span>
+            <span class="inv-count-context-v" id="invCtxName">—</span>
+          </div>
+        </div>
         <div class="inv-rack-banner" id="invRackBanner" hidden>RACK</div>
         <div class="inv-prog"><div class="inv-prog-bar" id="invProgBar"></div></div>
         <label class="inv-continuous" id="invContinuousWrap">
@@ -480,6 +494,6 @@
   <script src="js/platform-inventario-conciliacion.js?v=2"></script>
   <script src="js/platform-inventario-core.js?v=12"></script>
   <script src="js/platform-inventario-sync.js?v=8"></script>
-  <script src="js/platform-inventario-app.js?v=24"></script>
+  <script src="js/platform-inventario-app.js?v=25"></script>
 </body>
 </html>

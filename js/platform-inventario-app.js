@@ -768,6 +768,16 @@
       }
     }
 
+    var ctx = $('invCountContext');
+    var hasCtx = !!(f.loc || f.prod || f.prodName);
+    if (ctx) ctx.hidden = !hasCtx;
+    if ($('invCtxLoc')) $('invCtxLoc').textContent = f.loc || '—';
+    if ($('invCtxCode')) $('invCtxCode').textContent = f.prod || '—';
+    if ($('invCtxName')) {
+      $('invCtxName').textContent = f.prodName || (f.prod ? 'Sin descripción' : '—');
+      $('invCtxName').title = f.prodName || '';
+    }
+
     var showPickupQty = mode === 'pickup' && step === 5;
     if ($('invPickupQtyType')) $('invPickupQtyType').hidden = !showPickupQty;
     if ($('invQtyAmountLabel')) $('invQtyAmountLabel').hidden = !showPickupQty;
@@ -784,11 +794,11 @@
         rackBanner.className = 'inv-rack-banner' + (rb.passes >= 2 ? ' inv-rack-banner--double' : '');
       } else if (f.loc && mode === 'pickup') {
         rackBanner.hidden = false;
-        rackBanner.textContent = f.loc + ' · PICKUP · Conteo #' + state.countRound;
+        rackBanner.textContent = 'PICKUP · Conteo #' + state.countRound;
         rackBanner.className = 'inv-rack-banner';
       } else if (f.loc) {
         rackBanner.hidden = false;
-        rackBanner.textContent = f.loc + ' · Conteo #' + state.countRound;
+        rackBanner.textContent = 'Conteo #' + state.countRound;
         rackBanner.className = 'inv-rack-banner';
       } else {
         rackBanner.hidden = true;

@@ -425,6 +425,46 @@ body.inv-dash-view {
   height: 100% !important;
   object-fit: cover !important;
 }
+.inv-count-context {
+  margin: 0.3rem 0 0.15rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  display: grid;
+  gap: 0.18rem;
+}
+.inv-count-context[hidden] { display: none !important; }
+.inv-count-context-row {
+  display: grid;
+  grid-template-columns: 5.4rem minmax(0, 1fr);
+  gap: 0.35rem;
+  align-items: baseline;
+  min-width: 0;
+}
+.inv-count-context-k {
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+}
+.inv-count-context-v {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.inv-count-context-row--desc .inv-count-context-v {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 .inv-rack-banner {
   margin: 0.25rem 0 0.15rem;
   padding: 0.22rem 0.5rem;
@@ -489,6 +529,16 @@ body.inv-dash-view {
 #invViewCount .inv-mode-badge {
   padding: 2px 7px;
   font-size: 0.58rem;
+}
+#invViewCount .inv-count-context {
+  margin-top: 0.25rem;
+  padding: 0.35rem 0.5rem;
+}
+#invViewCount .inv-count-context-k {
+  font-size: 0.55rem;
+}
+#invViewCount .inv-count-context-v {
+  font-size: 0.7rem;
 }
 #invViewCount .inv-instr {
   margin-top: 3px;

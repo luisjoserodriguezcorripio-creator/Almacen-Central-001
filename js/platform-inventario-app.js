@@ -698,14 +698,28 @@
       : ['Escanee la ubicación', 'Escanee el artículo', 'Matrícula u omitir', 'Vencimiento u omitir', 'Ingrese cantidad y guarde'];
     var active = document.activeElement;
 
-    $('invStepCounter').textContent = (state.flowIndex + 1) + '/' + total;
-    $('invStepTitle').textContent = titles[step - 1];
-    $('invInstr').textContent = instr[step - 1];
-    $('invModeBadge').textContent = CORE.MODE_LABELS[mode] || 'PICKUP';
-    $('invProgBar').style.width = Math.round(((state.flowIndex + 1) / total) * 100) + '%';
-
     var nextCard = $('invCardNext');
     var choosing = !!state.awaitingNextChoice && mode === 'pallet';
+    if ($('invStepCounter')) {
+      $('invStepCounter').textContent = choosing ? 'OK' : ((state.flowIndex + 1) + '/' + total);
+    }
+    if ($('invStepTitle')) {
+      $('invStepTitle').textContent = choosing ? 'Siguiente ubicación' : titles[step - 1];
+    }
+    if ($('invInstr')) {
+      $('invInstr').textContent = choosing
+        ? (state.pendingNextLoc
+          ? ('Secuencia: ' + (state.pendingCurrentLoc || f.loc || '—') + ' → ' + state.pendingNextLoc)
+          : ('Actual: ' + (state.pendingCurrentLoc || f.loc || '—') + ' · máximo nivel 5'))
+        : instr[step - 1];
+    }
+    if ($('invModeBadge')) $('invModeBadge').textContent = CORE.MODE_LABELS[mode] || 'PICKUP';
+    if ($('invProgBar')) {
+      $('invProgBar').style.width = choosing
+        ? '100%'
+        : (Math.round(((state.flowIndex + 1) / total) * 100) + '%');
+    }
+
     for (var i = 1; i <= 5; i++) {
       var card = $('invCard' + i);
       if (card) {
@@ -722,19 +736,13 @@
       nextCard.hidden = !choosing;
       nextCard.classList.toggle('active', choosing);
       if (choosing) {
-        var subEl = $('invCardNextSub');
-        var upEl = $('invCardNextUp');
-        if (subEl) {
-          subEl.textContent = state.pendingNextLoc
-            ? ('Actual: ' + (state.pendingCurrentLoc || f.loc || '—') + ' · Próximo arriba: ' + state.pendingNextLoc)
-            : ('Actual: ' + (state.pendingCurrentLoc || f.loc || '—') + ' · No hay nivel superior (máx. 5). Digite una nueva ubicación.');
-        }
-        if (upEl) {
-          upEl.hidden = !state.pendingNextLoc;
-          upEl.textContent = state.pendingNextLoc
-            ? ('Continuar al próximo nivel (arriba) · ' + state.pendingNextLoc)
-            : 'Continuar al próximo nivel (arriba)';
-        }
+        fillNextLocationCopy(
+          $('invCardNextSub'),
+          $('invCardNextUp'),
+          $('invCardNextSeq'),
+          state.pendingCurrentLoc || f.loc || '',
+          state.pendingNextLoc || ''
+        );
       }
     }
     var swipeZone = document.querySelector('#invViewCount .inv-swipe-zone');
@@ -854,11 +862,50 @@
   }
 
   function goBackStep() {
+    if (state.awaitingNextChoice) {
+      toast('Elija: próximo nivel o nueva ubicación', 'err');
+      return;
+    }
     if (state.flowIndex <= 0) return;
     state.flowIndex--;
     state.step = state.flowSteps[state.flowIndex];
     applyCountStep();
     toast('Paso anterior');
+  }
+
+  function levelTokenFromLoc(loc) {
+    var m = /^(.*-)(\d{1,2})$/.exec(String(loc || '').trim().toUpperCase().replace(/\s+/g, ''));
+    return m ? parseInt(m[2], 10) : NaN;
+  }
+
+  function renderLevelSequence(seqEl, currentLoc, nextLoc) {
+    if (!seqEl) return;
+    var cur = levelTokenFromLoc(currentLoc);
+    var nxt = levelTokenFromLoc(nextLoc);
+    var html = '';
+    for (var lvl = 2; lvl <= 5; lvl++) {
+      var cls = '';
+      if (!isNaN(cur) && lvl === cur) cls = ' is-current';
+      else if (!isNaN(nxt) && lvl === nxt) cls = ' is-next';
+      html += '<span class="' + cls.trim() + '">' + lvl + '</span>';
+    }
+    seqEl.innerHTML = html;
+  }
+
+  function fillNextLocationCopy(subEl, upEl, seqEl, currentLoc, nextLoc) {
+    if (subEl) {
+      subEl.textContent = nextLoc
+        ? ('Actual: ' + currentLoc + ' · Próximo arriba: ' + nextLoc)
+        : ('Actual: ' + currentLoc + ' · Máximo nivel 5 · digite una nueva ubicación');
+    }
+    if (upEl) {
+      upEl.hidden = !nextLoc;
+      upEl.disabled = !nextLoc;
+      upEl.textContent = nextLoc
+        ? ('Continuar al próximo nivel (arriba) · ' + nextLoc)
+        : 'Continuar al próximo nivel (arriba)';
+    }
+    renderLevelSequence(seqEl, currentLoc, nextLoc);
   }
 
   function advanceStep() {
@@ -1292,9 +1339,8 @@
         state.awaitingNextChoice = true;
         // Mantener ubicación visible en encabezado mientras elige
         f.loc = savedLoc;
-        state.flowIndex = state.flowSteps.indexOf(5);
+        state.flowIndex = Math.max(0, state.flowSteps.indexOf(5));
         state.step = 5;
-        applyCountStep();
         showNextLocationChoice(savedLoc, advanced || '');
         return;
       }
@@ -1307,27 +1353,37 @@
   }
 
   function showNextLocationChoice(currentLoc, nextLoc) {
+    fillNextLocationCopy(
+      $('invNextLocSub'),
+      $('invNextLocUp'),
+      $('invNextLocSeq'),
+      currentLoc,
+      nextLoc
+    );
     var overlay = $('invNextLocOverlay');
-    var sub = $('invNextLocSub');
-    var btnUp = $('invNextLocUp');
-    if (sub) {
-      sub.textContent = nextLoc
-        ? ('Actual: ' + currentLoc + ' · Próximo arriba: ' + nextLoc)
-        : ('Actual: ' + currentLoc + ' · Máximo nivel 5 · digite una nueva ubicación');
+    if (overlay) {
+      overlay.hidden = false;
+      overlay.classList.add('is-open');
     }
-    if (btnUp) {
-      btnUp.hidden = !nextLoc;
-      btnUp.textContent = nextLoc
-        ? ('Continuar al próximo nivel (arriba) · ' + nextLoc)
-        : 'Continuar al próximo nivel (arriba)';
-    }
-    if (overlay) overlay.hidden = false;
+    // Asegura tarjeta inline visible aunque el overlay falle en algún WebView
+    state.awaitingNextChoice = true;
+    applyCountStep();
   }
 
   function hideNextLocationChoice() {
     var overlay = $('invNextLocOverlay');
-    if (overlay) overlay.hidden = true;
+    if (overlay) {
+      overlay.hidden = true;
+      overlay.classList.remove('is-open');
+    }
     state.awaitingNextChoice = false;
+    var nextCard = $('invCardNext');
+    if (nextCard) {
+      nextCard.hidden = true;
+      nextCard.classList.remove('active');
+    }
+    var swipeZone = document.querySelector('#invViewCount .inv-swipe-zone');
+    if (swipeZone) swipeZone.hidden = false;
   }
 
   function chooseNextLevelUp() {

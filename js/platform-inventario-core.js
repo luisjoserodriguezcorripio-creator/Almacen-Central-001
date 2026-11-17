@@ -59,6 +59,18 @@
     return m ? m[1] : '';
   }
 
+  /** Siguiente nivel de ubicación (2→3→4→5). Máximo 5. */
+  function nextLocationLevel(location, maxLevel) {
+    maxLevel = maxLevel == null ? 5 : maxLevel;
+    var loc = String(location || '').trim().toUpperCase();
+    var m = /^(.*-)(\d)$/.exec(loc);
+    if (!m) return null;
+    var level = parseInt(m[2], 10);
+    if (isNaN(level) || level < 1) return null;
+    if (level >= maxLevel) return null;
+    return m[1] + String(level + 1);
+  }
+
   function isValidPickupLocation(code) {
     code = String(code || '').trim();
     if (code === '0') return true;
@@ -116,7 +128,7 @@
     return String(s || '').trim().toLowerCase() === 'vacia';
   }
 
-  /** Artículo: más de 10 dígitos, o la palabra Vacia. No se aceptan 4 dígitos. */
+  /** Artículo: cualquier código (numérico/alfanumérico) o la palabra Vacia. */
   function validateArticleInput(raw) {
     var value = String(raw || '').trim();
     if (!value) {
@@ -131,20 +143,11 @@
         message: 'Ubicación vacía'
       };
     }
-    var digits = articleDigits(value);
-    if (digits.length <= 10) {
-      return {
-        ok: false,
-        message: digits.length <= 4
-          ? 'No se aceptan solo los últimos 4 dígitos. Digite más de 10.'
-          : 'El código debe tener más de 10 dígitos (o escriba Vacia).'
-      };
-    }
     return {
       ok: true,
       vacia: false,
       code: value,
-      digits: digits,
+      digits: articleDigits(value),
       message: 'Código válido'
     };
   }
@@ -274,6 +277,7 @@
     isDoubleRackLocation: isDoubleRackLocation,
     rackTypeLabel: rackTypeLabel,
     levelFromLocation: levelFromLocation,
+    nextLocationLevel: nextLocationLevel,
     isValidPickupLocation: isValidPickupLocation,
     isValidRackLocation: isValidRackLocation,
     validateLocationForMode: validateLocationForMode,

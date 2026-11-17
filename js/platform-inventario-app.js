@@ -1222,6 +1222,7 @@
       if (!res.ok) { toast('Error al guardar', 'err'); return; }
       var msg = res.offline ? 'Guardado local (sin conexión)' : 'Guardado en la nube';
       var passTxt = passes >= 2 ? (' · Lectura ' + banner.lectura + '/2') : '';
+      var savedLoc = f.loc;
       toast(msg + ' · ' + qtyNum + ' ' + unit + passTxt, 'ok');
       f.prod = '';
       f.mat = '';
@@ -1230,14 +1231,49 @@
       f.prodName = '';
       f.expectedQty = 0;
       state.catalogMat = '';
-      // Mantener countRound de la ubicación; se recalcula al reescanear ubicación
-      state.flowIndex = state.flowSteps.indexOf(2);
-      state.step = 2;
-      applyCountStep();
-      renderAdminStats();
-      if (opts.keepGoing && isPhoneViewport() && state.continuous) {
-        global.setTimeout(function () { openCamera('prod'); }, 350);
+
+      // Conteo de ubicaciones: tras guardar, subir de nivel 2→3→4→5
+      var advanced = null;
+      if (state.mode === 'pallet') {
+        advanced = CORE.nextLocationLevel(savedLoc, 5);
       }
+
+      function goArticleStep() {
+        state.flowIndex = state.flowSteps.indexOf(2);
+        state.step = 2;
+        applyCountStep();
+        renderAdminStats();
+        if (opts.keepGoing && isPhoneViewport() && state.continuous) {
+          global.setTimeout(function () { openCamera('prod'); }, 350);
+        }
+      }
+
+      if (advanced) {
+        f.loc = advanced;
+        return SYNC.countRoundForLocation(advanced, '_').then(function (n) {
+          state.countRound = n;
+          toast('Siguiente ubicación · ' + advanced, 'ok');
+          goArticleStep();
+        }).catch(function () {
+          state.countRound = 1;
+          toast('Siguiente ubicación · ' + advanced, 'ok');
+          goArticleStep();
+        });
+      }
+
+      if (state.mode === 'pallet' && CORE.levelFromLocation(savedLoc) === '5') {
+        f.loc = '';
+        state.countRound = 1;
+        state.flowIndex = state.flowSteps.indexOf(1);
+        state.step = 1;
+        applyCountStep();
+        renderAdminStats();
+        toast('Nivel 5 listo · escanee la próxima ubicación', 'ok');
+        return;
+      }
+
+      // Pickup / otros: mantener ubicación y pedir siguiente artículo
+      goArticleStep();
     }).catch(function () {
       toast('Error al guardar en la nube', 'err');
     });

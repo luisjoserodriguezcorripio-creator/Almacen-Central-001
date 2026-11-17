@@ -237,8 +237,8 @@
     <h1>Catálogo CODIGOS + validación de dígitos</h1>
     <p class="lead">
       Al leer el artículo se muestra la <b>descripción</b> desde <code>CODIGOS.xlsx</code>.
-      Ya no se aceptan solo los últimos 4 dígitos: el código debe tener <b>más de 10 dígitos</b>,
-      o escribir <b>Vacia</b> si la ubicación está vacía.
+      Acepta códigos <b>numéricos o alfanuméricos</b> de cualquier longitud,
+      o escribir <b>Vacia</b> si la ubicación está vacía. Muestra el nombre desde CODIGOS.
     </p>
 
     <div class="split">
@@ -246,9 +246,9 @@
         <h2>Reglas propuestas</h2>
         <div class="rules">
           <div class="rule ok"><b>Catálogo:</b> busca en CODIGOS (código → nombre del producto) y muestra la descripción bajo el campo.</div>
-          <div class="rule ok"><b>Válido:</b> código con más de 10 dígitos (ej. 11+), con o sin prefijo N.</div>
+          <div class="rule ok"><b>Válido:</b> cualquier código numérico o alfanumérico (con o sin prefijo N).</div>
           <div class="rule ok"><b>Vacía:</b> permitir exactamente la palabra <b>Vacia</b> (sin tilde), mayúsculas/minúsculas.</div>
-          <div class="rule bad"><b>Rechazar:</b> últimos 4 dígitos, códigos cortos (≤10 dígitos) y texto distinto de Vacia.</div>
+          <div class="rule bad"><b>Rechazar:</b> campo vacío o código no encontrado en CODIGOS (salvo Vacia).</div>
         </div>
         <div class="meta">
           <div><span>Catálogo</span><strong id="mCount">—</strong></div>
@@ -258,8 +258,8 @@
         <div class="samples">
           <button type="button" data-demo="764009045577">Código OK</button>
           <button type="button" data-demo="N17501001407503">Con N</button>
-          <button type="button" data-demo="4557">Solo 4 (rechazar)</button>
-          <button type="button" data-demo="1234567890">10 dígitos (rechazar)</button>
+          <button type="button" data-demo="D17441001601153">Alfanumérico</button>
+          <button type="button" data-demo="37000008552">11 dígitos</button>
           <button type="button" data-demo="Vacia">Vacia</button>
         </div>
         <p class="note" id="note">
@@ -281,7 +281,7 @@
             <div class="step-card">
               <span class="badge">AHORA</span>
               <h4>2 · Artículo</h4>
-              <p class="desc">Más de 10 dígitos · o escriba Vacia si está vacía</p>
+              <p class="desc">Código numérico/alfanumérico · o Vacia si está vacía</p>
               <input id="vCode" inputmode="text" autocomplete="off" placeholder="Código de barras o Vacia" />
               <div class="actions">
                 <button type="button" class="btn-scan" id="btnScan">📷 Escanear</button>
@@ -322,15 +322,6 @@
         return { ok: true, vacia: true, code: 'Vacia', name: 'UBICACIÓN VACÍA', message: 'OK · ubicación marcada como vacía' };
       }
       var digits = digitsOnly(value);
-      if (digits.length <= 10) {
-        return {
-          ok: false,
-          message: digits.length <= 4
-            ? 'No se aceptan solo los últimos 4 dígitos. Digite más de 10.'
-            : 'El código debe tener más de 10 dígitos (o escriba Vacia).',
-          name: ''
-        };
-      }
       var name =
         catalog.byCode[value.toUpperCase()] ||
         catalog.byDigits[digits] ||

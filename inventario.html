@@ -19,7 +19,7 @@
     }
   })();
   </script>
-  <meta name="description" content="Portal Inventario RF — Conteo pickup, ubicaciones y dirigido en tiempo real.">
+  <meta name="description" content="Portal Inventario RF — Conteo de ubicaciones y dirigido en tiempo real.">
   <meta name="theme-color" content="#15202B">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -33,7 +33,7 @@
   <link rel="stylesheet" href="css/auth-portals-layout.css?v=12">
   <link rel="stylesheet" href="css/dc-brand.css?v=11">
   <link rel="stylesheet" href="css/ac001-brand.css?v=1">
-  <link rel="stylesheet" href="css/inventario-portal.css?v=29">
+  <link rel="stylesheet" href="css/inventario-portal.css?v=30">
   <link rel="stylesheet" href="css/inventario-responsive.css?v=7">
   <link rel="stylesheet" href="css/perf-lite.css?v=18">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -71,9 +71,9 @@
               <h1 class="inv-auth-brand-title">Inventario RF · DC</h1>
             </div>
           </header>
-          <p class="auth-hero-desc inv-auth-hero-desc">Conteo de inventario en almacén (pickup, ubicaciones, dirigido), en el navegador con datos <strong>en tiempo real</strong>.</p>
+          <p class="auth-hero-desc inv-auth-hero-desc">Conteo de inventario en almacén (ubicaciones y dirigido), en el navegador con datos <strong>en tiempo real</strong>.</p>
           <div class="inv-auth-steps" aria-label="Conteo RF">
-            <span class="inv-auth-step">Pickup</span>
+            <span class="inv-auth-step">Ubicaciones</span>
             <span class="inv-auth-step">Ubic.</span>
             <span class="inv-auth-step">Dirigido</span>
             <span class="inv-auth-step">Registros</span>
@@ -175,15 +175,10 @@
         <p class="inv-instr">Seleccione cómo va a contar</p>
       </div>
       <div class="inv-body">
-        <div class="inv-mode" id="invModePickup" data-mode="pickup">
-          <span class="inv-mode-tag inv-mode-tag--pickup">PICKUP</span>
-          <h3 class="inv-mode-title--pickup">Conteo de Pickup</h3>
-          <p>Solo nivel 1, sin matrícula. Utilice cantidad 0 si está vacía.</p>
-        </div>
         <div class="inv-mode" id="invModePallet" data-mode="pallet">
-          <span class="inv-mode-tag inv-mode-tag--rack">UBIC.</span>
+          <span class="inv-mode-tag inv-mode-tag--rack">UBICACIONES</span>
           <h3 class="inv-mode-title--rack">Conteo de ubicaciones</h3>
-          <p>Niveles 2–5 · matrícula y vencimiento opcionales.</p>
+          <p>Niveles 2–5 · matrícula y vencimiento opcionales · caja o unidad.</p>
         </div>
         <div class="inv-mode" id="invModeDirigido" data-mode="dirigido">
           <span class="inv-mode-tag inv-mode-tag--dirigido">DIRIGIDO</span>
@@ -326,8 +321,8 @@
           <span class="badge">AHORA</span>
           <h2 style="color:#00897B">1 · Ubicación</h2>
           <p class="desc">Escanee con la cámara, el lector RF o escriba la ubicación</p>
-          <p class="desc desc--accent" id="invPickupHint">Pickup: solo ubicaciones que terminan en 1. Use 0 si está vacía.</p>
-          <input class="inv-field" id="invLoc" inputmode="text" autocomplete="off" enterkeyhint="done" placeholder="Ej. P020-012-1" style="border-color:#00897B">
+          <p class="desc desc--accent" id="invPickupHint" hidden>Ubicaciones: niveles 2 a 5 (no nivel 1).</p>
+          <input class="inv-field" id="invLoc" inputmode="text" autocomplete="off" enterkeyhint="done" placeholder="Ej. P020-012-2" style="border-color:#00897B">
           <div class="inv-scan-actions">
             <button type="button" class="inv-btn inv-btn-scan" data-inv-camera="loc">📷 Escanear ubicación</button>
             <button type="button" class="inv-btn inv-btn-primary" data-inv-apply="loc">Usar código</button>
@@ -366,14 +361,14 @@
           <span class="badge">AHORA</span>
           <h2 id="invQtyTitle" style="color:#EF6C00">Cantidad</h2>
           <div class="inv-pickup-qty" id="invPickupQtyType" hidden>
-            <p class="desc" style="font-weight:700;margin:0 0 8px">Seleccione cómo va a contar</p>
+            <p class="desc" style="font-weight:700;margin:0 0 8px">¿Qué desea contar?</p>
             <div class="inv-pickup-qty-btns">
-              <button type="button" id="invBtnQtyBox" style="border:2px solid #EF6C00;background:#EF6C00;color:#fff">CAJA (CJ)</button>
-              <button type="button" id="invBtnQtyUnit" style="border:2px solid #3949AB;background:#E8EEF4;color:#3949AB">UNIDAD (UND)</button>
+              <button type="button" id="invBtnQtyBox">CAJA (CJ)</button>
+              <button type="button" id="invBtnQtyUnit">UNIDAD (UND)</button>
             </div>
           </div>
           <p id="invQtyAmountLabel" class="desc" hidden>Ingrese la cantidad</p>
-          <input class="inv-field inv-field--qty" id="invQty" type="number" value="1" style="border-color:#EF6C00">
+          <input class="inv-field inv-field--qty" id="invQty" type="number" value="1" style="border-color:#EF6C00" hidden>
         </div>
         <div class="inv-card" id="invCardNext" style="border-color:#00897B" hidden>
           <span class="badge">AHORA</span>
@@ -502,8 +497,8 @@
   <script defer src="js/platform-supabase.js?v=4"></script>
   <script defer src="js/platform-supabase-realtime.js?v=1"></script>
   <script defer src="js/platform-supabase-bridge.js?v=4"></script>
-  <script defer src="js/platform-inventario-core.js?v=13"></script>
+  <script defer src="js/platform-inventario-core.js?v=14"></script>
   <script defer src="js/platform-inventario-sync.js?v=11"></script>
-  <script defer src="js/platform-inventario-app.js?v=29"></script>
+  <script defer src="js/platform-inventario-app.js?v=30"></script>
 </body>
 </html>

@@ -227,6 +227,10 @@ body.inv-dash-view {
   padding: 3px 10px;
   border-radius: 8px;
   color: var(--inv-text-on-dark-soft);
+  max-width: 48%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .inv-prog { height: 4px; background: rgba(255,255,255,.15); border-radius: 2px; margin-top: 8px; }
@@ -1162,7 +1166,7 @@ a.inv-admin-link {
 }
 .inv-toast.show { opacity: 1; }
 
-.inv-pickup-qty { background: #E8EEF4; border: 2px solid #3949AB; border-radius: 12px; padding: 14px; margin: 12px 0; }
+.inv-pickup-qty { background: #FFF3E0; border: 2px solid #EF6C00; border-radius: 12px; padding: 14px; margin: 12px 0; }
 .inv-pickup-qty-btns { display: flex; gap: 10px; }
 .inv-pickup-qty-btns button {
   flex: 1;
@@ -1173,6 +1177,22 @@ a.inv-admin-link {
   border-radius: 10px;
   cursor: pointer;
   line-height: 1.2;
+  border: 2px solid #90A4AE;
+  background: #fff;
+  color: #455A64;
+}
+.inv-pickup-qty-btns button.is-selected {
+  border-color: #EF6C00;
+  background: #EF6C00;
+  color: #fff;
+}
+#invBtnQtyUnit.is-selected {
+  border-color: #3949AB;
+  background: #3949AB;
+  color: #fff;
+}
+.inv-mode-tag--rack {
+  letter-spacing: 0.02em;
 }
 
 .auth-portal-card--inventario {

@@ -11,13 +11,14 @@
   var state = {
     user: null,
     role: null,
-    mode: 'pickup',
+    mode: 'pallet',
     view: 'login',
     step: 1,
     flowIndex: 0,
-    flowSteps: [1, 2, 4, 5],
+    flowSteps: [1, 2, 3, 4, 5],
     countRound: 1,
     pickupUnit: 'box',
+    countUnitChosen: false,
     catalogMat: '',
     fields: { loc: '', prod: '', mat: '', exp: '', qty: '1' },
     entries: [],
@@ -226,17 +227,19 @@
 
   /* ── Modo conteo ── */
   function pickMode(mode) {
+    if (mode === 'pickup') mode = 'pallet';
     state.mode = mode;
     try { global.sessionStorage.setItem('invCountMode', mode); } catch (e) { /* noop */ }
     state.awaitingNextChoice = false;
     state.pendingNextLoc = '';
     state.pendingCurrentLoc = '';
+    state.countUnitChosen = false;
     hideNextLocationChoice();
     if (mode === 'dirigido') {
       global.setTimeout(function () { setView('directed'); }, 120);
       return;
     }
-    state.flowSteps = CORE.flowStepsForMode(mode);
+    state.flowSteps = CORE.flowStepsForMode('pallet');
     state.flowIndex = 0;
     state.step = state.flowSteps[0];
     resetCountFields(true);
@@ -690,8 +693,16 @@
   }
 
   function setPickupUnit(u) {
-    state.pickupUnit = u;
+    state.pickupUnit = u === 'unit' ? 'unit' : 'box';
+    state.countUnitChosen = true;
     applyCountStep();
+    toast(state.pickupUnit === 'unit' ? 'Contará en UNIDADES' : 'Contará en CAJAS', 'ok');
+    global.setTimeout(function () {
+      var qty = $('invQty');
+      if (qty) {
+        try { qty.focus(); qty.select && qty.select(); } catch (e) { /* noop */ }
+      }
+    }, 80);
   }
 
   function syncCountFieldsFromDom() {
@@ -737,7 +748,7 @@
           : ('Actual: ' + (state.pendingCurrentLoc || f.loc || '—') + ' · máximo nivel 5'))
         : instr[step - 1];
     }
-    if ($('invModeBadge')) $('invModeBadge').textContent = CORE.MODE_LABELS[mode] || 'PICKUP';
+    if ($('invModeBadge')) $('invModeBadge').textContent = CORE.MODE_LABELS[mode] || 'UBICACIONES';
     if ($('invProgBar')) {
       $('invProgBar').style.width = choosing
         ? '100%'
@@ -752,7 +763,7 @@
           card.hidden = true;
         } else {
           card.classList.toggle('active', i === step);
-          card.hidden = mode === 'pickup' && i === 3;
+          card.hidden = false;
         }
       }
     }
@@ -802,12 +813,32 @@
       $('invCtxName').title = f.prodName || '';
     }
 
-    var showPickupQty = mode === 'pickup' && step === 5;
-    if ($('invPickupQtyType')) $('invPickupQtyType').hidden = !showPickupQty;
-    if ($('invQtyAmountLabel')) $('invQtyAmountLabel').hidden = !showPickupQty;
+    var showUnitAsk = mode === 'pallet' && step === 5 && !choosing;
+    var unitReady = showUnitAsk && state.countUnitChosen;
+    if ($('invPickupQtyType')) $('invPickupQtyType').hidden = !showUnitAsk;
+    if ($('invQtyAmountLabel')) {
+      $('invQtyAmountLabel').hidden = !unitReady;
+      $('invQtyAmountLabel').textContent = state.pickupUnit === 'unit'
+        ? 'Ingrese la cantidad en UNIDADES'
+        : 'Ingrese la cantidad en CAJAS';
+    }
+    if ($('invQty')) $('invQty').hidden = !unitReady;
+    if ($('invQtyTitle')) {
+      $('invQtyTitle').textContent = !showUnitAsk
+        ? 'Cantidad'
+        : (unitReady
+          ? (state.pickupUnit === 'unit' ? 'Cantidad (UND)' : 'Cantidad (CJ)')
+          : 'Tipo de conteo');
+    }
+    var btnBox = $('invBtnQtyBox');
+    var btnUnit = $('invBtnQtyUnit');
+    if (btnBox && btnUnit) {
+      btnBox.classList.toggle('is-selected', state.countUnitChosen && state.pickupUnit === 'box');
+      btnUnit.classList.toggle('is-selected', state.countUnitChosen && state.pickupUnit === 'unit');
+    }
 
-    $('invPickupHint').hidden = mode !== 'pickup';
-    $('invExcelBox').classList.toggle('show', step === 5);
+    if ($('invPickupHint')) $('invPickupHint').hidden = mode !== 'pallet' || step !== 1;
+    $('invExcelBox').classList.toggle('show', step === 5 && unitReady);
 
     var rackBanner = $('invRackBanner');
     if (rackBanner) {
@@ -816,10 +847,6 @@
         rackBanner.hidden = false;
         rackBanner.textContent = rb.text;
         rackBanner.className = 'inv-rack-banner' + (rb.passes >= 2 ? ' inv-rack-banner--double' : '');
-      } else if (f.loc && mode === 'pickup') {
-        rackBanner.hidden = false;
-        rackBanner.textContent = 'PICKUP · Conteo #' + state.countRound;
-        rackBanner.className = 'inv-rack-banner';
       } else if (f.loc) {
         rackBanner.hidden = false;
         rackBanner.textContent = 'Conteo #' + state.countRound;
@@ -841,10 +868,15 @@
     var hint = $('invSwipeHint');
     var labelR = $('invSwipeLabelR');
     if (step === 5) {
-      hint.textContent = state.continuous
-        ? 'Modo continuo: escanee para GUARDAR y seguir · o deslice ▶'
-        : 'Arrastre hacia la derecha ▶▶ para GUARDAR';
-      labelR.textContent = 'GUARDAR ▶';
+      if (!state.countUnitChosen) {
+        hint.textContent = 'Primero elija CAJA o UNIDAD';
+        labelR.textContent = 'ELEGIR ▶';
+      } else {
+        hint.textContent = state.continuous
+          ? 'Modo continuo: escanee para GUARDAR y seguir · o deslice ▶'
+          : 'Arrastre hacia la derecha ▶▶ para GUARDAR';
+        labelR.textContent = 'GUARDAR ▶';
+      }
     } else if (step === 3 || step === 4) {
       hint.textContent = 'Deslice ▶ para CONTINUAR · use el botón Omitir si no aplica';
       labelR.textContent = 'CONTINUAR ▶';
@@ -982,6 +1014,10 @@
     }
     syncCountFieldsFromDom();
     if (state.step === 5) {
+      if (state.mode === 'pallet' && !state.countUnitChosen) {
+        toast('Seleccione CAJA o UNIDAD para continuar', 'err');
+        return;
+      }
       saveEntry();
       return;
     }
@@ -1233,8 +1269,8 @@
         f.expectedQty = 0;
         state.catalogMat = '';
         if ($('invPname')) $('invPname').textContent = f.prodName;
-        state.flowIndex = state.flowSteps.indexOf(state.mode === 'pickup' ? 4 : 3);
-        state.step = state.mode === 'pickup' ? 4 : 3;
+        state.flowIndex = state.flowSteps.indexOf(3);
+        state.step = 3;
         applyCountStep();
         toast('Artículo: Vacia', 'ok');
         return;
@@ -1263,8 +1299,8 @@
           state.catalogMat = cat.matricula || '';
           if (cat.expectedQty) f.expectedQty = cat.expectedQty;
           if ($('invPname')) $('invPname').textContent = f.prodName;
-          state.flowIndex = state.flowSteps.indexOf(state.mode === 'pickup' ? 4 : 3);
-          state.step = state.mode === 'pickup' ? 4 : 3;
+          state.flowIndex = state.flowSteps.indexOf(3);
+          state.step = 3;
           applyCountStep();
           toast('Artículo OK · ' + cat.name, 'ok');
         });
@@ -1284,6 +1320,10 @@
         // Modo continuo APK: un escaneo en cantidad guarda y sigue en el mismo rack
         if (!f.prod) {
           toast('Primero escanee el artículo', 'err');
+          return;
+        }
+        if (!state.countUnitChosen) {
+          toast('Seleccione CAJA o UNIDAD primero', 'err');
           return;
         }
         saveEntry({ keepGoing: true });
@@ -1317,7 +1357,11 @@
     if (!u) { toast('Sesión expirada', 'err'); return; }
     if (!f.loc) { toast('Falta ubicación', 'err'); return; }
     if (!f.prod && String(f.qty) !== '0') { toast('Falta artículo', 'err'); return; }
-    var unit = state.mode === 'pickup' && state.pickupUnit === 'unit' ? 'UND' : 'CJ';
+    if (state.mode === 'pallet' && !state.countUnitChosen) {
+      toast('Seleccione CAJA o UNIDAD antes de guardar', 'err');
+      return;
+    }
+    var unit = state.pickupUnit === 'unit' ? 'UND' : 'CJ';
     var dbl = CORE.isDoubleRackLocation(f.loc);
     var passes = dbl === true ? 2 : 1;
     var banner = CORE.rackPassBanner(f.loc, state.countRound);
@@ -1352,10 +1396,12 @@
       f.prodName = '';
       f.expectedQty = 0;
       state.catalogMat = '';
+      state.countUnitChosen = false;
       renderAdminStats();
 
       function goArticleStep(keepGoing) {
         state.awaitingNextChoice = false;
+        state.countUnitChosen = false;
         state.flowIndex = state.flowSteps.indexOf(2);
         state.step = 2;
         applyCountStep();
@@ -1428,6 +1474,7 @@
     }
     hideNextLocationChoice();
     state.fields.loc = nextLoc;
+    state.countUnitChosen = false;
     var keepGoing = state.keepGoingAfterChoice;
     state.keepGoingAfterChoice = false;
     state.pendingNextLoc = '';
@@ -1455,6 +1502,7 @@
     state.pendingNextLoc = '';
     state.pendingCurrentLoc = '';
     state.keepGoingAfterChoice = false;
+    state.countUnitChosen = false;
     state.fields.loc = '';
     state.countRound = 1;
     state.flowIndex = state.flowSteps.indexOf(1);
@@ -1744,7 +1792,7 @@
       goLoginStep1();
     });
 
-    ['invModePickup', 'invModePallet', 'invModeDirigido'].forEach(function (id) {
+    ['invModePallet', 'invModeDirigido'].forEach(function (id) {
       var el = $(id);
       if (!el) return;
       el.addEventListener('click', function () {

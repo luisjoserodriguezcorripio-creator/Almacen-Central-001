@@ -13,7 +13,7 @@
   };
   var RACK_PREFIX = /^[A-Za-z](\d{3})$/i;
 
-  var MODE_LABELS = { pickup: 'PICKUP', pallet: 'UBIC.', dirigido: 'DIRIGIDO' };
+  var MODE_LABELS = { pickup: 'PICKUP', pallet: 'UBICACIONES', dirigido: 'DIRIGIDO' };
   var MODE_DB = { pickup: 'PICKUP', pallet: 'ALTURA', dirigido: 'DIRIGIDO' };
 
   function pasilloFromLocation(location) {

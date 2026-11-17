@@ -662,7 +662,23 @@
     applyCountStep();
   }
 
+  function syncCountFieldsFromDom() {
+    var active = document.activeElement;
+    var loc = $('invLoc');
+    var prod = $('invProd');
+    var mat = $('invMat');
+    var qty = $('invQty');
+    if (loc && active === loc) state.fields.loc = String(loc.value || '').trim();
+    if (prod && active === prod) {
+      state.fields.prod = String(prod.value || '').trim();
+    }
+    if (mat && active === mat) state.fields.mat = String(mat.value || '').trim();
+    if (qty && (active === qty || state.step === 5)) syncQtyFromInput();
+    if (state.step === 4) syncExpFromInput();
+  }
+
   function applyCountStep() {
+    syncCountFieldsFromDom();
     var step = state.step;
     var mode = state.mode;
     var f = state.fields;
@@ -672,6 +688,7 @@
     var instr = phone
       ? ['Escanee o escriba la ubicación', 'Escanee o escriba el artículo', 'Matrícula u omitir', 'Vencimiento u omitir', 'Ingrese cantidad y guarde']
       : ['Escanee la ubicación', 'Escanee el artículo', 'Matrícula u omitir', 'Vencimiento u omitir', 'Ingrese cantidad y guarde'];
+    var active = document.activeElement;
 
     $('invStepCounter').textContent = (state.flowIndex + 1) + '/' + total;
     $('invStepTitle').textContent = titles[step - 1];
@@ -687,11 +704,11 @@
       }
     }
 
-    $('invLoc').value = f.loc;
-    $('invProd').value = f.prod;
-    $('invMat').value = f.mat;
-    if ($('invExp')) $('invExp').value = displayToIso(f.exp);
-    $('invQty').value = f.qty;
+    if (!($('invLoc') && active === $('invLoc'))) $('invLoc').value = f.loc;
+    if (!($('invProd') && active === $('invProd'))) $('invProd').value = f.prod;
+    if (!($('invMat') && active === $('invMat'))) $('invMat').value = f.mat;
+    if ($('invExp') && active !== $('invExp')) $('invExp').value = displayToIso(f.exp);
+    if (!($('invQty') && active === $('invQty'))) $('invQty').value = f.qty;
     $('invPname').textContent = f.prodName || '—';
 
     var brand = $('invCountBrand');
@@ -838,29 +855,44 @@
   }
 
   function swipeConfirm() {
+    if (state.camStream || state.html5Qr || state.camBusy) {
+      toast('Cierre la cámara para continuar', 'err');
+      return;
+    }
+    syncCountFieldsFromDom();
     if (state.step === 5) {
       saveEntry();
       return;
     }
+    if (state.step === 1) {
+      applyTypedCode('loc');
+      return;
+    }
+    if (state.step === 2) {
+      applyTypedCode('prod');
+      return;
+    }
     if (state.step === 3) {
-      state.fields.mat = ($('invMat') && $('invMat').value) || state.fields.mat || '';
+      state.fields.mat = ($('invMat') && String($('invMat').value || '').trim()) || state.fields.mat || '';
+      if (!state.fields.mat) {
+        toast('Escanee matrícula o pulse Omitir', 'err');
+        return;
+      }
       advanceStep();
-      toast(state.fields.mat ? 'Matrícula OK' : 'Continuar sin matrícula');
+      toast('Matrícula OK', 'ok');
       return;
     }
     if (state.step === 4) {
       syncExpFromInput();
+      if (!state.fields.exp) {
+        toast('Elija fecha o pulse Omitir', 'err');
+        return;
+      }
       advanceStep();
-      toast(state.fields.exp ? ('Vence ' + state.fields.exp) : 'Continuar sin vencimiento');
+      toast('Vence ' + state.fields.exp, 'ok');
       return;
     }
-    if (isPhoneViewport()) {
-      if (state.step === 1) applyTypedCode('loc');
-      else if (state.step === 2) applyTypedCode('prod');
-      else toast('Use la cámara o escriba el código');
-    } else {
-      toast('Escanee con el lector RF');
-    }
+    toast('Complete este paso para continuar', 'err');
   }
 
   function applyTypedCode(target) {
@@ -868,9 +900,14 @@
     var el = $(map[target]);
     var code = el ? String(el.value || '').trim() : '';
     if (!code) {
-      toast(target === 'loc' ? 'Escanee o escriba la ubicación' : 'Escanee o escriba el código', 'err');
+      if (target === 'loc') toast('Escanee o escriba la ubicación', 'err');
+      else if (target === 'prod') toast('Escanee o escriba el artículo', 'err');
+      else toast('Escanee o escriba el código', 'err');
       return;
     }
+    if (target === 'loc') state.fields.loc = code;
+    if (target === 'prod') state.fields.prod = code;
+    if (target === 'mat') state.fields.mat = code;
     processScan(code);
   }
 
@@ -1295,32 +1332,102 @@
   function setupSwipe() {
     var thumb = $('invSwipeThumb');
     var track = $('invSwipeTrack');
+    var btnBack = $('invSwipeLabelL');
+    var btnNext = $('invSwipeLabelR');
     if (!thumb || !track || thumb.dataset.bound) return;
     thumb.dataset.bound = '1';
-    var startX = 0, startTx = 0, max = 100;
-    function onStart(x) {
-      startX = x;
-      startTx = thumb._tx || 0;
-      max = (track.offsetWidth - thumb.offsetWidth) / 2 - 8;
-    }
-    function onMove(x) {
-      var delta = Math.max(-max, Math.min(max, startTx + x - startX));
-      thumb._tx = delta;
-      thumb.style.transform = 'translateX(' + delta + 'px)';
-    }
-    function onEnd() {
-      var tx = thumb._tx || 0;
-      if (tx <= -max * 0.55) goBackStep();
-      else if (tx >= max * 0.55) swipeConfirm();
+    var dragging = false;
+    var startX = 0;
+    var startTx = 0;
+    var max = 100;
+    var moved = 0;
+
+    function resetThumb() {
       thumb._tx = 0;
-      thumb.style.transform = '';
+      thumb.style.transform = 'translateX(-50%)';
+      dragging = false;
+      startX = 0;
+      moved = 0;
     }
-    thumb.addEventListener('mousedown', function (e) { onStart(e.clientX); e.preventDefault(); });
-    global.addEventListener('mousemove', function (e) { if (startX) onMove(e.clientX); });
-    global.addEventListener('mouseup', function () { if (startX) { startX = 0; onEnd(); } });
-    thumb.addEventListener('touchstart', function (e) { onStart(e.touches[0].clientX); }, { passive: true });
-    thumb.addEventListener('touchmove', function (e) { onMove(e.touches[0].clientX); }, { passive: true });
+
+    function onStart(x, e) {
+      if (state.view !== 'count') return;
+      if (state.camStream || state.html5Qr) return;
+      dragging = true;
+      startX = x;
+      startTx = 0;
+      moved = 0;
+      max = Math.max(48, (track.offsetWidth - thumb.offsetWidth) / 2 - 10);
+      thumb.style.transition = 'none';
+      if (e && e.cancelable) e.preventDefault();
+    }
+
+    function onMove(x) {
+      if (!dragging) return;
+      var delta = Math.max(-max, Math.min(max, startTx + x - startX));
+      moved = Math.abs(delta);
+      thumb._tx = delta;
+      thumb.style.transform = 'translateX(calc(-50% + ' + delta + 'px))';
+    }
+
+    function onEnd() {
+      if (!dragging) return;
+      var tx = thumb._tx || 0;
+      var threshold = max * 0.72;
+      thumb.style.transition = 'transform 0.18s ease';
+      dragging = false;
+      if (moved >= 18 && tx <= -threshold) {
+        resetThumb();
+        goBackStep();
+        return;
+      }
+      if (moved >= 18 && tx >= threshold) {
+        resetThumb();
+        swipeConfirm();
+        return;
+      }
+      resetThumb();
+    }
+
+    thumb.addEventListener('mousedown', function (e) {
+      onStart(e.clientX, e);
+    });
+    global.addEventListener('mousemove', function (e) {
+      if (!dragging) return;
+      onMove(e.clientX);
+    });
+    global.addEventListener('mouseup', function () {
+      if (!dragging) return;
+      onEnd();
+    });
+    thumb.addEventListener('touchstart', function (e) {
+      if (!e.touches || !e.touches.length) return;
+      onStart(e.touches[0].clientX, e);
+    }, { passive: false });
+    thumb.addEventListener('touchmove', function (e) {
+      if (!dragging || !e.touches || !e.touches.length) return;
+      onMove(e.touches[0].clientX);
+      if (e.cancelable) e.preventDefault();
+    }, { passive: false });
     thumb.addEventListener('touchend', onEnd);
+    thumb.addEventListener('touchcancel', resetThumb);
+
+    if (btnBack && !btnBack.dataset.bound) {
+      btnBack.dataset.bound = '1';
+      btnBack.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (state.view !== 'count') return;
+        goBackStep();
+      });
+    }
+    if (btnNext && !btnNext.dataset.bound) {
+      btnNext.dataset.bound = '1';
+      btnNext.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (state.view !== 'count') return;
+        swipeConfirm();
+      });
+    }
   }
 
   function bindEvents() {

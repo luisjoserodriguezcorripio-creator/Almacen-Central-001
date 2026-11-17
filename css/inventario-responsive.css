@@ -132,7 +132,7 @@ html.inv-rf-viewport,
 .inv-rf-device #invViewCount .inv-body {
   display: flex;
   flex-direction: column;
-  padding: 10px 12px;
+  padding: 8px 10px;
 }
 
 .inv-rf-device #invViewCount .inv-card {
@@ -142,10 +142,38 @@ html.inv-rf-viewport,
   justify-content: center;
   margin-bottom: 0;
   min-height: 0;
+  padding: 12px;
 }
 
 .inv-rf-device #invViewCount .inv-card.active {
   display: flex;
+}
+
+.inv-rf-device #invViewCount .inv-card h2 {
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+
+.inv-rf-device #invViewCount .inv-card .desc {
+  margin-bottom: 8px;
+  font-size: 0.78rem;
+}
+
+.inv-rf-device #invViewCount .inv-step-title {
+  font-size: 0.95rem;
+}
+
+.inv-rf-device #invViewCount .inv-step-counter {
+  font-size: 0.85rem;
+}
+
+.inv-rf-device #invViewCount .inv-swipe-zone {
+  padding: 8px 12px 10px;
+}
+
+.inv-rf-device #invViewCount .inv-swipe-hint {
+  margin-bottom: 6px;
+  font-size: 0.68rem;
 }
 
 .inv-rf-device #invViewCount .inv-excel:not(.show) {

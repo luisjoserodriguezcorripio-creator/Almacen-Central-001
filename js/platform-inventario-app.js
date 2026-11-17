@@ -1518,7 +1518,7 @@
   }
 
   function confirmDeleteAll() {
-    if (!global.confirm('¿Eliminar TODOS los registros de la nube?')) return;
+    if (!global.confirm('¿Desea borrar los registros?\n\nAceptar = Sí · Cancelar = No')) return;
     SYNC.deleteAllEntries().then(function () {
       toast('Registros eliminados', 'ok');
       renderRecords();

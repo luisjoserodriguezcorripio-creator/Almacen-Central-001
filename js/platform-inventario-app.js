@@ -19,6 +19,7 @@
     countRound: 1,
     pickupUnit: 'box',
     countUnitChosen: false,
+    seqStartLevel: 1,
     catalogMat: '',
     fields: { loc: '', prod: '', mat: '', exp: '', qty: '1' },
     entries: [],
@@ -944,12 +945,21 @@
     return m ? parseInt(m[2], 10) : NaN;
   }
 
+  function rememberSeqStart(loc) {
+    var lvl = levelTokenFromLoc(loc);
+    state.seqStartLevel = (!isNaN(lvl) && lvl >= 1 && lvl <= 5) ? lvl : 1;
+  }
+
   function renderLevelSequence(seqEl, currentLoc, nextLoc) {
     if (!seqEl) return;
     var cur = levelTokenFromLoc(currentLoc);
     var nxt = levelTokenFromLoc(nextLoc);
+    var start = parseInt(state.seqStartLevel, 10);
+    if (isNaN(start) || start < 1) start = !isNaN(cur) ? cur : 1;
+    if (start > 5) start = 5;
+    // Secuencia desde el nivel en que inició hasta 5 (1–5 si empezó en 1)
     var html = '';
-    for (var lvl = 2; lvl <= 5; lvl++) {
+    for (var lvl = start; lvl <= 5; lvl++) {
       var cls = '';
       if (!isNaN(cur) && lvl === cur) cls = ' is-current';
       else if (!isNaN(nxt) && lvl === nxt) cls = ' is-next';
@@ -1239,6 +1249,7 @@
         return;
       }
       f.loc = code;
+      rememberSeqStart(code);
       if (code === '0') {
         f.qty = '0';
         state.countRound = 1;
@@ -1255,7 +1266,7 @@
         applyCountStep();
         var banner = CORE.rackPassBanner(code, state.countRound);
         var extra = state.mode === 'pallet' ? (' · ' + banner.tipo) : '';
-        toast('Ubicación OK · Conteo #' + state.countRound + extra, 'ok');
+        toast('Ubicación OK · Conteo #' + state.countRound + extra + ' · Niveles ' + state.seqStartLevel + '–5', 'ok');
       });
     } else if (state.step === 2) {
       var artCheck = CORE.validateArticleInput(code);
@@ -1475,6 +1486,7 @@
     hideNextLocationChoice();
     state.fields.loc = nextLoc;
     state.countUnitChosen = false;
+    // Mantener seqStartLevel: secuencia desde el nivel inicial hasta arriba
     var keepGoing = state.keepGoingAfterChoice;
     state.keepGoingAfterChoice = false;
     state.pendingNextLoc = '';
@@ -1503,6 +1515,7 @@
     state.pendingCurrentLoc = '';
     state.keepGoingAfterChoice = false;
     state.countUnitChosen = false;
+    state.seqStartLevel = 1;
     state.fields.loc = '';
     state.countRound = 1;
     state.flowIndex = state.flowSteps.indexOf(1);

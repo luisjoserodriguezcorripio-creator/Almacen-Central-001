@@ -178,7 +178,7 @@
         <div class="inv-mode" id="invModePallet" data-mode="pallet">
           <span class="inv-mode-tag inv-mode-tag--rack">UBICACIONES</span>
           <h3 class="inv-mode-title--rack">Conteo de ubicaciones</h3>
-          <p>Niveles 2–5 · matrícula y vencimiento opcionales · caja o unidad.</p>
+          <p>Niveles 1–5 (desde donde inicie, hacia arriba) · caja o unidad.</p>
         </div>
         <div class="inv-mode" id="invModeDirigido" data-mode="dirigido">
           <span class="inv-mode-tag inv-mode-tag--dirigido">DIRIGIDO</span>
@@ -321,8 +321,8 @@
           <span class="badge">AHORA</span>
           <h2 style="color:#00897B">1 · Ubicación</h2>
           <p class="desc">Escanee con la cámara, el lector RF o escriba la ubicación</p>
-          <p class="desc desc--accent" id="invPickupHint" hidden>Ubicaciones: niveles 2 a 5 (no nivel 1).</p>
-          <input class="inv-field" id="invLoc" inputmode="text" autocomplete="off" enterkeyhint="done" placeholder="Ej. P020-012-2" style="border-color:#00897B">
+          <p class="desc desc--accent" id="invPickupHint" hidden>Ubicaciones: niveles 1 a 5 · la secuencia sube desde el nivel inicial.</p>
+          <input class="inv-field" id="invLoc" inputmode="text" autocomplete="off" enterkeyhint="done" placeholder="Ej. P020-012-1" style="border-color:#00897B">
           <div class="inv-scan-actions">
             <button type="button" class="inv-btn inv-btn-scan" data-inv-camera="loc">📷 Escanear ubicación</button>
             <button type="button" class="inv-btn inv-btn-primary" data-inv-apply="loc">Usar código</button>
@@ -497,8 +497,8 @@
   <script defer src="js/platform-supabase.js?v=4"></script>
   <script defer src="js/platform-supabase-realtime.js?v=1"></script>
   <script defer src="js/platform-supabase-bridge.js?v=4"></script>
-  <script defer src="js/platform-inventario-core.js?v=14"></script>
+  <script defer src="js/platform-inventario-core.js?v=15"></script>
   <script defer src="js/platform-inventario-sync.js?v=11"></script>
-  <script defer src="js/platform-inventario-app.js?v=30"></script>
+  <script defer src="js/platform-inventario-app.js?v=31"></script>
 </body>
 </html>

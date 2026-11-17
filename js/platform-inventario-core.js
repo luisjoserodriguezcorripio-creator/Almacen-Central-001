@@ -55,15 +55,16 @@
   }
 
   function levelFromLocation(location) {
-    var m = /-(\d)$/.exec(String(location || '').trim());
-    return m ? m[1] : '';
+    var m = /-(\d{1,2})$/.exec(String(location || '').trim().toUpperCase().replace(/\s+/g, ''));
+    if (!m) return '';
+    return String(parseInt(m[1], 10));
   }
 
-  /** Siguiente nivel de ubicación (2→3→4→5). Máximo 5. */
+  /** Siguiente nivel de ubicación (1→2→…→5). Máximo 5. */
   function nextLocationLevel(location, maxLevel) {
     maxLevel = maxLevel == null ? 5 : maxLevel;
     var loc = String(location || '').trim().toUpperCase().replace(/\s+/g, '');
-    // Formatos: P020-012-2 | P020-012-02 | prefijo-nivel
+    // Formatos: P020-012-1 | P020-012-2 | P020-012-02 | prefijo-nivel
     var m = /^(.*-)(\d{1,2})$/.exec(loc);
     if (!m) return null;
     var level = parseInt(m[2], 10);
@@ -83,12 +84,14 @@
     return code.length > 0 && code.slice(-1) === '1';
   }
 
-  /** Ubicaciones de rack/altura: no permitir nivel 1 (pickup). */
+  /** Ubicaciones: niveles 1 a 5 (secuencia desde el nivel inicial hacia arriba). */
   function isValidRackLocation(code) {
     code = String(code || '').trim();
     if (!code || code === '0') return false;
     var level = levelFromLocation(code);
-    if (level === '1') return false;
+    if (!level) return true;
+    var n = parseInt(level, 10);
+    if (isNaN(n) || n < 1 || n > 5) return false;
     return true;
   }
 
@@ -104,9 +107,7 @@
       if (!isValidRackLocation(code)) {
         return {
           ok: false,
-          message: code.slice(-1) === '1'
-            ? (code + ' es nivel 1 (pickup). En ubicaciones use niveles 2 a 5.')
-            : 'Ubicación no válida para conteo de ubicaciones.'
+          message: 'Ubicación no válida. Use niveles 1 a 5 (ej. P020-012-1).'
         };
       }
       return { ok: true };

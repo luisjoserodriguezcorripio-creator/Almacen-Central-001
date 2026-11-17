@@ -19,7 +19,7 @@
     }
   })();
   </script>
-  <meta name="description" content="Portal Inventario RF — Conteo pickup, rack y dirigido en tiempo real.">
+  <meta name="description" content="Portal Inventario RF — Conteo pickup, ubicaciones y dirigido en tiempo real.">
   <meta name="theme-color" content="#15202B">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -60,11 +60,11 @@
               <h1 class="inv-auth-brand-title">Inventario RF · DC</h1>
             </div>
           </header>
-          <p class="auth-hero-desc inv-auth-hero-desc">Conteo de inventario en almacén (pickup, rack, dirigido), en el navegador con datos <strong>en tiempo real</strong>.</p>
+          <p class="auth-hero-desc inv-auth-hero-desc">Conteo de inventario en almacén (pickup, ubicaciones, dirigido), en el navegador con datos <strong>en tiempo real</strong>.</p>
           <div class="inv-auth-steps" aria-label="Conteo RF">
             <span class="inv-auth-step">Pickup</span>
-            <span class="inv-auth-step">Rack</span>
-            <span class="inv-auth-step">Piso</span>
+            <span class="inv-auth-step">Ubic.</span>
+            <span class="inv-auth-step">Dirigido</span>
             <span class="inv-auth-step">Registros</span>
             <span class="inv-auth-step">CSV</span>
           </div>
@@ -170,9 +170,9 @@
           <p>Solo nivel 1. Sin matrícula. Caja o unidad. Use <b>0</b> si vacía.</p>
         </div>
         <div class="inv-mode" id="invModePallet" data-mode="pallet">
-          <span class="inv-mode-tag inv-mode-tag--rack">RACK</span>
-          <h3 class="inv-mode-title--rack">Conteo de Rack</h3>
-          <p>Formato P###-###-# (niveles 2–5). Matrícula y vencimiento omisibles.</p>
+          <span class="inv-mode-tag inv-mode-tag--rack">UBIC.</span>
+          <h3 class="inv-mode-title--rack">Conteo de ubicaciones</h3>
+          <p>Niveles 2–5 · matrícula y vencimiento opcionales.</p>
         </div>
         <div class="inv-mode" id="invModeDirigido" data-mode="dirigido">
           <span class="inv-mode-tag inv-mode-tag--dirigido">DIRIGIDO</span>
@@ -460,7 +460,7 @@
   <script src="js/platform-supabase-bridge.js?v=4"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="js/platform-inventario-conciliacion.js?v=2"></script>
-  <script src="js/platform-inventario-core.js?v=4"></script>
+  <script src="js/platform-inventario-core.js?v=5"></script>
   <script src="js/platform-inventario-sync.js?v=7"></script>
   <script src="js/platform-inventario-app.js?v=16"></script>
 </body>

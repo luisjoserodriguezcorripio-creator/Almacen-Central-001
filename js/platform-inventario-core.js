@@ -13,7 +13,7 @@
   };
   var RACK_PREFIX = /^[A-Za-z](\d{3})$/i;
 
-  var MODE_LABELS = { pickup: 'PICKUP', pallet: 'RACK', dirigido: 'DIRIGIDO' };
+  var MODE_LABELS = { pickup: 'PICKUP', pallet: 'UBIC.', dirigido: 'DIRIGIDO' };
   var MODE_DB = { pickup: 'PICKUP', pallet: 'ALTURA', dirigido: 'DIRIGIDO' };
 
   function pasilloFromLocation(location) {
@@ -87,8 +87,8 @@
         return {
           ok: false,
           message: code.slice(-1) === '1'
-            ? (code + ' es nivel 1 (pickup). En rack use niveles 2 a 5.')
-            : 'Ubicación no válida para conteo de rack.'
+            ? (code + ' es nivel 1 (pickup). En ubicaciones use niveles 2 a 5.')
+            : 'Ubicación no válida para conteo de ubicaciones.'
         };
       }
       return { ok: true };

@@ -15,7 +15,7 @@ Plataforma web de **control ejecutivo de almacén**: importación Excel, dashboa
 | **Facturas** | Ventas por almacén, metas, gráficos |
 | **Productividad** | Rendimiento por empleado |
 | **Despacho** | Preparador ↔ Validador |
-| **Inventario RF** | Conteo pickup, rack y dirigido (Excel) |
+| **Inventario RF** | Conteo pickup, ubicaciones y dirigido (Excel) |
 | **Turnos** | Chofer y supervisor |
 | **Agenda** | Tareas diarias por puesto |
 | **Recepción** | Contenedores, validación y ubicación |

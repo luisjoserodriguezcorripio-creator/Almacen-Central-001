@@ -62,13 +62,19 @@
   /** Siguiente nivel de ubicación (2→3→4→5). Máximo 5. */
   function nextLocationLevel(location, maxLevel) {
     maxLevel = maxLevel == null ? 5 : maxLevel;
-    var loc = String(location || '').trim().toUpperCase();
-    var m = /^(.*-)(\d)$/.exec(loc);
+    var loc = String(location || '').trim().toUpperCase().replace(/\s+/g, '');
+    // Formatos: P020-012-2 | P020-012-02 | prefijo-nivel
+    var m = /^(.*-)(\d{1,2})$/.exec(loc);
     if (!m) return null;
     var level = parseInt(m[2], 10);
     if (isNaN(level) || level < 1) return null;
     if (level >= maxLevel) return null;
-    return m[1] + String(level + 1);
+    var width = m[2].length > 1 ? m[2].length : 1;
+    var next = String(level + 1);
+    if (width > 1) {
+      while (next.length < width) next = '0' + next;
+    }
+    return m[1] + next;
   }
 
   function isValidPickupLocation(code) {

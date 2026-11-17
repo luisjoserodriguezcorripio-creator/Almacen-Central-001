@@ -35,7 +35,9 @@
     directedActiveId: null,
     dirCamTarget: null,
     pendingNextLoc: '',
-    keepGoingAfterChoice: false
+    pendingCurrentLoc: '',
+    keepGoingAfterChoice: false,
+    awaitingNextChoice: false
   };
 
   var CAM_HINTS = {
@@ -226,6 +228,10 @@
   function pickMode(mode) {
     state.mode = mode;
     try { global.sessionStorage.setItem('invCountMode', mode); } catch (e) { /* noop */ }
+    state.awaitingNextChoice = false;
+    state.pendingNextLoc = '';
+    state.pendingCurrentLoc = '';
+    hideNextLocationChoice();
     if (mode === 'dirigido') {
       global.setTimeout(function () { setView('directed'); }, 120);
       return;
@@ -698,13 +704,41 @@
     $('invModeBadge').textContent = CORE.MODE_LABELS[mode] || 'PICKUP';
     $('invProgBar').style.width = Math.round(((state.flowIndex + 1) / total) * 100) + '%';
 
+    var nextCard = $('invCardNext');
+    var choosing = !!state.awaitingNextChoice && mode === 'pallet';
     for (var i = 1; i <= 5; i++) {
       var card = $('invCard' + i);
       if (card) {
-        card.classList.toggle('active', i === step);
-        card.hidden = mode === 'pickup' && i === 3;
+        if (choosing) {
+          card.classList.remove('active');
+          card.hidden = true;
+        } else {
+          card.classList.toggle('active', i === step);
+          card.hidden = mode === 'pickup' && i === 3;
+        }
       }
     }
+    if (nextCard) {
+      nextCard.hidden = !choosing;
+      nextCard.classList.toggle('active', choosing);
+      if (choosing) {
+        var subEl = $('invCardNextSub');
+        var upEl = $('invCardNextUp');
+        if (subEl) {
+          subEl.textContent = state.pendingNextLoc
+            ? ('Actual: ' + (state.pendingCurrentLoc || f.loc || '—') + ' · Próximo arriba: ' + state.pendingNextLoc)
+            : ('Actual: ' + (state.pendingCurrentLoc || f.loc || '—') + ' · No hay nivel superior (máx. 5). Digite una nueva ubicación.');
+        }
+        if (upEl) {
+          upEl.hidden = !state.pendingNextLoc;
+          upEl.textContent = state.pendingNextLoc
+            ? ('Continuar al próximo nivel (arriba) · ' + state.pendingNextLoc)
+            : 'Continuar al próximo nivel (arriba)';
+        }
+      }
+    }
+    var swipeZone = document.querySelector('#invViewCount .inv-swipe-zone');
+    if (swipeZone) swipeZone.hidden = choosing;
 
     if (!($('invLoc') && active === $('invLoc'))) $('invLoc').value = f.loc;
     if (!($('invProd') && active === $('invProd'))) $('invProd').value = f.prod;
@@ -857,6 +891,10 @@
   }
 
   function swipeConfirm() {
+    if (state.awaitingNextChoice) {
+      toast('Elija: próximo nivel o nueva ubicación', 'err');
+      return;
+    }
     if (state.camStream || state.html5Qr || state.camBusy) {
       toast('Cierre la cámara para continuar', 'err');
       return;
@@ -1224,7 +1262,7 @@
       if (!res.ok) { toast('Error al guardar', 'err'); return; }
       var msg = res.offline ? 'Guardado local (sin conexión)' : 'Guardado en la nube';
       var passTxt = passes >= 2 ? (' · Lectura ' + banner.lectura + '/2') : '';
-      var savedLoc = f.loc;
+      var savedLoc = String(f.loc || '').trim();
       toast(msg + ' · ' + qtyNum + ' ' + unit + passTxt, 'ok');
       f.prod = '';
       f.mat = '';
@@ -1236,6 +1274,7 @@
       renderAdminStats();
 
       function goArticleStep(keepGoing) {
+        state.awaitingNextChoice = false;
         state.flowIndex = state.flowSteps.indexOf(2);
         state.step = 2;
         applyCountStep();
@@ -1244,34 +1283,26 @@
         }
       }
 
-      function goNewLocationStep() {
-        f.loc = '';
-        state.countRound = 1;
-        state.pendingNextLoc = '';
-        state.flowIndex = state.flowSteps.indexOf(1);
-        state.step = 1;
-        applyCountStep();
-        toast('Digite o escanee la nueva ubicación', 'ok');
-      }
-
-      // Conteo de ubicaciones: preguntar si sube de nivel o digita otra
+      // Conteo de ubicaciones: siempre preguntar (arriba o nueva)
       if (state.mode === 'pallet') {
-        var advanced = CORE.nextLocationLevel(savedLoc, 5);
+        var advanced = CORE.nextLocationLevel ? CORE.nextLocationLevel(savedLoc, 5) : null;
         state.keepGoingAfterChoice = !!(opts.keepGoing && state.continuous);
-        if (advanced) {
-          state.pendingNextLoc = advanced;
-          showNextLocationChoice(savedLoc, advanced);
-          return;
-        }
-        // Ya en nivel 5 (o sin siguiente): solo nueva ubicación
-        goNewLocationStep();
+        state.pendingCurrentLoc = savedLoc;
+        state.pendingNextLoc = advanced || '';
+        state.awaitingNextChoice = true;
+        // Mantener ubicación visible en encabezado mientras elige
+        f.loc = savedLoc;
+        state.flowIndex = state.flowSteps.indexOf(5);
+        state.step = 5;
+        applyCountStep();
+        showNextLocationChoice(savedLoc, advanced || '');
         return;
       }
 
       // Pickup / otros: mantener ubicación y pedir siguiente artículo
       goArticleStep(opts.keepGoing);
-    }).catch(function () {
-      toast('Error al guardar en la nube', 'err');
+    }).catch(function (err) {
+      toast((err && err.message) ? ('Error al guardar: ' + err.message) : 'Error al guardar en la nube', 'err');
     });
   }
 
@@ -1280,11 +1311,15 @@
     var sub = $('invNextLocSub');
     var btnUp = $('invNextLocUp');
     if (sub) {
-      sub.textContent = 'Actual: ' + currentLoc + ' · Próximo arriba: ' + nextLoc;
+      sub.textContent = nextLoc
+        ? ('Actual: ' + currentLoc + ' · Próximo arriba: ' + nextLoc)
+        : ('Actual: ' + currentLoc + ' · Máximo nivel 5 · digite una nueva ubicación');
     }
     if (btnUp) {
-      btnUp.textContent = 'Continuar al próximo nivel (arriba) · ' + nextLoc;
       btnUp.hidden = !nextLoc;
+      btnUp.textContent = nextLoc
+        ? ('Continuar al próximo nivel (arriba) · ' + nextLoc)
+        : 'Continuar al próximo nivel (arriba)';
     }
     if (overlay) overlay.hidden = false;
   }
@@ -1292,23 +1327,21 @@
   function hideNextLocationChoice() {
     var overlay = $('invNextLocOverlay');
     if (overlay) overlay.hidden = true;
+    state.awaitingNextChoice = false;
   }
 
   function chooseNextLevelUp() {
     var nextLoc = state.pendingNextLoc;
-    hideNextLocationChoice();
     if (!nextLoc) {
-      state.fields.loc = '';
-      state.countRound = 1;
-      state.flowIndex = state.flowSteps.indexOf(1);
-      state.step = 1;
-      applyCountStep();
+      toast('No hay nivel superior. Digite una nueva ubicación.', 'err');
       return;
     }
+    hideNextLocationChoice();
     state.fields.loc = nextLoc;
     var keepGoing = state.keepGoingAfterChoice;
     state.keepGoingAfterChoice = false;
     state.pendingNextLoc = '';
+    state.pendingCurrentLoc = '';
     SYNC.countRoundForLocation(nextLoc, '_').then(function (n) {
       state.countRound = n;
       state.flowIndex = state.flowSteps.indexOf(2);
@@ -1330,6 +1363,7 @@
   function chooseNewLocation() {
     hideNextLocationChoice();
     state.pendingNextLoc = '';
+    state.pendingCurrentLoc = '';
     state.keepGoingAfterChoice = false;
     state.fields.loc = '';
     state.countRound = 1;
@@ -1609,6 +1643,8 @@
     $('invBtnOmitExp') && $('invBtnOmitExp').addEventListener('click', omitVencimiento);
     $('invNextLocUp') && $('invNextLocUp').addEventListener('click', chooseNextLevelUp);
     $('invNextLocNew') && $('invNextLocNew').addEventListener('click', chooseNewLocation);
+    $('invCardNextUp') && $('invCardNextUp').addEventListener('click', chooseNextLevelUp);
+    $('invCardNextNew') && $('invCardNextNew').addEventListener('click', chooseNewLocation);
     if ($('invExp')) {
       $('invExp').addEventListener('change', function () {
         syncExpFromInput();

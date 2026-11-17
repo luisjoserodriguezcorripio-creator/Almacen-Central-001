@@ -721,9 +721,13 @@
         rackBanner.hidden = false;
         rackBanner.textContent = rb.text;
         rackBanner.className = 'inv-rack-banner' + (rb.passes >= 2 ? ' inv-rack-banner--double' : '');
-      } else if (f.loc && mode !== 'pickup') {
+      } else if (f.loc && mode === 'pickup') {
         rackBanner.hidden = false;
-        rackBanner.textContent = 'Ubicación ' + f.loc + ' · Conteo #' + state.countRound;
+        rackBanner.textContent = f.loc + ' · PICKUP · Conteo #' + state.countRound;
+        rackBanner.className = 'inv-rack-banner';
+      } else if (f.loc) {
+        rackBanner.hidden = false;
+        rackBanner.textContent = f.loc + ' · Conteo #' + state.countRound;
         rackBanner.className = 'inv-rack-banner';
       } else {
         rackBanner.hidden = true;

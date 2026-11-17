@@ -113,16 +113,18 @@
   }
 
   function rackPassBanner(location, countRound) {
-    var dbl = isDoubleRackLocation(location);
+    var loc = String(location || '').trim();
+    var dbl = isDoubleRackLocation(loc);
     var passes = dbl === true ? 2 : 1;
     var round = Math.max(1, parseInt(countRound, 10) || 1);
     var lectura = passes >= 2 ? ((round - 1) % 2) + 1 : 1;
     var tipo = dbl === true ? 'RACK DOBLE (2 vueltas)' : (dbl === false ? 'RACK SENCILLO (1 vuelta)' : 'RACK');
+    var detail = tipo + ' · Lectura ' + lectura + ' de ' + passes;
     return {
       tipo: tipo,
       passes: passes,
       lectura: lectura,
-      text: tipo + ' · Lectura ' + lectura + ' de ' + passes
+      text: loc ? (loc + ' · ' + detail) : detail
     };
   }
 

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#15202B" />
+  <title>Mockup · Artículo con catálogo CODIGOS</title>
+  <style>
+    :root {
+      --bg: #0f1720;
+      --line: rgba(244, 241, 234, 0.12);
+      --text: #f4f1ea;
+      --muted: #94a3b8;
+      --teal: #00897b;
+      --amber: #f0a202;
+      --ok: #22c55e;
+      --bad: #ef4444;
+      --font: "Segoe UI", "Trebuchet MS", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(ellipse 70% 40% at 8% 0%, rgba(0, 137, 123, 0.2), transparent 50%),
+        radial-gradient(ellipse 50% 35% at 100% 0%, rgba(240, 162, 2, 0.12), transparent 45%),
+        var(--bg);
+    }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 1rem 1rem 2rem; }
+    .banner {
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #fde68a;
+      margin-bottom: 0.75rem;
+    }
+    h1 { margin: 0 0 0.35rem; font-size: 1.3rem; font-weight: 800; }
+    .lead {
+      margin: 0 0 1rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+      max-width: 68ch;
+    }
+    .split {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 1rem;
+      align-items: start;
+    }
+    @media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
+    .card {
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: linear-gradient(165deg, rgba(30, 44, 58, 0.95), rgba(21, 32, 43, 0.96));
+      padding: 0.95rem;
+    }
+    .card h2 {
+      margin: 0 0 0.55rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #cbd5e1;
+    }
+    .rules {
+      display: grid;
+      gap: 0.45rem;
+      margin-bottom: 0.85rem;
+    }
+    .rule {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.65rem 0.75rem;
+      background: rgba(255,255,255,0.03);
+      font-size: 0.78rem;
+      line-height: 1.4;
+      color: #cbd5e1;
+    }
+    .rule b { color: var(--amber); }
+    .rule.ok { border-color: rgba(34,197,94,0.35); }
+    .rule.bad { border-color: rgba(239,68,68,0.35); }
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.45rem;
+      margin-bottom: 0.75rem;
+    }
+    .meta div {
+      border-radius: 10px;
+      padding: 0.5rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      text-align: center;
+    }
+    .meta span { display: block; font-size: 0.58rem; color: var(--muted); font-weight: 700; }
+    .meta strong { font-size: 1rem; }
+    .samples { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.5rem 0 0.75rem; }
+    .samples button {
+      border: 0;
+      border-radius: 999px;
+      padding: 0.4rem 0.7rem;
+      font: inherit;
+      font-size: 0.7rem;
+      font-weight: 800;
+      cursor: pointer;
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+    }
+    .note { font-size: 0.75rem; color: var(--muted); line-height: 1.45; margin-top: 0.75rem; }
+    .phone {
+      width: min(360px, 100%);
+      margin: 0 auto;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #eceff1;
+      color: #15202b;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+      min-height: 620px;
+      display: flex;
+      flex-direction: column;
+    }
+    .ph-head {
+      background: #15202b;
+      color: #fff;
+      padding: 0.8rem 0.9rem 0.7rem;
+    }
+    .ph-head .brand {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #d4a017;
+    }
+    .ph-head h3 { margin: 0.25rem 0 0; font-size: 1rem; }
+    .ph-head p { margin: 0.2rem 0 0; font-size: 0.72rem; color: #94a3b8; }
+    .ph-banner {
+      margin-top: 0.45rem;
+      padding: 0.25rem 0.55rem;
+      border-radius: 999px;
+      background: rgba(245, 197, 24, 0.18);
+      border: 1px solid rgba(245, 197, 24, 0.45);
+      color: #ffe9a0;
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-align: center;
+    }
+    .ph-body { padding: 0.75rem; flex: 1; }
+    .step-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 0.9rem;
+      border: 2px solid #3949AB;
+      box-shadow: 0 4px 14px rgba(21,32,43,0.08);
+      position: relative;
+    }
+    .badge {
+      position: absolute;
+      top: 0.7rem;
+      right: 0.7rem;
+      font-size: 0.62rem;
+      font-weight: 800;
+      background: #c9a227;
+      color: #fff;
+      padding: 0.2rem 0.45rem;
+      border-radius: 6px;
+    }
+    .step-card h4 { margin: 0 0 0.35rem; color: #3949AB; font-size: 1.05rem; }
+    .step-card .desc { margin: 0 0 0.55rem; font-size: 0.75rem; color: #607080; font-weight: 600; }
+    .step-card input {
+      width: 100%;
+      border: 2px solid #3949AB;
+      border-radius: 10px;
+      padding: 0.75rem 0.8rem;
+      font: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .step-card input.ok { border-color: #22c55e; }
+    .step-card input.bad { border-color: #ef4444; }
+    .actions { display: flex; gap: 0.4rem; margin-top: 0.55rem; }
+    .actions button, .btn-use {
+      flex: 1;
+      border: 0;
+      border-radius: 10px;
+      padding: 0.7rem 0.6rem;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-scan { background: #00897B; color: #fff; }
+    .btn-use { background: #243447; color: #fff; width: 100%; margin-top: 0.45rem; }
+    .pname {
+      margin-top: 0.65rem;
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #15202b;
+      line-height: 1.35;
+      min-height: 2.4em;
+    }
+    .pname.muted { color: #90A4AE; }
+    .pname.ok { color: #15803d; }
+    .pname.bad { color: #b91c1c; }
+    .msg {
+      margin-top: 0.55rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #607080;
+      line-height: 1.35;
+    }
+    .ph-nav {
+      display: flex;
+      gap: 0.35rem;
+      padding: 0.65rem;
+      background: #fff;
+      border-top: 1px solid #dde3ea;
+    }
+    .ph-nav button {
+      flex: 1;
+      border: 0;
+      border-radius: 10px;
+      padding: 0.65rem 0.4rem;
+      font: inherit;
+      font-size: 0.72rem;
+      font-weight: 800;
+      background: #eceff1;
+      color: #455A64;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="banner">Mockup · Inventario RF · Paso 2 Artículo</div>
+    <h1>Catálogo CODIGOS + validación de dígitos</h1>
+    <p class="lead">
+      Al leer el artículo se muestra la <b>descripción</b> desde <code>CODIGOS.xlsx</code>.
+      Ya no se aceptan solo los últimos 4 dígitos: el código debe tener <b>más de 10 dígitos</b>,
+      o escribir <b>Vacia</b> si la ubicación está vacía.
+    </p>
+
+    <div class="split">
+      <section class="card">
+        <h2>Reglas propuestas</h2>
+        <div class="rules">
+          <div class="rule ok"><b>Catálogo:</b> busca en CODIGOS (código → nombre del producto) y muestra la descripción bajo el campo.</div>
+          <div class="rule ok"><b>Válido:</b> código con más de 10 dígitos (ej. 11+), con o sin prefijo N.</div>
+          <div class="rule ok"><b>Vacía:</b> permitir exactamente la palabra <b>Vacia</b> (sin tilde), mayúsculas/minúsculas.</div>
+          <div class="rule bad"><b>Rechazar:</b> últimos 4 dígitos, códigos cortos (≤10 dígitos) y texto distinto de Vacia.</div>
+        </div>
+        <div class="meta">
+          <div><span>Catálogo</span><strong id="mCount">—</strong></div>
+          <div><span>Estado</span><strong id="mStatus">Cargando</strong></div>
+          <div><span>Demo</span><strong>Paso 2</strong></div>
+        </div>
+        <div class="samples">
+          <button type="button" data-demo="764009045577">Código OK</button>
+          <button type="button" data-demo="N17501001407503">Con N</button>
+          <button type="button" data-demo="4557">Solo 4 (rechazar)</button>
+          <button type="button" data-demo="1234567890">10 dígitos (rechazar)</button>
+          <button type="button" data-demo="Vacia">Vacia</button>
+        </div>
+        <p class="note" id="note">
+          Fuente: data/inv-codigos-catalog.json exportado desde CODIGOS.xlsx.
+          Este mockup no publica a producción; diga <b>aprobado</b> para implementar en Inventario RF.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Celular · 2 · Artículo</h2>
+        <div class="phone">
+          <div class="ph-head">
+            <div class="brand" id="phLoc">P020-012-2</div>
+            <h3>2/5 Artículo</h3>
+            <p>Escanee o escriba el artículo</p>
+            <div class="ph-banner">P020-012-2 · RACK SENCILLO (1 vuelta) · Lectura 1 de 1</div>
+          </div>
+          <div class="ph-body">
+            <div class="step-card">
+              <span class="badge">AHORA</span>
+              <h4>2 · Artículo</h4>
+              <p class="desc">Más de 10 dígitos · o escriba Vacia si está vacía</p>
+              <input id="vCode" inputmode="text" autocomplete="off" placeholder="Código de barras o Vacia" />
+              <div class="actions">
+                <button type="button" class="btn-scan" id="btnScan">📷 Escanear</button>
+              </div>
+              <button type="button" class="btn-use" id="btnUse">Usar código</button>
+              <div class="pname muted" id="vName">Descripción del producto</div>
+              <p class="msg" id="vMsg">Escriba o escanee un código del catálogo.</p>
+            </div>
+          </div>
+          <div class="ph-nav">
+            <button type="button">◀ ATRÁS</button>
+            <button type="button" id="btnNext">SIGUIENTE ▶</button>
+            <button type="button">Salir</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    var catalog = { byDigits: {}, byCode: {}, items: [] };
+    var $ = function (id) { return document.getElementById(id); };
+
+    function digitsOnly(s) {
+      return String(s || '').replace(/^N/i, '').replace(/\D/g, '');
+    }
+
+    function isVacia(s) {
+      return String(s || '').trim().toLowerCase() === 'vacia';
+    }
+
+    function validateArticle(raw) {
+      var value = String(raw || '').trim();
+      if (!value) {
+        return { ok: false, message: 'Escanee o escriba el artículo', name: '' };
+      }
+      if (isVacia(value)) {
+        return { ok: true, vacia: true, code: 'Vacia', name: 'UBICACIÓN VACÍA', message: 'OK · ubicación marcada como vacía' };
+      }
+      var digits = digitsOnly(value);
+      if (digits.length <= 10) {
+        return {
+          ok: false,
+          message: digits.length <= 4
+            ? 'No se aceptan solo los últimos 4 dígitos. Digite más de 10.'
+            : 'El código debe tener más de 10 dígitos (o escriba Vacia).',
+          name: ''
+        };
+      }
+      var name =
+        catalog.byCode[value.toUpperCase()] ||
+        catalog.byDigits[digits] ||
+        catalog.byCode[('N' + digits).toUpperCase()] ||
+        '';
+      if (!name) {
+        return {
+          ok: false,
+          message: 'Código no encontrado en CODIGOS.xlsx',
+          name: 'Sin descripción',
+          code: value,
+          digits: digits
+        };
+      }
+      return {
+        ok: true,
+        code: value,
+        digits: digits,
+        name: name,
+        message: 'OK · descripción cargada del catálogo'
+      };
+    }
+
+    function renderValidation(live) {
+      var res = validateArticle($('vCode').value);
+      var input = $('vCode');
+      var name = $('vName');
+      var msg = $('vMsg');
+      input.className = !String($('vCode').value || '').trim() ? '' : (res.ok ? 'ok' : 'bad');
+      if (!String($('vCode').value || '').trim()) {
+        name.className = 'pname muted';
+        name.textContent = 'Descripción del producto';
+        msg.textContent = 'Escriba o escanee un código del catálogo.';
+        msg.style.color = '#607080';
+        return res;
+      }
+      name.className = 'pname ' + (res.ok ? 'ok' : 'bad');
+      name.textContent = res.name || '—';
+      msg.textContent = res.message;
+      msg.style.color = res.ok ? '#2e7d32' : '#c62828';
+      if (live && res.ok && !res.vacia) {
+        /* preview only */
+      }
+      return res;
+    }
+
+    function loadCatalog() {
+      return fetch('../data/inv-codigos-catalog.json?v=1')
+        .then(function (r) {
+          if (!r.ok) throw new Error('No se pudo cargar catálogo');
+          return r.json();
+        })
+        .then(function (data) {
+          catalog.items = data.items || [];
+          catalog.byDigits = {};
+          catalog.byCode = {};
+          catalog.items.forEach(function (it) {
+            var code = String(it.code || '').trim();
+            var name = String(it.name || '').trim();
+            var dig = String(it.digits || digitsOnly(code));
+            if (!code || !name) return;
+            catalog.byCode[code.toUpperCase()] = name;
+            catalog.byDigits[dig] = name;
+            catalog.byCode[('N' + dig).toUpperCase()] = name;
+          });
+          $('mCount').textContent = String(catalog.items.length);
+          $('mStatus').textContent = 'Listo';
+          $('note').textContent =
+            'Fuente: data/inv-codigos-catalog.json (' + catalog.items.length +
+            ' artículos desde CODIGOS.xlsx). Mockup listo — diga aprobado para publicar en Inventario RF.';
+        })
+        .catch(function (err) {
+          $('mStatus').textContent = 'Error';
+          $('note').textContent = (err && err.message) || 'Error al cargar catálogo';
+          $('note').style.color = '#fecaca';
+        });
+    }
+
+    $('vCode').addEventListener('input', function () { renderValidation(true); });
+    $('btnUse').addEventListener('click', function () {
+      var res = renderValidation(false);
+      if (!res.ok) return;
+      $('vMsg').textContent = res.vacia
+        ? 'Listo para continuar · Vacia'
+        : 'Listo para continuar · ' + res.name;
+    });
+    $('btnNext').addEventListener('click', function () {
+      var res = renderValidation(false);
+      if (!res.ok) {
+        alert(res.message);
+        return;
+      }
+      alert('Mock: pasaría al siguiente paso con «' + (res.vacia ? 'Vacia' : res.name) + '»');
+    });
+    $('btnScan').addEventListener('click', function () {
+      $('vCode').value = '764009045577';
+      renderValidation(true);
+    });
+    document.querySelectorAll('[data-demo]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        $('vCode').value = btn.getAttribute('data-demo') || '';
+        renderValidation(true);
+      });
+    });
+
+    loadCatalog();
+  </script>
+</body>
+</html>

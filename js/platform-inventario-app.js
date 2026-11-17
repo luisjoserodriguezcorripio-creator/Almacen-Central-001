@@ -1101,26 +1101,51 @@
         toast('Ubicación OK · Conteo #' + state.countRound + extra, 'ok');
       });
     } else if (state.step === 2) {
+      var artCheck = CORE.validateArticleInput(code);
+      if (!artCheck.ok) {
+        toast(artCheck.message || 'Artículo no válido', 'err');
+        return;
+      }
+      if (artCheck.vacia) {
+        f.prod = 'Vacia';
+        f.prodName = 'UBICACIÓN VACÍA';
+        f.expectedQty = 0;
+        state.catalogMat = '';
+        if ($('invPname')) $('invPname').textContent = f.prodName;
+        state.flowIndex = state.flowSteps.indexOf(state.mode === 'pickup' ? 4 : 3);
+        state.step = state.mode === 'pickup' ? 4 : 3;
+        applyCountStep();
+        toast('Artículo: Vacia', 'ok');
+        return;
+      }
       SYNC.lookupPairCode(code).then(function (pair) {
         if (pair) {
           f.mat = code;
           f.prod = pair.articleCode;
           f.prodName = pair.productName;
+          if ($('invPname')) $('invPname').textContent = f.prodName || '—';
           state.flowIndex = state.flowSteps.indexOf(4);
-          state.step = state.mode === 'pickup' ? 4 : 4;
+          state.step = 4;
           applyCountStep();
           toast('Matrícula detectada → vencimiento', 'ok');
           return;
         }
         return SYNC.lookupCatalog(code, f.loc).then(function (cat) {
+          if (!cat || !cat.name) {
+            toast('Código no encontrado en CODIGOS', 'err');
+            f.prodName = '';
+            if ($('invPname')) $('invPname').textContent = 'Sin descripción';
+            return;
+          }
           f.prod = code;
-          f.prodName = cat ? cat.name : 'Producto';
-          state.catalogMat = cat ? cat.matricula : '';
-          if (cat && cat.expectedQty) f.expectedQty = cat.expectedQty;
+          f.prodName = cat.name;
+          state.catalogMat = cat.matricula || '';
+          if (cat.expectedQty) f.expectedQty = cat.expectedQty;
+          if ($('invPname')) $('invPname').textContent = f.prodName;
           state.flowIndex = state.flowSteps.indexOf(state.mode === 'pickup' ? 4 : 3);
           state.step = state.mode === 'pickup' ? 4 : 3;
           applyCountStep();
-          toast('Artículo OK', 'ok');
+          toast('Artículo OK · ' + cat.name, 'ok');
         });
       });
     } else if (state.step === 3) {
@@ -1259,29 +1284,40 @@
 
   function exportCsv() {
     SYNC.fetchEntries().then(function (list) {
-      var csv = CORE.entriesToCsv(list.map(function (e) {
-        return {
-          created_at: e.createdAt,
-          user_id: e.userId,
-          zone: e.zone,
-          warehouse: e.warehouse,
-          barcode: e.barcode,
-          matricula: e.matricula,
-          expiration_date: e.expirationDate,
-          product_name: e.productName,
-          unit: e.unit,
-          quantity: e.quantity,
-          expected_qty: e.expectedQty,
-          count_mode: e.countMode,
-          count_number: e.countNumber
-        };
-      }));
-      var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'inventario-dc-' + new Date().toISOString().slice(0, 10) + '.csv';
-      a.click();
-      toast('CSV descargado', 'ok');
+      return SYNC.ensureCodigosCatalog().then(function () {
+        return Promise.all((list || []).map(function (e) {
+          var base = {
+            created_at: e.createdAt,
+            user_id: e.userId,
+            zone: e.zone,
+            warehouse: e.warehouse,
+            barcode: e.barcode,
+            matricula: e.matricula,
+            expiration_date: e.expirationDate,
+            product_name: e.productName || '',
+            unit: e.unit,
+            quantity: e.quantity,
+            expected_qty: e.expectedQty,
+            count_mode: e.countMode,
+            count_number: e.countNumber
+          };
+          if (base.product_name) return base;
+          return SYNC.lookupCatalog(e.barcode || '', e.zone || '').then(function (cat) {
+            if (cat && cat.name) base.product_name = cat.name;
+            return base;
+          });
+        }));
+      }).then(function (rows) {
+        var csv = CORE.entriesToCsv(rows);
+        var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'inventario-dc-' + new Date().toISOString().slice(0, 10) + '.csv';
+        a.click();
+        toast('CSV descargado (SKU + Descripción)', 'ok');
+      });
+    }).catch(function () {
+      toast('No se pudo exportar', 'err');
     });
   }
 
@@ -1489,6 +1525,53 @@
     if ($('invQty')) {
       $('invQty').addEventListener('input', syncQtyFromInput);
       $('invQty').addEventListener('change', syncQtyFromInput);
+    }
+    if ($('invProd')) {
+      var prodPreviewTimer = null;
+      $('invProd').addEventListener('input', function () {
+        var raw = String($('invProd').value || '').trim();
+        state.fields.prod = raw;
+        if (prodPreviewTimer) global.clearTimeout(prodPreviewTimer);
+        if (!raw) {
+          state.fields.prodName = '';
+          if ($('invPname')) {
+            $('invPname').textContent = '—';
+            $('invPname').className = 'inv-prod-name';
+          }
+          return;
+        }
+        if (CORE.isVaciaArticle(raw)) {
+          state.fields.prodName = 'UBICACIÓN VACÍA';
+          if ($('invPname')) {
+            $('invPname').textContent = state.fields.prodName;
+            $('invPname').className = 'inv-prod-name inv-prod-name--ok';
+          }
+          return;
+        }
+        var chk = CORE.validateArticleInput(raw);
+        if (!chk.ok) {
+          if ($('invPname')) {
+            $('invPname').textContent = chk.message;
+            $('invPname').className = 'inv-prod-name inv-prod-name--bad';
+          }
+          return;
+        }
+        prodPreviewTimer = global.setTimeout(function () {
+          SYNC.lookupCatalog(raw, state.fields.loc).then(function (cat) {
+            if (String($('invProd').value || '').trim() !== raw) return;
+            if (cat && cat.name) {
+              state.fields.prodName = cat.name;
+              if ($('invPname')) {
+                $('invPname').textContent = cat.name;
+                $('invPname').className = 'inv-prod-name inv-prod-name--ok';
+              }
+            } else if ($('invPname')) {
+              $('invPname').textContent = 'Código no encontrado en CODIGOS';
+              $('invPname').className = 'inv-prod-name inv-prod-name--bad';
+            }
+          });
+        }, 220);
+      });
     }
 
     bindAll('[data-inv-nav="admin"]', function () { stopCamera(); setView('admin'); });

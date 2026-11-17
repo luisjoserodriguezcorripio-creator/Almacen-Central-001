@@ -108,6 +108,47 @@
     return c.replace(/^0+(?=\d)/, function (m) { return m.length > 1 ? '' : m; });
   }
 
+  function articleDigits(s) {
+    return String(s || '').replace(/^N/i, '').replace(/\D/g, '');
+  }
+
+  function isVaciaArticle(s) {
+    return String(s || '').trim().toLowerCase() === 'vacia';
+  }
+
+  /** Artículo: más de 10 dígitos, o la palabra Vacia. No se aceptan 4 dígitos. */
+  function validateArticleInput(raw) {
+    var value = String(raw || '').trim();
+    if (!value) {
+      return { ok: false, message: 'Escanee o escriba el artículo' };
+    }
+    if (isVaciaArticle(value)) {
+      return {
+        ok: true,
+        vacia: true,
+        code: 'Vacia',
+        digits: '',
+        message: 'Ubicación vacía'
+      };
+    }
+    var digits = articleDigits(value);
+    if (digits.length <= 10) {
+      return {
+        ok: false,
+        message: digits.length <= 4
+          ? 'No se aceptan solo los últimos 4 dígitos. Digite más de 10.'
+          : 'El código debe tener más de 10 dígitos (o escriba Vacia).'
+      };
+    }
+    return {
+      ok: true,
+      vacia: false,
+      code: value,
+      digits: digits,
+      message: 'Código válido'
+    };
+  }
+
   function directedLineKey(row) {
     return normLoc(row && row.location) + '|' + normBarcode(row && row.barcode);
   }
@@ -198,7 +239,7 @@
 
   function entriesToCsv(entries) {
     var lines = [
-      'Fecha;Usuario;Ubicación;Almacén;Código;Matrícula;Vencimiento;Producto;Empaque;Cantidad;Sistema;Diferencia;Modo;Conteo#'
+      'Fecha;Usuario;Ubicación;Almacén;SKU;Descripción;Matrícula;Vencimiento;Empaque;Cantidad;Sistema;Diferencia;Modo;Conteo#'
     ];
     (entries || []).forEach(function (e) {
       var diff = (e.quantity || 0) - (parseFloat(e.expected_qty) || 0);
@@ -208,9 +249,9 @@
         e.zone || '',
         e.warehouse || WAREHOUSE,
         e.barcode || '',
+        e.product_name || e.descripcion || '',
         e.matricula || '',
         e.expiration_date || '',
-        e.product_name || '',
         e.unit || 'CJ',
         e.quantity || 0,
         e.expected_qty || 0,
@@ -239,6 +280,9 @@
     rackPassBanner: rackPassBanner,
     normLoc: normLoc,
     normBarcode: normBarcode,
+    articleDigits: articleDigits,
+    isVaciaArticle: isVaciaArticle,
+    validateArticleInput: validateArticleInput,
     directedLineKey: directedLineKey,
     flowStepsForMode: flowStepsForMode,
     buildEntryPayload: buildEntryPayload,

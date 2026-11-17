@@ -8,6 +8,9 @@
   var CACHE_ENTRIES = 'inv_dc_entries_cache';
   var CACHE_DIRECTED = 'inv_dc_directed_plan_v1';
   var CACHE_DIRECTED_META = 'inv_dc_directed_meta_v1';
+  var CACHE_CODIGOS = 'inv_dc_codigos_catalog_v1';
+  var codigosIndex = null;
+  var codigosLoadPromise = null;
   var DEFAULT_USERS = [
     { employeeId: '51192', displayName: 'Jansel Castro', role: 'COUNT', active: true, adminPin: '' },
     { employeeId: '51963', displayName: 'Luis José Rodríguez Ruíz', role: 'COUNT', active: true, adminPin: '' },
@@ -184,24 +187,100 @@
     });
   }
 
-  function lookupCatalog(barcode, location) {
-    var client = sb();
-    if (!client || !barcode) return Promise.resolve(null);
-    var q = client.from('inv_catalog')
-      .select('*')
-      .eq('article_code', String(barcode).trim())
-      .limit(5);
-    if (location) q = q.eq('location', String(location).trim());
-    return q.then(function (res) {
-      if (res.error || !res.data || !res.data.length) return null;
-      var row = res.data[0];
+  function buildCodigosIndex(payload) {
+    var byCode = {};
+    var byDigits = {};
+    var items = (payload && payload.items) || [];
+    var C = core();
+    items.forEach(function (it) {
+      var code = String(it.code || '').trim();
+      var name = String(it.name || '').trim();
+      if (!code || !name) return;
+      var dig = String(it.digits || (C && C.articleDigits ? C.articleDigits(code) : code.replace(/^N/i, '').replace(/\D/g, '')));
+      byCode[code.toUpperCase()] = name;
+      if (dig) {
+        byDigits[dig] = name;
+        byCode[('N' + dig).toUpperCase()] = name;
+      }
+    });
+    return { byCode: byCode, byDigits: byDigits, count: items.length, meta: payload || {} };
+  }
+
+  function ensureCodigosCatalog() {
+    if (codigosIndex) return Promise.resolve(codigosIndex);
+    if (codigosLoadPromise) return codigosLoadPromise;
+    var cached = readCache(CACHE_CODIGOS, null);
+    if (cached && cached.items && cached.items.length) {
+      codigosIndex = buildCodigosIndex(cached);
+    }
+    codigosLoadPromise = global.fetch('data/inv-codigos-catalog.json?v=1', { cache: 'no-store' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('Catálogo CODIGOS no disponible');
+        return res.json();
+      })
+      .then(function (data) {
+        writeCache(CACHE_CODIGOS, data);
+        codigosIndex = buildCodigosIndex(data);
+        notify('catalog', { count: codigosIndex.count });
+        return codigosIndex;
+      })
+      .catch(function () {
+        if (!codigosIndex && cached && cached.items) {
+          codigosIndex = buildCodigosIndex(cached);
+        }
+        return codigosIndex || { byCode: {}, byDigits: {}, count: 0, meta: {} };
+      });
+    return codigosLoadPromise;
+  }
+
+  function lookupCodigosLocal(barcode) {
+    return ensureCodigosCatalog().then(function (idx) {
+      if (!barcode || !idx) return null;
+      var C = core();
+      if (C && C.isVaciaArticle && C.isVaciaArticle(barcode)) {
+        return { name: 'UBICACIÓN VACÍA', matricula: '', expectedQty: 0, unit: 'CJ', vacia: true, source: 'vacia' };
+      }
+      var raw = String(barcode || '').trim();
+      var dig = C && C.articleDigits ? C.articleDigits(raw) : raw.replace(/^N/i, '').replace(/\D/g, '');
+      var name =
+        idx.byCode[raw.toUpperCase()] ||
+        idx.byDigits[dig] ||
+        idx.byCode[('N' + dig).toUpperCase()] ||
+        '';
+      if (!name) return null;
       return {
-        name: row.product_name,
-        matricula: row.matricula || '',
-        expectedQty: parseFloat(row.qty_available) || 0,
-        unit: row.unit || 'CJ'
+        name: name,
+        matricula: '',
+        expectedQty: 0,
+        unit: 'CJ',
+        source: 'codigos'
       };
-    }).catch(function () { return null; });
+    });
+  }
+
+  function lookupCatalog(barcode, location) {
+    if (!barcode) return Promise.resolve(null);
+    return lookupCodigosLocal(barcode).then(function (local) {
+      if (local) return local;
+      var client = sb();
+      if (!client) return null;
+      var q = client.from('inv_catalog')
+        .select('*')
+        .eq('article_code', String(barcode).trim())
+        .limit(5);
+      if (location) q = q.eq('location', String(location).trim());
+      return q.then(function (res) {
+        if (res.error || !res.data || !res.data.length) return null;
+        var row = res.data[0];
+        return {
+          name: row.product_name,
+          matricula: row.matricula || '',
+          expectedQty: parseFloat(row.qty_available) || 0,
+          unit: row.unit || 'CJ',
+          source: 'cloud'
+        };
+      }).catch(function () { return null; });
+    });
   }
 
   function lookupPairCode(code) {
@@ -452,8 +531,10 @@
     return (global.PlatformSupabase ? global.PlatformSupabase.init() : Promise.resolve(false))
       .then(function () {
         bindRealtime();
-        return fetchUsers().then(function (users) {
-          return syncAdminPinToCloud().then(function () { return users; });
+        return ensureCodigosCatalog().then(function () {
+          return fetchUsers().then(function (users) {
+            return syncAdminPinToCloud().then(function () { return users; });
+          });
         });
       });
   }
@@ -463,6 +544,8 @@
     onChange: onChange,
     fetchUsers: fetchUsers,
     verifyLogin: verifyLogin,
+    ensureCodigosCatalog: ensureCodigosCatalog,
+    lookupCodigosLocal: lookupCodigosLocal,
     lookupCatalog: lookupCatalog,
     lookupPairCode: lookupPairCode,
     fetchEntries: fetchEntries,

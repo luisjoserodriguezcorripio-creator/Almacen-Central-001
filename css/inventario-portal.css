@@ -436,6 +436,8 @@ body.inv-dash-view {
   margin-top: 10px;
   line-height: 1.35;
 }
+.inv-prod-name--ok { color: #15803d; }
+.inv-prod-name--bad { color: #b91c1c; font-size: var(--inv-fs-sm); }
 
 .inv-swipe-zone {
   flex-shrink: 0;

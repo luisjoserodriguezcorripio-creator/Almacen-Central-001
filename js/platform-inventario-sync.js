@@ -352,6 +352,30 @@
       });
   }
 
+  function deleteEntryById(id) {
+    id = String(id || '').trim();
+    if (!id) return Promise.reject(new Error('Falta id'));
+    var client = sb();
+    if (!client) {
+      var local = readCache(CACHE_ENTRIES, []).filter(function (e) {
+        return String(e.id) !== id;
+      });
+      writeCache(CACHE_ENTRIES, local);
+      notify('sync', local);
+      return Promise.resolve(true);
+    }
+    return client.from('inv_entries').delete().eq('id', id)
+      .then(function (res) {
+        if (res.error) throw res.error;
+        var local = readCache(CACHE_ENTRIES, []).filter(function (e) {
+          return String(e.id) !== id;
+        });
+        writeCache(CACHE_ENTRIES, local);
+        notify('sync', local);
+        return true;
+      });
+  }
+
   function deleteAllEntries() {
     var client = sb();
     if (!client) {
@@ -551,6 +575,7 @@
     fetchEntries: fetchEntries,
     countRoundForLocation: countRoundForLocation,
     insertEntry: insertEntry,
+    deleteEntryById: deleteEntryById,
     deleteAllEntries: deleteAllEntries,
     getDirectedPlan: getDirectedPlan,
     publishDirectedPlan: publishDirectedPlan,

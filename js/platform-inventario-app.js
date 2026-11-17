@@ -1465,9 +1465,14 @@
       state.entries = list;
       var html = list.length ? list.map(function (e) {
         var m = CORE.entryMeta({ zone: e.zone, count_number: e.countNumber, rack_passes_total: e.rackPassesTotal });
-        return '<article class="inv-record-item">' +
-          '<div class="inv-record-loc">' + esc(e.zone) + '</div>' +
+        var id = esc(e.id || '');
+        return '<article class="inv-record-item" data-entry-id="' + id + '">' +
+          '<div class="inv-record-top">' +
+            '<div class="inv-record-loc">' + esc(e.zone) + '</div>' +
+            '<button type="button" class="inv-record-del" data-inv-del="' + id + '" aria-label="Borrar registro">Borrar</button>' +
+          '</div>' +
           '<div class="inv-record-prod">' + esc(e.productName || e.barcode) + '</div>' +
+          '<div class="inv-record-code">' + esc(e.barcode || '—') + '</div>' +
           '<div class="inv-record-cycle' + (m.re ? ' re' : '') + '">' + esc(m.label) + '</div>' +
           '<div class="inv-record-meta">' + esc(e.quantity + ' ' + (e.unit || 'CJ')) + ' · ' +
           esc(e.userId) + ' · ' + esc(CORE.formatDateTime(e.createdAt)) +
@@ -1475,6 +1480,26 @@
           '</div></article>';
       }).join('') : '<p class="inv-empty">Sin registros aún.</p>';
       if ($('invRecordsList')) $('invRecordsList').innerHTML = html;
+    });
+  }
+
+  function confirmDeleteOne(id) {
+    id = String(id || '').trim();
+    if (!id) {
+      toast('Registro sin id', 'err');
+      return;
+    }
+    var entry = (state.entries || []).filter(function (e) { return String(e.id) === id; })[0];
+    var label = entry
+      ? ((entry.zone || '') + ' · ' + (entry.barcode || '') + ' · ' + (entry.productName || ''))
+      : id;
+    if (!global.confirm('¿Desea borrar este registro con error?\n\n' + label + '\n\nAceptar = Sí · Cancelar = No')) return;
+    SYNC.deleteEntryById(id).then(function () {
+      toast('Registro eliminado', 'ok');
+      renderRecords();
+      renderAdminStats();
+    }).catch(function () {
+      toast('Error al eliminar el registro', 'err');
     });
   }
 
@@ -1783,6 +1808,15 @@
 
     bindAll('[data-inv-action="export"]', exportCsv);
     bindAll('[data-inv-action="delete-all"]', confirmDeleteAll);
+    if ($('invRecordsList') && !$('invRecordsList').dataset.delBound) {
+      $('invRecordsList').dataset.delBound = '1';
+      $('invRecordsList').addEventListener('click', function (ev) {
+        var btn = ev.target && ev.target.closest ? ev.target.closest('[data-inv-del]') : null;
+        if (!btn) return;
+        ev.preventDefault();
+        confirmDeleteOne(btn.getAttribute('data-inv-del'));
+      });
+    }
     $('invBtnTestSb') && $('invBtnTestSb').addEventListener('click', testSupabase);
     $('invBtnSetupSb') && $('invBtnSetupSb').addEventListener('click', showSupabaseSetup);
 

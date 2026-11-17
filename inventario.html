@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="css/auth-portals-layout.css?v=11">
   <link rel="stylesheet" href="css/dc-brand.css?v=11">
   <link rel="stylesheet" href="css/ac001-brand.css?v=1">
-  <link rel="stylesheet" href="css/inventario-portal.css?v=22">
+  <link rel="stylesheet" href="css/inventario-portal.css?v=23">
   <link rel="stylesheet" href="css/inventario-responsive.css?v=6">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -437,6 +437,15 @@
 
   <div class="inv-toast" id="invToast" role="status" aria-live="polite"></div>
 
+  <div class="inv-next-overlay" id="invNextLocOverlay" hidden>
+    <div class="inv-next-sheet" role="dialog" aria-modal="true" aria-labelledby="invNextLocTitle">
+      <h3 id="invNextLocTitle">¿Cómo continúa el conteo?</h3>
+      <p class="inv-next-sub" id="invNextLocSub">Elija el siguiente paso</p>
+      <button type="button" class="inv-btn inv-btn-primary" id="invNextLocUp">Continuar al próximo nivel (arriba)</button>
+      <button type="button" class="inv-btn inv-btn-scan" id="invNextLocNew">Digitar nueva ubicación</button>
+    </div>
+  </div>
+
   <div class="inv-cam-overlay" id="invCamOverlay" hidden>
     <div class="inv-cam-sheet" role="dialog" aria-modal="true" aria-labelledby="invCamTitle">
       <div class="inv-cam-head">
@@ -462,6 +471,6 @@
   <script src="js/platform-inventario-conciliacion.js?v=2"></script>
   <script src="js/platform-inventario-core.js?v=10"></script>
   <script src="js/platform-inventario-sync.js?v=8"></script>
-  <script src="js/platform-inventario-app.js?v=21"></script>
+  <script src="js/platform-inventario-app.js?v=22"></script>
 </body>
 </html>

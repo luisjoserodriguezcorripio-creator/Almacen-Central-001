@@ -33,7 +33,9 @@
     directedMeta: {},
     directedDraft: [],
     directedActiveId: null,
-    dirCamTarget: null
+    dirCamTarget: null,
+    pendingNextLoc: '',
+    keepGoingAfterChoice: false
   };
 
   var CAM_HINTS = {
@@ -1231,52 +1233,110 @@
       f.prodName = '';
       f.expectedQty = 0;
       state.catalogMat = '';
+      renderAdminStats();
 
-      // Conteo de ubicaciones: tras guardar, subir de nivel 2→3→4→5
-      var advanced = null;
-      if (state.mode === 'pallet') {
-        advanced = CORE.nextLocationLevel(savedLoc, 5);
-      }
-
-      function goArticleStep() {
+      function goArticleStep(keepGoing) {
         state.flowIndex = state.flowSteps.indexOf(2);
         state.step = 2;
         applyCountStep();
-        renderAdminStats();
-        if (opts.keepGoing && isPhoneViewport() && state.continuous) {
+        if (keepGoing && isPhoneViewport() && state.continuous) {
           global.setTimeout(function () { openCamera('prod'); }, 350);
         }
       }
 
-      if (advanced) {
-        f.loc = advanced;
-        return SYNC.countRoundForLocation(advanced, '_').then(function (n) {
-          state.countRound = n;
-          toast('Siguiente ubicación · ' + advanced, 'ok');
-          goArticleStep();
-        }).catch(function () {
-          state.countRound = 1;
-          toast('Siguiente ubicación · ' + advanced, 'ok');
-          goArticleStep();
-        });
-      }
-
-      if (state.mode === 'pallet' && CORE.levelFromLocation(savedLoc) === '5') {
+      function goNewLocationStep() {
         f.loc = '';
         state.countRound = 1;
+        state.pendingNextLoc = '';
         state.flowIndex = state.flowSteps.indexOf(1);
         state.step = 1;
         applyCountStep();
-        renderAdminStats();
-        toast('Nivel 5 listo · escanee la próxima ubicación', 'ok');
+        toast('Digite o escanee la nueva ubicación', 'ok');
+      }
+
+      // Conteo de ubicaciones: preguntar si sube de nivel o digita otra
+      if (state.mode === 'pallet') {
+        var advanced = CORE.nextLocationLevel(savedLoc, 5);
+        state.keepGoingAfterChoice = !!(opts.keepGoing && state.continuous);
+        if (advanced) {
+          state.pendingNextLoc = advanced;
+          showNextLocationChoice(savedLoc, advanced);
+          return;
+        }
+        // Ya en nivel 5 (o sin siguiente): solo nueva ubicación
+        goNewLocationStep();
         return;
       }
 
       // Pickup / otros: mantener ubicación y pedir siguiente artículo
-      goArticleStep();
+      goArticleStep(opts.keepGoing);
     }).catch(function () {
       toast('Error al guardar en la nube', 'err');
     });
+  }
+
+  function showNextLocationChoice(currentLoc, nextLoc) {
+    var overlay = $('invNextLocOverlay');
+    var sub = $('invNextLocSub');
+    var btnUp = $('invNextLocUp');
+    if (sub) {
+      sub.textContent = 'Actual: ' + currentLoc + ' · Próximo arriba: ' + nextLoc;
+    }
+    if (btnUp) {
+      btnUp.textContent = 'Continuar al próximo nivel (arriba) · ' + nextLoc;
+      btnUp.hidden = !nextLoc;
+    }
+    if (overlay) overlay.hidden = false;
+  }
+
+  function hideNextLocationChoice() {
+    var overlay = $('invNextLocOverlay');
+    if (overlay) overlay.hidden = true;
+  }
+
+  function chooseNextLevelUp() {
+    var nextLoc = state.pendingNextLoc;
+    hideNextLocationChoice();
+    if (!nextLoc) {
+      state.fields.loc = '';
+      state.countRound = 1;
+      state.flowIndex = state.flowSteps.indexOf(1);
+      state.step = 1;
+      applyCountStep();
+      return;
+    }
+    state.fields.loc = nextLoc;
+    var keepGoing = state.keepGoingAfterChoice;
+    state.keepGoingAfterChoice = false;
+    state.pendingNextLoc = '';
+    SYNC.countRoundForLocation(nextLoc, '_').then(function (n) {
+      state.countRound = n;
+      state.flowIndex = state.flowSteps.indexOf(2);
+      state.step = 2;
+      applyCountStep();
+      toast('Siguiente nivel · ' + nextLoc, 'ok');
+      if (keepGoing && isPhoneViewport() && state.continuous) {
+        global.setTimeout(function () { openCamera('prod'); }, 350);
+      }
+    }).catch(function () {
+      state.countRound = 1;
+      state.flowIndex = state.flowSteps.indexOf(2);
+      state.step = 2;
+      applyCountStep();
+      toast('Siguiente nivel · ' + nextLoc, 'ok');
+    });
+  }
+
+  function chooseNewLocation() {
+    hideNextLocationChoice();
+    state.pendingNextLoc = '';
+    state.keepGoingAfterChoice = false;
+    state.fields.loc = '';
+    state.countRound = 1;
+    state.flowIndex = state.flowSteps.indexOf(1);
+    state.step = 1;
+    applyCountStep();
+    toast('Digite o escanee la nueva ubicación', 'ok');
   }
 
   /* ── Admin / Records ── */
@@ -1547,6 +1607,8 @@
     $('invBtnQtyUnit') && $('invBtnQtyUnit').addEventListener('click', function () { setPickupUnit('unit'); });
     $('invBtnOmitMat') && $('invBtnOmitMat').addEventListener('click', omitMatricula);
     $('invBtnOmitExp') && $('invBtnOmitExp').addEventListener('click', omitVencimiento);
+    $('invNextLocUp') && $('invNextLocUp').addEventListener('click', chooseNextLevelUp);
+    $('invNextLocNew') && $('invNextLocNew').addEventListener('click', chooseNewLocation);
     if ($('invExp')) {
       $('invExp').addEventListener('change', function () {
         syncExpFromInput();

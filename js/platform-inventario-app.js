@@ -814,32 +814,39 @@
       $('invCtxName').title = f.prodName || '';
     }
 
-    var showUnitAsk = mode === 'pallet' && step === 5 && !choosing;
-    var unitReady = showUnitAsk && state.countUnitChosen;
-    if ($('invPickupQtyType')) $('invPickupQtyType').hidden = !showUnitAsk;
+    var onQtyStep = mode === 'pallet' && step === 5 && !choosing;
+    var askingUnit = onQtyStep && !state.countUnitChosen;
+    var unitReady = onQtyStep && state.countUnitChosen;
+    if ($('invPickupQtyType')) $('invPickupQtyType').hidden = !askingUnit;
+    if ($('invUnitChosen')) $('invUnitChosen').hidden = !unitReady;
+    if ($('invUnitChosenLabel')) {
+      $('invUnitChosenLabel').textContent = state.pickupUnit === 'unit' ? 'UNIDAD (UND)' : 'CAJA (CJ)';
+    }
+    if ($('invQtyEnter')) $('invQtyEnter').hidden = !unitReady;
     if ($('invQtyAmountLabel')) {
-      $('invQtyAmountLabel').hidden = !unitReady;
       $('invQtyAmountLabel').textContent = state.pickupUnit === 'unit'
         ? 'Ingrese la cantidad en UNIDADES'
         : 'Ingrese la cantidad en CAJAS';
     }
     if ($('invQty')) $('invQty').hidden = !unitReady;
     if ($('invQtyTitle')) {
-      $('invQtyTitle').textContent = !showUnitAsk
-        ? 'Cantidad'
+      $('invQtyTitle').textContent = askingUnit
+        ? '¿Caja o unidad?'
         : (unitReady
           ? (state.pickupUnit === 'unit' ? 'Cantidad (UND)' : 'Cantidad (CJ)')
-          : 'Tipo de conteo');
+          : 'Cantidad');
     }
     var btnBox = $('invBtnQtyBox');
     var btnUnit = $('invBtnQtyUnit');
     if (btnBox && btnUnit) {
-      btnBox.classList.toggle('is-selected', state.countUnitChosen && state.pickupUnit === 'box');
-      btnUnit.classList.toggle('is-selected', state.countUnitChosen && state.pickupUnit === 'unit');
+      btnBox.classList.toggle('is-selected', false);
+      btnUnit.classList.toggle('is-selected', false);
     }
+    if ($('invCard5')) $('invCard5').classList.toggle('inv-card--unit-ask', askingUnit);
 
     if ($('invPickupHint')) $('invPickupHint').hidden = mode !== 'pallet' || step !== 1;
-    $('invExcelBox').classList.toggle('show', step === 5 && unitReady);
+    // La franja superior ya muestra ubicación/código/descripción: no saturar con Vista Excel
+    $('invExcelBox').classList.remove('show');
 
     var rackBanner = $('invRackBanner');
     if (rackBanner) {
@@ -857,7 +864,7 @@
       }
     }
     var contWrap = $('invContinuousWrap');
-    if (contWrap) contWrap.hidden = false;
+    if (contWrap) contWrap.hidden = !!(mode === 'pallet' && step === 5 && !state.countUnitChosen);
     if ($('invContinuousMode')) $('invContinuousMode').checked = !!state.continuous;
 
     document.querySelectorAll('.inv-scan-actions').forEach(function (el) {
@@ -869,14 +876,16 @@
     var hint = $('invSwipeHint');
     var labelR = $('invSwipeLabelR');
     if (step === 5) {
-      if (!state.countUnitChosen) {
-        hint.textContent = 'Primero elija CAJA o UNIDAD';
+      if (mode === 'pallet' && !state.countUnitChosen) {
+        hint.textContent = 'Toque CAJA o UNIDAD para continuar';
         labelR.textContent = 'ELEGIR ▶';
+        if (swipeZone) swipeZone.hidden = true;
       } else {
         hint.textContent = state.continuous
           ? 'Modo continuo: escanee para GUARDAR y seguir · o deslice ▶'
           : 'Arrastre hacia la derecha ▶▶ para GUARDAR';
         labelR.textContent = 'GUARDAR ▶';
+        if (swipeZone && !choosing) swipeZone.hidden = false;
       }
     } else if (step === 3 || step === 4) {
       hint.textContent = 'Deslice ▶ para CONTINUAR · use el botón Omitir si no aplica';
@@ -1815,6 +1824,10 @@
 
     $('invBtnQtyBox') && $('invBtnQtyBox').addEventListener('click', function () { setPickupUnit('box'); });
     $('invBtnQtyUnit') && $('invBtnQtyUnit').addEventListener('click', function () { setPickupUnit('unit'); });
+    $('invUnitChange') && $('invUnitChange').addEventListener('click', function () {
+      state.countUnitChosen = false;
+      applyCountStep();
+    });
     $('invBtnOmitMat') && $('invBtnOmitMat').addEventListener('click', omitMatricula);
     $('invBtnOmitExp') && $('invBtnOmitExp').addEventListener('click', omitVencimiento);
     $('invNextLocUp') && $('invNextLocUp').addEventListener('click', chooseNextLevelUp);

@@ -33,7 +33,7 @@
   <link rel="stylesheet" href="css/auth-portals-layout.css?v=12">
   <link rel="stylesheet" href="css/dc-brand.css?v=11">
   <link rel="stylesheet" href="css/ac001-brand.css?v=1">
-  <link rel="stylesheet" href="css/inventario-portal.css?v=30">
+  <link rel="stylesheet" href="css/inventario-portal.css?v=31">
   <link rel="stylesheet" href="css/inventario-responsive.css?v=7">
   <link rel="stylesheet" href="css/perf-lite.css?v=18">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -367,8 +367,14 @@
               <button type="button" id="invBtnQtyUnit">UNIDAD (UND)</button>
             </div>
           </div>
-          <p id="invQtyAmountLabel" class="desc" hidden>Ingrese la cantidad</p>
-          <input class="inv-field inv-field--qty" id="invQty" type="number" value="1" style="border-color:#EF6C00" hidden>
+          <div class="inv-unit-chosen" id="invUnitChosen" hidden>
+            <span id="invUnitChosenLabel">CAJA (CJ)</span>
+            <button type="button" class="inv-unit-change" id="invUnitChange">Cambiar</button>
+          </div>
+          <div class="inv-qty-enter" id="invQtyEnter" hidden>
+            <p id="invQtyAmountLabel" class="desc">Ingrese la cantidad</p>
+            <input class="inv-field inv-field--qty" id="invQty" type="number" value="1" inputmode="numeric" style="border-color:#EF6C00">
+          </div>
         </div>
         <div class="inv-card" id="invCardNext" style="border-color:#00897B" hidden>
           <span class="badge">AHORA</span>
@@ -499,6 +505,6 @@
   <script defer src="js/platform-supabase-bridge.js?v=4"></script>
   <script defer src="js/platform-inventario-core.js?v=15"></script>
   <script defer src="js/platform-inventario-sync.js?v=11"></script>
-  <script defer src="js/platform-inventario-app.js?v=31"></script>
+  <script defer src="js/platform-inventario-app.js?v=32"></script>
 </body>
 </html>

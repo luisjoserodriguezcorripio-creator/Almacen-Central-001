@@ -1,29 +1,43 @@
 @echo off
-title Sync en vivo - Almacen Central DC
+title Sync nube - Almacen Central 001
 cd /d "%~dp0"
 echo.
 echo ============================================================
-echo   SYNC EN TIEMPO REAL — FIREBASE (YA CONFIGURADO)
+echo   SYNC NUBE ENTRE PCS (JSONBin — gratis)
 echo ============================================================
 echo.
-echo  NO necesita JSONBin ni Master Key.
+echo  Para que Despacho / Averias / WMS vean lo mismo en todas
+echo  las PCs y celulares (GitHub Pages):
 echo.
-echo  La web usa Firebase Realtime Database (gratis).
-echo  Todos los modulos sincronizan en menos de 1 segundo:
-echo    - Centro de mando WMS  (index.html)
-echo    - Despacho             (despacho.html)
-echo    - Operaciones / Averias (averias.html)
+echo  1. Cree cuenta gratis en https://jsonbin.io
+echo  2. Entre a API Keys y copie la Master Key
+echo  3. Peguela aqui abajo (no se muestra al escribir)
 echo.
-echo  PASOS:
-echo    1. Publique en GitHub (SUBIR-GITHUB.bat o git push)
-echo    2. Espere 2 minutos
-echo    3. Ctrl+F5 en telefono Y PC
-echo    4. Misma URL en todos:
-echo       https://luisjoserodriguezcorripio-creator.github.io/Almacen-Central-001/
+set /p MASTERKEY=Master Key JSONBin: 
+if "%MASTERKEY%"=="" (
+  echo.
+  echo Cancelado: no se ingreso Master Key.
+  pause
+  exit /b 1
+)
 echo.
-echo  Reglas RTDB (OBLIGATORIO — sin esto no guarda en celular):
-echo    Ejecute CONFIGURAR-FIREBASE-REGLAS.bat y publique las reglas
+echo Activando bins Averias + Despacho + Platform...
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\setup-web-sync.ps1" -MasterKey "%MASTERKEY%"
+if errorlevel 1 (
+  echo.
+  echo Fallo la activacion. Revise la Master Key y la conexion a internet.
+  pause
+  exit /b 1
+)
 echo.
-echo  Opcional LAN sin internet: INICIAR-SYNC-TIEMPO-REAL.bat
+echo ============================================================
+echo  LISTO
+echo ============================================================
+echo  Espere ~2 min (GitHub Pages) y en TODAS las PCs:
+echo    Ctrl+F5 en despacho.html / averias.html / index.html
+echo  Debe aparecer sync en vivo (ya no "Sin sync entre PCs").
+echo.
+echo  Alternativa solo WiFi local (sin nube):
+echo    INICIAR-SYNC-TIEMPO-REAL.bat  -^> opcion B / Enter
 echo.
 pause

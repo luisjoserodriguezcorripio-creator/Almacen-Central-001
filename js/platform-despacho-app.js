@@ -365,30 +365,33 @@
     showAuthError('');
   }
 
-  function initTheme() {
-    var stored = null;
+  function applyTheme(theme) {
+    var next = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
     try {
-      stored = localStorage.getItem('almacen_platform_config');
-      if (stored) {
-        var cfg = JSON.parse(stored);
-        if (cfg.theme) document.documentElement.setAttribute('data-theme', cfg.theme);
-      }
+      var raw = localStorage.getItem('almacen_platform_config');
+      var config = raw ? JSON.parse(raw) : {};
+      config.theme = next;
+      localStorage.setItem('almacen_platform_config', JSON.stringify(config));
+    } catch (e) { /* ignore */ }
+    return next;
+  }
+
+  function initTheme() {
+    /* Plantilla canónica: blanco + tipografía oscura en todos los PCs. */
+    var canonKey = 'almacen_despacho_theme_canon';
+    var canonVer = '2026-11-18-light-white';
+    applyTheme('light');
+    try {
+      localStorage.setItem(canonKey, canonVer);
     } catch (e) { /* ignore */ }
 
     var btn = $('despBtnTheme');
-    if (!btn || btn.dataset.bound) return;
-    btn.dataset.bound = '1';
-    btn.addEventListener('click', function () {
-      var cur = document.documentElement.getAttribute('data-theme') || 'dark';
-      var next = cur === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      try {
-        var raw = localStorage.getItem('almacen_platform_config');
-        var config = raw ? JSON.parse(raw) : {};
-        config.theme = next;
-        localStorage.setItem('almacen_platform_config', JSON.stringify(config));
-      } catch (e) { /* ignore */ }
-    });
+    if (btn) {
+      btn.hidden = true;
+      btn.setAttribute('aria-hidden', 'true');
+      btn.tabIndex = -1;
+    }
   }
 
   function init() {

@@ -657,7 +657,9 @@ body.executive-ui .desp-auth-overlay .auth-field-input:focus {
 }
 
 /* ——— Encabezado / layout: que quepa en viewport sin cortarse ——— */
-.desp-auth-overlay.auth-overlay {
+/* :not(.is-hidden) — sin esto, display:flex !important gana a .auth-overlay.is-hidden
+   y el login queda “trabado” encima del portal tras autenticar. */
+.desp-auth-overlay.auth-overlay:not(.is-hidden) {
   display: flex !important;
   align-items: flex-start !important;
   justify-content: center !important;
@@ -667,6 +669,13 @@ body.executive-ui .desp-auth-overlay .auth-field-input:focus {
   box-sizing: border-box !important;
   width: 100% !important;
   max-width: 100vw !important;
+}
+
+.desp-auth-overlay.auth-overlay.is-hidden,
+body.despacho-dash-view .desp-auth-overlay {
+  display: none !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
 }
 
 .desp-auth-overlay .auth-layout {

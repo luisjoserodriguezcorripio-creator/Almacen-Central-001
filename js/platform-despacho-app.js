@@ -54,9 +54,18 @@
     var app = $('despApp');
     if (overlay) {
       overlay.classList.toggle('is-hidden', !visible);
+      overlay.hidden = !visible;
       overlay.setAttribute('aria-hidden', visible ? 'false' : 'true');
-      if (!visible) overlay.style.pointerEvents = 'none';
-      else overlay.style.removeProperty('pointer-events');
+      if (!visible) {
+        // !important: despacho-auth.css tenía display:flex !important que anulaba .is-hidden
+        overlay.style.setProperty('display', 'none', 'important');
+        overlay.style.setProperty('pointer-events', 'none', 'important');
+        overlay.style.setProperty('visibility', 'hidden', 'important');
+      } else {
+        overlay.style.removeProperty('display');
+        overlay.style.removeProperty('pointer-events');
+        overlay.style.removeProperty('visibility');
+      }
     }
     if (app) {
       app.classList.toggle('is-hidden', visible);

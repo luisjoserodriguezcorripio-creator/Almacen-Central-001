@@ -1,59 +1,59 @@
 {
-  "version": 1,
-  "updatedAt": "2026-09-22T20:30:00.000Z",
-  "owner": "luisjoserodriguezcorripio-creator",
-  "project": "Almacen-Central-001",
-  "publicSyncBaseUrl": "",
-  "githubPagesDataUrl": "https://luisjoserodriguezcorripio-creator.github.io/Almacen-Central-001/data/averias.json",
-  "githubPagesDespachoDataUrl": "https://luisjoserodriguezcorripio-creator.github.io/Almacen-Central-001/data/despacho.json",
-  "githubPagesPlatformDataUrl": "https://luisjoserodriguezcorripio-creator.github.io/Almacen-Central-001/data/platform.json",
-  "pollSeconds": 4,
-  "realtime": true,
-  "syncTargetMs": 4000,
-  "firebase": {
-    "enabled": false,
-    "apiKey": "",
-    "authDomain": "",
-    "databaseURL": "",
-    "projectId": "",
-    "storageBucket": "",
-    "messagingSenderId": "",
-    "appId": "",
-    "measurementId": ""
-  },
-  "averiasJsonBin": {
-    "enabled": false,
-    "binId": "",
-    "accessKey": "",
-    "keyType": "master"
-  },
-  "despachoJsonBin": {
-    "enabled": false,
-    "binId": "",
-    "accessKey": "",
-    "keyType": "master"
-  },
-  "platformJsonBin": {
-    "enabled": false,
-    "binId": "",
-    "accessKey": "",
-    "keyType": "master"
-  },
-  "supabase": {
-    "enabled": false,
-    "primary": false,
-    "freeTier": true,
-    "preferPoll": true,
-    "keepAlive": false,
-    "url": "",
-    "anonKey": "",
-    "help": "Configure su propio proyecto Supabase. Los servicios del colaborador anterior fueron desconectados."
-  },
-  "help": "Instancia propia Almacen-Central-001. Active Firebase/Supabase/JsonBin con sus credenciales cuando las tenga.",
-  "security": {
-    "turnstileSiteKey": "",
-    "humanVerifyMinMs": 1200,
-    "turnstileReady": false,
-    "help": "Opcional: configure Cloudflare Turnstile con su site key."
-  }
+    "version":  1,
+    "updatedAt":  "2026-11-18T14:14:28.1128170Z",
+    "owner":  "luisjoserodriguezcorripio-creator",
+    "project":  "Almacen-Central-001",
+    "publicSyncBaseUrl":  "",
+    "githubPagesDataUrl":  "https://luisjoserodriguezcorripio-creator.github.io/Almacen-Central-001/data/averias.json",
+    "githubPagesDespachoDataUrl":  "https://luisjoserodriguezcorripio-creator.github.io/Almacen-Central-001/data/despacho.json",
+    "githubPagesPlatformDataUrl":  "https://luisjoserodriguezcorripio-creator.github.io/Almacen-Central-001/data/platform.json",
+    "pollSeconds":  1,
+    "realtime":  true,
+    "syncTargetMs":  4000,
+    "firebase":  {
+                     "enabled":  false,
+                     "apiKey":  "",
+                     "authDomain":  "",
+                     "databaseURL":  "",
+                     "projectId":  "",
+                     "storageBucket":  "",
+                     "messagingSenderId":  "",
+                     "appId":  "",
+                     "measurementId":  ""
+                 },
+    "averiasJsonBin":  {
+                           "binId":  "6afdb2c2ffd5d16053cb89c2",
+                           "keyType":  "master",
+                           "accessKey":  "$2a$10$BVgPkAiddz0XEx.Ud5X3le18H5lB5iib3Tk3ko3A.fwbdYPdemzf6",
+                           "enabled":  true
+                       },
+    "despachoJsonBin":  {
+                            "binId":  "6afdb2c3ffd5d16053cb89c3",
+                            "keyType":  "master",
+                            "accessKey":  "$2a$10$BVgPkAiddz0XEx.Ud5X3le18H5lB5iib3Tk3ko3A.fwbdYPdemzf6",
+                            "enabled":  true
+                        },
+    "platformJsonBin":  {
+                            "binId":  "6afdb2c3ffd5d16053cb89c4",
+                            "keyType":  "master",
+                            "accessKey":  "$2a$10$BVgPkAiddz0XEx.Ud5X3le18H5lB5iib3Tk3ko3A.fwbdYPdemzf6",
+                            "enabled":  true
+                        },
+    "supabase":  {
+                     "enabled":  false,
+                     "primary":  false,
+                     "freeTier":  true,
+                     "preferPoll":  true,
+                     "keepAlive":  false,
+                     "url":  "",
+                     "anonKey":  "",
+                     "help":  "Configure su propio proyecto Supabase. Los servicios del colaborador anterior fueron desconectados."
+                 },
+    "help":  "Sync web activa: todos ven lo mismo en index.html, despacho.html y averias.html (~1s).",
+    "security":  {
+                     "turnstileSiteKey":  "",
+                     "humanVerifyMinMs":  1200,
+                     "turnstileReady":  false,
+                     "help":  "Opcional: configure Cloudflare Turnstile con su site key."
+                 }
 }

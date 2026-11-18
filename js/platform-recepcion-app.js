@@ -372,33 +372,39 @@
     var verify = Sec && Sec.verifyBeforeLogin
       ? Sec.verifyBeforeLogin({ portal: 'recepcion', form: $('recAuthForm') })
       : Promise.resolve({ ok: true });
+    function attemptLogin() {
+      var user = Auth.authenticate(username, PC.sha256Sync(password));
+      if (!user) {
+        if (errEl) {
+          var wmsUser = global.PlatformAdmin && global.PlatformAdmin.authenticate
+            ? global.PlatformAdmin.authenticate(username, PC.sha256Sync(password))
+            : null;
+          errEl.textContent = wmsUser
+            ? 'Su usuario no tiene permiso para Gestión de Recepción y Ubicación. Contacte al administrador.'
+            : 'Usuario o contraseña incorrectos.';
+          errEl.hidden = false;
+        }
+        return;
+      }
+      PC.persistRememberedLoginUsername('recepcion', username, !!($('recAuthRememberUser') && $('recAuthRememberUser').checked));
+      saveSession(user);
+      enterApp(user);
+      toast('Bienvenido, ' + Auth.getDisplayName(user), 'ok');
+    }
+
     verify.then(function (human) {
-      if (!human.ok) {
-        if (errEl) { errEl.textContent = human.error || 'Verificación requerida.'; errEl.hidden = false; }
+      if (!human || !human.ok) {
+        if (errEl) { errEl.textContent = (human && human.error) || 'Verificación requerida.'; errEl.hidden = false; }
         return;
       }
       var refresh = global.PlatformWebUsers && global.PlatformWebUsers.refresh
         ? global.PlatformWebUsers.refresh()
         : Promise.resolve();
-      return refresh.then(function () {
-        var user = Auth.authenticate(username, PC.sha256Sync(password));
-        if (!user) {
-          if (errEl) {
-            var wmsUser = global.PlatformAdmin && global.PlatformAdmin.authenticate
-              ? global.PlatformAdmin.authenticate(username, PC.sha256Sync(password))
-              : null;
-            errEl.textContent = wmsUser
-              ? 'Su usuario no tiene permiso para Gestión de Recepción y Ubicación. Contacte al administrador.'
-              : 'Usuario o contraseña incorrectos.';
-            errEl.hidden = false;
-          }
-          return;
-        }
-        PC.persistRememberedLoginUsername('recepcion', username, !!($('recAuthRememberUser') && $('recAuthRememberUser').checked));
-        saveSession(user);
-        enterApp(user);
-        toast('Bienvenido, ' + Auth.getDisplayName(user), 'ok');
+      var timed = new Promise(function (resolve) {
+        global.setTimeout(resolve, 2500);
+        refresh.then(resolve).catch(resolve);
       });
+      return timed.then(attemptLogin).catch(attemptLogin);
     }).catch(function (err) {
       if (errEl) {
         errEl.textContent = (err && err.message) || 'No se pudo iniciar sesión. Recargue la página.';
@@ -446,15 +452,18 @@
   function init() {
     if (!PC || !Auth) return;
     bindAuthUi();
+    var started = false;
+    function safeStart() {
+      if (started) return;
+      started = true;
+      tryRestoreSession();
+      if (!state.user) setAuthVisible(true);
+    }
     var ready = global.PlatformWebUsers && global.PlatformWebUsers.ready
       ? global.PlatformWebUsers.ready()
       : Promise.resolve();
-    ready.then(function () {
-      tryRestoreSession();
-      if (!state.user) setAuthVisible(true);
-    }).catch(function () {
-      setAuthVisible(true);
-    });
+    ready.then(safeStart).catch(safeStart);
+    global.setTimeout(safeStart, 3800);
   }
 
   if (document.readyState === 'loading') {

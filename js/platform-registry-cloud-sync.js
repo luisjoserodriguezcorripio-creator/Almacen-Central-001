@@ -309,7 +309,18 @@
     global.localStorage.__registryCloudHooked = true;
   }
 
+  function markReady(ok) {
+    if (readyResolve) {
+      readyResolve(!!ok);
+      readyResolve = null;
+    }
+  }
+
   function init() {
+    var settled = false;
+    global.setTimeout(function () {
+      if (!settled) markReady(false);
+    }, 3200);
     var boot = global.PlatformSupabase ? global.PlatformSupabase.init() : Promise.resolve(false);
     return boot.then(function () {
       initSupabase();
@@ -331,15 +342,11 @@
       global.addEventListener('visibilitychange', function () {
         if (global.document.visibilityState === 'visible') pullAll();
       }, { passive: true });
-      if (readyResolve) {
-        readyResolve(true);
-        readyResolve = null;
-      }
+      settled = true;
+      markReady(true);
     }).catch(function () {
-      if (readyResolve) {
-        readyResolve(false);
-        readyResolve = null;
-      }
+      settled = true;
+      markReady(false);
     });
   }
 

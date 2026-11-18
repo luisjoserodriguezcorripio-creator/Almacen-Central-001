@@ -155,13 +155,7 @@
       ? Sec.verifyBeforeLogin({ portal: 'averias', form: $('avAuthForm') })
       : Promise.resolve({ ok: true });
 
-    verifyHuman.then(function (human) {
-      if (!human.ok) {
-        setLoginLoading(false);
-        showAuthError(human.error || 'Completa la verificación humana.');
-        if (Sec && Sec.resetHumanVerify) Sec.resetHumanVerify($('avAuthForm'));
-        return;
-      }
+    function attemptLogin() {
       try {
         var hash = PC.sha256Sync(password);
         var user = Auth.authenticate(username, hash);
@@ -185,6 +179,26 @@
         setLoginLoading(false);
         showAuthError('No se pudo validar la sesión. Intenta de nuevo.');
       }
+    }
+
+    verifyHuman.then(function (human) {
+      if (!human || !human.ok) {
+        setLoginLoading(false);
+        showAuthError((human && human.error) || 'Completa la verificación humana.');
+        if (Sec && Sec.resetHumanVerify) Sec.resetHumanVerify($('avAuthForm'));
+        return;
+      }
+      var refresh = (global.PlatformWebUsers && global.PlatformWebUsers.refresh)
+        ? global.PlatformWebUsers.refresh()
+        : Promise.resolve({ ok: true });
+      var timed = new Promise(function (resolve) {
+        global.setTimeout(function () { resolve({ ok: false }); }, 2500);
+        refresh.then(resolve).catch(function () { resolve({ ok: false }); });
+      });
+      timed.then(attemptLogin).catch(attemptLogin);
+    }).catch(function () {
+      setLoginLoading(false);
+      showAuthError('No se pudo validar. Intenta de nuevo.');
     });
   }
 
@@ -257,10 +271,17 @@
       }
     };
 
-    if (global.PlatformWebUsers && global.PlatformWebUsers.ready) {
-      global.PlatformWebUsers.ready().then(start).catch(start);
-    } else {
+    var started = false;
+    function safeStart() {
+      if (started) return;
+      started = true;
       start();
+    }
+    if (global.PlatformWebUsers && global.PlatformWebUsers.ready) {
+      global.PlatformWebUsers.ready().then(safeStart).catch(safeStart);
+      global.setTimeout(safeStart, 3800);
+    } else {
+      safeStart();
     }
   }
 

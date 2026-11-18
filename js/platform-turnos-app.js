@@ -213,7 +213,14 @@
       global.PlatformTurnosPwa.init();
     }
     if (isSupervisorPortal() && global.PlatformWebUsers && global.PlatformWebUsers.ready) {
-      global.PlatformWebUsers.ready().then(start).catch(start);
+      var started = false;
+      function safeStart() {
+        if (started) return;
+        started = true;
+        start();
+      }
+      global.PlatformWebUsers.ready().then(safeStart).catch(safeStart);
+      global.setTimeout(safeStart, 3800);
     } else {
       start();
     }

@@ -3575,10 +3575,17 @@
           }
         }
       };
-      if (global.PlatformWebUsers && global.PlatformWebUsers.ready) {
-        global.PlatformWebUsers.ready().then(start).catch(start);
-      } else {
+      var started = false;
+      function safeStart() {
+        if (started) return;
+        started = true;
         start();
+      }
+      if (global.PlatformWebUsers && global.PlatformWebUsers.ready) {
+        global.PlatformWebUsers.ready().then(safeStart).catch(safeStart);
+        global.setTimeout(safeStart, 3800);
+      } else {
+        safeStart();
       }
     }
     if (document.readyState === 'loading') {

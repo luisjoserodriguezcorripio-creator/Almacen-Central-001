@@ -134,7 +134,20 @@
 
   function ready() {
     if (!readyPromise) {
-      readyPromise = mergeWebUsersAfterCloud();
+      var work = mergeWebUsersAfterCloud().catch(function () {
+        return { ok: false, reason: 'ready-failed' };
+      });
+      // Nunca bloquear el login si Supabase/red cuelgan
+      readyPromise = new Promise(function (resolve) {
+        var done = false;
+        function finish(v) {
+          if (done) return;
+          done = true;
+          resolve(v || { ok: false, reason: 'timeout' });
+        }
+        work.then(finish).catch(function () { finish({ ok: false }); });
+        global.setTimeout(function () { finish({ ok: false, reason: 'timeout' }); }, 3500);
+      });
     }
     return readyPromise;
   }

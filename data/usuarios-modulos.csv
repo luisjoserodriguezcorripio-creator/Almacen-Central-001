@@ -1,0 +1,21 @@
+﻿Modulo,Usuario,Nombre,Rol,Clave,TipoAcceso,Activo,Notas
+WMS · Despacho · Averías · Recepción · Temperatura · Agenda,luisjose,Administrador general,administrador,51963,Usuario / contraseña,Sí,"Alias: admin, administrador"
+WMS · Despacho · Averías · Recepción · Temperatura · Agenda (en Despacho entra como Preparador si tiene permiso),ENMANUEL.VASQUEZ,Enmanuel Vasquez,administrador,00000,Usuario / contraseña,Sí,Publicado 2026-11-17
+WMS · Despacho · Averías · Recepción · Temperatura · Agenda (en Despacho entra como Preparador si tiene permiso),Luisr0,Luis R.,administrador,51963,Usuario / contraseña,Sí,Publicado 2026-11-17
+WMS · Despacho · Averías · Recepción · Temperatura · Agenda (en Despacho entra como Preparador si tiene permiso),CESAR.ASTACIO,Cesar Andres Astacio,administrador,00000,Usuario / contraseña,Sí,Publicado 2026-11-17
+WMS · Despacho · Averías · Recepción · Temperatura · Agenda (en Despacho entra como Validador),SAMUEL.CORDERO,Samuel Cordero,validador,00000,Usuario / contraseña,Sí,Publicado 2026-11-17
+WMS · Despacho · Averías · Recepción · Temperatura · Agenda (en Despacho entra como Validador),ANTHONY.SANCHEZ,Anthony Jose Sanchez,validador,00000,Usuario / contraseña,Sí,Publicado 2026-11-17
+WMS · Despacho · Averías · Recepción · Temperatura · Agenda (en Despacho entra como Preparador si tiene permiso),MARIA.RAMOS,Maria Ramos,colaborador,00000,Usuario / contraseña,Sí,Publicado 2026-11-17
+WMS · Despacho · Averías · Recepción · Temperatura · Agenda (en Despacho entra como Preparador si tiene permiso),ELIZABETH.CRUZ,Elizabeth Cruz,colaborador,00000,Usuario / contraseña,Sí,Publicado 2026-11-17
+WMS · Despacho · Averías · Recepción · Temperatura · Agenda (en Despacho entra como Preparador si tiene permiso),LUIS.JOSE,Luis Jose de Jesus,colaborador,00000,Usuario / contraseña,Sí,Publicado 2026-11-17
+WMS · Despacho · Averías · Recepción · Temperatura · Agenda (en Despacho entra como Preparador si tiene permiso),CLAUDIA.SANTOS,Claudia de los Santos,colaborador,00000,Usuario / contraseña,Sí,Publicado 2026-11-17
+WMS · Despacho · Averías · Recepción · Temperatura · Agenda (en Despacho entra como Preparador si tiene permiso),JIOMALLIRY.CRUZ,Jiomalliry de la Cruz,colaborador,00000,Usuario / contraseña,Sí,Publicado 2026-11-17
+WMS · Despacho · Averías · Recepción · Temperatura · Agenda (en Despacho entra como Preparador si tiene permiso),MODESTO.ANDRES,Modesto Andres,supervisor,00000,Usuario / contraseña,Sí,Publicado 2026-11-17
+WMS · Despacho · Averías · Recepción · Temperatura · Agenda (en Despacho entra como Preparador si tiene permiso),JOSE.PICHARDO,José Pichardo,colaborador,00000,Usuario / contraseña,Sí,Publicado 2026-11-17
+WMS · Despacho · Averías · Recepción · Temperatura · Agenda (en Despacho entra como Preparador si tiene permiso),JOSE.POLANCO,Jose Polanco,colaborador,00000,Usuario / contraseña,Sí,Publicado 2026-11-17
+Inventario RF,51192,Jansel Castro,COUNT,(sin clave — solo código),Código empleado,Sí,Contador
+Inventario RF,51963,Luis José Rodríguez Ruíz,COUNT,(sin clave — solo código),Código empleado,Sí,Contador
+Inventario RF,12345,María López,COUNT,(sin clave — solo código),Código empleado,Sí,Contador demo
+Inventario RF,admin,Administrador,ADMIN,Central@,Usuario + PIN,Sí,PIN administrador Inventario RF
+Despacho (demo local),preparador,Preparador de pedidos,preparador,(solo en entorno local — no público),Usuario / contraseña,Local,No disponible en GitHub Pages público
+Despacho (demo local),validador,Validador de despacho,validador,(solo en entorno local — no público),Usuario / contraseña,Local,No disponible en GitHub Pages público

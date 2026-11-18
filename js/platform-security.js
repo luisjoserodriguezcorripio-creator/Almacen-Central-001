@@ -372,25 +372,38 @@
     var tm = checkTiming(form);
     if (!tm.ok) return Promise.resolve(tm);
 
-    return loadConfig().then(function () {
+    var cfg = loadConfig().catch(function () { return {}; });
+    var timedCfg = new Promise(function (resolve) {
+      global.setTimeout(function () { resolve({}); }, 2000);
+      cfg.then(resolve).catch(function () { resolve({}); });
+    });
+
+    return timedCfg.then(function () {
+      var mode = getVerifyMode(form);
+      if (mode === 'math' || (form && form.querySelector('.auth-human-answer'))) {
+        var mathOnly = verifyMathChallenge(form, portal);
+        if (!mathOnly.ok) return mathOnly;
+        return { ok: true };
+      }
       var ts = verifyTurnstileClient(form);
       if (!ts.ok) {
-        if (getVerifyMode(form) === 'turnstile') {
+        if (mode === 'turnstile') {
           var box = form && form.querySelector('.auth-human-verify');
           if (box) setupMathChallenge(box, portal);
           var mathRetry = verifyMathChallenge(form, portal);
           if (!mathRetry.ok) {
             return { ok: false, error: 'Completa la verificación humana (suma).' };
           }
-        } else {
-          return ts;
+          return { ok: true };
         }
-      } else {
-        var math = verifyMathChallenge(form, portal);
-        if (!math.ok) return math;
+        return ts;
       }
+      var math = verifyMathChallenge(form, portal);
+      if (!math.ok) return math;
       return verifyOnServer(turnstileToken).then(function (server) {
         if (!server.ok) return server;
+        return { ok: true };
+      }).catch(function () {
         return { ok: true };
       });
     });

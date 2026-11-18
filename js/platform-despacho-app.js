@@ -378,9 +378,9 @@
   }
 
   function initTheme() {
-    /* Plantilla canónica: blanco + tipografía oscura en todos los PCs. */
+    /* Solo fuerza tema claro. Nunca toca datos de despacho (pedidos/historial). */
     var canonKey = 'almacen_despacho_theme_canon';
-    var canonVer = '2026-11-18-light-white';
+    var canonVer = '2026-11-18-light-unified';
     applyTheme('light');
     try {
       localStorage.setItem(canonKey, canonVer);

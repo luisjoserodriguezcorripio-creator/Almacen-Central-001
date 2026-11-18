@@ -1,0 +1,270 @@
+/**
+ * Despacho — plantilla clara unificada (carga al final).
+ * Evita texto claro sobre fondo blanco después del cambio oscuro → claro.
+ */
+
+html[data-theme="light"] body.despacho-dash-view,
+html[data-theme="light"] body.despacho-dash-view.executive-ui {
+  background: #eef2f7 !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .desp-app,
+html[data-theme="light"] .desp-content,
+html[data-theme="light"] .desp-dashboard,
+html[data-theme="light"] #despModule {
+  background: transparent !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .desp-topbar {
+  background: #ffffff !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.1) !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .desp-topbar h1,
+html[data-theme="light"] .desp-topbar strong,
+html[data-theme="light"] .desp-topbar-title,
+html[data-theme="light"] .desp-topbar-title p {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .desp-topbar .btn,
+html[data-theme="light"] .desp-topbar .btn-ghost {
+  color: #0f172a !important;
+  background: #f8fafc !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+html[data-theme="light"] .desp-topbar #despBtnLogout {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: #0f172a !important;
+}
+
+html[data-theme="light"] .role-badge,
+html[data-theme="light"] #despRoleBadge {
+  background: #fff7ed !important;
+  color: #9a3412 !important;
+  border: 1px solid rgba(234, 88, 12, 0.35) !important;
+}
+
+html[data-theme="light"] .desp-panel,
+html[data-theme="light"] .desp-validador-stack .desp-panel,
+html[data-theme="light"] .desp-archivo-section,
+html[data-theme="light"] .desp-registro-envios,
+html[data-theme="light"] .desp-actividad-hoy,
+html[data-theme="light"] .desp-jaula-card,
+html[data-theme="light"] .desp-barcode-panel,
+html[data-theme="light"] .desp-lista-share-actions,
+html[data-theme="light"] .desp-val-resumen,
+html[data-theme="light"] .desp-lista-present-kpi {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-color: rgba(15, 23, 42, 0.1) !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05) !important;
+}
+
+html[data-theme="light"] .desp-dashboard h1,
+html[data-theme="light"] .desp-dashboard h2,
+html[data-theme="light"] .desp-dashboard h3,
+html[data-theme="light"] .desp-dashboard h4,
+html[data-theme="light"] .desp-dash-title,
+html[data-theme="light"] .desp-panel-head h3,
+html[data-theme="light"] .desp-archivo-head h4,
+html[data-theme="light"] .desp-actividad-hoy-head h4,
+html[data-theme="light"] .desp-idc,
+html[data-theme="light"] .desp-cliente,
+html[data-theme="light"] .desp-validador-asignado,
+html[data-theme="light"] .desp-dt,
+html[data-theme="light"] .desp-table td,
+html[data-theme="light"] .desp-table th,
+html[data-theme="light"] .desp-actividad-hoy-item,
+html[data-theme="light"] .desp-actividad-hoy-user,
+html[data-theme="light"] .desp-hist-dialog,
+html[data-theme="light"] .desp-hist-head h4,
+html[data-theme="light"] .desp-jaula-num,
+html[data-theme="light"] .desp-jaula-idc-list,
+html[data-theme="light"] .desp-carga-chip,
+html[data-theme="light"] .desp-filters label,
+html[data-theme="light"] .desp-filter span {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .desp-muted,
+html[data-theme="light"] .desp-dash-sub,
+html[data-theme="light"] .desp-panel-sub,
+html[data-theme="light"] .desp-archivo-sub,
+html[data-theme="light"] .desp-actividad-hoy-sub,
+html[data-theme="light"] .desp-hist-head p,
+html[data-theme="light"] .desp-empty-row,
+html[data-theme="light"] .desp-eyebrow,
+html[data-theme="light"] .desp-dash-eyebrow,
+html[data-theme="light"] .desp-table th,
+html[data-theme="light"] .desp-cliente-inline {
+  color: #475569 !important;
+}
+
+html[data-theme="light"] .desp-table,
+html[data-theme="light"] .desp-table-wrap {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .desp-table thead th {
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.1) !important;
+}
+
+html[data-theme="light"] .desp-table tbody tr:nth-child(even) {
+  background: #f8fafc !important;
+}
+
+html[data-theme="light"] .desp-table tbody tr:hover td {
+  background: #eff6ff !important;
+}
+
+html[data-theme="light"] .desp-flujo {
+  background: #f8fafc !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+html[data-theme="light"] .desp-filters input,
+html[data-theme="light"] .desp-filters select,
+html[data-theme="light"] .desp-dashboard input,
+html[data-theme="light"] .desp-dashboard select,
+html[data-theme="light"] .desp-dashboard textarea {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(15, 23, 42, 0.16) !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+html[data-theme="light"] .desp-filters input::placeholder {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+}
+
+html[data-theme="light"] .desp-estado--red,
+html[data-theme="light"] .desp-lista-present-estado--red {
+  background: rgba(220, 38, 38, 0.1) !important;
+  color: #b91c1c !important;
+  border-color: rgba(220, 38, 38, 0.28) !important;
+}
+
+html[data-theme="light"] .desp-estado--yellow,
+html[data-theme="light"] .desp-lista-present-estado--yellow {
+  background: rgba(202, 138, 4, 0.14) !important;
+  color: #a16207 !important;
+  border-color: rgba(202, 138, 4, 0.35) !important;
+}
+
+html[data-theme="light"] .desp-estado--green,
+html[data-theme="light"] .desp-lista-present-estado--green {
+  background: rgba(5, 150, 105, 0.12) !important;
+  color: #047857 !important;
+  border-color: rgba(5, 150, 105, 0.3) !important;
+}
+
+html[data-theme="light"] .desp-estado--amber,
+html[data-theme="light"] .desp-estado--blue,
+html[data-theme="light"] .desp-estado--orange,
+html[data-theme="light"] .desp-estado--purple,
+html[data-theme="light"] .desp-estado--neutral {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .desp-lista-present-kpi-lbl,
+html[data-theme="light"] .desp-val-resumen-title,
+html[data-theme="light"] .desp-val-resumen-legend,
+html[data-theme="light"] .desp-val-chart-name {
+  color: #334155 !important;
+}
+
+html[data-theme="light"] .desp-lista-present-kpi--pendiente .desp-lista-present-kpi-num {
+  color: #dc2626 !important;
+}
+
+html[data-theme="light"] .desp-lista-present-kpi--validado .desp-lista-present-kpi-num {
+  color: #ca8a04 !important;
+}
+
+html[data-theme="light"] .desp-lista-present-kpi--cargado .desp-lista-present-kpi-num {
+  color: #059669 !important;
+}
+
+html[data-theme="light"] .desp-val-chart-seg-num,
+html[data-theme="light"] .desp-val-chart-seg-num--validado,
+html[data-theme="light"] .desp-val-chart-seg-num--cargado {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .desp-val-chart-bar-line--flex,
+html[data-theme="light"] .desp-val-chart-bar-line {
+  background: rgba(15, 23, 42, 0.08) !important;
+}
+
+html[data-theme="light"] .desp-share-status--lista {
+  background: rgba(5, 150, 105, 0.1) !important;
+  color: #047857 !important;
+  border: 1px solid rgba(5, 150, 105, 0.25) !important;
+}
+
+html[data-theme="light"] .desp-vista-badge--activo {
+  background: rgba(5, 150, 105, 0.12) !important;
+  color: #047857 !important;
+}
+
+html[data-theme="light"] .desp-vista-badge--retirado {
+  background: rgba(100, 116, 139, 0.12) !important;
+  color: #475569 !important;
+}
+
+html[data-theme="light"] .desp-hist-dialog {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+}
+
+html[data-theme="light"] .desp-hist-close {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .desp-hist-overlay {
+  background: rgba(15, 23, 42, 0.45) !important;
+}
+
+html[data-theme="light"] .desp-btn-ghost,
+html[data-theme="light"] .desp-dashboard .btn-ghost,
+html[data-theme="light"] .desp-dashboard .btn:not(.desp-action-btn):not(.desp-btn-share-lista):not(.desp-btn-share):not(.desp-btn-update) {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+html[data-theme="light"] .desp-live-badge {
+  background: rgba(5, 150, 105, 0.12) !important;
+  color: #047857 !important;
+  border-color: rgba(5, 150, 105, 0.28) !important;
+}
+
+html[data-theme="light"] .desp-validador-pill,
+html[data-theme="light"] .desp-lista-present-validador-pill {
+  background: rgba(37, 99, 235, 0.1) !important;
+  color: #1d4ed8 !important;
+  border: 1px solid rgba(37, 99, 235, 0.22) !important;
+}
+
+/* Botones de estado / acción secundaria */
+html[data-theme="light"] .desp-btn-set-estado,
+html[data-theme="light"] .desp-dashboard .btn.desp-btn-archive,
+html[data-theme="light"] .desp-dashboard .btn.desp-btn-hist {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(15, 23, 42, 0.14) !important;
+  -webkit-text-fill-color: #0f172a !important;
+}

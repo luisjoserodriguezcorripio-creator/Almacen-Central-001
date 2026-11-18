@@ -11,10 +11,46 @@
   var LOGIN_ATTEMPTS_KEY = 'almacen_login_attempts';
   var DESPACHO_LOGIN_ATTEMPTS_KEY = 'almacen_despacho_login_attempts';
   var AVERIAS_LOGIN_ATTEMPTS_KEY = 'almacen_averias_login_attempts';
-  var MAX_LOGIN_ATTEMPTS = 5;
-  var LOCKOUT_MS = 15 * 60 * 1000;
+  /** Subir este número limpia bloqueos de login en todos los equipos al cargar. */
+  var LOGIN_LOCK_RESET_VERSION = '2026-11-17b';
+  var LOGIN_LOCK_RESET_KEY = 'almacen_login_lock_reset';
+  var MAX_LOGIN_ATTEMPTS = 8;
+  var LOCKOUT_MS = 5 * 60 * 1000;
   var USERNAME_MAX = 64;
   var PASSWORD_MAX = 128;
+
+  function purgeLoginLockKeys() {
+    var keys = [
+      LOGIN_ATTEMPTS_KEY,
+      DESPACHO_LOGIN_ATTEMPTS_KEY,
+      AVERIAS_LOGIN_ATTEMPTS_KEY,
+      'almacen_recepcion_login_attempts',
+      'almacen_inventario_login_attempts',
+      'almacen_temperatura_login_attempts',
+      'almacen_agenda_login_attempts',
+      'almacen_turnos_login_attempts'
+    ];
+    keys.forEach(function (key) {
+      try { if (global.localStorage) localStorage.removeItem(key); } catch (e) { /* noop */ }
+      try { if (global.sessionStorage) sessionStorage.removeItem(key); } catch (e2) { /* noop */ }
+    });
+  }
+
+  function ensureLoginLocksReset() {
+    try {
+      if (!global.localStorage) {
+        purgeLoginLockKeys();
+        return;
+      }
+      if (localStorage.getItem(LOGIN_LOCK_RESET_KEY) === LOGIN_LOCK_RESET_VERSION) return;
+      purgeLoginLockKeys();
+      localStorage.setItem(LOGIN_LOCK_RESET_KEY, LOGIN_LOCK_RESET_VERSION);
+    } catch (e) {
+      purgeLoginLockKeys();
+    }
+  }
+
+  ensureLoginLocksReset();
 
   function $(id) {
     return document.getElementById(id);

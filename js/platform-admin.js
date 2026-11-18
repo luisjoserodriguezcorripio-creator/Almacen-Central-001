@@ -268,7 +268,10 @@
       localStorage.setItem(verKey, String(CREDENTIALS_VERSION));
       try {
         localStorage.removeItem('almacen_login_attempts');
+        localStorage.removeItem('almacen_despacho_login_attempts');
+        localStorage.removeItem('almacen_averias_login_attempts');
         localStorage.removeItem('panel_almacen_session');
+        localStorage.removeItem('almacen_login_lock_reset');
       } catch (e) { /* noop */ }
     }
     var list = parse(localStorage.getItem(KEYS.users), null);

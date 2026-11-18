@@ -206,6 +206,79 @@
     }
   }
 
+  function dayKeySantoDomingo(iso) {
+    if (!iso) return '';
+    try {
+      return new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Santo_Domingo',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).format(new Date(iso));
+    } catch (e) {
+      return String(iso).slice(0, 10);
+    }
+  }
+
+  function hoyKeySantoDomingo() {
+    return dayKeySantoDomingo(new Date().toISOString());
+  }
+
+  function collectActividadHoy(pedidos) {
+    var hoy = hoyKeySantoDomingo();
+    var rows = [];
+    (pedidos || []).forEach(function (p) {
+      (p.historial || []).forEach(function (h) {
+        if (!h || dayKeySantoDomingo(h.at) !== hoy) return;
+        rows.push({
+          at: h.at,
+          usuario: h.usuario || '—',
+          idc: formatIdc(p.idc),
+          pedidoId: p.id,
+          cambio: DS.formatHistorialEntry ? DS.formatHistorialEntry(h) : (h.hacia || '—'),
+          nota: h.nota || ''
+        });
+      });
+      if (p.createdAt && dayKeySantoDomingo(p.createdAt) === hoy && !(p.historial || []).length) {
+        rows.push({
+          at: p.createdAt,
+          usuario: p.createdBy || '—',
+          idc: formatIdc(p.idc),
+          pedidoId: p.id,
+          cambio: 'Alta IDC',
+          nota: p.cliente || ''
+        });
+      }
+    });
+    rows.sort(function (a, b) {
+      return String(b.at || '').localeCompare(String(a.at || ''));
+    });
+    return rows;
+  }
+
+  function renderActividadHoy(pedidos) {
+    var rows = collectActividadHoy(pedidos);
+    var hoyLabel = fmtDt(new Date().toISOString()).split(',')[0] || hoyKeySantoDomingo();
+    return '<section class="desp-actividad-hoy" aria-labelledby="despActividadHoyTitle">' +
+      '<header class="desp-actividad-hoy-head">' +
+      '<h4 id="despActividadHoyTitle">Actividad de hoy · ' + esc(hoyLabel) + '</h4>' +
+      '<p class="desp-muted desp-actividad-hoy-sub">Historial digitado hoy (America/Santo_Domingo) · incl. JOSE.PICHARDO y demás</p>' +
+      '</header>' +
+      (rows.length
+        ? '<ul class="desp-actividad-hoy-list">' + rows.slice(0, 80).map(function (r) {
+            return '<li class="desp-actividad-hoy-item">' +
+              '<span class="desp-dt">' + esc(fmtDt(r.at)) + '</span>' +
+              '<span><span class="desp-actividad-hoy-user">' + esc(r.usuario) + '</span> · IDC ' +
+              esc(r.idc) + ' · ' + esc(r.cambio) +
+              (r.nota ? '<div class="desp-actividad-hoy-meta">' + esc(r.nota) + '</div>' : '') +
+              '</span>' +
+              '<button type="button" class="btn btn-ghost desp-btn-hist" data-pedido-id="' + esc(r.pedidoId) + '">Ver</button>' +
+              '</li>';
+          }).join('') + '</ul>'
+        : '<p class="desp-muted">Sin movimientos registrados hoy todavía. Si digitaron en otra PC, abra Despacho en esa PC (los datos viven en ese equipo si no hay sync nube).</p>') +
+      '</section>';
+  }
+
   function estadoBadge(estadoId) {
     var e = DS.ESTADOS[estadoId] || { label: estadoId, color: 'neutral', short: estadoId };
     var icon = DS.renderEstadoIconSvg ? DS.renderEstadoIconSvg(estadoId) : '';
@@ -577,6 +650,7 @@
       '<p class="desp-muted desp-jaula-map-sub">IDC que el validador aún no ha retirado del seguimiento</p>' +
       renderJaulaMap(DS.getPedidosVisiblesValidador(data.pedidos)) +
       '</section>' +
+      renderActividadHoy(data.pedidos) +
       renderRegistroEnviadosValidador(DS.getRegistroEnviadosValidador(data.pedidos)) +
       '</div></section>';
   }
@@ -808,6 +882,7 @@
       renderListaShareActions(data, opts) +
       '<p class="desp-share-status desp-share-status--lista" id="despListaShareStatus"' + (sharing ? '' : ' hidden') + '>' +
       statusTxt + '</p>' +
+      renderActividadHoy(data.pedidos) +
       renderResumenCamionesValidador(data.pedidos) +
       renderListaEnVivoSeguimiento(pedidos, canRemove, (opts && opts.userName) || '') +
       '</section>' +

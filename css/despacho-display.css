@@ -1,13 +1,14 @@
 /**
  * Pantalla externa — estilos fullscreen (TV / monitor grande)
+ * Plantilla clara moderna (misma línea visual que Despacho portal).
  */
 body.desp-display-mode {
   margin: 0;
   min-height: 100vh;
   min-height: 100dvh;
-  background: #03060e;
+  background: #eef2f7;
   font-family: 'DM Sans', system-ui, sans-serif;
-  color: #e8eef4;
+  color: #0f172a;
   overflow: hidden;
 }
 
@@ -18,7 +19,7 @@ body.desp-display-mode.desp-live-lista-on {
 
 /* —— Tema elegante pantalla código de barras —— */
 body.desp-display-mode.desp-live-present-on {
-  background: #040810;
+  background: #eef2f7;
 }
 
 body.desp-display-mode.desp-live-present-on::before {
@@ -29,10 +30,9 @@ body.desp-display-mode.desp-live-present-on::before {
   pointer-events: none;
   animation: despPresentBgPulse 8s ease-in-out infinite;
   background:
-    radial-gradient(ellipse 90% 70% at 100% 0%, rgba(255, 152, 0, 0.2), transparent 52%),
-    radial-gradient(ellipse 70% 55% at 0% 100%, rgba(255, 152, 0, 0.12), transparent 48%),
-    radial-gradient(ellipse 55% 45% at 50% 42%, rgba(42, 62, 110, 0.32), transparent 68%),
-    linear-gradient(160deg, #050a14 0%, #0c1628 42%, #08101e 72%, #040810 100%);
+    radial-gradient(ellipse 90% 70% at 100% 0%, rgba(234, 88, 12, 0.08), transparent 52%),
+    radial-gradient(ellipse 70% 55% at 0% 100%, rgba(37, 99, 235, 0.06), transparent 48%),
+    linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
 }
 
 @keyframes despPresentBgPulse {
@@ -700,6 +700,8 @@ body.desp-display-mode .desp-lista-present-shell {
   display: flex;
   flex-direction: column;
   border-bottom: none;
+  background: #f8fafc;
+  color: #0f172a;
 }
 
 body.desp-display-mode .desp-lista-present-inner {

@@ -2,12 +2,12 @@
    Una sola escala (--desp-table-fs) para que TODO el texto de la tabla
    crezca igual en TVs grandes; IDC sin salto de línea. */
 body.desp-display-mode .desp-lista-present-inner {
-  /* Objetivo: ≥8 filas visibles en 1080p; tipografía sin cambios */
-  --desp-table-fs: clamp(0.95rem, 1.65vmin, 2.5rem);
-  --desp-badge-h: calc(var(--desp-table-fs) * 1.88);
-  --desp-etapa-h: calc(var(--desp-table-fs) * 1.1);
+  /* TV 1080p: tipografía compacta para caber KPIs + más filas */
+  --desp-table-fs: clamp(0.7rem, 1.15vmin, 1.2rem);
+  --desp-badge-h: calc(var(--desp-table-fs) * 1.55);
+  --desp-etapa-h: calc(var(--desp-table-fs) * 0.95);
   --desp-row-gap: 0;
-  padding: clamp(0.18rem, 0.35vh, 0.38rem) clamp(0.5rem, 1.2vw, 1.2rem);
+  padding: clamp(0.1rem, 0.25vh, 0.28rem) clamp(0.4rem, 0.9vw, 0.9rem);
 }
 
 body.desp-display-mode .desp-lista-present-toolbar {
@@ -30,35 +30,35 @@ body.desp-display-mode .desp-lista-present-kpis {
 }
 
 body.desp-display-mode .desp-lista-present-kpi {
-  min-height: clamp(4rem, 8.5vh, 7.5rem);
+  min-height: clamp(3.1rem, 5.8vh, 4.8rem);
   height: 100%;
   justify-content: flex-start;
   align-items: center;
   text-align: center;
-  gap: clamp(0.1rem, 0.18vh, 0.16rem);
-  padding: clamp(0.35rem, 0.55vh, 0.55rem) clamp(0.4rem, 0.85vw, 0.75rem);
-  padding-top: clamp(2.45rem, 4.6vmin, 5.25rem);
+  gap: clamp(0.06rem, 0.12vh, 0.12rem);
+  padding: clamp(0.22rem, 0.4vh, 0.4rem) clamp(0.3rem, 0.65vw, 0.55rem);
+  padding-top: clamp(1.55rem, 2.8vmin, 2.35rem);
   box-sizing: border-box;
 }
 
 body.desp-display-mode .desp-lista-present-kpi-num {
-  font-size: clamp(2.75rem, 5.8vmin, 7.5rem);
-  font-weight: 900;
+  font-size: clamp(1.65rem, 3.4vmin, 3.4rem);
+  font-weight: 850;
   line-height: 0.92;
   width: 100%;
   text-align: center;
   flex: 0 0 auto;
-  height: clamp(2.5rem, 5.2vmin, 6.8rem);
+  height: clamp(1.55rem, 3.1vmin, 3.2rem);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 body.desp-display-mode .desp-lista-present-kpi-iconbox {
-  width: clamp(1.85rem, 3.2vmin, 4rem);
-  height: clamp(1.85rem, 3.2vmin, 4rem);
-  top: clamp(0.32rem, 0.6vh, 0.65rem);
-  left: clamp(0.38rem, 0.75vw, 0.85rem);
+  width: clamp(1.25rem, 2.2vmin, 2.2rem);
+  height: clamp(1.25rem, 2.2vmin, 2.2rem);
+  top: clamp(0.22rem, 0.4vh, 0.4rem);
+  left: clamp(0.28rem, 0.55vw, 0.55rem);
 }
 
 body.desp-display-mode .desp-lista-present-kpi-iconbox .desp-estado-icon {
@@ -114,10 +114,10 @@ body.desp-display-mode .desp-val-chart-rows {
 }
 
 body.desp-display-mode .desp-val-chart-row {
-  grid-template-columns: minmax(0, 14vmin) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 11vmin) minmax(0, 1fr);
   width: 100%;
-  font-size: calc(var(--desp-table-fs) * 1.15);
-  line-height: 1.15;
+  font-size: calc(var(--desp-table-fs) * 0.98);
+  line-height: 1.1;
   position: relative;
   min-width: 0;
 }
@@ -243,23 +243,23 @@ body.desp-display-mode .desp-lista-present-jaula {
 }
 
 body.desp-display-mode .desp-lista-present-col-idc {
-  width: 12%;
+  width: 11%;
 }
 
 body.desp-display-mode .desp-lista-present-col-cliente {
-  width: 20%;
+  width: 14%;
 }
 
 body.desp-display-mode .desp-lista-present-col-jaula {
-  width: 5%;
+  width: 6%;
 }
 
 body.desp-display-mode .desp-lista-present-col-validador {
-  width: 8%;
+  width: 10%;
 }
 
 body.desp-display-mode .desp-lista-present-col-carga {
-  width: 11%;
+  width: 9%;
 }
 
 body.desp-display-mode .desp-lista-present-col-estado {
@@ -269,18 +269,21 @@ body.desp-display-mode .desp-lista-present-col-estado {
 body.desp-display-mode .desp-lista-present-col-f1,
 body.desp-display-mode .desp-lista-present-col-f2,
 body.desp-display-mode .desp-lista-present-col-f3 {
-  width: 13.33%;
+  width: 12.66%;
 }
 
 body.desp-display-mode .desp-lista-present-table th {
-  font-size: 0.72em;
-  padding: clamp(0.14rem, 0.28vh, 0.24rem) clamp(0.2rem, 0.45vw, 0.55rem);
-  letter-spacing: 0.05em;
+  font-size: 0.62em;
+  padding: clamp(0.08rem, 0.18vh, 0.16rem) clamp(0.14rem, 0.35vw, 0.4rem);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 body.desp-display-mode .desp-lista-present-table th,
 body.desp-display-mode .desp-lista-present-table td {
-  font-size: 1.15em;
+  font-size: 0.98em;
 }
 
 body.desp-display-mode .desp-lista-present-idc,
@@ -291,31 +294,30 @@ body.desp-display-mode .desp-lista-present-validador {
 }
 
 body.desp-display-mode .desp-lista-present-carga {
-  font-size: clamp(0.62rem, 1.05vw, 0.78rem);
-  color: #ffcc80;
+  font-size: 0.82em;
+  color: #9a3412;
   font-weight: 600;
-  white-space: normal;
-  line-height: 1.2;
+  white-space: nowrap;
+  line-height: 1.15;
   vertical-align: middle;
   overflow: hidden;
-  word-break: break-word;
-  overflow-wrap: anywhere;
+  text-overflow: ellipsis;
 }
 
 body.desp-display-mode .desp-lista-present-idc {
-  font-size: 1.15em;
+  font-size: 1em;
   font-weight: 800;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   white-space: nowrap;
 }
 
 body.desp-display-mode .desp-lista-present-cliente {
-  font-size: 1.06em;
-  font-weight: 600;
+  font-size: 0.95em;
+  font-weight: 650;
 }
 
 body.desp-display-mode .desp-lista-present-jaula {
-  font-size: 1.09em;
+  font-size: 0.95em;
   font-weight: 700;
 }
 
@@ -435,22 +437,21 @@ body.desp-display-mode .desp-lista-present-estado .desp-estado-icon {
 }
 
 body.desp-display-mode .desp-lista-present-kpi-lbl {
-  font-size: clamp(0.82rem, 1.45vmin, 1.55rem);
+  font-size: clamp(0.58rem, 1.05vmin, 0.95rem);
   font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: 0.02em;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
   text-align: center;
   width: 100%;
-  white-space: normal;
+  white-space: nowrap;
   flex: 0 0 auto;
-  min-height: clamp(1.5em, 2.4vmin, 1.85em);
+  min-height: 1.1em;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow-wrap: break-word;
-  word-break: break-word;
-  hyphens: auto;
-  padding: 0 0.1em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 0.08em;
   text-transform: none;
 }
 
@@ -488,20 +489,20 @@ body.desp-display-mode .desp-lista-present-fecha-etapa {
 }
 
 body.desp-display-mode .desp-lista-present-fecha-etapa--empty {
-  color: rgba(255, 255, 255, 0.28);
+  color: #cbd5e1;
   font-weight: 600;
 }
 
 body.desp-display-mode .desp-lista-present-fecha-etapa--pendiente {
-  color: #ff8a80;
+  color: #dc2626;
 }
 
 body.desp-display-mode .desp-lista-present-fecha-etapa--validado {
-  color: #ffd54f;
+  color: #ca8a04;
 }
 
 body.desp-display-mode .desp-lista-present-fecha-etapa--cargado {
-  color: #69f0ae;
+  color: #059669;
 }
 
 body.desp-display-mode .desp-lista-present-estado-cell-only {
@@ -509,30 +510,169 @@ body.desp-display-mode .desp-lista-present-estado-cell-only {
 }
 
 body.desp-display-mode .desp-lista-present-foot td {
-  padding: clamp(0.35rem, 0.65vh, 0.55rem) clamp(0.35rem, 0.8vw, 0.75rem);
-  font-size: calc(var(--desp-table-fs) * 0.82);
-  color: #94a3b8;
-  border-top: 1px solid rgba(148, 163, 184, 0.28);
-  background: rgba(4, 10, 20, 0.55);
+  padding: clamp(0.2rem, 0.4vh, 0.35rem) clamp(0.28rem, 0.65vw, 0.55rem);
+  font-size: calc(var(--desp-table-fs) * 0.78);
+  color: #64748b;
+  border-top: 1px solid rgba(15, 23, 42, 0.1);
+  background: #f8fafc;
 }
 
 body.desp-display-mode .desp-lista-present-foot-item {
   display: inline-block;
-  margin-right: clamp(0.65rem, 1.4vw, 1.25rem);
+  margin-right: clamp(0.5rem, 1.1vw, 1rem);
   white-space: nowrap;
 }
 
 body.desp-display-mode .desp-lista-present-foot-item strong {
-  color: #e2e8f0;
+  color: #0f172a;
   font-variant-numeric: tabular-nums;
 }
 
 body.desp-display-mode .desp-lista-present-foot-sync {
-  opacity: 0.85;
-  font-size: 0.92em;
+  opacity: 0.9;
+  font-size: 0.9em;
 }
 
 body.desp-display-mode .desp-lista-present-foot-idc {
-  opacity: 0.75;
+  opacity: 0.8;
+  font-size: 0.88em;
+}
+
+/* ——— TV clara moderna: fuerza fondo blanco + texto oscuro ——— */
+body.desp-display-mode .desp-lista-present-shell {
+  background: #f8fafc !important;
+  border-bottom: 2px solid rgba(234, 88, 12, 0.55) !important;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.06) !important;
+  color: #0f172a !important;
+}
+
+body.desp-display-mode .desp-lista-present-kpi {
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.1) !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05) !important;
+}
+
+body.desp-display-mode .desp-lista-present-kpi-lbl {
+  color: #334155 !important;
+}
+
+body.desp-display-mode .desp-lista-present-kpi--pendiente .desp-lista-present-kpi-num {
+  color: #dc2626 !important;
+}
+
+body.desp-display-mode .desp-lista-present-kpi--validado .desp-lista-present-kpi-num {
+  color: #ca8a04 !important;
+}
+
+body.desp-display-mode .desp-lista-present-kpi--cargado .desp-lista-present-kpi-num {
+  color: #059669 !important;
+}
+
+body.desp-display-mode .desp-lista-present-kpi--pendiente {
+  border-color: rgba(220, 38, 38, 0.35) !important;
+}
+
+body.desp-display-mode .desp-lista-present-kpi--validado {
+  border-color: rgba(202, 138, 4, 0.4) !important;
+}
+
+body.desp-display-mode .desp-lista-present-kpi--cargado {
+  border-color: rgba(5, 150, 105, 0.35) !important;
+}
+
+body.desp-display-mode .desp-val-resumen,
+body.desp-display-mode .desp-val-resumen--solo-barras {
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.1) !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04) !important;
+  color: #0f172a !important;
+}
+
+body.desp-display-mode .desp-val-resumen-legend--tv,
+body.desp-display-mode .desp-val-chart-name {
+  color: #475569 !important;
+}
+
+body.desp-display-mode .desp-val-chart-bar-line--flex {
+  background: rgba(15, 23, 42, 0.06) !important;
+}
+
+body.desp-display-mode .desp-val-chart-row::after {
+  background: rgba(15, 23, 42, 0.08) !important;
+}
+
+body.desp-display-mode .desp-val-chart-seg-num {
+  color: #0f172a !important;
+}
+
+body.desp-display-mode .desp-lista-present-table {
+  color: #0f172a !important;
+  background: #ffffff !important;
+}
+
+body.desp-display-mode .desp-lista-present-table th {
+  color: #64748b !important;
+  background: #f1f5f9 !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.1) !important;
+}
+
+body.desp-display-mode .desp-lista-present-table td {
+  color: #0f172a !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06) !important;
+}
+
+body.desp-display-mode .desp-lista-present-table tbody tr:nth-child(even) {
+  background: #f8fafc !important;
+}
+
+body.desp-display-mode .desp-lista-present-idc,
+body.desp-display-mode .desp-lista-present-cliente,
+body.desp-display-mode .desp-lista-present-jaula {
+  color: #0f172a !important;
+}
+
+body.desp-display-mode .desp-lista-present-validador-pill {
+  background: rgba(37, 99, 235, 0.1) !important;
+  color: #1d4ed8 !important;
+  border: 1px solid rgba(37, 99, 235, 0.2) !important;
+}
+
+body.desp-display-mode .desp-lista-present-estado--red,
+body.desp-display-mode .desp-lista-present-estado.desp-estado--red {
+  background: rgba(220, 38, 38, 0.1) !important;
+  color: #b91c1c !important;
+  border-color: rgba(220, 38, 38, 0.28) !important;
+}
+
+body.desp-display-mode .desp-lista-present-estado--yellow,
+body.desp-display-mode .desp-lista-present-estado.desp-estado--yellow {
+  background: rgba(202, 138, 4, 0.14) !important;
+  color: #a16207 !important;
+  border-color: rgba(202, 138, 4, 0.35) !important;
+}
+
+body.desp-display-mode .desp-lista-present-estado--green,
+body.desp-display-mode .desp-lista-present-estado.desp-estado--green {
+  background: rgba(5, 150, 105, 0.12) !important;
+  color: #047857 !important;
+  border-color: rgba(5, 150, 105, 0.3) !important;
+}
+
+body.desp-display-mode .desp-lista-present-fecha-etapa {
   font-size: 0.9em;
+  white-space: nowrap;
+}
+
+body.desp-display-mode .desp-display-waiting {
+  background: #eef2f7 !important;
+  color: #0f172a !important;
+}
+
+body.desp-display-mode .desp-display-wait-title {
+  color: #0f172a !important;
+}
+
+body.desp-display-mode .desp-display-wait-text,
+body.desp-display-mode .desp-display-wait-hint {
+  color: #475569 !important;
 }

@@ -650,6 +650,23 @@ body.executive-ui .desp-auth-overlay .auth-field-input:focus {
   font-size: 1.05rem !important;
   font-weight: 700 !important;
   border-radius: 12px !important;
+  background: linear-gradient(135deg, #ea580c 0%, #c2410c 55%, #9a3412 100%) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 8px 22px rgba(194, 65, 12, 0.28) !important;
+}
+
+.desp-auth-overlay #despAuthSubmit:hover,
+.desp-auth-overlay .btn-primary:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 10px 26px rgba(194, 65, 12, 0.34) !important;
+}
+
+.desp-auth-overlay #despAuthSubmit.is-loading {
+  opacity: 0.85;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
 .desp-auth-overlay .desp-auth-error,

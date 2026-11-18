@@ -268,3 +268,37 @@ html[data-theme="light"] .desp-dashboard .btn.desp-btn-hist {
   border: 1px solid rgba(15, 23, 42, 0.14) !important;
   -webkit-text-fill-color: #0f172a !important;
 }
+
+/* Portada login: botón Entrar siempre legible */
+html[data-theme="light"] .desp-auth-overlay #despAuthSubmit,
+html[data-theme="light"] .desp-auth-overlay .btn-primary,
+html[data-theme="light"] body.executive-ui .desp-auth-overlay #despAuthSubmit {
+  background: linear-gradient(135deg, #ea580c 0%, #c2410c 55%, #9a3412 100%) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 8px 22px rgba(194, 65, 12, 0.28) !important;
+}
+
+html[data-theme="light"] .desp-auth-overlay .auth-role-card,
+html[data-theme="light"] .desp-auth-overlay .desp-auth-role-card {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+}
+
+html[data-theme="light"] .desp-auth-overlay .auth-role-card strong,
+html[data-theme="light"] .desp-auth-overlay .desp-auth-role-card strong {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .desp-auth-overlay .auth-role-card .role-desc,
+html[data-theme="light"] .desp-auth-overlay .desp-auth-role-card .role-desc {
+  color: #64748b !important;
+}
+
+html[data-theme="light"] .desp-auth-overlay .auth-hub-link {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+}

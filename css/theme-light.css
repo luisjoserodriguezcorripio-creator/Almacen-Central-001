@@ -245,8 +245,15 @@ html[data-theme="light"] .shortcuts-backdrop {
   background: rgba(15, 36, 64, 0.35);
 }
 
-html[data-theme="light"] .btn:not(.desp-action-btn):not(.desp-btn-share-lista):not(.desp-btn-share):not(.desp-btn-share--barcode):not(.desp-btn-update) {
+html[data-theme="light"] .btn:not(.btn-primary):not(.desp-action-btn):not(.desp-btn-share-lista):not(.desp-btn-share):not(.desp-btn-share--barcode):not(.desp-btn-update) {
   background: #ffffff;
+}
+
+html[data-theme="light"] .btn-primary {
+  background: linear-gradient(135deg, #1565c0, #0d4d9a) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: none !important;
 }
 
 html[data-theme="light"] .btn-ghost:hover {

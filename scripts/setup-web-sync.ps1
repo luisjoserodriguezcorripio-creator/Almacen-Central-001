@@ -7,7 +7,7 @@ Set-Location -LiteralPath $PSScriptRoot\..
 
 $siteConfigPath = Join-Path $PSScriptRoot "..\data\site-config.json"
 if (-not (Test-Path $siteConfigPath)) {
-  Write-Error "No se encontró data/site-config.json"
+  Write-Error "No se encontro data/site-config.json"
   exit 1
 }
 
@@ -111,7 +111,7 @@ git push origin main
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Green
-Write-Host " LISTO — TODOS VEN LO MISMO EN LA WEB" -ForegroundColor Green
+Write-Host " LISTO - TODOS VEN LO MISMO EN LA WEB" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "Espere 2 minutos y en TODAS las PCs:" -ForegroundColor Yellow

@@ -37,6 +37,8 @@ ACCESO-RED.txt
 # Excel de prueba fuera de plantilla/
 *.xlsx
 *.xls
+!data/usuarios-modulos.xls
+!data/usuarios-modulos.csv
 !plantilla/**
 
 # Videos: solo el login principal va a GitHub (evita repo muy pesado)

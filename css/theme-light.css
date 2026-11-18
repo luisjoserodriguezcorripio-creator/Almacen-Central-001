@@ -245,7 +245,7 @@ html[data-theme="light"] .shortcuts-backdrop {
   background: rgba(15, 36, 64, 0.35);
 }
 
-html[data-theme="light"] .btn {
+html[data-theme="light"] .btn:not(.desp-action-btn):not(.desp-btn-share-lista):not(.desp-btn-share):not(.desp-btn-share--barcode):not(.desp-btn-update) {
   background: #ffffff;
 }
 

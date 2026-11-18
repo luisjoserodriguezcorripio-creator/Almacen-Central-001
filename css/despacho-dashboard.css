@@ -2217,6 +2217,96 @@ html[data-theme="light"] .desp-btn-send-validador {
   animation: despShareGlow 2.4s ease-in-out infinite;
 }
 
+/* Tema claro: no dejar el botón blanco con letras blancas (theme-light .btn) */
+html[data-theme="light"] .desp-action-btn.desp-btn-share-lista,
+html[data-theme="light"] .desp-action-btn.desp-btn-share,
+html[data-theme="light"] .desp-action-btn.desp-btn-share--barcode,
+html[data-theme="light"] .desp-action-btn.desp-btn-update {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="light"] .desp-action-btn.desp-btn-share-lista {
+  background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #1976d2 100%) !important;
+  border-color: rgba(21, 101, 192, 0.45) !important;
+}
+
+html[data-theme="light"] .desp-action-btn.desp-btn-share-lista.is-live {
+  background: linear-gradient(135deg, #8b0000 0%, #c62828 50%, #e53935 100%) !important;
+  border-color: rgba(198, 40, 40, 0.5) !important;
+  box-shadow:
+    0 6px 24px rgba(198, 40, 40, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+}
+
+html[data-theme="light"] .desp-action-btn.desp-btn-share,
+html[data-theme="light"] .desp-action-btn.desp-btn-share--barcode {
+  background: linear-gradient(135deg, #283593 0%, #3949ab 50%, #5c6bc0 100%) !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="light"] .desp-action-btn.desp-btn-share.is-live,
+html[data-theme="light"] .desp-action-btn.desp-btn-share--barcode.is-live {
+  background: linear-gradient(135deg, #8b0000 0%, #c62828 50%, #e53935 100%) !important;
+}
+
+html[data-theme="light"] .desp-action-btn.desp-btn-update {
+  background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 45%, #388e3c 100%) !important;
+}
+
+html[data-theme="light"] .desp-action-btn-icon {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="light"] .desp-action-btn-text {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="light"] .desp-share-status--locked {
+  background: rgba(21, 101, 192, 0.08) !important;
+  border-color: rgba(21, 101, 192, 0.22) !important;
+  color: #1e3a8a !important;
+}
+
+html[data-theme="light"] .desp-share-status--locked strong {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .desp-lista-present-kpi {
+  background: #ffffff !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+html[data-theme="light"] .desp-lista-present-kpi-lbl {
+  color: #334155 !important;
+}
+
+html[data-theme="light"] .desp-lista-present-kpi--pendiente .desp-lista-present-kpi-num {
+  color: #dc2626 !important;
+}
+
+html[data-theme="light"] .desp-lista-present-kpi--validado .desp-lista-present-kpi-num {
+  color: #ca8a04 !important;
+}
+
+html[data-theme="light"] .desp-lista-present-kpi--cargado .desp-lista-present-kpi-num {
+  color: #059669 !important;
+}
+
+html[data-theme="light"] .desp-val-resumen {
+  background: #ffffff !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .desp-val-resumen-title,
+html[data-theme="light"] .desp-val-resumen-legend,
+html[data-theme="light"] .desp-val-chart-name {
+  color: #475569 !important;
+}
+
 .desp-share-status--locked {
   margin: 0;
   padding: 0.85rem 1rem;

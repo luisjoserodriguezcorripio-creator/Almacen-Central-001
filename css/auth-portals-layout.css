@@ -195,6 +195,26 @@ body.auth-locked:has(.auth-layout--hub-news) .auth-video-scrim {
   box-shadow: 0 4px 16px rgba(197, 165, 114, 0.14);
 }
 
+.auth-portal-card--recepcion .auth-portal-icon--recepcion,
+.auth-layout--hub.auth-layout--portals-only .auth-portal-card--recepcion .auth-portal-icon--recepcion,
+.hub-drawer .auth-portal-card--recepcion .auth-portal-icon--recepcion {
+  display: inline-grid;
+  place-items: center;
+  font-size: 1.45rem !important;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+  background: linear-gradient(145deg, #7f1d1d 0%, #c8102e 55%, #9f1239 100%);
+  border-color: rgba(248, 113, 113, 0.5);
+  box-shadow: 0 4px 16px rgba(200, 16, 46, 0.28);
+}
+
+.auth-portal-card--recepcion .auth-portal-cta {
+  color: #ff8a80;
+}
+
 @media (max-width: 900px) {
   .auth-layout--hub.auth-layout--portals-only .auth-hero-head--center .jc-logo-img--hero {
     width: 3.25rem;

@@ -57,15 +57,16 @@
   function loadFechaFilter() {
     try {
       var raw = sessionStorage.getItem(FILTER_KEY);
-      if (!raw) return { desde: '', hasta: '', preset: 'todas' };
+      if (!raw) return { desde: '', hasta: '', preset: 'todas', estado: '' };
       var parsed = JSON.parse(raw);
       return {
         desde: parsed.desde || '',
         hasta: parsed.hasta || '',
-        preset: parsed.preset || 'todas'
+        preset: parsed.preset || 'todas',
+        estado: parsed.estado || ''
       };
     } catch (e) {
-      return { desde: '', hasta: '', preset: 'todas' };
+      return { desde: '', hasta: '', preset: 'todas', estado: '' };
     }
   }
 
@@ -104,61 +105,97 @@
     return Number(p[2]) + ' ' + monthsShort()[Number(p[1]) - 1] + ' ' + p[0];
   }
 
+  function estadoLabel(estado) {
+    var map = {
+      validar: 'Pend. Validar',
+      descargar: 'Pend. Descargar',
+      remision: 'Pend. Remision',
+      ubicar: 'Pend. Ubicar'
+    };
+    return map[estado] || '';
+  }
+
   function filterHintText(filter) {
     filter = filter || {};
-    if (!filter.desde && !filter.hasta) return 'Se muestran todos los registros';
-    if (filter.desde && filter.hasta && filter.desde === filter.hasta) {
-      return 'Se muestran registros del ' + labelFechaIso(filter.desde);
+    var parts = [];
+    if (!filter.desde && !filter.hasta) {
+      parts.push('todas las fechas');
+    } else if (filter.desde && filter.hasta && filter.desde === filter.hasta) {
+      parts.push(labelFechaIso(filter.desde));
+    } else if (filter.desde && filter.hasta) {
+      parts.push(labelFechaIso(filter.desde) + ' al ' + labelFechaIso(filter.hasta));
+    } else if (filter.desde) {
+      parts.push('desde ' + labelFechaIso(filter.desde));
+    } else {
+      parts.push('hasta ' + labelFechaIso(filter.hasta));
     }
-    if (filter.desde && filter.hasta) {
-      return 'Se muestran registros del ' + labelFechaIso(filter.desde) + ' al ' + labelFechaIso(filter.hasta);
-    }
-    if (filter.desde) return 'Se muestran registros desde ' + labelFechaIso(filter.desde);
-    return 'Se muestran registros hasta ' + labelFechaIso(filter.hasta);
+    if (filter.estado) parts.push(estadoLabel(filter.estado));
+    return 'Filtro: ' + parts.join(' · ');
   }
 
-  function resolvePresetRange(preset, today) {
+  function resolvePresetRange(preset, today, estado) {
     today = today || todayInputValue();
-    if (preset === 'hoy') return { desde: today, hasta: today, preset: 'hoy' };
+    var base = { estado: estado || '' };
+    if (preset === 'hoy') return Object.assign({ desde: today, hasta: today, preset: 'hoy' }, base);
     if (preset === 'semana') {
-      return { desde: startOfWeekIso(today), hasta: today, preset: 'semana' };
+      return Object.assign({ desde: startOfWeekIso(today), hasta: today, preset: 'semana' }, base);
     }
     if (preset === '7d') {
-      return { desde: addDaysIso(today, -6), hasta: today, preset: '7d' };
+      return Object.assign({ desde: addDaysIso(today, -6), hasta: today, preset: '7d' }, base);
     }
     if (preset === 'mes') {
-      return { desde: startOfMonthIso(today), hasta: today, preset: 'mes' };
+      return Object.assign({ desde: startOfMonthIso(today), hasta: today, preset: 'mes' }, base);
     }
-    return { desde: '', hasta: '', preset: 'todas' };
+    return Object.assign({ desde: '', hasta: '', preset: 'todas' }, base);
   }
 
-  function renderFechaFilter(filter) {
+  function renderFechaFilter(filter, liveActive) {
     filter = filter || loadFechaFilter();
     var presets = [
       { id: 'hoy', label: 'Hoy' },
-      { id: 'semana', label: 'Esta semana' },
-      { id: '7d', label: 'Últimos 7 días' },
-      { id: 'mes', label: 'Este mes' },
+      { id: 'semana', label: 'Semana' },
+      { id: '7d', label: '7 días' },
+      { id: 'mes', label: 'Mes' },
       { id: 'todas', label: 'Todas' }
     ];
-    return '<section class="rec-fecha-filter" aria-label="Rango de fecha">' +
-      '<p class="rec-fecha-filter__label">Rango de fecha</p>' +
+    var estados = [
+      { id: '', label: 'Todos' },
+      { id: 'validar', label: 'Pend. Validar' },
+      { id: 'descargar', label: 'Pend. Descargar' },
+      { id: 'remision', label: 'Pend. Remision' },
+      { id: 'ubicar', label: 'Pend. Ubicar' }
+    ];
+    return '<section class="rec-fecha-filter" aria-label="Filtros de recepción">' +
+      '<div class="rec-fecha-filter__top">' +
+      '<div class="rec-fecha-filter__main">' +
+      '<p class="rec-fecha-filter__label">Filtros</p>' +
       '<div class="rec-fecha-filter__row">' +
       '<label class="rec-fecha-filter__field"><span>Desde</span>' +
       '<input type="date" id="recFechaDesde" value="' + esc(filter.desde || '') + '"></label>' +
       '<span class="rec-fecha-filter__dash" aria-hidden="true"></span>' +
       '<label class="rec-fecha-filter__field"><span>Hasta</span>' +
       '<input type="date" id="recFechaHasta" value="' + esc(filter.hasta || '') + '"></label>' +
-      '</div>' +
       '<div class="rec-fecha-filter__presets" id="recFechaPresets">' +
       presets.map(function (p) {
         return '<button type="button" class="rec-fecha-preset' +
           (filter.preset === p.id ? ' is-active' : '') +
           '" data-rec-fecha-preset="' + esc(p.id) + '">' + esc(p.label) + '</button>';
       }).join('') +
+      '</div></div>' +
+      '<div class="rec-fecha-filter__estados" id="recEstadoPresets">' +
+      estados.map(function (e) {
+        var active = (filter.estado || '') === e.id;
+        return '<button type="button" class="rec-estado-preset' + (active ? ' is-active' : '') +
+          '" data-rec-estado="' + esc(e.id) + '">' + esc(e.label) + '</button>';
+      }).join('') +
       '</div>' +
       '<p class="rec-fecha-filter__hint" id="recFechaHint">' + esc(filterHintText(filter)) + '</p>' +
-      '</section>';
+      '</div>' +
+      '<button type="button" class="rec-proy-btn' + (liveActive ? ' is-live' : '') + '" id="recBtnShare"' +
+      (liveActive ? ' aria-pressed="true"' : '') + ' title="Proyectar manifiesto en pantalla TV">' +
+      '<img src="assets/img/kpi-pantalla.svg?v=2" alt="" width="28" height="28">' +
+      '<span>' + (liveActive ? '● En proyección' : 'Proyectar') + '</span>' +
+      '</button></div></section>';
   }
 
   function formatQty(n) {
@@ -264,48 +301,41 @@
       '<div class="rbl-drawer-foot">' + esc(name) + '</div></aside>';
   }
 
-  function renderTorreKpis(counts, liveActive) {
+  function renderTorreKpis(counts) {
     counts = counts || {};
-    return '<div class="rbl-kpi-grid rbl-kpi-grid--rec7" role="group" aria-label="Resumen recepción">' +
+    return '<div class="rbl-kpi-grid rbl-kpi-grid--rec6" role="group" aria-label="Resumen recepción">' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--blue">' +
-      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-contenedor.svg?v=2" alt="" width="40" height="40"></div>' +
-      '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.total || 0)) + '</span>' +
+      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-contenedor.svg?v=2" alt="" width="36" height="36"></div>' +
+      '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.total || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Contenedores</span></div></div>' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--teal">' +
-      '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-paletas-gen.png?v=1" alt="" width="40" height="40"></div>' +
-      '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.paletas || 0)) + '</span>' +
+      '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-paletas-gen.png?v=1" alt="" width="36" height="36"></div>' +
+      '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.paletas || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Paletas recibidas</span></div></div>' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--amber">' +
-      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-jaula.svg?v=2" alt="" width="40" height="40"></div>' +
-      '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteValidar || 0)) + '</span>' +
+      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-jaula.svg?v=2" alt="" width="36" height="36"></div>' +
+      '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteValidar || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Pend. Validar</span></div></div>' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--teal">' +
-      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-montacargas.svg?v=1" alt="" width="40" height="40"></div>' +
-      '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteDescargar || 0)) + '</span>' +
+      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-montacargas.svg?v=1" alt="" width="36" height="36"></div>' +
+      '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteDescargar || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Pend. Descargar</span></div></div>' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--navy">' +
       '<svg class="rbl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
       '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>' +
-      '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteRemision || 0)) + '</span>' +
+      '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteRemision || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Pend. Remision</span></div></div>' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--amber">' +
       '<svg class="rbl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
       '<path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>' +
-      '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteUbicar || 0)) + '</span>' +
+      '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteUbicar || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Pend. Ubicar</span></div></div>' +
-      '<button type="button" class="rbl-kpi rbl-kpi--action' + (liveActive ? ' is-live' : '') + '" id="recBtnShare"' +
-      (liveActive ? ' aria-pressed="true"' : '') + ' title="Proyectar manifiesto en pantalla TV">' +
-      '<div class="rbl-kpi-icon rbl-kpi-icon--cast">' +
-      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-pantalla.svg?v=2" alt="" width="40" height="40"></div>' +
-      '<div><span class="rbl-kpi-lbl rbl-kpi-lbl--action">' +
-      (liveActive ? '● En proyección' : 'Proyectar') + '</span>' +
-      '<span class="rbl-kpi-sub">TV recepción</span></div></button>' +
       '</div>';
   }
 
@@ -580,8 +610,11 @@
     var headers = (planilla && planilla.headers && planilla.headers.length)
       ? planilla.headers
       : DEFAULT_HEADERS;
+    var dateFiltered = store.filterPlanillaRows
+      ? store.filterPlanillaRows(planilla, { desde: filter.desde, hasta: filter.hasta })
+      : ((planilla && planilla.rows) || []);
     var counts = store.countPlanillaKpis
-      ? store.countPlanillaKpis(filteredRows)
+      ? store.countPlanillaKpis(dateFiltered)
       : store.countResumen(data.contenedores);
     var liveActive = store.isLiveShareBoardActive(data);
 
@@ -590,8 +623,8 @@
       '<div class="rbl-stage"><div class="rbl-f-wrap">' +
       renderTorreHero() +
       '<div class="rbl-f-screen is-on" data-rec-screen="ops">' +
-      renderFechaFilter(filter) +
-      renderTorreKpis(counts, liveActive) +
+      renderFechaFilter(filter, liveActive) +
+      renderTorreKpis(counts) +
       '<div class="rbl-card rbl-card--manifest">' +
       '<div class="rbl-card-head"><h3>Manifiesto de recepción</h3>' +
       '<span>' + esc(formatQty(filteredRows.length)) + ' en seguimiento</span></div>' +
@@ -776,12 +809,21 @@
     if (!root || root.__recFechaBound) return;
     root.__recFechaBound = true;
 
+    function currentEstado() {
+      var cur = loadFechaFilter();
+      return cur.estado || '';
+    }
+
     function applyFilter(next, rerender) {
+      if (!next.estado && next.estado !== '') next.estado = currentEstado();
       saveFechaFilter(next);
       var hint = root.querySelector('#recFechaHint');
       if (hint) hint.textContent = filterHintText(next);
       root.querySelectorAll('[data-rec-fecha-preset]').forEach(function (btn) {
         btn.classList.toggle('is-active', btn.getAttribute('data-rec-fecha-preset') === next.preset);
+      });
+      root.querySelectorAll('[data-rec-estado]').forEach(function (btn) {
+        btn.classList.toggle('is-active', (btn.getAttribute('data-rec-estado') || '') === (next.estado || ''));
       });
       var cbs = root.__recAppCallbacks || {};
       if (rerender && cbs.onFechaFilterChange) cbs.onFechaFilterChange(next);
@@ -795,15 +837,27 @@
       applyFilter({
         desde: desdeEl ? desdeEl.value : '',
         hasta: hastaEl ? hastaEl.value : '',
-        preset: 'custom'
+        preset: 'custom',
+        estado: currentEstado()
       }, true);
     });
 
     root.addEventListener('click', function (ev) {
+      var estadoBtn = ev.target.closest('[data-rec-estado]');
+      if (estadoBtn) {
+        var cur = loadFechaFilter();
+        applyFilter({
+          desde: cur.desde || '',
+          hasta: cur.hasta || '',
+          preset: cur.preset || 'todas',
+          estado: estadoBtn.getAttribute('data-rec-estado') || ''
+        }, true);
+        return;
+      }
       var btn = ev.target.closest('[data-rec-fecha-preset]');
       if (!btn) return;
       var preset = btn.getAttribute('data-rec-fecha-preset') || 'todas';
-      var next = resolvePresetRange(preset, todayInputValue());
+      var next = resolvePresetRange(preset, todayInputValue(), currentEstado());
       var desdeEl = root.querySelector('#recFechaDesde');
       var hastaEl = root.querySelector('#recFechaHasta');
       if (desdeEl) desdeEl.value = next.desde || '';

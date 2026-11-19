@@ -237,12 +237,25 @@
     var rows = (planilla && planilla.rows) || [];
     var desde = String(opts.desde || '').trim();
     var hasta = String(opts.hasta || '').trim();
-    if (!desde && !hasta) return rows.slice();
+    var estado = String(opts.estado || '').trim().toLowerCase();
+    var estadoIdx = {
+      descargar: 11,
+      validar: 12,
+      ubicar: 13,
+      remision: 14
+    };
+    var col = estadoIdx[estado];
     return rows.filter(function (r) {
-      var key = r.fechaKey || r.fechaDescargaKey || r.fechaLlegadaKey || '';
-      if (!key) return false;
-      if (desde && key < desde) return false;
-      if (hasta && key > hasta) return false;
+      if (desde || hasta) {
+        var key = r.fechaKey || r.fechaDescargaKey || r.fechaLlegadaKey || '';
+        if (!key) return false;
+        if (desde && key < desde) return false;
+        if (hasta && key > hasta) return false;
+      }
+      if (col != null) {
+        var v = (r.values || [])[col];
+        if (isOkStatus(v)) return false;
+      }
       return true;
     });
   }

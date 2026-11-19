@@ -26,7 +26,8 @@
     var filter = global.PlatformRecepcionUI && global.PlatformRecepcionUI.loadFechaFilter
       ? global.PlatformRecepcionUI.loadFechaFilter()
       : {};
-    var filterSig = String(filter.desde || '') + '|' + String(filter.hasta || '') + '|' + String(filter.preset || '');
+    var filterSig = String(filter.desde || '') + '|' + String(filter.hasta || '') + '|' +
+      String(filter.preset || '') + '|' + String(filter.estado || '');
     return String(data.updatedAt || '') + '::' + ids + '::' + planillaSig + '::' + filterSig;
   }
 

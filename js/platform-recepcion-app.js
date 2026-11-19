@@ -380,7 +380,7 @@
     store.toggleLiveShareBoard(Auth.getDisplayName(state.user));
     toast(
       win
-        ? 'Compartiendo seguimiento en pantalla TV.'
+        ? 'Compartiendo productividad en pantalla TV.'
         : 'Transmisión activada. Si no se abrió sola, use Configuraciones → Abrir pantalla TV.',
       win ? 'ok' : 'info'
     );

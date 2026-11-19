@@ -192,7 +192,7 @@
       '<p class="rec-fecha-filter__hint" id="recFechaHint">' + esc(filterHintText(filter)) + '</p>' +
       '</div>' +
       '<button type="button" class="rec-proy-btn' + (liveActive ? ' is-live' : '') + '" id="recBtnShare"' +
-      (liveActive ? ' aria-pressed="true"' : '') + ' title="Proyectar manifiesto en pantalla TV">' +
+      (liveActive ? ' aria-pressed="true"' : '') + ' title="Proyectar productividad en pantalla TV">' +
       '<img src="assets/img/kpi-pantalla.svg?v=2" alt="" width="28" height="28">' +
       '<span>' + (liveActive ? '● En proyección' : 'Proyectar') + '</span>' +
       '</button></div></section>';
@@ -347,11 +347,11 @@
       '<div class="rbl-card-body rbl-cfg-section">' +
       '<p class="rec-tc-cfg-user">' + esc(A().getDisplayName(user)) + '</p>' +
       '<p class="rec-tc-cfg-role">' + esc(A().getRoleLabel(user)) + '</p></div></div>' +
-      '<div class="rbl-card"><div class="rbl-card-head"><h3>Pantalla TV</h3><span>Manifiesto en vivo</span></div>' +
+      '<div class="rbl-card"><div class="rbl-card-head"><h3>Pantalla TV</h3><span>Productividad en vivo</span></div>' +
       '<div class="rbl-card-body rbl-cfg-section rec-tc-cfg-actions">' +
       '<button type="button" class="rec-btn rec-btn--cfg-primary" id="recBtnShareCfg"' +
       (liveActive ? ' aria-pressed="true"' : '') + '>' +
-      (liveActive ? '● Dejar de compartir pantalla' : 'Compartir en pantalla TV') + '</button>' +
+      (liveActive ? '● Dejar de compartir pantalla' : 'Compartir productividad en TV') + '</button>' +
       '<a class="rec-btn" id="recBtnOpenDisplay" href="recepcion-pantalla.html" target="_blank" rel="noopener">Abrir pantalla TV</a>' +
       '<button type="button" class="rec-btn" id="recBtnLogout">Cerrar sesión</button>' +
       '</div></div></div></div>';
@@ -425,7 +425,7 @@
       '<div class="rec-toolbar__right">' +
       '<button type="button" class="rec-btn rec-btn--ghost" id="recBtnShare"' +
       (liveActive ? ' aria-pressed="true"' : '') + '>' +
-      (liveActive ? '● Pantalla en vivo' : 'Compartir en pantalla TV') + '</button>' +
+      (liveActive ? '● Productividad en vivo' : 'Compartir productividad en TV') + '</button>' +
       '<a class="rec-btn rec-btn--ghost" id="recBtnOpenDisplay" href="recepcion-pantalla.html" target="_blank" rel="noopener">Abrir pantalla TV</a>' +
       '<button type="button" class="rec-btn rec-btn--ghost" id="recBtnLogout">Salir</button>' +
       '</div></div>';
@@ -470,7 +470,7 @@
       '<div class="rec-muelle-modal__backdrop" data-rec-action="cerrar-persona-modal"></div>' +
       '<div class="rec-muelle-modal__panel">' +
       '<h3 id="recPersonaModalTitle" class="rec-muelle-modal__title">Seleccionar persona</h3>' +
-      '<p class="rec-muelle-modal__sub" id="recPersonaModalSub">Elija quién realizó esta acción para el resumen en pantalla TV.</p>' +
+      '<p class="rec-muelle-modal__sub" id="recPersonaModalSub">Elija quién realizó esta acción para la productividad en pantalla TV.</p>' +
       '<label class="rec-field" for="recPersonaModalSelect"><span id="recPersonaModalLabel">Persona</span>' +
       '<select id="recPersonaModalSelect" class="rec-input" required></select></label>' +
       '<div class="rec-muelle-modal__actions">' +

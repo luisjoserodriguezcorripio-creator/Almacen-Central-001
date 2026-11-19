@@ -221,6 +221,9 @@
       }),
       ubicadores: tallyByField(contenedores, 'ubicadorPor', function (c) {
         return c.ubicado === 'ok';
+      }),
+      digitadores: tallyByField(contenedores, 'entradaPor', function (c) {
+        return c.entrada === 'ok';
       })
     };
   }
@@ -231,30 +234,55 @@
     return m;
   }
 
+  function sumN(list) {
+    var t = 0;
+    (list || []).forEach(function (x) { t += Number(x.n) || 0; });
+    return t;
+  }
+
   function barPct(n, max) {
     return Math.max(8, Math.round((n / (max || 1)) * 100));
   }
 
   function renderChartRow(item, max, fillCls) {
-    return '<div class="rec-tv-chart-row">' +
-      '<span class="rec-tv-chart-name">' + esc(item.name) + '</span>' +
-      '<div class="rec-tv-chart-bar"><div class="rec-tv-chart-fill' + (fillCls ? ' ' + fillCls : '') +
+    return '<div class="rec-tv-prod-row">' +
+      '<span class="rec-tv-prod-name">' + esc(item.name) + '</span>' +
+      '<div class="rec-tv-prod-bar"><div class="rec-tv-prod-fill' + (fillCls ? ' ' + fillCls : '') +
       '" style="width:' + barPct(item.n, max) + '%"></div></div>' +
-      '<span class="rec-tv-chart-num">' + item.n + '</span></div>';
+      '<span class="rec-tv-prod-num">' + item.n + '</span></div>';
   }
 
-  function renderChartSection(label, rows, fillCls, limit) {
+  function renderProdCard(label, rows, roleCls, fillCls) {
     rows = (rows || []).slice();
-    if (limit > 0) rows = rows.slice(0, limit);
+    var total = sumN(rows);
+    var top = rows.length ? rows[0] : null;
+    var body;
     if (!rows.length) {
-      return '<div class="rec-tv-chart-section"><div class="rec-tv-chart-section-lbl">' + esc(label) +
-        '</div><div class="rec-tv-chart-rows"><div class="rec-tv-chart-empty">Sin datos</div></div></div>';
+      body = '<div class="rec-tv-prod-empty">Sin datos</div>';
+    } else {
+      var mx = maxN(rows);
+      body = '<div class="rec-tv-prod-rows">' +
+        rows.map(function (x) { return renderChartRow(x, mx, fillCls); }).join('') +
+        '</div>';
     }
-    var mx = maxN(rows);
-    return '<div class="rec-tv-chart-section"><div class="rec-tv-chart-section-lbl">' + esc(label) +
-      '</div><div class="rec-tv-chart-rows">' +
-      rows.map(function (x) { return renderChartRow(x, mx, fillCls); }).join('') +
-      '</div></div>';
+    return '<article class="rec-tv-prod-card ' + roleCls + '" aria-label="' + esc(label) + '">' +
+      '<header class="rec-tv-prod-head">' +
+      '<p class="rec-tv-prod-lbl">' + esc(label) + '</p>' +
+      '<p class="rec-tv-prod-total">' + total + '</p>' +
+      (top
+        ? '<p class="rec-tv-prod-top">Top: ' + esc(top.name) + ' · ' + top.n + '</p>'
+        : '<p class="rec-tv-prod-top">—</p>') +
+      '</header>' + body + '</article>';
+  }
+
+  function renderProductivityBoard(chart) {
+    chart = chart || {};
+    return '<section class="rec-tv-prod-board" aria-label="Productividad por rol">' +
+      renderProdCard('Operadores (Cont. Descargados)', chart.operadores, 'rec-tv-prod-card--op', 'rec-tv-prod-fill--op') +
+      renderProdCard('Validadores (Cont. Validados)', chart.validadores, 'rec-tv-prod-card--val', 'rec-tv-prod-fill--val') +
+      renderProdCard('Ubicadores (Cont. Ubicados)', chart.ubicadores, 'rec-tv-prod-card--ubi', 'rec-tv-prod-fill--ubi') +
+      renderProdCard('Digitadores (Remisiones)', chart.digitadores, 'rec-tv-prod-card--dig', 'rec-tv-prod-fill--dig') +
+      '</section>';
   }
 
   function renderDateFilter(range) {
@@ -289,30 +317,7 @@
   }
 
   function renderToolbar(counts, chart) {
-    return '<div class="rec-tv-toolbar">' +
-      '<div class="rec-tv-kpis" role="group" aria-label="Resumen recepción">' +
-      '<div class="rec-tv-kpi rec-tv-kpi--desc"><span class="rec-tv-kpi-icon" aria-hidden="true">📦</span>' +
-      '<div class="rec-tv-kpi-body"><span class="rec-tv-kpi-num">' + esc(String(counts.total || 0)) +
-      '</span><span class="rec-tv-kpi-lbl">Descargados</span></div></div>' +
-      '<div class="rec-tv-kpi rec-tv-kpi--tipo"><span class="rec-tv-kpi-icon" aria-hidden="true">⚖</span>' +
-      '<div class="rec-tv-kpi-body"><span class="rec-tv-kpi-num">' + esc(String(counts.local || 0)) +
-      ' · ' + esc(String(counts.importado || 0)) + '</span>' +
-      '<span class="rec-tv-kpi-lbl">Local · Importado</span></div></div>' +
-      '<div class="rec-tv-kpi rec-tv-kpi--val"><span class="rec-tv-kpi-icon" aria-hidden="true">✓</span>' +
-      '<div class="rec-tv-kpi-body"><span class="rec-tv-kpi-num">' + esc(String(counts.validado || 0)) +
-      '</span><span class="rec-tv-kpi-lbl">Validados</span></div></div>' +
-      '<div class="rec-tv-kpi rec-tv-kpi--ent"><span class="rec-tv-kpi-icon" aria-hidden="true">→</span>' +
-      '<div class="rec-tv-kpi-body"><span class="rec-tv-kpi-num">' + esc(String(counts.conEntrada || 0)) +
-      '</span><span class="rec-tv-kpi-lbl">Entrada</span></div></div>' +
-      '<div class="rec-tv-kpi rec-tv-kpi--ubi"><span class="rec-tv-kpi-icon" aria-hidden="true">📍</span>' +
-      '<div class="rec-tv-kpi-body"><span class="rec-tv-kpi-num">' + esc(String(counts.conUbicado || 0)) +
-      '</span><span class="rec-tv-kpi-lbl">Ubicados</span></div></div></div>' +
-      '<aside class="rec-tv-chart rec-tv-chart--triple" aria-label="Productividad equipo">' +
-      '<p class="rec-tv-chart-title">Equipo en recepción</p>' +
-      renderChartSection('Operadores sentado', chart.operadores, '', 0) +
-      renderChartSection('Validadores', chart.validadores, 'rec-tv-chart-fill--val', 0) +
-      renderChartSection('Ubicadores', chart.ubicadores, 'rec-tv-chart-fill--ubi', 0) +
-      '</aside></div>';
+    return renderProductivityBoard(chart);
   }
 
   function signature(share, contenedores, counts, range) {
@@ -396,24 +401,17 @@
     document.body.classList.add('rec-live-on');
 
     mountEl.innerHTML =
-      '<div class="rec-present-shell rec-present-shell--tv">' +
+      '<div class="rec-present-shell rec-present-shell--tv rec-present-shell--tv-prod">' +
       '<header class="rec-present-header">' +
       '<div class="rec-present-header-brand">' +
       '<img class="jc-logo-img jc-logo-img--present" src="assets/img/ac001-logo.svg?v=4" alt="AC" width="56" height="56">' +
       '<div class="rec-present-header-copy"><p class="rec-present-eyebrow">Almacén Central AC · EN VIVO</p>' +
-      '<h1 class="rec-present-title">Gestión de Recepción y Ubicación</h1>' +
-      '<p class="rec-present-sub">Recepción de contenedores</p></div></div>' +
+      '<h1 class="rec-present-title">Productividad en recepción</h1>' +
+      '<p class="rec-present-sub">Operadores · Validadores · Ubicadores · Digitadores</p></div></div>' +
       renderDateFilter(view.range) +
       '</header>' +
       renderToolbar(view.counts, view.chart) +
-      '<div class="rec-present-table-wrap">' +
-      '<table class="rec-present-table rec-present-table--tv" aria-label="Manifiesto recepción en vivo">' +
-      '<thead><tr>' +
-      '<th>Contenedor</th><th>Tipo</th><th>División</th><th>Descripción</th><th>Paletas</th><th>Muelle</th>' +
-      '<th>Op. sentado</th><th>Validador</th><th>Entrada</th><th>Ubicador</th>' +
-      '<th>Descargado</th><th>Validado</th><th>Entrada</th><th>Ubicado</th>' +
-      '<th>Val.</th><th>Ent.</th><th>Ubi.</th>' +
-      '</tr></thead><tbody>' + renderRows(view.contenedores, view.range) + '</tbody></table></div></div>';
+      '</div>';
 
     lastSig = signature(share, view.contenedores, view.counts, view.range);
   }

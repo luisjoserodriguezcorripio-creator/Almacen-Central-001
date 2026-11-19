@@ -809,6 +809,9 @@
       }),
       ubicadores: tallyCampo(contenedores, 'ubicadorPor', function (c) {
         return c.ubicado === 'ok';
+      }),
+      digitadores: tallyCampo(contenedores, 'entradaPor', function (c) {
+        return c.entrada === 'ok';
       })
     };
   }

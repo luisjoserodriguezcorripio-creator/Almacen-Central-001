@@ -263,20 +263,20 @@
   <script>
     var roles = {
       operadores: {
-        key: 'op', label: 'Operadores',
+        key: 'op', label: 'Operadores (Cont. Descargados)',
         people: [['Pedro', 94], ['Robert', 85], ['Schad', 9]]
       },
       validadores: {
-        key: 'val', label: 'Validadores',
+        key: 'val', label: 'Validadores (Cont. Validados)',
         people: [['Julio L.', 62], ['Handerson', 48], ['Nelson', 41], ['Richard', 28]]
       },
-      digitadores: {
-        key: 'dig', label: 'Digitadores',
-        people: [['Francis', 91], ['Andy', 55], ['Yessica', 30]]
-      },
       ubicadores: {
-        key: 'ubi', label: 'Ubicadores',
+        key: 'ubi', label: 'Ubicadores (Cont. Ubicados)',
         people: [['Rolando', 58], ['Obispo', 47], ['Yeuri', 39], ['Yeison', 35]]
+      },
+      digitadores: {
+        key: 'dig', label: 'Digitadores (Remisiones)',
+        people: [['Francis', 91], ['Andy', 55], ['Yessica', 30]]
       }
     };
 
@@ -317,7 +317,7 @@
 
     function allRoleCards() {
       return roleCard(roles.operadores) + roleCard(roles.validadores) +
-        roleCard(roles.digitadores) + roleCard(roles.ubicadores);
+        roleCard(roles.ubicadores) + roleCard(roles.digitadores);
     }
 
     function tabsPanel() {
@@ -326,8 +326,8 @@
         '<div class="tab-side">' +
         '<span class="tab role-op is-on">Operadores</span>' +
         '<span class="tab role-val">Validadores</span>' +
-        '<span class="tab role-dig">Digitadores</span>' +
-        '<span class="tab role-ubi">Ubicadores</span></div>' +
+        '<span class="tab role-ubi">Ubicadores</span>' +
+        '<span class="tab role-dig">Digitadores</span></div>' +
         '<div style="min-height:0">' + roleCard(roles.operadores) + '</div>' +
         '</div></div>';
     }
@@ -338,7 +338,7 @@
         '<div class="role-name">' + role.label + '</div>' +
         '<div class="big-total">' + sum(role.people) + '</div>' +
         '<div class="big-sub">Top: ' + top[0] + ' · ' + top[1] + '</div>' +
-        '<div style="margin-top:12px">' + rowsHtml(role.people.slice(0, 3)) + '</div></div>';
+        '<div style="margin-top:12px">' + rowsHtml(role.people) + '</div></div>';
     }
 
     function rankBoard(role) {
@@ -354,15 +354,15 @@
       var totals = [
         sum(roles.operadores.people),
         sum(roles.validadores.people),
-        sum(roles.digitadores.people),
-        sum(roles.ubicadores.people)
+        sum(roles.ubicadores.people),
+        sum(roles.digitadores.people)
       ];
       var mx = Math.max.apply(null, totals);
       var list = [
         [roles.operadores, totals[0]],
         [roles.validadores, totals[1]],
-        [roles.digitadores, totals[2]],
-        [roles.ubicadores, totals[3]]
+        [roles.ubicadores, totals[2]],
+        [roles.digitadores, totals[3]]
       ];
       return '<div class="donut-row">' + list.map(function (item) {
         var role = item[0];
@@ -420,15 +420,15 @@
         desc: 'Cuatro bandas apiladas de borde a borde, una por rol.',
         html: '<div class="body-pad"><div class="L5">' +
           bandCard(roles.operadores) + bandCard(roles.validadores) +
-          bandCard(roles.digitadores) + bandCard(roles.ubicadores) +
+          bandCard(roles.ubicadores) + bandCard(roles.digitadores) +
           '</div></div>'
       },
       {
-        id: 'o6', title: 'Opción 6 · Totales grandes + top',
-        desc: 'Número dominante por rol y top performer, con barras debajo.',
+        id: 'o6', title: 'Opción 6 · Totales grandes + top · ELEGIDA',
+        desc: 'Orden: Operadores → Validadores → Ubicadores → Digitadores. Todos los nombres. Pantalla completa en TV.',
         html: '<div class="body-pad"><div class="L6">' +
           totalsCard(roles.operadores) + totalsCard(roles.validadores) +
-          totalsCard(roles.digitadores) + totalsCard(roles.ubicadores) +
+          totalsCard(roles.ubicadores) + totalsCard(roles.digitadores) +
           '</div></div>'
       },
       {
@@ -436,7 +436,7 @@
         desc: 'Leaderboard por rol con posición 1–n.',
         html: '<div class="body-pad"><div class="L7">' +
           rankBoard(roles.operadores) + rankBoard(roles.validadores) +
-          rankBoard(roles.digitadores) + rankBoard(roles.ubicadores) +
+          rankBoard(roles.ubicadores) + rankBoard(roles.digitadores) +
           '</div></div>'
       },
       {
@@ -449,7 +449,7 @@
         desc: 'Avatares con conteo y barras de productividad por rol.',
         html: '<div class="body-pad"><div class="L9">' +
           chipsPanel(roles.operadores) + chipsPanel(roles.validadores) +
-          chipsPanel(roles.digitadores) + chipsPanel(roles.ubicadores) +
+          chipsPanel(roles.ubicadores) + chipsPanel(roles.digitadores) +
           '</div></div>'
       },
       {
@@ -457,7 +457,7 @@
         desc: 'Arriba Operadores + Validadores; abajo Digitadores + Ubicadores.',
         html: '<div class="body-pad"><div class="L10">' +
           '<div class="dual-row">' + roleCard(roles.operadores) + roleCard(roles.validadores) + '</div>' +
-          '<div class="dual-row">' + roleCard(roles.digitadores) + roleCard(roles.ubicadores) + '</div>' +
+          '<div class="dual-row">' + roleCard(roles.ubicadores) + roleCard(roles.digitadores) + '</div>' +
           '</div></div>'
       }
     ];

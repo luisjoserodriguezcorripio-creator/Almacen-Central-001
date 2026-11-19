@@ -566,3 +566,244 @@ body.rec-live-on .rec-live-present {
   max-height: calc(100vh - clamp(9rem, 22vh, 14rem));
   overflow: auto;
 }
+
+/* Opción 6 · Productividad full-screen (fondo oscuro) */
+body.rec-display-mode.rec-live-on {
+  background: #06101f;
+}
+
+body.rec-display-mode.rec-live-on .rec-tv-menubar {
+  background: rgba(7, 17, 31, 0.96);
+  border-bottom-color: rgba(148, 163, 184, 0.2);
+  color: #e2e8f0;
+}
+
+body.rec-display-mode.rec-live-on .rec-tv-menubar-title {
+  color: #e2e8f0;
+}
+
+body.rec-display-mode.rec-live-on .rec-tv-menu-btn {
+  color: #e2e8f0;
+  border-color: rgba(148, 163, 184, 0.28);
+  background: rgba(2, 8, 20, 0.55);
+}
+
+.rec-present-shell--tv-prod {
+  min-height: calc(100vh - 3.35rem);
+  height: calc(100vh - 3.35rem);
+  max-height: calc(100vh - 3.35rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.55rem, 1.1vh, 0.9rem);
+  padding: clamp(0.45rem, 1.1vw, 0.85rem);
+  box-sizing: border-box;
+  background: linear-gradient(160deg, #071222 0%, #0b1a31 55%, #06101f 100%);
+  color: #f8fafc;
+  overflow: hidden;
+}
+
+.rec-present-shell--tv-prod .rec-present-header {
+  margin-bottom: 0;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  flex-shrink: 0;
+}
+
+.rec-present-shell--tv-prod .rec-present-eyebrow {
+  color: #f87171;
+}
+
+.rec-present-shell--tv-prod .rec-present-title {
+  color: #f8fafc;
+}
+
+.rec-present-shell--tv-prod .rec-present-sub {
+  color: #94a3b8;
+  letter-spacing: 0.08em;
+}
+
+.rec-present-shell--tv-prod .rec-present-date-filter {
+  background: rgba(2, 8, 20, 0.55);
+  border-color: rgba(148, 163, 184, 0.22);
+  opacity: 1;
+}
+
+.rec-present-shell--tv-prod .rec-present-date-label,
+.rec-present-shell--tv-prod .rec-present-date-field span,
+.rec-present-shell--tv-prod .rec-present-date-hint {
+  color: #94a3b8;
+}
+
+.rec-present-shell--tv-prod .rec-present-date-input {
+  background: #0f172a;
+  border-color: rgba(148, 163, 184, 0.28);
+  color: #e2e8f0;
+}
+
+.rec-present-shell--tv-prod .rec-present-date-btn {
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(148, 163, 184, 0.28);
+  color: #cbd5e1;
+}
+
+.rec-present-shell--tv-prod .rec-present-date-btn.is-active {
+  background: #c8102e;
+  border-color: #c8102e;
+  color: #fff;
+}
+
+.rec-tv-prod-board {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.65rem, 1.2vw, 1rem);
+  align-items: stretch;
+}
+
+.rec-tv-prod-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(2, 8, 20, 0.72);
+  padding: clamp(0.75rem, 1.3vw, 1.1rem);
+  overflow: hidden;
+}
+
+.rec-tv-prod-card--op {
+  border-color: rgba(248, 113, 113, 0.42);
+  background: linear-gradient(180deg, rgba(248, 113, 113, 0.12), rgba(2, 8, 20, 0.72));
+}
+.rec-tv-prod-card--val {
+  border-color: rgba(251, 191, 36, 0.42);
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.12), rgba(2, 8, 20, 0.72));
+}
+.rec-tv-prod-card--ubi {
+  border-color: rgba(45, 212, 191, 0.42);
+  background: linear-gradient(180deg, rgba(45, 212, 191, 0.12), rgba(2, 8, 20, 0.72));
+}
+.rec-tv-prod-card--dig {
+  border-color: rgba(52, 211, 153, 0.42);
+  background: linear-gradient(180deg, rgba(52, 211, 153, 0.12), rgba(2, 8, 20, 0.72));
+}
+
+.rec-tv-prod-head {
+  flex-shrink: 0;
+  margin-bottom: clamp(0.55rem, 1.2vh, 0.9rem);
+}
+
+.rec-tv-prod-lbl {
+  margin: 0;
+  font-size: clamp(0.72rem, 1.15vw, 0.95rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  color: #cbd5e1;
+}
+
+.rec-tv-prod-card--op .rec-tv-prod-lbl { color: #fca5a5; }
+.rec-tv-prod-card--val .rec-tv-prod-lbl { color: #fcd34d; }
+.rec-tv-prod-card--ubi .rec-tv-prod-lbl { color: #5eead4; }
+.rec-tv-prod-card--dig .rec-tv-prod-lbl { color: #6ee7b7; }
+
+.rec-tv-prod-total {
+  margin: 0.35rem 0 0;
+  font-size: clamp(2.4rem, 5.2vw, 4.2rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+
+.rec-tv-prod-card--op .rec-tv-prod-total { color: #f87171; }
+.rec-tv-prod-card--val .rec-tv-prod-total { color: #fbbf24; }
+.rec-tv-prod-card--ubi .rec-tv-prod-total { color: #2dd4bf; }
+.rec-tv-prod-card--dig .rec-tv-prod-total { color: #34d399; }
+
+.rec-tv-prod-top {
+  margin: 0.35rem 0 0;
+  font-size: clamp(0.72rem, 1.05vw, 0.9rem);
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.rec-tv-prod-rows {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.45rem, 1vh, 0.7rem);
+  padding-right: 0.15rem;
+}
+
+.rec-tv-prod-row {
+  display: grid;
+  grid-template-columns: minmax(5.5rem, 36%) minmax(0, 1fr) auto;
+  gap: 0.55rem;
+  align-items: center;
+  font-size: clamp(0.85rem, 1.35vw, 1.15rem);
+}
+
+.rec-tv-prod-name {
+  color: #e2e8f0;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rec-tv-prod-bar {
+  height: clamp(0.55rem, 1.1vh, 0.85rem);
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.18);
+  overflow: hidden;
+}
+
+.rec-tv-prod-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #f87171;
+  box-shadow: 0 0 12px rgba(248, 113, 113, 0.35);
+}
+
+.rec-tv-prod-fill--op { background: linear-gradient(90deg, #ef4444, #f87171); }
+.rec-tv-prod-fill--val { background: linear-gradient(90deg, #d97706, #fbbf24); box-shadow: 0 0 12px rgba(251, 191, 36, 0.35); }
+.rec-tv-prod-fill--ubi { background: linear-gradient(90deg, #0f766e, #2dd4bf); box-shadow: 0 0 12px rgba(45, 212, 191, 0.35); }
+.rec-tv-prod-fill--dig { background: linear-gradient(90deg, #059669, #34d399); box-shadow: 0 0 12px rgba(52, 211, 153, 0.35); }
+
+.rec-tv-prod-num {
+  font-weight: 900;
+  color: #f8fafc;
+  min-width: 1.6em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.rec-tv-prod-empty {
+  color: #64748b;
+  font-size: clamp(0.85rem, 1.2vw, 1.05rem);
+  font-weight: 700;
+  padding: 0.5rem 0;
+}
+
+@media (max-width: 1100px) {
+  .rec-tv-prod-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .rec-present-shell--tv-prod {
+    height: auto;
+    max-height: none;
+    overflow: auto;
+  }
+  .rec-tv-prod-board {
+    grid-template-columns: 1fr;
+  }
+}

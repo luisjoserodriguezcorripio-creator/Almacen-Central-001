@@ -154,11 +154,10 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
 .rec-tc-app .rbl-kpi-grid--rec6 .rbl-kpi-icon-img--photo {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
   border-radius: 10px;
   background: #fff;
-  padding: 0.15rem;
   box-sizing: border-box;
 }
 

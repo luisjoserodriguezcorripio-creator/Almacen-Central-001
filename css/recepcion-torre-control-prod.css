@@ -109,16 +109,16 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
 .rec-tc-app .rbl-kpi-grid--rec5 .rbl-kpi,
 .rec-tc-app .rbl-kpi-grid--rec6 .rbl-kpi {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  text-align: center;
+  justify-content: flex-start;
+  text-align: left;
   width: 100%;
   min-width: 0;
-  min-height: 7.25rem;
+  min-height: 6.4rem;
   box-sizing: border-box;
-  padding: 0.95rem 0.65rem 0.9rem;
-  gap: 0.5rem;
+  padding: 1rem 0.9rem;
+  gap: 0.75rem;
   border-radius: 14px;
 }
 
@@ -126,18 +126,18 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
 .rec-tc-app .rbl-kpi-grid--rec6 .rbl-kpi-text {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  text-align: center;
+  text-align: left;
   min-width: 0;
-  width: 100%;
+  flex: 1;
   gap: 0.2rem;
 }
 
 .rec-tc-app .rbl-kpi-grid--rec5 .rbl-kpi-icon,
 .rec-tc-app .rbl-kpi-grid--rec6 .rbl-kpi-icon {
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 3.6rem;
+  height: 3.6rem;
   border-radius: 12px;
   flex-shrink: 0;
 }
@@ -146,8 +146,8 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
 .rec-tc-app .rbl-kpi-grid--rec5 .rbl-icon,
 .rec-tc-app .rbl-kpi-grid--rec6 .rbl-kpi-icon-img,
 .rec-tc-app .rbl-kpi-grid--rec6 .rbl-icon {
-  width: 2.15rem;
-  height: 2.15rem;
+  width: 2.2rem;
+  height: 2.2rem;
 }
 
 .rec-tc-app .rbl-kpi-grid--rec5 .rbl-kpi-num,
@@ -155,8 +155,7 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
   font-size: 1.75rem !important;
   line-height: 1.05;
   font-weight: 800 !important;
-  text-align: center;
-  width: 100%;
+  text-align: left;
 }
 
 .rec-tc-app .rbl-kpi-grid--rec5 .rbl-kpi-lbl,
@@ -165,8 +164,8 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
   letter-spacing: 0.02em;
   line-height: 1.2;
   white-space: nowrap;
-  text-align: center;
-  width: 100%;
+  text-align: left;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -185,6 +184,7 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
   }
 }
 
+.rec-tc-app .rbl-kpi-grid--rec5 .rbl-kpi.is-filter-on,
 .rec-tc-app .rbl-kpi-grid--rec6 .rbl-kpi.is-filter-on {
   border-color: rgba(185, 28, 28, 0.45);
   box-shadow: 0 0 0 2px rgba(185, 28, 28, 0.12);

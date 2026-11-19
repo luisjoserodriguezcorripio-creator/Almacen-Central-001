@@ -818,7 +818,7 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
 
 /* Tabla planilla (encabezados Excel) */
 .rec-tc-app .rec-table--planilla {
-  min-width: 1680px;
+  min-width: 1760px;
   table-layout: auto;
 }
 

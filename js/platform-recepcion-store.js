@@ -131,30 +131,30 @@
       if (r.fechaKey) fechaIso = r.fechaKey + 'T12:00:00.000Z';
       else fechaIso = nowIso();
       var validado = statusFromText(v[12]);
-      var remision = statusFromText(v[13]);
-      var ubicado = String(v[18] || '').trim() ? 'ok' : 'pendiente';
+      var ubicado = statusFromText(v[13]);
+      var remision = statusFromText(v[14]);
       return normalizeContenedor({
         id: 'pl_' + idx + '_' + String(v[0] || idx),
         registro: String(v[6] || v[0] || ('FILA-' + (idx + 1))).trim().toUpperCase(),
         fecha: fechaIso,
         contenedor: String(v[4] || '').trim().toUpperCase() || ('SIN-CONT-' + (idx + 1)),
-        tipo: /local/i.test(String(v[20] || '')) ? 'local' : 'importado',
+        tipo: /local/i.test(String(v[21] || '')) ? 'local' : 'importado',
         division: String(v[3] || '').trim(),
         descripcion: String(v[8] || '').trim(),
-        paletas: parseInt(v[21], 10) || 0,
-        muelle: String(v[15] || '').trim().toUpperCase(),
+        paletas: parseInt(v[22], 10) || 0,
+        muelle: String(v[16] || '').trim().toUpperCase(),
         descargado: statusFromText(v[11]),
         validado: validado,
         entrada: remision,
         ubicado: ubicado,
         atDescargado: fechaIso,
-        operadorDescarga: String(v[16] || '').trim() || '—',
+        operadorDescarga: String(v[17] || '').trim() || '—',
         atValidado: validado === 'ok' ? fechaIso : '',
-        validadorPor: String(v[17] || '').trim(),
+        validadorPor: String(v[18] || '').trim(),
         atEntrada: remision === 'ok' ? fechaIso : '',
-        entradaPor: String(v[19] || '').trim(),
+        entradaPor: String(v[20] || '').trim(),
         atUbicado: ubicado === 'ok' ? fechaIso : '',
-        ubicadorPor: String(v[18] || '').trim(),
+        ubicadorPor: String(v[19] || '').trim(),
         createdAt: fechaIso,
         createdBy: planilla.uploadedBy || 'planilla',
         updatedAt: planilla.uploadedAt || nowIso(),
@@ -724,14 +724,16 @@
       paletas: 0,
       pendienteValidar: 0,
       pendienteDescargar: 0,
-      pendienteRemision: 0
+      pendienteRemision: 0,
+      pendienteUbicar: 0
     };
     list.forEach(function (r) {
       var v = r.values || [];
-      out.paletas += parseInt(v[21], 10) || 0;
+      out.paletas += parseInt(v[22], 10) || 0;
       if (!isOkStatus(v[12])) out.pendienteValidar += 1;
       if (!isOkStatus(v[11])) out.pendienteDescargar += 1;
-      if (!isOkStatus(v[13])) out.pendienteRemision += 1;
+      if (!isOkStatus(v[13])) out.pendienteUbicar += 1;
+      if (!isOkStatus(v[14])) out.pendienteRemision += 1;
     });
     return out;
   }

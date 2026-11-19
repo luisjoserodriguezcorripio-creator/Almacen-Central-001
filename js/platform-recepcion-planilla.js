@@ -21,6 +21,7 @@
     'VIDA UTIL (DIAS)',
     'DESCARGADO',
     'VALIDADO',
+    'UBICADO',
     'REMISION',
     'NO.REMISION',
     'MUELLE',

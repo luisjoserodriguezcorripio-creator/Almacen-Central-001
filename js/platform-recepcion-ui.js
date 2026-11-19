@@ -49,7 +49,7 @@
   var FILTER_KEY = 'rec_planilla_fecha_filter';
   var DEFAULT_HEADERS = (global.PlatformRecepcionPlanilla && global.PlatformRecepcionPlanilla.EXPECTED_HEADERS) || [
     'NO.', 'FECHA LLEGADA', 'FECHA DESCARGA', 'Bahias', '# CONT. / FACTURA', '# OC/OT', '#IDC', 'Turno',
-    'ARTICULO', 'Fecha de vencimiento', 'VIDA UTIL (DIAS)', 'DESCARGADO', 'VALIDADO', 'REMISION',
+    'ARTICULO', 'Fecha de vencimiento', 'VIDA UTIL (DIAS)', 'DESCARGADO', 'VALIDADO', 'UBICADO', 'REMISION',
     'NO.REMISION', 'MUELLE', 'OPERADOR', 'VALIDADOR', 'UBICADOR', 'DIGITADOR', 'TIPO', 'PALETA',
     'HORA RAMPA', 'COMENTARIOS'
   ];
@@ -487,7 +487,7 @@
         var h = (headers && headers[ci]) || '';
         var cls = 'rec-col-planilla';
         if (/cont\.|factura|articulo/i.test(h)) cls += ' rec-col-planilla--strong';
-        if (/validado|descargado|remision/i.test(h)) {
+        if (/validado|descargado|ubicado|remision/i.test(h)) {
           return '<td class="' + cls + '">' + renderStatusCell(val) + '</td>';
         }
         if (/^paleta/i.test(h) && String(val || '').trim() !== '') {

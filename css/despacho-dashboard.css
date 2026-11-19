@@ -1945,6 +1945,15 @@ body.desp-controller-mode .desp-lista-present-totales,
   margin-top: 0;
 }
 
+.desp-panel--personal-fondo {
+  margin-top: 0.25rem;
+  order: 99;
+}
+
+.desp-panel--personal-fondo .desp-resumen-camiones {
+  margin-top: 0.35rem;
+}
+
 .desp-panel--val-catalog {
   margin: 0;
 }

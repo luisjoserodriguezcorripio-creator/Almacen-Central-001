@@ -919,16 +919,21 @@
       '<header class="desp-panel-head">' +
       '<div><span class="desp-eyebrow">Pantalla externa · Validador</span>' +
       '<h3 id="despValShareTitle">Pantalla TV</h3>' +
-      '<p class="desp-panel-sub">Comparta el seguimiento en TV · abajo está la tabla de trabajo del validador</p></div>' +
+      '<p class="desp-panel-sub">Proyecte el seguimiento en la TV del piso</p></div>' +
       '</header>' +
       renderListaShareActions(data, opts) +
       '<p class="desp-share-status desp-share-status--lista" id="despListaShareStatus"' + (sharing ? '' : ' hidden') + '>' +
       statusTxt + '</p>' +
-      renderActividadHoy(data.pedidos) +
-      renderResumenCamionesValidador(data.pedidos) +
       '</section>' +
       renderGestionValidadores(canRemove) +
       renderTablaValidacion(data, opts) +
+      '<section class="desp-panel desp-panel--personal-fondo" aria-label="Resumen de personal">' +
+      '<header class="desp-panel-head">' +
+      '<div><span class="desp-eyebrow">Personal</span>' +
+      '<h3>Carga por validador</h3></div>' +
+      '</header>' +
+      renderResumenCamionesValidador(data.pedidos) +
+      '</section>' +
       '</div>';
   }
 

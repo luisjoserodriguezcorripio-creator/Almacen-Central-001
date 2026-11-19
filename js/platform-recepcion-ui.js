@@ -320,7 +320,7 @@
       '<span class="rbl-kpi-lbl">Paletas</span></div></div>' +
       '<div class="' + kpiCls('validar') + '" data-rec-kpi-estado="validar">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--navy">' +
-      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-handheld-wms.svg?v=1" alt="" width="48" height="48"></div>' +
+      '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-handheld-zebra.png?v=1" alt="" width="48" height="48"></div>' +
       '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteValidar || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Pend. Validar</span></div></div>' +
       '<div class="' + kpiCls('remision') + '" data-rec-kpi-estado="remision">' +

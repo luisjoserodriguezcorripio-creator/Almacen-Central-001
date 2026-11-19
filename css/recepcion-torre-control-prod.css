@@ -98,8 +98,8 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
   align-items: stretch;
   flex: 1;
   min-height: 0;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, min(26vw, 420px));
-  gap: clamp(0.65rem, 1vw, 1rem);
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 380px);
+  gap: clamp(0.75rem, 1.2vw, 1.15rem);
 }
 
 .rec-tc-app .rbl-f-grid > .rbl-card {
@@ -144,22 +144,28 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
   text-align: center;
   vertical-align: middle;
   border-bottom: 1px solid #e2e8f0;
-  color: #334155;
+  color: #0f172a;
 }
 
 .rec-tc-app .rec-table th {
-  background: #f8fafc;
-  color: #64748b;
-  font-size: 0.58rem;
+  background: #eef2f7;
+  color: #1e293b;
+  font-size: 0.72rem;
   font-weight: 800;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
-  padding: 0.5rem 0.35rem;
+  padding: 0.65rem 0.45rem;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  box-shadow: 0 1px 0 #cbd5e1;
 }
 
 .rec-tc-app .rec-table td {
-  padding: 0.45rem 0.35rem;
-  font-size: 0.76rem;
+  padding: 0.6rem 0.45rem;
+  font-size: 0.88rem;
+  line-height: 1.25;
 }
 
 .rec-tc-app .rec-table tbody tr:hover {
@@ -169,12 +175,13 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
 .rec-tc-app .rec-col-contenedor strong {
   color: #0f172a;
   font-weight: 800;
+  font-size: 0.92rem;
 }
 
 .rec-tc-app .rec-col-registro strong,
 .rec-tc-app .rec-log-reg strong {
   color: #b91c1c;
-  font-size: 0.74rem;
+  font-size: 0.84rem;
 }
 
 .rec-tc-app .rec-col-desc {
@@ -182,32 +189,38 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: left;
+  padding-left: 0.55rem;
 }
 
 .rec-tc-app .rec-table--manifest {
   width: 100%;
+  min-width: 980px;
   table-layout: fixed;
   border-collapse: collapse;
 }
 
 .rec-tc-app .rec-table-wrap--manifest {
   flex: 1;
-  min-height: 0;
+  min-height: 280px;
   max-height: none;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+  border: 1px solid #e2e8f0;
+  border-radius: 0 0 12px 12px;
+  background: #fff;
 }
 
-.rec-tc-app .rec-table--manifest .rec-col-fecha { width: 7%; }
-.rec-tc-app .rec-table--manifest .rec-col-registro { width: 9%; }
-.rec-tc-app .rec-table--manifest .rec-col-contenedor { width: 11%; }
+.rec-tc-app .rec-table--manifest .rec-col-fecha { width: 7.5%; }
+.rec-tc-app .rec-table--manifest .rec-col-registro { width: 8.5%; }
+.rec-tc-app .rec-table--manifest .rec-col-contenedor { width: 12%; }
 .rec-tc-app .rec-table--manifest .rec-col-tipo { width: 8%; }
 .rec-tc-app .rec-table--manifest .rec-col-division { width: 8%; }
-.rec-tc-app .rec-table--manifest .rec-col-desc { width: 16%; }
+.rec-tc-app .rec-table--manifest .rec-col-desc { width: 15%; }
 .rec-tc-app .rec-table--manifest .rec-col-num { width: 6%; }
-.rec-tc-app .rec-table--manifest .rec-col-muelle { width: 14%; }
+.rec-tc-app .rec-table--manifest .rec-col-muelle { width: 11%; }
 .rec-tc-app .rec-table--manifest .rec-col-status { width: 7%; }
-.rec-tc-app .rec-table--manifest .rec-col-actions { width: 12%; }
+.rec-tc-app .rec-table--manifest .rec-col-actions { width: 10%; }
 
 .rec-tc-app .rec-btn--ubi {
   background: #e0f2f1;
@@ -217,14 +230,16 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
 
 .rec-tc-app .rec-badge {
   min-width: 0;
-  padding: 0.15rem 0.35rem;
-  font-size: 0.62rem;
-  border-radius: 6px;
+  padding: 0.22rem 0.45rem;
+  font-size: 0.72rem;
+  border-radius: 7px;
+  font-weight: 700;
 }
 
 .rec-tc-app .rec-tipo {
-  font-size: 0.6rem;
-  padding: 0.12rem 0.35rem;
+  font-size: 0.72rem;
+  padding: 0.18rem 0.42rem;
+  font-weight: 700;
 }
 
 .rec-tc-app .rec-muelle-edit {
@@ -238,13 +253,15 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
 .rec-tc-app .rec-muelle-input {
   min-width: 0;
   width: 100%;
-  padding: 0.32rem 0.4rem;
-  font-size: 0.72rem;
+  padding: 0.4rem 0.45rem;
+  font-size: 0.82rem;
+  color: #0f172a;
+  -webkit-text-fill-color: #0f172a;
 }
 
 .rec-tc-app .rec-btn--sm {
-  font-size: 0.62rem;
-  padding: 0.22rem 0.4rem;
+  font-size: 0.72rem;
+  padding: 0.3rem 0.45rem;
 }
 
 .rec-tc-app .rec-col-actions {
@@ -259,8 +276,33 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
 }
 
 .rec-tc-app .rec-empty {
-  color: #94a3b8;
-  padding: 1.5rem;
+  color: #64748b;
+  padding: 2.25rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.rec-tc-app .rbl-card--manifest .rbl-card-head h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.rec-tc-app .rbl-card--manifest .rbl-card-head span {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.rec-tc-app .rbl-kpi-num {
+  font-size: clamp(1.35rem, 2.2vw, 1.75rem) !important;
+  color: #0f172a !important;
+}
+
+.rec-tc-app .rbl-kpi-lbl {
+  font-size: 0.72rem !important;
+  color: #334155 !important;
+  font-weight: 800 !important;
 }
 
 /* Formulario torre */
@@ -275,11 +317,21 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
   display: none;
 }
 
+.rec-tc-app .rbl-card:not(.rbl-card--manifest) {
+  overflow: auto;
+}
+
+.rec-tc-app .rbl-card:not(.rbl-card--manifest) .rbl-card-head h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
 .rec-tc-app .rec-form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.55rem;
-  margin-bottom: 0.65rem;
+  gap: 0.7rem;
+  margin-bottom: 0.75rem;
 }
 
 .rec-tc-app .rec-field--wide,
@@ -290,31 +342,32 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
 .rec-tc-app .rec-form-row-pair {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.55rem;
+  gap: 0.7rem;
 }
 
 .rec-tc-app .rec-field span {
   display: block;
-  font-size: 0.62rem;
+  font-size: 0.72rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: #64748b;
-  margin-bottom: 0.28rem;
+  letter-spacing: 0.05em;
+  color: #334155;
+  margin-bottom: 0.32rem;
 }
 
 .rec-tc-app .rec-input {
   width: 100%;
   box-sizing: border-box;
-  padding: 0.55rem 0.7rem;
+  padding: 0.65rem 0.75rem;
   border-radius: 10px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #94a3b8;
   background: #fff;
   color: #0f172a;
   font: inherit;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   font-weight: 600;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+  -webkit-text-fill-color: #0f172a;
 }
 
 .rec-tc-app .rec-input:focus {
@@ -325,15 +378,17 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
 
 .rec-tc-app .rec-btn--primary {
   width: 100%;
-  margin-top: 0.35rem;
-  padding: 0.7rem;
+  margin-top: 0.45rem;
+  padding: 0.8rem;
   border: none;
   border-radius: 10px;
   background: linear-gradient(180deg, #dc2626, #991b1b);
   color: #fff;
+  font-size: 0.98rem;
   font-weight: 800;
   box-shadow: 0 4px 14px rgba(185, 28, 28, 0.3);
   cursor: pointer;
+  -webkit-text-fill-color: #fff;
 }
 
 .rec-tc-app .rec-btn--primary:hover {
@@ -497,13 +552,13 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
   }
 
   .rec-tc-app .rec-table th {
-    font-size: 0.62rem;
-    padding: 0.55rem 0.45rem;
+    font-size: 0.78rem;
+    padding: 0.7rem 0.5rem;
   }
 
   .rec-tc-app .rec-table td {
-    font-size: 0.8rem;
-    padding: 0.5rem 0.45rem;
+    font-size: 0.94rem;
+    padding: 0.65rem 0.5rem;
   }
 }
 

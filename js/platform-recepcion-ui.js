@@ -283,7 +283,9 @@
       '<div class="rbl-f-logo-text">' +
       '<h1>Gestión de Recepción y Ubicación</h1>' +
       '<p>Almacén Central 001 · Recepción de contenedores</p>' +
-      '</div></div></div></header>';
+      '</div></div>' +
+      '<a class="rec-tablon-back" href="./index.html">← Tablón informativo</a>' +
+      '</div></header>';
   }
 
   function renderTorreDrawer(user) {
@@ -297,7 +299,7 @@
       '<button type="button" class="rbl-drawer-link is-on" data-rec-screen="ops">Operaciones</button>' +
       '<button type="button" class="rbl-drawer-link" data-rec-screen="hist">Historia</button>' +
       '<button type="button" class="rbl-drawer-link" data-rec-screen="cfg">Configuraciones</button>' +
-      '<a class="rbl-drawer-link rbl-drawer-link--back" href="index.html">Volver al tablón informativo</a>' +
+      '<a class="rbl-drawer-link rbl-drawer-link--back" href="./index.html">← Volver al tablón informativo</a>' +
       '</nav>' +
       '<div class="rbl-drawer-foot">' + esc(name) + '</div></aside>';
   }

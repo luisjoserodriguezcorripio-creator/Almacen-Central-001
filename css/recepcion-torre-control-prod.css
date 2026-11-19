@@ -89,6 +89,34 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
   min-width: 0;
 }
 
+.rec-tc-app .rec-tablon-back {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  min-height: 2.2rem;
+  padding: 0 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(200, 16, 46, 0.35);
+  background: rgba(200, 16, 46, 0.1);
+  color: #c8102e;
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.rec-tc-app .rec-tablon-back:hover {
+  background: rgba(200, 16, 46, 0.18);
+  color: #9f1239;
+}
+
+@media (max-width: 720px) {
+  .rec-tc-app .rec-tablon-back {
+    display: none;
+  }
+}
+
 .rec-tc-app .rbl-kpi-grid {
   margin-bottom: 0.65rem;
   flex-shrink: 0;
@@ -650,14 +678,17 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
 .rec-tc-app a.rbl-drawer-link {
   text-decoration: none;
   box-sizing: border-box;
+  color: inherit;
 }
 
 .rec-tc-app .rbl-drawer-link--back {
-  margin-top: 0.35rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0 0 12px 12px;
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
   padding-top: 0.85rem;
-  color: rgba(226, 232, 240, 0.88);
+  color: #fff !important;
+  background: rgba(200, 16, 46, 0.22);
+  border: 1px solid rgba(248, 113, 113, 0.4);
 }
 
 .rec-tc-app .rbl-drawer-link.is-on {

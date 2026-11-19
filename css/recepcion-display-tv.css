@@ -207,6 +207,40 @@ body.rec-live-on .rec-live-present {
   color: #475569;
 }
 
+.rec-tv-menubar-back {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.15rem;
+  padding: 0 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.06);
+  color: #0f172a;
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.rec-tv-menubar-back:hover {
+  background: rgba(200, 16, 46, 0.1);
+  border-color: rgba(200, 16, 46, 0.35);
+  color: #c8102e;
+}
+
+body.rec-display-mode.rec-live-on .rec-tv-menubar-back {
+  background: rgba(2, 8, 20, 0.55);
+  border-color: rgba(148, 163, 184, 0.35);
+  color: #e2e8f0;
+}
+
+body.rec-display-mode.rec-live-on .rec-tv-menubar-back:hover {
+  background: rgba(248, 113, 113, 0.16);
+  border-color: rgba(248, 113, 113, 0.45);
+  color: #fecaca;
+}
+
 .rec-tv-drawer-backdrop {
   position: fixed;
   inset: 0;
@@ -328,11 +362,11 @@ body.rec-live-on .rec-live-present {
 }
 
 .rec-tv-drawer-link--back {
-  margin-top: 0.35rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0 0 12px 12px;
-  padding-top: 0.85rem;
-  color: rgba(226, 232, 240, 0.88);
+  margin-top: auto;
+  border-radius: 12px;
+  color: #fff !important;
+  background: rgba(200, 16, 46, 0.22);
+  border: 1px solid rgba(248, 113, 113, 0.4);
 }
 
 .rec-tv-drawer-foot {

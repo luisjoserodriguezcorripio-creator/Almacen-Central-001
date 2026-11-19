@@ -400,6 +400,38 @@
       '<div class="desp-val-chart-rows">' + rows + '</div></aside>';
   }
 
+  function buildProdFilasCompletas(pedidos) {
+    var store = DS();
+    if (!store || !store.resumenPorValidador) return [];
+    var resumen = store.resumenPorValidador(pedidos || []);
+    var byName = {};
+    (resumen.filas || []).forEach(function (r) {
+      if (r && r.nombre) byName[r.nombre] = r;
+    });
+    var catalog = store.getValidadoresAsignables
+      ? store.getValidadoresAsignables()
+      : [];
+    var seen = {};
+    var filas = [];
+    catalog.forEach(function (name) {
+      if (!name || seen[name]) return;
+      seen[name] = true;
+      filas.push(byName[name] || { nombre: name, validado: 0, cargado: 0 });
+    });
+    (resumen.filas || []).forEach(function (r) {
+      if (!r || !r.nombre || seen[r.nombre]) return;
+      seen[r.nombre] = true;
+      filas.push(r);
+    });
+    filas.sort(function (a, b) {
+      var ta = (a.validado || 0) + (a.cargado || 0);
+      var tb = (b.validado || 0) + (b.cargado || 0);
+      if (tb !== ta) return tb - ta;
+      return String(a.nombre).localeCompare(String(b.nombre), 'es');
+    });
+    return filas;
+  }
+
   function renderProdSide(pedidos) {
     var store = DS();
     if (!store || !store.resumenPorValidador) {
@@ -407,27 +439,36 @@
         '<h2 class="desp-lista-prod-title">Productividad validadores</h2>' +
         '<p class="desp-lista-prod-empty">Sin datos</p></aside>';
     }
-    var resumen = store.resumenPorValidador(pedidos || []);
-    var filas = (resumen.filas || []).filter(function (r) {
-      return (r.validado || 0) > 0 || (r.cargado || 0) > 0;
-    });
+    var filas = buildProdFilasCompletas(pedidos);
     var scaleMax = barScaleGlobal(filas);
     var cards = filas.map(function (r) {
       var cargado = r.cargado != null ? r.cargado : 0;
+      var validado = r.validado != null ? r.validado : 0;
       return '<div class="desp-lista-prod-person">' +
+        '<div class="desp-lista-prod-person-top">' +
         '<div class="desp-lista-prod-name">' + esc(r.nombre) + '</div>' +
-        '<div class="desp-lista-prod-meta"><span>Validados</span><strong>' + esc(String(r.validado || 0)) + '</strong></div>' +
-        renderBarFlex(r.validado, scaleMax, 'validado') +
-        '<div class="desp-lista-prod-meta"><span>Cargados</span><strong>' + esc(String(cargado)) + '</strong></div>' +
-        renderBarFlex(cargado, scaleMax, 'cargado') +
-        '</div>';
+        '<div class="desp-lista-prod-nums" aria-label="Validados y cargados">' +
+        '<span class="desp-lista-prod-num desp-lista-prod-num--val" title="Validados">' +
+        esc(String(validado)) + '</span>' +
+        '<span class="desp-lista-prod-num desp-lista-prod-num--cam" title="Cargados">' +
+        esc(String(cargado)) + '</span></div></div>' +
+        '<div class="desp-lista-prod-bars">' +
+        '<div class="desp-lista-prod-bar-row" title="Validados">' +
+        renderBarFlex(validado, scaleMax, 'validado') + '</div>' +
+        '<div class="desp-lista-prod-bar-row" title="Cargados">' +
+        renderBarFlex(cargado, scaleMax, 'cargado') + '</div>' +
+        '</div></div>';
     }).join('');
     if (!cards) {
-      cards = '<p class="desp-lista-prod-empty">Sin IDC validados ni cargados.</p>';
+      cards = '<p class="desp-lista-prod-empty">Sin validadores en catálogo.</p>';
     }
     return '<aside class="desp-lista-prod-side" aria-label="Productividad validadores">' +
       '<h2 class="desp-lista-prod-title">Productividad validadores</h2>' +
-      cards +
+      '<div class="desp-lista-prod-legend" aria-hidden="true">' +
+      '<span><i class="desp-lista-prod-swatch desp-lista-prod-swatch--val"></i>Val</span>' +
+      '<span><i class="desp-lista-prod-swatch desp-lista-prod-swatch--cam"></i>Cam</span>' +
+      '</div>' +
+      '<div class="desp-lista-prod-list">' + cards + '</div>' +
       '</aside>';
   }
 

@@ -907,26 +907,25 @@
   function renderPanelValidador(data, opts) {
     var sharing = DS.getLiveShareLista(data);
     var perms = listaSharePermisosUi(data, opts);
-    var pedidos = DS.getPedidosVisiblesValidador(data.pedidos);
     opts = opts || {};
     var canRemove = !!opts.canValidate;
+    var nSeguimiento = DS.getPedidosVisiblesValidador(data.pedidos).length;
     var statusTxt = sharing
-      ? 'En pantalla TV · ' + esc(String(pedidos.length)) + ' IDC en seguimiento validador' +
+      ? 'En pantalla TV · ' + esc(String(nSeguimiento)) + ' IDC en seguimiento validador' +
         (perms.sharedBy ? ' · ' + esc(perms.sharedBy) : '')
       : '';
     return '<div class="desp-validador-stack">' +
       '<section class="desp-panel desp-panel--val-share" aria-labelledby="despValShareTitle">' +
       '<header class="desp-panel-head">' +
       '<div><span class="desp-eyebrow">Pantalla externa · Validador</span>' +
-      '<h3 id="despValShareTitle">Seguimiento validador</h3>' +
-      '<p class="desp-panel-sub">Lo que comparte en TV · cada validador indica <strong>cuántos camiones cargó</strong> (ej. Juan 2 · Pedro 1)</p></div>' +
+      '<h3 id="despValShareTitle">Pantalla TV</h3>' +
+      '<p class="desp-panel-sub">Comparta el seguimiento en TV · abajo está la tabla de trabajo del validador</p></div>' +
       '</header>' +
       renderListaShareActions(data, opts) +
       '<p class="desp-share-status desp-share-status--lista" id="despListaShareStatus"' + (sharing ? '' : ' hidden') + '>' +
       statusTxt + '</p>' +
       renderActividadHoy(data.pedidos) +
       renderResumenCamionesValidador(data.pedidos) +
-      renderListaEnVivoSeguimiento(pedidos, canRemove, (opts && opts.userName) || '') +
       '</section>' +
       renderGestionValidadores(canRemove) +
       renderTablaValidacion(data, opts) +
@@ -1128,7 +1127,11 @@
       return a.localeCompare(b, 'es', { numeric: true });
     });
     return '<div class="desp-jaula-grid">' + keys.map(function (jaula) {
-      var items = byJaula[jaula];
+      var items = byJaula[jaula].slice().sort(function (a, b) {
+        var tb = Date.parse(b.createdAt || b.updatedAt) || 0;
+        var ta = Date.parse(a.createdAt || a.updatedAt) || 0;
+        return tb - ta;
+      });
       return '<article class="desp-jaula-card">' +
         '<header class="desp-jaula-card-head"><span class="desp-jaula-num">Jaula ' + esc(jaula) + '</span>' +
         '<span class="desp-jaula-count">' + items.length + ' IDC</span></header>' +

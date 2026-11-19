@@ -980,29 +980,19 @@
     return actualizarCamionesValidador(pedidoId, validadorNombre, 0, usuario);
   }
 
-  /** Orden validador: fecha/hora de registro (no reordenar al cambiar estado). */
+  /** Fecha/hora mostrada en columnas de seguimiento (registro del IDC). */
   function pedidoTimestamp(p) {
     var t = Date.parse(p && p.createdAt);
     if (t) return t;
     return Date.parse(p && p.updatedAt) || 0;
   }
 
-  /** Cargado siempre debajo de pendiente/validado; dentro de cada grupo, más antiguos arriba. */
-  function validadorEstadoSortRank(estado) {
-    if (estado === 'listo_despacho') return 1;
-    if (estado === 'pendiente_carga' || estado === 'en_validacion') return 0;
-    return 2;
-  }
-
-  /** Validador: pendiente/validado arriba (viejos primero); cargado abajo (viejos primero entre cargados). */
+  /** Validador: más reciente arriba (misma fecha/hora de la columna). */
   function sortPedidosValidador(pedidos) {
     return (pedidos || []).slice().sort(function (a, b) {
-      var ra = validadorEstadoSortRank(a.estado);
-      var rb = validadorEstadoSortRank(b.estado);
-      if (ra !== rb) return ra - rb;
-      var ta = pedidoTimestamp(a);
       var tb = pedidoTimestamp(b);
-      if (ta !== tb) return ta - tb;
+      var ta = pedidoTimestamp(a);
+      if (tb !== ta) return tb - ta;
       var ja = String(a.jaula || '').localeCompare(String(b.jaula || ''), 'es', { numeric: true });
       if (ja !== 0) return ja;
       return String(a.idc || '').localeCompare(String(b.idc || ''), 'es', { numeric: true });

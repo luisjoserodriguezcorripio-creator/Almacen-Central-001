@@ -465,8 +465,8 @@
     return '<aside class="desp-lista-prod-side" aria-label="Productividad validadores">' +
       '<h2 class="desp-lista-prod-title">Productividad validadores</h2>' +
       '<div class="desp-lista-prod-legend" aria-hidden="true">' +
-      '<span><i class="desp-lista-prod-swatch desp-lista-prod-swatch--val"></i>Val</span>' +
-      '<span><i class="desp-lista-prod-swatch desp-lista-prod-swatch--cam"></i>Cam</span>' +
+      '<span><i class="desp-lista-prod-swatch desp-lista-prod-swatch--val"></i>Validado</span>' +
+      '<span><i class="desp-lista-prod-swatch desp-lista-prod-swatch--cam"></i>Cargados</span>' +
       '</div>' +
       '<div class="desp-lista-prod-list">' + cards + '</div>' +
       '</aside>';

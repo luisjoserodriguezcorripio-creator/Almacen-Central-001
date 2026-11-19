@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f1f5f9">
+  <title>10 modelos · TV Recepción · Productividad por rol</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #eef2f7;
+      --panel: #ffffff;
+      --line: rgba(15, 23, 42, 0.1);
+      --text: #0f172a;
+      --muted: #64748b;
+      --red: #c8102e;
+      --red-soft: #fee2e2;
+      --amber: #b45309;
+      --amber-soft: #ffedd5;
+      --green: #15803d;
+      --green-soft: #dcfce7;
+      --teal: #0f766e;
+      --teal-soft: #ccfbf1;
+      --blue: #1d4ed8;
+      --blue-soft: #dbeafe;
+      --violet: #6d28d9;
+      --violet-soft: #ede9fe;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #e2e8f0;
+      color: var(--text);
+      font-family: "DM Sans", system-ui, sans-serif;
+    }
+    .banner {
+      position: sticky; top: 0; z-index: 30;
+      background: #fff7ed; color: #9a3412;
+      border-bottom: 1px solid #fed7aa;
+      padding: 10px 16px;
+      display: flex; flex-wrap: wrap; gap: 10px 16px;
+      align-items: center; justify-content: space-between;
+      font-size: 13px; font-weight: 700;
+    }
+    .banner a { color: #9a3412; font-weight: 800; }
+    .nav {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding: 12px 16px; background: #0f172a; border-bottom: 1px solid #1e293b;
+      position: sticky; top: 42px; z-index: 29;
+    }
+    .nav a {
+      text-decoration: none; color: #e2e8f0;
+      border: 1px solid rgba(248,113,113,.45);
+      background: rgba(200,16,46,.18);
+      border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 700;
+    }
+    .nav a:hover { background: rgba(200,16,46,.35); }
+    .page { padding: 18px 16px 48px; max-width: 1480px; margin: 0 auto; }
+    .opt {
+      margin-bottom: 28px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #f8fafc;
+      scroll-margin-top: 110px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+    .opt-head {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex; flex-wrap: wrap; gap: 8px 14px;
+      align-items: baseline; justify-content: space-between;
+      background: #fff;
+    }
+    .opt-head h2 { margin: 0; font-size: 1rem; }
+    .opt-head p { margin: 0; color: var(--muted); font-size: 0.82rem; max-width: 52rem; }
+    .pick {
+      border: 0; border-radius: 999px; padding: 7px 12px;
+      background: var(--red); color: #fff; font-weight: 800; cursor: pointer;
+    }
+    .stage {
+      padding: 12px;
+      min-height: 520px;
+      background: linear-gradient(180deg, #f1f5f9 0%, #e8eef5 100%);
+    }
+    .tv {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    }
+    .tv-head {
+      display: flex; gap: 12px; align-items: center; justify-content: space-between;
+      padding: 10px 14px; background: #fff; border-bottom: 1px solid var(--line);
+      flex-wrap: wrap;
+    }
+    .brand { display: flex; gap: 10px; align-items: center; min-width: 0; }
+    .logo {
+      width: 38px; height: 38px; border-radius: 999px; background: var(--red);
+      color: #fff; display: grid; place-items: center; font-weight: 900; font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .brand h3 { margin: 0; font-size: 0.95rem; letter-spacing: 0.02em; }
+    .brand p { margin: 2px 0 0; font-size: 0.68rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+    .live {
+      display: inline-flex; align-items: center; gap: 6px; margin-left: 8px;
+      color: var(--red); font-size: 0.68rem; font-weight: 800; letter-spacing: 0.05em;
+    }
+    .live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 3px rgba(200,16,46,.2); }
+    .datebox {
+      background: #f8fafc; border: 1px solid var(--line); border-radius: 10px;
+      padding: 8px 10px; min-width: 260px;
+    }
+    .datebox-lbl { font-size: 0.58rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--red); margin-bottom: 4px; }
+    .presets { display: flex; flex-wrap: wrap; gap: 4px; }
+    .preset {
+      border: 1px solid var(--line); background: #fff; border-radius: 999px;
+      padding: 3px 8px; font-size: 0.62rem; font-weight: 700; color: #334155;
+    }
+    .preset.is-on { background: var(--red); color: #fff; border-color: var(--red); }
+
+    .kpis {
+      display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px;
+    }
+    .kpi {
+      background: #fff; border: 1px solid var(--line); border-radius: 12px;
+      padding: 10px 10px; display: flex; gap: 8px; align-items: center; min-width: 0;
+    }
+    .kpi-ic {
+      width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center;
+      font-size: 0.95rem; flex-shrink: 0;
+    }
+    .kpi-ic--d { background: var(--red-soft); }
+    .kpi-ic--t { background: #fef9c3; }
+    .kpi-ic--v { background: var(--amber-soft); }
+    .kpi-ic--e { background: var(--green-soft); }
+    .kpi-ic--u { background: var(--teal-soft); }
+    .kpi-num { display: block; font-size: 1.35rem; font-weight: 900; line-height: 1; color: var(--text); }
+    .kpi-lbl { display: block; margin-top: 2px; font-size: 0.58rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+
+    .role-op { --role: var(--red); --role-soft: var(--red-soft); }
+    .role-val { --role: var(--amber); --role-soft: var(--amber-soft); }
+    .role-dig { --role: var(--green); --role-soft: var(--green-soft); }
+    .role-ubi { --role: var(--teal); --role-soft: var(--teal-soft); }
+
+    .panel {
+      background: #fff; border: 1px solid var(--line); border-radius: 12px;
+      padding: 10px; min-width: 0; min-height: 0;
+    }
+    .panel-title {
+      margin: 0 0 8px; font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--red);
+    }
+    .role-card {
+      border: 1px solid var(--line); border-radius: 10px; padding: 8px;
+      background: #f8fafc; min-width: 0;
+    }
+    .role-card.role-op, .role-card.role-val, .role-card.role-dig, .role-card.role-ubi {
+      border-color: color-mix(in srgb, var(--role) 28%, transparent);
+      background: linear-gradient(180deg, #fff, color-mix(in srgb, var(--role-soft) 55%, #fff));
+    }
+    .role-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px;
+    }
+    .role-name {
+      font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--role, var(--red));
+    }
+    .role-total {
+      font-size: 1.05rem; font-weight: 900; color: var(--text); line-height: 1;
+    }
+    .rows { display: flex; flex-direction: column; gap: 5px; }
+    .row {
+      display: grid; grid-template-columns: minmax(3.8rem, 34%) minmax(0, 1fr) auto;
+      gap: 6px; align-items: center; font-size: 0.68rem;
+    }
+    .row-name { font-weight: 700; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .track { height: 7px; border-radius: 999px; background: rgba(15,23,42,.08); overflow: hidden; }
+    .fill { height: 100%; border-radius: inherit; background: var(--role, var(--red)); }
+    .row-num { font-weight: 800; color: var(--text); min-width: 1.4em; text-align: right; }
+
+    .table-wrap {
+      border: 1px solid var(--line); border-radius: 12px; overflow: auto; background: #fff; min-height: 0;
+    }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 0.72rem; }
+    th {
+      text-align: left; padding: 7px 5px; background: #f1f5f9; color: #64748b;
+      font-size: 0.58rem; letter-spacing: .04em; text-transform: uppercase; border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+    }
+    td {
+      padding: 6px 5px; border-bottom: 1px solid rgba(15,23,42,.06); color: #1e293b;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    tr:nth-child(even) td { background: #fafbfc; }
+    .idc { font-weight: 800; color: #0f172a; }
+    .pill {
+      display: inline-flex; border-radius: 999px; padding: 2px 7px; font-size: 0.58rem; font-weight: 800; border: 1px solid;
+    }
+    .pill-ok { background: #dcfce7; color: #166534; border-color: #86efac; }
+    .pill-pend { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+    .pill-imp { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+
+    .tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; }
+    .tab {
+      border: 1px solid var(--line); background: #fff; border-radius: 999px;
+      padding: 4px 9px; font-size: 0.62rem; font-weight: 800; color: #475569; cursor: default;
+    }
+    .tab.is-on { color: #fff; border-color: transparent; }
+    .tab.role-op.is-on { background: var(--red); }
+    .tab.role-val.is-on { background: var(--amber); }
+    .tab.role-dig.is-on { background: var(--green); }
+    .tab.role-ubi.is-on { background: var(--teal); }
+
+    .chip-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--line); border-radius: 999px; padding: 4px 8px 4px 4px;
+      background: #fff; font-size: 0.68rem; font-weight: 700;
+    }
+    .chip-av {
+      width: 22px; height: 22px; border-radius: 999px; display: grid; place-items: center;
+      font-size: 0.58rem; font-weight: 900; color: #fff; background: var(--role, var(--red));
+    }
+    .chip strong { font-weight: 900; }
+
+    .rank { display: flex; flex-direction: column; gap: 6px; }
+    .rank-item {
+      display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; align-items: center;
+      padding: 6px 8px; border-radius: 10px; background: #fff; border: 1px solid var(--line);
+    }
+    .rank-pos {
+      width: 22px; height: 22px; border-radius: 999px; display: grid; place-items: center;
+      font-size: 0.62rem; font-weight: 900; color: #fff; background: var(--role, var(--red));
+    }
+
+    .donut-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+    .donut-card {
+      text-align: center; border: 1px solid var(--line); border-radius: 12px; padding: 10px 6px; background: #fff;
+    }
+    .donut {
+      width: 54px; height: 54px; border-radius: 50%; margin: 0 auto 6px;
+      background: conic-gradient(var(--role) calc(var(--pct) * 1%), #e2e8f0 0);
+      display: grid; place-items: center;
+    }
+    .donut span {
+      width: 36px; height: 36px; border-radius: 50%; background: #fff;
+      display: grid; place-items: center; font-size: 0.78rem; font-weight: 900;
+    }
+    .donut-lbl { font-size: 0.58rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+
+    .selected-tag { display: none; margin-left: 8px; color: #15803d; font-size: 0.78rem; font-weight: 800; }
+    .opt.is-picked .selected-tag { display: inline; }
+    .opt.is-picked { outline: 2px solid #22c55e; }
+
+    /* layouts */
+    .L1 { display: grid; grid-template-rows: auto 1fr; gap: 10px; height: 100%; padding: 10px; }
+    .L1 .top { display: grid; grid-template-columns: 1.55fr 0.45fr; gap: 10px; }
+    .L1 .side { display: flex; flex-direction: column; gap: 6px; max-height: 210px; overflow: auto; }
+
+    .L2 { display: grid; grid-template-rows: auto auto 1fr; gap: 10px; height: 100%; padding: 10px; }
+    .L2 .prod { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+
+    .L3 { display: grid; grid-template-rows: auto auto 1fr; gap: 10px; height: 100%; padding: 10px; }
+    .L3 .roles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+
+    .L4 { display: grid; grid-template-columns: 1.55fr 0.45fr; gap: 10px; height: 100%; padding: 10px; }
+    .L4 .left { display: grid; grid-template-rows: auto 1fr; gap: 10px; min-height: 0; }
+
+    .L5 { display: grid; grid-template-rows: auto auto auto 1fr; gap: 10px; height: 100%; padding: 10px; }
+    .L5 .bands { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+
+    .L6 { display: grid; grid-template-rows: auto auto 1fr; gap: 10px; height: 100%; padding: 10px; }
+    .L6 .quad { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+    .big-total { font-size: 1.8rem; font-weight: 900; line-height: 1; color: var(--role, var(--text)); }
+    .big-sub { font-size: 0.62rem; color: var(--muted); font-weight: 700; margin-top: 2px; }
+
+    .L7 { display: grid; grid-template-rows: auto 1fr; gap: 10px; height: 100%; padding: 10px; }
+    .L7 .body { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 10px; min-height: 0; }
+    .L7 .boards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .L8 { display: grid; grid-template-rows: auto auto 1fr; gap: 10px; height: 100%; padding: 10px; }
+
+    .L9 { display: grid; grid-template-rows: auto auto 1fr; gap: 10px; height: 100%; padding: 10px; }
+    .L9 .roles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+
+    .L10 { display: grid; grid-template-rows: auto 1fr; gap: 10px; height: 100%; padding: 10px; }
+    .L10 .body { display: grid; grid-template-columns: 1.35fr 0.65fr; gap: 10px; min-height: 0; }
+    .L10 .dual { display: grid; grid-template-rows: 1fr 1fr; gap: 8px; min-height: 0; }
+    .L10 .dual-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; min-height: 0; }
+
+    @media (max-width: 980px) {
+      .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .L1 .top, .L4, .L7 .body, .L10 .body { grid-template-columns: 1fr; }
+      .L2 .prod, .L3 .roles, .L5 .bands, .L6 .quad, .L9 .roles, .donut-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <div class="banner">
+    <span>PREVIEW · 10 modelos TV Recepción · Productividad por Validador / Ubicador / Operador / Digitador (sin tocar el portal aún)</span>
+    <a href="../recepcion-pantalla.html">Ir a pantalla actual</a>
+  </div>
+  <div class="nav">
+    <a href="#o1">1 Clásica+</a>
+    <a href="#o2">2 Grid 2×2</a>
+    <a href="#o3">3 4 columnas</a>
+    <a href="#o4">4 Tabs</a>
+    <a href="#o5">5 Bandas</a>
+    <a href="#o6">6 Totales</a>
+    <a href="#o7">7 Ranking</a>
+    <a href="#o8">8 Donuts</a>
+    <a href="#o9">9 Chips</a>
+    <a href="#o10">10 Dual</a>
+  </div>
+  <div class="page" id="gallery"></div>
+
+  <script>
+    var roles = {
+      operadores: {
+        key: 'op', label: 'Operadores', short: 'Operador',
+        people: [['Pedro', 94], ['Robert', 85], ['Schad', 9]]
+      },
+      validadores: {
+        key: 'val', label: 'Validadores', short: 'Validador',
+        people: [['Julio L.', 62], ['Handerson', 48], ['Nelson', 41], ['Richard', 28]]
+      },
+      digitadores: {
+        key: 'dig', label: 'Digitadores', short: 'Digitador',
+        people: [['Francis', 91], ['Andy', 55], ['Yessica', 30]]
+      },
+      ubicadores: {
+        key: 'ubi', label: 'Ubicadores', short: 'Ubicador',
+        people: [['Rolando', 58], ['Obispo', 47], ['Yeuri', 39], ['Yeison', 35]]
+      }
+    };
+
+    var tableRows = [
+      ['SMLU7751…', 'IMP.', 'B-05', 'AVENA', '28', 'R-11', 'PEDRO', 'JULIO L.', 'FRANCIS', 'ROLANDO', 'OK', 'OK', 'OK'],
+      ['SMLU8820…', 'IMP.', 'B-07', 'LECHE', '32', 'R-05', 'ROBERT', 'HANDERSON', 'ANDY', 'OBISPO', 'OK', 'OK', 'PEND.'],
+      ['TGHU4412…', 'IMP.', 'B-05', 'GATORADE', '24', 'R-11', 'PEDRO', 'NELSON', 'FRANCIS', 'YEURI', 'OK', 'PEND.', 'PEND.'],
+      ['MSCU9901…', 'IMP.', 'B-03', 'CEREAL', '18', 'R-02', 'SCHAD', 'RICHARD', 'YESSICA', 'YEISON', 'PEND.', 'PEND.', 'PEND.']
+    ];
+
+    function sum(people) {
+      return people.reduce(function (a, p) { return a + p[1]; }, 0);
+    }
+    function maxN(people) {
+      return Math.max.apply(null, people.map(function (p) { return p[1]; }).concat([1]));
+    }
+    function initials(name) {
+      return String(name || '').split(/\s+/).map(function (p) { return p.charAt(0); }).join('').slice(0, 2).toUpperCase();
+    }
+
+    function headHtml() {
+      return '<div class="tv-head">' +
+        '<div class="brand"><div class="logo">AC</div><div>' +
+        '<h3>Almacén Central AC <span class="live">EN VIVO</span></h3>' +
+        '<p>Recepción de contenedores</p></div></div>' +
+        '<div class="datebox"><div class="datebox-lbl">Rango de fecha</div>' +
+        '<div class="presets">' +
+        '<span class="preset">Hoy</span><span class="preset">Esta semana</span>' +
+        '<span class="preset">Últimos 7 días</span><span class="preset">Este mes</span>' +
+        '<span class="preset is-on">Todas</span></div></div></div>';
+    }
+
+    function kpisHtml() {
+      return '<div class="kpis">' +
+        '<div class="kpi"><div class="kpi-ic kpi-ic--d">📦</div><div><span class="kpi-num">188</span><span class="kpi-lbl">Descargados</span></div></div>' +
+        '<div class="kpi"><div class="kpi-ic kpi-ic--t">⚖</div><div><span class="kpi-num">0 · 188</span><span class="kpi-lbl">Local · Importado</span></div></div>' +
+        '<div class="kpi"><div class="kpi-ic kpi-ic--v">✓</div><div><span class="kpi-num">179</span><span class="kpi-lbl">Validados</span></div></div>' +
+        '<div class="kpi"><div class="kpi-ic kpi-ic--e">→</div><div><span class="kpi-num">176</span><span class="kpi-lbl">Entrada</span></div></div>' +
+        '<div class="kpi"><div class="kpi-ic kpi-ic--u">📍</div><div><span class="kpi-num">179</span><span class="kpi-lbl">Ubicados</span></div></div>' +
+      '</div>';
+    }
+
+    function rowsHtml(people, roleKey) {
+      var mx = maxN(people);
+      return '<div class="rows">' + people.map(function (p) {
+        var pct = Math.round((p[1] / mx) * 100);
+        return '<div class="row"><span class="row-name">' + p[0] + '</span>' +
+          '<div class="track"><div class="fill" style="width:' + pct + '%"></div></div>' +
+          '<span class="row-num">' + p[1] + '</span></div>';
+      }).join('') + '</div>';
+    }
+
+    function roleCard(role, extraClass) {
+      return '<div class="role-card role-' + role.key + (extraClass ? ' ' + extraClass : '') + '">' +
+        '<div class="role-head"><span class="role-name">' + role.label + '</span>' +
+        '<span class="role-total">' + sum(role.people) + '</span></div>' +
+        rowsHtml(role.people, role.key) + '</div>';
+    }
+
+    function allRoleCards() {
+      return roleCard(roles.operadores) + roleCard(roles.validadores) +
+        roleCard(roles.digitadores) + roleCard(roles.ubicadores);
+    }
+
+    function tableHtml() {
+      var body = tableRows.map(function (r) {
+        function st(v) {
+          return v === 'OK'
+            ? '<span class="pill pill-ok">OK</span>'
+            : '<span class="pill pill-pend">PEND.</span>';
+        }
+        return '<tr>' +
+          '<td class="idc">' + r[0] + '</td>' +
+          '<td><span class="pill pill-imp">' + r[1] + '</span></td>' +
+          '<td>' + r[2] + '</td><td>' + r[3] + '</td><td>' + r[4] + '</td><td>' + r[5] + '</td>' +
+          '<td>' + r[6] + '</td><td>' + r[7] + '</td><td>' + r[8] + '</td><td>' + r[9] + '</td>' +
+          '<td>' + st(r[10]) + '</td><td>' + st(r[11]) + '</td><td>' + st(r[12]) + '</td>' +
+        '</tr>';
+      }).join('');
+      return '<div class="table-wrap"><table><thead><tr>' +
+        '<th>Contenedor</th><th>Tipo</th><th>División</th><th>Descripción</th><th>Paletas</th><th>Muelle</th>' +
+        '<th>Op. Sentado</th><th>Validador</th><th>Digitador</th><th>Ubicador</th>' +
+        '<th>Val.</th><th>Ent.</th><th>Ubi.</th>' +
+        '</tr></thead><tbody>' + body + '</tbody></table></div>';
+    }
+
+    function tabsPanel() {
+      return '<div class="panel"><div class="panel-title">Productividad por rol</div>' +
+        '<div class="tabs">' +
+        '<span class="tab role-op is-on">Operadores</span>' +
+        '<span class="tab role-val">Validadores</span>' +
+        '<span class="tab role-dig">Digitadores</span>' +
+        '<span class="tab role-ubi">Ubicadores</span></div>' +
+        roleCard(roles.operadores) + '</div>';
+    }
+
+    function totalsCard(role) {
+      var top = role.people[0];
+      return '<div class="role-card role-' + role.key + '">' +
+        '<div class="role-name">' + role.label + '</div>' +
+        '<div class="big-total">' + sum(role.people) + '</div>' +
+        '<div class="big-sub">Top: ' + top[0] + ' · ' + top[1] + '</div>' +
+        '<div style="margin-top:8px">' + rowsHtml(role.people.slice(0, 3), role.key) + '</div></div>';
+    }
+
+    function rankBoard(role) {
+      var sorted = role.people.slice().sort(function (a, b) { return b[1] - a[1]; });
+      return '<div class="role-card role-' + role.key + '"><div class="role-name">' + role.label + '</div>' +
+        '<div class="rank" style="margin-top:6px">' + sorted.map(function (p, i) {
+          return '<div class="rank-item"><span class="rank-pos">' + (i + 1) + '</span>' +
+            '<span class="row-name">' + p[0] + '</span><strong>' + p[1] + '</strong></div>';
+        }).join('') + '</div></div>';
+    }
+
+    function donutsHtml() {
+      var totals = [
+        sum(roles.operadores.people),
+        sum(roles.validadores.people),
+        sum(roles.digitadores.people),
+        sum(roles.ubicadores.people)
+      ];
+      var mx = Math.max.apply(null, totals);
+      var list = [
+        [roles.operadores, totals[0]],
+        [roles.validadores, totals[1]],
+        [roles.digitadores, totals[2]],
+        [roles.ubicadores, totals[3]]
+      ];
+      return '<div class="donut-row">' + list.map(function (item) {
+        var role = item[0];
+        var n = item[1];
+        var pct = Math.round((n / mx) * 100);
+        return '<div class="donut-card role-' + role.key + '">' +
+          '<div class="donut" style="--pct:' + pct + '"><span>' + n + '</span></div>' +
+          '<div class="donut-lbl">' + role.label + '</div></div>';
+      }).join('') + '</div>';
+    }
+
+    function chipsPanel(role) {
+      return '<div class="role-card role-' + role.key + '">' +
+        '<div class="role-head"><span class="role-name">' + role.label + '</span>' +
+        '<span class="role-total">' + sum(role.people) + '</span></div>' +
+        '<div class="chip-grid">' + role.people.map(function (p) {
+          return '<span class="chip"><span class="chip-av">' + initials(p[0]) + '</span>' +
+            p[0] + ' <strong>' + p[1] + '</strong></span>';
+        }).join('') + '</div></div>';
+    }
+
+    var options = [
+      {
+        id: 'o1', title: 'Opción 1 · Clásica+ (sidebar 4 roles)',
+        desc: 'Mantiene el layout actual: KPIs + panel lateral, pero con Operadores, Validadores, Digitadores y Ubicadores en secciones separadas.',
+        html: '<div class="L1"><div class="top">' + kpisHtml() +
+          '<aside class="panel side"><p class="panel-title">Equipo en recepción</p>' + allRoleCards() + '</aside></div>' +
+          tableHtml() + '</div>'
+      },
+      {
+        id: 'o2', title: 'Opción 2 · Grid 2×2 bajo KPIs',
+        desc: 'Los 4 roles quedan en cuadrícula debajo de los KPIs, a ancho completo, y la tabla ocupa el resto.',
+        html: '<div class="L2">' + kpisHtml() + '<div class="prod">' + allRoleCards() + '</div>' + tableHtml() + '</div>'
+      },
+      {
+        id: 'o3', title: 'Opción 3 · Cuatro columnas iguales',
+        desc: 'Cada rol tiene su propia columna con total y barras; lectura rápida en TV de pared.',
+        html: '<div class="L3">' + kpisHtml() + '<div class="roles">' + allRoleCards() + '</div>' + tableHtml() + '</div>'
+      },
+      {
+        id: 'o4', title: 'Opción 4 · Tabs por rol',
+        desc: 'Un solo panel lateral con pestañas Operador / Validador / Digitador / Ubicador para no saturar.',
+        html: '<div class="L4"><div class="left">' + kpisHtml() + tableHtml() + '</div>' + tabsPanel() + '</div>'
+      },
+      {
+        id: 'o5', title: 'Opción 5 · Bandas horizontales',
+        desc: 'Cuatro bandas compactas debajo de KPIs; cada una es un rol con sus personas y totales.',
+        html: '<div class="L5">' + kpisHtml() + '<div class="bands">' + allRoleCards() + '</div>' + tableHtml() + '</div>'
+      },
+      {
+        id: 'o6', title: 'Opción 6 · Totales grandes + top',
+        desc: 'Énfasis en el número total por rol y el top performer; ideal para supervisión a distancia.',
+        html: '<div class="L6">' + kpisHtml() + '<div class="quad">' +
+          totalsCard(roles.operadores) + totalsCard(roles.validadores) +
+          totalsCard(roles.digitadores) + totalsCard(roles.ubicadores) +
+          '</div>' + tableHtml() + '</div>'
+      },
+      {
+        id: 'o7', title: 'Opción 7 · Rankings lado a lado',
+        desc: 'Tabla a la izquierda; a la derecha, leaderboards por rol con posición 1–n.',
+        html: '<div class="L7">' + kpisHtml() + '<div class="body">' + tableHtml() +
+          '<div class="boards">' +
+          rankBoard(roles.operadores) + rankBoard(roles.validadores) +
+          rankBoard(roles.digitadores) + rankBoard(roles.ubicadores) +
+          '</div></div></div>'
+      },
+      {
+        id: 'o8', title: 'Opción 8 · Donuts de total por rol',
+        desc: 'Resumen visual circular del volumen por rol + detalle en tabla; muy legible en TV.',
+        html: '<div class="L8">' + kpisHtml() + donutsHtml() + tableHtml() + '</div>'
+      },
+      {
+        id: 'o9', title: 'Opción 9 · Chips / avatares',
+        desc: 'Personas como chips con iniciales y conteo; cuatro bloques de rol debajo de KPIs.',
+        html: '<div class="L9">' + kpisHtml() + '<div class="roles">' +
+          chipsPanel(roles.operadores) + chipsPanel(roles.validadores) +
+          chipsPanel(roles.digitadores) + chipsPanel(roles.ubicadores) +
+          '</div>' + tableHtml() + '</div>'
+      },
+      {
+        id: 'o10', title: 'Opción 10 · Dual (2+2)',
+        desc: 'Izquierda tabla; derecha dos filas: Operadores+Validadores arriba, Digitadores+Ubicadores abajo.',
+        html: '<div class="L10">' + kpisHtml() + '<div class="body">' + tableHtml() +
+          '<div class="dual">' +
+          '<div class="dual-row">' + roleCard(roles.operadores) + roleCard(roles.validadores) + '</div>' +
+          '<div class="dual-row">' + roleCard(roles.digitadores) + roleCard(roles.ubicadores) + '</div>' +
+          '</div></div></div>'
+      }
+    ];
+
+    var gallery = document.getElementById('gallery');
+    gallery.innerHTML = options.map(function (opt) {
+      return '<section class="opt" id="' + opt.id + '">' +
+        '<div class="opt-head"><div><h2>' + opt.title +
+        ' <span class="selected-tag">· ELEGIDA</span></h2><p>' + opt.desc + '</p></div>' +
+        '<button type="button" class="pick" data-pick="' + opt.id + '">Elegir esta</button></div>' +
+        '<div class="stage"><div class="tv">' + headHtml() + opt.html + '</div></div></section>';
+    }).join('');
+
+    gallery.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-pick]');
+      if (!btn) return;
+      document.querySelectorAll('.opt').forEach(function (el) { el.classList.remove('is-picked'); });
+      var sec = document.getElementById(btn.getAttribute('data-pick'));
+      if (sec) sec.classList.add('is-picked');
+      try { localStorage.setItem('rec_tv_prod_pick', btn.getAttribute('data-pick')); } catch (err) {}
+    });
+
+    try {
+      var saved = localStorage.getItem('rec_tv_prod_pick');
+      if (saved && document.getElementById(saved)) document.getElementById(saved).classList.add('is-picked');
+    } catch (err) {}
+  </script>
+</body>
+</html>

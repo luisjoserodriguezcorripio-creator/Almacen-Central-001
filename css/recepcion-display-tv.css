@@ -327,6 +327,14 @@ body.rec-live-on .rec-live-present {
   box-shadow: inset 3px 0 0 #ef4444;
 }
 
+.rec-tv-drawer-link--back {
+  margin-top: 0.35rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0 0 12px 12px;
+  padding-top: 0.85rem;
+  color: rgba(226, 232, 240, 0.88);
+}
+
 .rec-tv-drawer-foot {
   margin-top: auto;
   padding: 0.85rem 1.05rem;

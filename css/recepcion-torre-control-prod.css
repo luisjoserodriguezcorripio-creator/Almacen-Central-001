@@ -647,6 +647,19 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
   border-right-color: rgba(239, 68, 68, 0.35);
 }
 
+.rec-tc-app a.rbl-drawer-link {
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.rec-tc-app .rbl-drawer-link--back {
+  margin-top: 0.35rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0 0 12px 12px;
+  padding-top: 0.85rem;
+  color: rgba(226, 232, 240, 0.88);
+}
+
 .rec-tc-app .rbl-drawer-link.is-on {
   background: linear-gradient(90deg, rgba(127, 29, 29, 0.5), rgba(185, 28, 28, 0.2));
   border-color: rgba(248, 113, 113, 0.45);

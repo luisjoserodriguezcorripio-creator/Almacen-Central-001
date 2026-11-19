@@ -297,6 +297,7 @@
       '<button type="button" class="rbl-drawer-link is-on" data-rec-screen="ops">Operaciones</button>' +
       '<button type="button" class="rbl-drawer-link" data-rec-screen="hist">Historia</button>' +
       '<button type="button" class="rbl-drawer-link" data-rec-screen="cfg">Configuraciones</button>' +
+      '<a class="rbl-drawer-link rbl-drawer-link--back" href="index.html">Volver al tablón informativo</a>' +
       '</nav>' +
       '<div class="rbl-drawer-foot">' + esc(name) + '</div></aside>';
   }

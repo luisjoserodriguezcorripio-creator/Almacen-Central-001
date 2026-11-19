@@ -89,10 +89,12 @@
     var focusSnap = captureFocusSnap(host);
     var searchEl = host.querySelector('#despSearch');
     var filtEl = host.querySelector('#despFilterEstado');
+    var fechaEl = host.querySelector('#despFilterFecha');
     render(host, fresh, Object.assign({}, lastOpts || opts, {
       screen: screen,
       filterQ: searchEl ? searchEl.value : ((opts && opts.filterQ) || ''),
-      filterEstado: filtEl ? filtEl.value : ((opts && opts.filterEstado) || '')
+      filterEstado: filtEl ? filtEl.value : ((opts && opts.filterEstado) || ''),
+      filterFecha: fechaEl ? fechaEl.value : ((opts && opts.filterFecha) || '')
     }));
     if (screen === 'barcode') {
       restoreShareForm(host, formSnap);
@@ -1098,16 +1100,35 @@
     }).join('') + '</div>';
   }
 
+  function shiftDayKey(dayKey, deltaDays) {
+    if (!dayKey || !/^\d{4}-\d{2}-\d{2}$/.test(dayKey)) return '';
+    var parts = dayKey.split('-');
+    var dt = new Date(Date.UTC(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10)));
+    dt.setUTCDate(dt.getUTCDate() + deltaDays);
+    return dt.toISOString().slice(0, 10);
+  }
+
   function renderTablaValidacion(data, opts) {
     var filterEstado = (opts && opts.filterEstado) || '';
     var filterQ = (opts && opts.filterQ) || '';
+    var filterFecha = (opts && opts.filterFecha) || '';
     var list = DS.filterPedidos(data.pedidos, {
       estado: filterEstado,
       q: filterQ,
+      fechaDia: filterFecha,
       soloValidador: true
     });
     var archivados = DS.getPedidosArchivadosValidador(data.pedidos);
+    if (filterFecha && /^\d{4}-\d{2}-\d{2}$/.test(filterFecha)) {
+      archivados = archivados.filter(function (p) {
+        var iso = p.archivadoValidadorAt || p.updatedAt || p.createdAt;
+        return dayKeySantoDomingo(iso) === filterFecha;
+      });
+    }
     var canValidate = opts && opts.canValidate;
+    var hoyKey = hoyKeySantoDomingo();
+    var ayerKey = shiftDayKey(hoyKey, -1);
+    var tieneFiltro = !!(filterEstado || filterQ || filterFecha);
 
     return '<section class="desp-panel desp-panel--val" aria-labelledby="despValTitle">' +
       '<header class="desp-panel-head">' +
@@ -1128,6 +1149,13 @@
           esc(e.short || e.label) + '</option>';
       }).join('') +
       '</select></label>' +
+      '<label class="desp-filter desp-filter--fecha"><span>Fecha</span>' +
+      '<div class="desp-filter-fecha-row">' +
+      '<input type="date" id="despFilterFecha" value="' + esc(filterFecha) + '" title="Filtrar por fecha (RD)">' +
+      '<button type="button" class="btn btn-ghost desp-fecha-chip' + (filterFecha === hoyKey ? ' is-active' : '') + '" id="despFilterFechaHoy" data-fecha="' + esc(hoyKey) + '">Hoy</button>' +
+      '<button type="button" class="btn btn-ghost desp-fecha-chip' + (filterFecha === ayerKey ? ' is-active' : '') + '" id="despFilterFechaAyer" data-fecha="' + esc(ayerKey) + '">Ayer</button>' +
+      '<button type="button" class="btn btn-ghost desp-fecha-chip' + (!filterFecha ? ' is-active' : '') + '" id="despFilterFechaTodos">Todos</button>' +
+      '</div></label>' +
       '</div>' +
       '<div class="desp-table-wrap">' +
       '<table class="desp-table" id="despValTable">' +
@@ -1140,7 +1168,7 @@
       '</tr></thead><tbody>' +
       (list.length ? list.map(function (p) { return renderValidadorRow(p, opts); }).join('') :
         '<tr><td colspan="' + (canValidate ? 9 : 8) + '" class="desp-empty-row">No hay IDC en seguimiento validador' +
-        (filterEstado || filterQ ? ' con este filtro' : ' — el operador debe enviarlos desde su panel') + '.</td></tr>') +
+        (tieneFiltro ? ' con este filtro' : ' — el operador debe enviarlos desde su panel') + '.</td></tr>') +
       '</tbody></table></div>' +
       renderRegistroArchivados(archivados, canValidate) +
       '</section>';
@@ -1574,11 +1602,13 @@
 
     var searchEl = host.querySelector('#despSearch');
     var filtEl = host.querySelector('#despFilterEstado');
+    var fechaEl = host.querySelector('#despFilterFecha');
     function applyFilters() {
       var focusSnap = captureFocusSnap(host);
       render(host, DS.load(), Object.assign({}, opts, {
         filterQ: searchEl ? searchEl.value : '',
-        filterEstado: filtEl ? filtEl.value : ''
+        filterEstado: filtEl ? filtEl.value : '',
+        filterFecha: fechaEl ? fechaEl.value : ''
       }));
       restoreFocusSnap(host, focusSnap);
     }
@@ -1590,6 +1620,28 @@
       });
     }
     if (filtEl) filtEl.addEventListener('change', applyFilters);
+    if (fechaEl) fechaEl.addEventListener('change', applyFilters);
+    var btnHoy = host.querySelector('#despFilterFechaHoy');
+    var btnAyer = host.querySelector('#despFilterFechaAyer');
+    var btnTodos = host.querySelector('#despFilterFechaTodos');
+    if (btnHoy) {
+      btnHoy.addEventListener('click', function () {
+        if (fechaEl) fechaEl.value = btnHoy.getAttribute('data-fecha') || hoyKeySantoDomingo();
+        applyFilters();
+      });
+    }
+    if (btnAyer) {
+      btnAyer.addEventListener('click', function () {
+        if (fechaEl) fechaEl.value = btnAyer.getAttribute('data-fecha') || '';
+        applyFilters();
+      });
+    }
+    if (btnTodos) {
+      btnTodos.addEventListener('click', function () {
+        if (fechaEl) fechaEl.value = '';
+        applyFilters();
+      });
+    }
 
     host.querySelectorAll('.desp-validador-asignado-select').forEach(function (sel) {
       sel.addEventListener('change', function () {

@@ -489,20 +489,20 @@ body.desp-display-mode .desp-lista-present-fecha-etapa {
 }
 
 body.desp-display-mode .desp-lista-present-fecha-etapa--empty {
-  color: #cbd5e1;
+  color: #64748b;
   font-weight: 600;
 }
 
 body.desp-display-mode .desp-lista-present-fecha-etapa--pendiente {
-  color: #dc2626;
+  color: #f87171;
 }
 
 body.desp-display-mode .desp-lista-present-fecha-etapa--validado {
-  color: #ca8a04;
+  color: #fbbf24;
 }
 
 body.desp-display-mode .desp-lista-present-fecha-etapa--cargado {
-  color: #059669;
+  color: #34d399;
 }
 
 body.desp-display-mode .desp-lista-present-estado-cell-only {
@@ -512,9 +512,9 @@ body.desp-display-mode .desp-lista-present-estado-cell-only {
 body.desp-display-mode .desp-lista-present-foot td {
   padding: clamp(0.2rem, 0.4vh, 0.35rem) clamp(0.28rem, 0.65vw, 0.55rem);
   font-size: calc(var(--desp-table-fs) * 0.78);
-  color: #64748b;
-  border-top: 1px solid rgba(15, 23, 42, 0.1);
-  background: #f8fafc;
+  color: #94a3b8;
+  border-top: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(2, 8, 20, 0.55);
 }
 
 body.desp-display-mode .desp-lista-present-foot-item {
@@ -524,7 +524,7 @@ body.desp-display-mode .desp-lista-present-foot-item {
 }
 
 body.desp-display-mode .desp-lista-present-foot-item strong {
-  color: #0f172a;
+  color: #f8fafc;
   font-variant-numeric: tabular-nums;
 }
 
@@ -538,124 +538,149 @@ body.desp-display-mode .desp-lista-present-foot-idc {
   font-size: 0.88em;
 }
 
-/* ——— TV clara moderna: fuerza fondo blanco + texto oscuro ——— */
+/* ——— TV oscura: alto contraste para proyección ——— */
+body.desp-display-mode.desp-live-lista-on {
+  background: #06101f !important;
+  color: #f8fafc !important;
+}
+
 body.desp-display-mode .desp-lista-present-shell {
-  background: #f8fafc !important;
-  border-bottom: 2px solid rgba(234, 88, 12, 0.55) !important;
-  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.06) !important;
-  color: #0f172a !important;
+  background: linear-gradient(160deg, #071222 0%, #0b1a31 48%, #0a1628 100%) !important;
+  border-bottom: 2px solid rgba(96, 165, 250, 0.45) !important;
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.45) !important;
+  color: #f8fafc !important;
+}
+
+body.desp-display-mode .desp-lista-present-badge {
+  color: #93c5fd !important;
+}
+
+body.desp-display-mode .desp-lista-present-meta {
+  color: #94a3b8 !important;
 }
 
 body.desp-display-mode .desp-lista-present-kpi {
-  background: #ffffff !important;
-  border: 1px solid rgba(15, 23, 42, 0.1) !important;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05) !important;
+  background: rgba(2, 8, 20, 0.55) !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
 }
 
 body.desp-display-mode .desp-lista-present-kpi-lbl {
-  color: #334155 !important;
+  color: #cbd5e1 !important;
 }
 
 body.desp-display-mode .desp-lista-present-kpi--pendiente .desp-lista-present-kpi-num {
-  color: #dc2626 !important;
+  color: #f87171 !important;
 }
 
 body.desp-display-mode .desp-lista-present-kpi--validado .desp-lista-present-kpi-num {
-  color: #ca8a04 !important;
+  color: #fbbf24 !important;
 }
 
 body.desp-display-mode .desp-lista-present-kpi--cargado .desp-lista-present-kpi-num {
-  color: #059669 !important;
+  color: #34d399 !important;
 }
 
 body.desp-display-mode .desp-lista-present-kpi--pendiente {
-  border-color: rgba(220, 38, 38, 0.35) !important;
+  border-color: rgba(248, 113, 113, 0.55) !important;
+  background: rgba(248, 113, 113, 0.1) !important;
 }
 
 body.desp-display-mode .desp-lista-present-kpi--validado {
-  border-color: rgba(202, 138, 4, 0.4) !important;
+  border-color: rgba(251, 191, 36, 0.55) !important;
+  background: rgba(251, 191, 36, 0.1) !important;
 }
 
 body.desp-display-mode .desp-lista-present-kpi--cargado {
-  border-color: rgba(5, 150, 105, 0.35) !important;
+  border-color: rgba(52, 211, 153, 0.55) !important;
+  background: rgba(52, 211, 153, 0.1) !important;
 }
 
 body.desp-display-mode .desp-val-resumen,
 body.desp-display-mode .desp-val-resumen--solo-barras {
-  background: #ffffff !important;
-  border: 1px solid rgba(15, 23, 42, 0.1) !important;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04) !important;
-  color: #0f172a !important;
+  background: rgba(2, 8, 20, 0.55) !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+  color: #f8fafc !important;
 }
 
 body.desp-display-mode .desp-val-resumen-legend--tv,
 body.desp-display-mode .desp-val-chart-name {
-  color: #475569 !important;
+  color: #cbd5e1 !important;
 }
 
 body.desp-display-mode .desp-val-chart-bar-line--flex {
-  background: rgba(15, 23, 42, 0.06) !important;
+  background: rgba(148, 163, 184, 0.18) !important;
 }
 
 body.desp-display-mode .desp-val-chart-row::after {
-  background: rgba(15, 23, 42, 0.08) !important;
+  background: rgba(148, 163, 184, 0.16) !important;
 }
 
 body.desp-display-mode .desp-val-chart-seg-num {
-  color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+body.desp-display-mode .desp-lista-present-table-wrap {
+  border-color: rgba(148, 163, 184, 0.2) !important;
+  background: rgba(2, 8, 20, 0.35) !important;
 }
 
 body.desp-display-mode .desp-lista-present-table {
-  color: #0f172a !important;
-  background: #ffffff !important;
+  color: #f8fafc !important;
+  background: transparent !important;
 }
 
 body.desp-display-mode .desp-lista-present-table th {
-  color: #64748b !important;
-  background: #f1f5f9 !important;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.1) !important;
+  color: #93c5fd !important;
+  background: rgba(37, 99, 235, 0.22) !important;
+  border-bottom: 1px solid rgba(96, 165, 250, 0.28) !important;
 }
 
 body.desp-display-mode .desp-lista-present-table td {
-  color: #0f172a !important;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.06) !important;
+  color: #e2e8f0 !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12) !important;
 }
 
 body.desp-display-mode .desp-lista-present-table tbody tr:nth-child(even) {
-  background: #f8fafc !important;
+  background: rgba(148, 163, 184, 0.06) !important;
 }
 
-body.desp-display-mode .desp-lista-present-idc,
+body.desp-display-mode .desp-lista-present-idc {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
 body.desp-display-mode .desp-lista-present-cliente,
 body.desp-display-mode .desp-lista-present-jaula {
-  color: #0f172a !important;
+  color: #e2e8f0 !important;
 }
 
 body.desp-display-mode .desp-lista-present-validador-pill {
-  background: rgba(37, 99, 235, 0.1) !important;
-  color: #1d4ed8 !important;
-  border: 1px solid rgba(37, 99, 235, 0.2) !important;
+  background: rgba(59, 130, 246, 0.2) !important;
+  color: #bfdbfe !important;
+  border: 1px solid rgba(96, 165, 250, 0.4) !important;
 }
 
 body.desp-display-mode .desp-lista-present-estado--red,
 body.desp-display-mode .desp-lista-present-estado.desp-estado--red {
-  background: rgba(220, 38, 38, 0.1) !important;
-  color: #b91c1c !important;
-  border-color: rgba(220, 38, 38, 0.28) !important;
+  background: rgba(248, 113, 113, 0.18) !important;
+  color: #fecaca !important;
+  border-color: rgba(248, 113, 113, 0.55) !important;
 }
 
 body.desp-display-mode .desp-lista-present-estado--yellow,
 body.desp-display-mode .desp-lista-present-estado.desp-estado--yellow {
-  background: rgba(202, 138, 4, 0.14) !important;
-  color: #a16207 !important;
-  border-color: rgba(202, 138, 4, 0.35) !important;
+  background: rgba(251, 191, 36, 0.18) !important;
+  color: #fde68a !important;
+  border-color: rgba(251, 191, 36, 0.55) !important;
 }
 
 body.desp-display-mode .desp-lista-present-estado--green,
 body.desp-display-mode .desp-lista-present-estado.desp-estado--green {
-  background: rgba(5, 150, 105, 0.12) !important;
-  color: #047857 !important;
-  border-color: rgba(5, 150, 105, 0.3) !important;
+  background: rgba(52, 211, 153, 0.18) !important;
+  color: #a7f3d0 !important;
+  border-color: rgba(52, 211, 153, 0.55) !important;
 }
 
 body.desp-display-mode .desp-lista-present-fecha-etapa {
@@ -664,15 +689,17 @@ body.desp-display-mode .desp-lista-present-fecha-etapa {
 }
 
 body.desp-display-mode .desp-display-waiting {
-  background: #eef2f7 !important;
-  color: #0f172a !important;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(59, 130, 246, 0.14), transparent 55%),
+    #06101f !important;
+  color: #f8fafc !important;
 }
 
 body.desp-display-mode .desp-display-wait-title {
-  color: #0f172a !important;
+  color: #f8fafc !important;
 }
 
 body.desp-display-mode .desp-display-wait-text,
 body.desp-display-mode .desp-display-wait-hint {
-  color: #475569 !important;
+  color: #94a3b8 !important;
 }

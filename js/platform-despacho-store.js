@@ -151,6 +151,25 @@
     return claveJornadaLaboral(nowIso());
   }
 
+  /** Día calendario YYYY-MM-DD en zona RD (sin ajuste de jornada 6:00). */
+  function dayKeyCalendarioDespacho(iso) {
+    if (!iso) return '';
+    try {
+      return new Intl.DateTimeFormat('en-CA', {
+        timeZone: TZ_DESPACHO,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).format(new Date(iso));
+    } catch (e) {
+      return String(iso).slice(0, 10);
+    }
+  }
+
+  function hoyCalendarioDespacho() {
+    return dayKeyCalendarioDespacho(nowIso());
+  }
+
   function emptyPayload() {
     return {
       module: 'despacho',
@@ -942,6 +961,15 @@
           p.visibleValidador !== false &&
           VALIDADOR_ESTADOS.indexOf(p.estado) >= 0;
       });
+    }
+    if (opts.fechaDia) {
+      var dia = String(opts.fechaDia).trim();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dia)) {
+        list = list.filter(function (p) {
+          var iso = p.createdAt || p.updatedAt;
+          return dayKeyCalendarioDespacho(iso) === dia;
+        });
+      }
     }
     if (opts.soloValidador || opts.visiblesValidador) {
       return sortPedidosValidador(list);
@@ -1748,6 +1776,8 @@
     formatFechaDespacho: formatFechaDespacho,
     claveJornadaLaboral: claveJornadaLaboral,
     jornadaLaboralActualClave: jornadaLaboralActualClave,
+    dayKeyCalendarioDespacho: dayKeyCalendarioDespacho,
+    hoyCalendarioDespacho: hoyCalendarioDespacho,
     inicioCicloValidador: inicioCicloValidador,
     fechaCambioEstado: fechaCambioEstado,
     fechasEtapasValidador: fechasEtapasValidador

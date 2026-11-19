@@ -73,7 +73,7 @@
 
   var PREPARADOR_ESTADOS = ['facturado'];
   var VALIDADOR_ESTADOS = ['pendiente_carga', 'en_validacion', 'listo_despacho'];
-  var VALIDADORES_ASIGNABLES = [
+  var DEFAULT_VALIDADORES_ASIGNABLES = [
     'Franklin M.',
     'Francisco Gil',
     'Eduardo L.',
@@ -82,9 +82,88 @@
     'Raul M.',
     'José P.'
   ];
+  /** Catálogo vivo (se sincroniza desde data.validadoresAsignables). */
+  var VALIDADORES_ASIGNABLES = DEFAULT_VALIDADORES_ASIGNABLES.slice();
   /** No va en VALIDADORES_ASIGNABLES: no suma en el resumen TV. */
   var VALIDADOR_SIN_ASIGNAR = 'No asignado';
   var FLUJO = ['facturado', 'pendiente_carga', 'en_validacion', 'listo_despacho'];
+
+  function normalizeNombreValidador(nombre) {
+    return String(nombre || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function normalizeValidadoresAsignables(list) {
+    var out = [];
+    var seen = {};
+    (Array.isArray(list) ? list : []).forEach(function (n) {
+      var name = normalizeNombreValidador(n);
+      if (!name || name === VALIDADOR_SIN_ASIGNAR) return;
+      var key = name.toLowerCase();
+      if (seen[key]) return;
+      seen[key] = true;
+      out.push(name);
+    });
+    return out;
+  }
+
+  function applyValidadoresCache(list) {
+    var next = normalizeValidadoresAsignables(list);
+    if (!next.length) next = DEFAULT_VALIDADORES_ASIGNABLES.slice();
+    VALIDADORES_ASIGNABLES.length = 0;
+    next.forEach(function (n) { VALIDADORES_ASIGNABLES.push(n); });
+    return VALIDADORES_ASIGNABLES.slice();
+  }
+
+  function ensureValidadoresAsignables(data) {
+    data = data || emptyPayload();
+    var list = normalizeValidadoresAsignables(data.validadoresAsignables);
+    if (!list.length) list = DEFAULT_VALIDADORES_ASIGNABLES.slice();
+    data.validadoresAsignables = list;
+    applyValidadoresCache(list);
+    return data;
+  }
+
+  function getValidadoresAsignables() {
+    ensureValidadoresAsignables(load());
+    return VALIDADORES_ASIGNABLES.slice();
+  }
+
+  function addValidadorAsignable(nombre, usuario) {
+    nombre = normalizeNombreValidador(nombre);
+    if (!nombre) return { ok: false, error: 'Escriba el nombre del validador.' };
+    if (nombre === VALIDADOR_SIN_ASIGNAR) {
+      return { ok: false, error: 'Ese nombre está reservado.' };
+    }
+    if (nombre.length > 40) return { ok: false, error: 'Máximo 40 caracteres.' };
+    var data = ensureValidadoresAsignables(load());
+    var exists = data.validadoresAsignables.some(function (n) {
+      return n.toLowerCase() === nombre.toLowerCase();
+    });
+    if (exists) return { ok: false, error: 'Ese validador ya está en la lista.' };
+    data.validadoresAsignables.push(nombre);
+    applyValidadoresCache(data.validadoresAsignables);
+    persistData(data, { estadoPush: true });
+    return { ok: true, data: data, nombre: nombre };
+  }
+
+  function removeValidadorAsignable(nombre, usuario) {
+    nombre = normalizeNombreValidador(nombre);
+    if (!nombre) return { ok: false, error: 'Validador no válido.' };
+    var data = ensureValidadoresAsignables(load());
+    var before = data.validadoresAsignables.length;
+    data.validadoresAsignables = data.validadoresAsignables.filter(function (n) {
+      return n.toLowerCase() !== nombre.toLowerCase();
+    });
+    if (data.validadoresAsignables.length === before) {
+      return { ok: false, error: 'No se encontró ese validador.' };
+    }
+    if (!data.validadoresAsignables.length) {
+      return { ok: false, error: 'Debe quedar al menos un validador.' };
+    }
+    applyValidadoresCache(data.validadoresAsignables);
+    persistData(data, { estadoPush: true });
+    return { ok: true, data: data, nombre: nombre };
+  }
 
   function uid() {
     return 'ped_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
@@ -176,6 +255,7 @@
       version: 1,
       updatedAt: nowIso(),
       pedidos: [],
+      validadoresAsignables: DEFAULT_VALIDADORES_ASIGNABLES.slice(),
       liveShare: null,
       liveShareLista: null,
       liveShareSeq: 0,
@@ -236,6 +316,17 @@
         data.liveShareBarcodeSeq = 1;
         migrated = true;
       }
+      if (!Array.isArray(data.validadoresAsignables) || !data.validadoresAsignables.length) {
+        data.validadoresAsignables = DEFAULT_VALIDADORES_ASIGNABLES.slice();
+        migrated = true;
+      } else {
+        var normalizedList = normalizeValidadoresAsignables(data.validadoresAsignables);
+        if (normalizedList.length !== data.validadoresAsignables.length) migrated = true;
+        data.validadoresAsignables = normalizedList.length
+          ? normalizedList
+          : DEFAULT_VALIDADORES_ASIGNABLES.slice();
+      }
+      applyValidadoresCache(data.validadoresAsignables);
       if (migrated) persistData(data, { silent: true });
       return data;
     } catch (e) {
@@ -1724,6 +1815,9 @@
     VALIDADORES_ASIGNABLES: VALIDADORES_ASIGNABLES,
     VALIDADOR_SIN_ASIGNAR: VALIDADOR_SIN_ASIGNAR,
     FLUJO: FLUJO,
+    getValidadoresAsignables: getValidadoresAsignables,
+    addValidadorAsignable: addValidadorAsignable,
+    removeValidadorAsignable: removeValidadorAsignable,
     load: load,
     save: save,
     registrarPedido: registrarPedido,

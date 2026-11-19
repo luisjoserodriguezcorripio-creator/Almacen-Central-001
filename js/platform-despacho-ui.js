@@ -464,6 +464,7 @@
   }
 
   function listValidadoresAsignables() {
+    if (DS && DS.getValidadoresAsignables) return DS.getValidadoresAsignables();
     if (DS && DS.VALIDADORES_ASIGNABLES) return DS.VALIDADORES_ASIGNABLES.slice();
     return [
       'Franklin M.',
@@ -474,6 +475,36 @@
       'Raul M.',
       'José P.'
     ];
+  }
+
+  function renderGestionValidadores(canEdit) {
+    var opts = listValidadoresAsignables();
+    var listHtml = opts.length
+      ? '<ul class="desp-val-catalog-list">' + opts.map(function (name) {
+          return '<li class="desp-val-catalog-item">' +
+            '<span class="desp-val-catalog-name">' + esc(name) + '</span>' +
+            (canEdit
+              ? '<button type="button" class="btn btn-ghost desp-val-catalog-rm" data-validador="' +
+                esc(name) + '" title="Eliminar validador">Eliminar</button>'
+              : '') +
+            '</li>';
+        }).join('') + '</ul>'
+      : '<p class="desp-muted">Sin validadores en catálogo.</p>';
+    var formHtml = canEdit
+      ? '<form class="desp-val-catalog-form" id="despValCatalogForm" autocomplete="off">' +
+        '<label class="desp-field"><span>Nuevo validador</span>' +
+        '<input type="text" id="despValCatalogNombre" maxlength="40" placeholder="Ej. Juan Pérez" required></label>' +
+        '<button type="submit" class="btn btn-primary" id="despValCatalogAdd">Agregar</button>' +
+        '</form>'
+      : '';
+    return '<section class="desp-panel desp-panel--val-catalog" aria-labelledby="despValCatalogTitle">' +
+      '<header class="desp-panel-head">' +
+      '<div><span class="desp-eyebrow">Personal</span>' +
+      '<h3 id="despValCatalogTitle">Validadores del equipo</h3>' +
+      '<p class="desp-panel-sub">Agregue o elimine nombres cuando haya cambios de personal. Se sincroniza en todas las PCs.</p></div>' +
+      '</header>' +
+      formHtml + listHtml +
+      '</section>';
   }
 
   function renderValidadorAsignadoField(selected) {
@@ -888,6 +919,7 @@
       renderResumenCamionesValidador(data.pedidos) +
       renderListaEnVivoSeguimiento(pedidos, canRemove, (opts && opts.userName) || '') +
       '</section>' +
+      renderGestionValidadores(canRemove) +
       renderTablaValidacion(data, opts) +
       '</div>';
   }
@@ -1732,6 +1764,36 @@
           return;
         }
         if (!res.unchanged) toast('Equipo actualizado', 'info');
+        render(host, res.data, opts);
+      });
+    });
+
+    var catalogForm = host.querySelector('#despValCatalogForm');
+    if (catalogForm) {
+      catalogForm.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var input = host.querySelector('#despValCatalogNombre');
+        var nombre = input ? input.value : '';
+        var res = DS.addValidadorAsignable(nombre, userName);
+        if (!res.ok) {
+          toast(res.error, 'warn');
+          return;
+        }
+        toast('Validador agregado: ' + res.nombre, 'success');
+        render(host, res.data, opts);
+      });
+    }
+    host.querySelectorAll('.desp-val-catalog-rm').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var validador = btn.getAttribute('data-validador');
+        if (!validador) return;
+        if (!global.confirm('¿Eliminar a «' + validador + '» del catálogo de personal?\nLos IDC ya asignados conservan el nombre.')) return;
+        var res = DS.removeValidadorAsignable(validador, userName);
+        if (!res.ok) {
+          toast(res.error, 'warn');
+          return;
+        }
+        toast('Validador eliminado: ' + res.nombre, 'info');
         render(host, res.data, opts);
       });
     });

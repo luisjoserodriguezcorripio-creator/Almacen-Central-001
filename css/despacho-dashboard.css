@@ -1945,6 +1945,68 @@ body.desp-controller-mode .desp-lista-present-totales,
   margin-top: 0;
 }
 
+.desp-panel--val-catalog {
+  margin: 0;
+}
+
+.desp-val-catalog-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 0.75rem;
+  align-items: flex-end;
+  margin-bottom: 0.85rem;
+}
+
+.desp-val-catalog-form .desp-field {
+  flex: 1 1 220px;
+  margin: 0;
+}
+
+.desp-val-catalog-form .btn {
+  flex: 0 0 auto;
+  min-height: 2.4rem;
+}
+
+.desp-val-catalog-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.45rem;
+}
+
+.desp-val-catalog-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated, #fff);
+}
+
+.desp-val-catalog-name {
+  font-weight: 700;
+  color: var(--text);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.desp-val-catalog-rm {
+  flex-shrink: 0;
+  font-size: 0.78rem !important;
+  padding: 0.25rem 0.55rem !important;
+}
+
+html[data-theme="light"] .desp-val-catalog-item {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.12);
+}
+
 .desp-entrada-btn {
   position: relative;
   display: flex;

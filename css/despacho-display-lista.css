@@ -3,62 +3,102 @@
    crezca igual en TVs grandes; IDC sin salto de línea. */
 body.desp-display-mode .desp-lista-present-inner {
   /* TV 1080p: tipografía compacta para caber KPIs + más filas */
-  --desp-table-fs: clamp(0.7rem, 1.15vmin, 1.2rem);
-  --desp-badge-h: calc(var(--desp-table-fs) * 1.55);
-  --desp-etapa-h: calc(var(--desp-table-fs) * 0.95);
+  --desp-table-fs: clamp(0.62rem, 1.05vmin, 0.95rem);
+  --desp-badge-h: calc(var(--desp-table-fs) * 1.35);
+  --desp-etapa-h: calc(var(--desp-table-fs) * 0.9);
   --desp-row-gap: 0;
-  padding: clamp(0.1rem, 0.25vh, 0.28rem) clamp(0.4rem, 0.9vw, 0.9rem);
-}
-
-body.desp-display-mode .desp-lista-present-toolbar {
-  flex-shrink: 0;
-  margin-bottom: clamp(0.06rem, 0.14vh, 0.12rem);
-  gap: clamp(0.35rem, 0.75vw, 0.65rem);
-  align-items: stretch;
-  width: 100%;
-  justify-content: flex-start;
+  --desp-side-w: clamp(240px, 22vw, 300px);
+  --desp-fecha-w: clamp(140px, 12vw, 168px);
+  padding: clamp(0.35rem, 0.7vh, 0.65rem) clamp(0.55rem, 1vw, 1rem);
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
 }
 
+body.desp-display-mode .desp-lista-present-layout-v2 {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.45rem, 0.9vh, 0.75rem);
+  min-height: 0;
+  flex: 1;
+}
+
+body.desp-display-mode .desp-lista-top-band {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--desp-side-w);
+  gap: clamp(0.45rem, 0.9vw, 0.75rem);
+  align-items: stretch;
+  flex-shrink: 0;
+}
+
+body.desp-display-mode .desp-lista-top-left {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--desp-fecha-w);
+  gap: clamp(0.45rem, 0.9vw, 0.75rem);
+  min-width: 0;
+}
+
+body.desp-display-mode .desp-lista-body-band {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--desp-side-w);
+  gap: clamp(0.45rem, 0.9vw, 0.75rem);
+  align-items: stretch;
+  min-height: 0;
+  flex: 1;
+}
+
+body.desp-display-mode .desp-lista-present-toolbar {
+  display: none;
+}
+
 body.desp-display-mode .desp-lista-present-kpis {
-  flex: 0 0 38%;
-  width: 38%;
-  max-width: 38%;
-  gap: clamp(0.35rem, 0.75vw, 0.65rem);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  flex: 1;
+  width: auto;
+  max-width: none;
+  gap: clamp(0.4rem, 0.8vw, 0.7rem);
   min-width: 0;
   align-items: stretch;
 }
 
 body.desp-display-mode .desp-lista-present-kpi {
-  min-height: clamp(3.1rem, 5.8vh, 4.8rem);
+  position: relative;
+  min-height: clamp(5.2rem, 11vh, 7.2rem);
   height: 100%;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   text-align: center;
-  gap: clamp(0.06rem, 0.12vh, 0.12rem);
-  padding: clamp(0.22rem, 0.4vh, 0.4rem) clamp(0.3rem, 0.65vw, 0.55rem);
-  padding-top: clamp(1.55rem, 2.8vmin, 2.35rem);
+  gap: clamp(0.2rem, 0.45vh, 0.4rem);
+  padding: clamp(0.55rem, 1vh, 0.85rem) clamp(0.4rem, 0.8vw, 0.7rem);
   box-sizing: border-box;
 }
 
 body.desp-display-mode .desp-lista-present-kpi-num {
-  font-size: clamp(1.65rem, 3.4vmin, 3.4rem);
+  font-size: clamp(2.2rem, 4.6vmin, 3.6rem);
   font-weight: 850;
-  line-height: 0.92;
+  line-height: 0.95;
   width: 100%;
   text-align: center;
   flex: 0 0 auto;
-  height: clamp(1.55rem, 3.1vmin, 3.2rem);
+  height: auto;
+  min-height: clamp(1.8rem, 3.6vmin, 3.4rem);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 body.desp-display-mode .desp-lista-present-kpi-iconbox {
-  width: clamp(1.25rem, 2.2vmin, 2.2rem);
-  height: clamp(1.25rem, 2.2vmin, 2.2rem);
-  top: clamp(0.22rem, 0.4vh, 0.4rem);
-  left: clamp(0.28rem, 0.55vw, 0.55rem);
+  position: static;
+  width: clamp(1.45rem, 2.6vmin, 2.4rem);
+  height: clamp(1.45rem, 2.6vmin, 2.4rem);
+  top: auto;
+  left: auto;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
 }
 
 body.desp-display-mode .desp-lista-present-kpi-iconbox .desp-estado-icon {
@@ -242,35 +282,13 @@ body.desp-display-mode .desp-lista-present-jaula {
   text-overflow: ellipsis;
 }
 
-body.desp-display-mode .desp-lista-present-col-idc {
-  width: 11%;
-}
-
-body.desp-display-mode .desp-lista-present-col-cliente {
-  width: 14%;
-}
-
-body.desp-display-mode .desp-lista-present-col-jaula {
-  width: 6%;
-}
-
-body.desp-display-mode .desp-lista-present-col-validador {
-  width: 10%;
-}
-
-body.desp-display-mode .desp-lista-present-col-carga {
-  width: 9%;
-}
-
-body.desp-display-mode .desp-lista-present-col-estado {
-  width: 12%;
-}
-
-body.desp-display-mode .desp-lista-present-col-f1,
-body.desp-display-mode .desp-lista-present-col-f2,
-body.desp-display-mode .desp-lista-present-col-f3 {
-  width: 12.66%;
-}
+body.desp-display-mode .desp-lista-present-col-reg { width: 15%; }
+body.desp-display-mode .desp-lista-present-col-idc { width: 13%; }
+body.desp-display-mode .desp-lista-present-col-cliente { width: 28%; }
+body.desp-display-mode .desp-lista-present-col-jaula { width: 8%; }
+body.desp-display-mode .desp-lista-present-col-validador { width: 13%; }
+body.desp-display-mode .desp-lista-present-col-carga { width: 6%; }
+body.desp-display-mode .desp-lista-present-col-estado { width: 17%; }
 
 body.desp-display-mode .desp-lista-present-table th {
   font-size: 0.62em;
@@ -549,6 +567,10 @@ body.desp-display-mode .desp-lista-present-shell {
   border-bottom: 2px solid rgba(96, 165, 250, 0.45) !important;
   box-shadow: 0 10px 36px rgba(0, 0, 0, 0.45) !important;
   color: #f8fafc !important;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 body.desp-display-mode .desp-lista-present-badge {
@@ -702,4 +724,180 @@ body.desp-display-mode .desp-display-wait-title {
 body.desp-display-mode .desp-display-wait-text,
 body.desp-display-mode .desp-display-wait-hint {
   color: #94a3b8 !important;
+}
+
+/* ——— Layout v2: filtros + productividad lateral + tabla densa ——— */
+body.desp-display-mode .desp-lista-present-table-wrap {
+  min-height: 0;
+  height: 100%;
+  overflow: auto;
+}
+
+body.desp-display-mode .desp-lista-present-table td {
+  padding: clamp(0.08rem, 0.2vh, 0.18rem) clamp(0.18rem, 0.4vw, 0.45rem) !important;
+  line-height: 1.15;
+}
+
+body.desp-display-mode .desp-lista-present-table th {
+  padding: clamp(0.18rem, 0.35vh, 0.28rem) clamp(0.18rem, 0.4vw, 0.45rem) !important;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+body.desp-display-mode .desp-lista-present-kpi-lbl {
+  font-size: clamp(0.72rem, 1.35vmin, 1.05rem) !important;
+  text-align: center;
+  width: 100%;
+}
+
+body.desp-display-mode .desp-lista-filter {
+  position: relative;
+  background: rgba(2, 8, 20, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 12px;
+  padding: clamp(0.45rem, 0.9vh, 0.7rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+body.desp-display-mode .desp-lista-filter-fecha,
+body.desp-display-mode .desp-lista-filter-estado {
+  min-width: 0;
+  height: 100%;
+}
+
+body.desp-display-mode .desp-lista-filter-estado .desp-lista-filter {
+  width: 100%;
+}
+
+body.desp-display-mode .desp-lista-filter-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #93c5fd;
+  font-weight: 800;
+  margin-bottom: 0.35rem;
+}
+
+body.desp-display-mode .desp-lista-filter-btn {
+  width: 100%;
+  text-align: left;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(2, 8, 20, 0.75);
+  color: #f8fafc;
+  padding: 0.55rem 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+body.desp-display-mode .desp-lista-filter-menu {
+  position: absolute;
+  z-index: 20;
+  left: 0.55rem;
+  right: 0.55rem;
+  top: calc(100% - 0.2rem);
+  background: #0f172a;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 10px;
+  padding: 0.4rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  max-height: 40vh;
+  overflow: auto;
+}
+
+body.desp-display-mode .desp-lista-filter-menu[hidden] {
+  display: none !important;
+}
+
+body.desp-display-mode .desp-lista-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.45rem;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  cursor: pointer;
+  color: #e2e8f0;
+}
+
+body.desp-display-mode .desp-lista-filter-option:hover {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+body.desp-display-mode .desp-lista-prod-side {
+  background: rgba(2, 8, 20, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 14px;
+  padding: clamp(0.55rem, 1vh, 0.85rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-height: 0;
+  height: 100%;
+  overflow: auto;
+  box-sizing: border-box;
+}
+
+body.desp-display-mode .desp-lista-prod-title {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #93c5fd;
+  text-align: center;
+  font-weight: 800;
+}
+
+body.desp-display-mode .desp-lista-prod-person {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  padding: 0.65rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+body.desp-display-mode .desp-lista-prod-name {
+  font-weight: 800;
+  margin-bottom: 0.45rem;
+  text-align: center;
+  color: #f8fafc;
+}
+
+body.desp-display-mode .desp-lista-prod-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: #cbd5e1;
+  font-weight: 700;
+  margin: 0.35rem 0 0.2rem;
+}
+
+body.desp-display-mode .desp-lista-prod-empty {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+body.desp-display-mode .desp-lista-prod-side .desp-val-chart-bar-line--flex {
+  background: rgba(148, 163, 184, 0.18) !important;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+body.desp-display-mode .desp-live-present-lista,
+body.desp-display-mode.desp-live-lista-on .desp-lista-present-shell {
+  height: 100vh;
+  height: 100dvh;
 }

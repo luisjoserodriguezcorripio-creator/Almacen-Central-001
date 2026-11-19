@@ -13,6 +13,10 @@
   var lastSig = '';
   var displayMode = false;
   var pollTimer = null;
+  /** null = todas; array YYYY-MM-DD */
+  var filterFechas = null;
+  /** null = todos; array de ids de estado */
+  var filterEstados = null;
 
   var ETAPA_LABELS = {
     pendiente_carga: 'Pend. por validar',
@@ -97,17 +101,171 @@
     }
   }
 
-  function fechaEtapaCellHtml(iso, etapaId) {
-    var cls = iso ? (ETAPA_CLS[etapaId] || 'empty') : 'empty';
-    return '<td class="desp-lista-present-fecha-etapa desp-lista-present-fecha-etapa--' + cls + '">' +
-      esc(iso ? fmtDtLista(iso) : '—') + '</td>';
+  function dayKeyPedido(iso) {
+    var store = DS();
+    if (!iso) return '';
+    if (store && store.dayKeyCalendarioDespacho) return store.dayKeyCalendarioDespacho(iso);
+    try {
+      return new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Santo_Domingo',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).format(new Date(iso));
+    } catch (e) {
+      return String(iso).slice(0, 10);
+    }
+  }
+
+  function registroIso(p) {
+    var store = DS();
+    var etapas = store && store.fechasEtapasValidador ? store.fechasEtapasValidador(p) : {};
+    return etapas.pendiente_carga || p.createdAt || p.updatedAt || '';
+  }
+
+  function shortDayLabel(dayKey) {
+    if (!dayKey || !/^\d{4}-\d{2}-\d{2}$/.test(dayKey)) return dayKey || '';
+    var parts = dayKey.split('-');
+    return parts[2] + '/' + parts[1];
+  }
+
+  function collectAvailableDays(pedidos) {
+    var map = {};
+    (pedidos || []).forEach(function (p) {
+      var k = dayKeyPedido(registroIso(p));
+      if (k) map[k] = true;
+    });
+    return Object.keys(map).sort().reverse();
+  }
+
+  function applyTvFilters(pedidos) {
+    return (pedidos || []).filter(function (p) {
+      if (filterFechas && filterFechas.length) {
+        var dia = dayKeyPedido(registroIso(p));
+        if (filterFechas.indexOf(dia) < 0) return false;
+      }
+      if (filterEstados && filterEstados.length) {
+        if (filterEstados.indexOf(p.estado) < 0) return false;
+      }
+      return true;
+    });
+  }
+
+  function filterSummaryLabel(selected, allLabel, oneEmptyLabel) {
+    if (!selected || !selected.length) return allLabel;
+    if (selected.length === 1) return selected[0].label;
+    return 'seleccionado';
+  }
+
+  function renderFilterDropdown(opts) {
+    var id = opts.id;
+    var title = opts.title;
+    var summary = opts.summary;
+    var items = opts.items || [];
+    return '<div class="desp-lista-filter" data-filter-id="' + esc(id) + '">' +
+      '<div class="desp-lista-filter-label">' + esc(title) + '</div>' +
+      '<button type="button" class="desp-lista-filter-btn" data-filter-toggle="' + esc(id) + '" aria-expanded="false">' +
+      '<span class="desp-lista-filter-summary">' + esc(summary) + '</span><span aria-hidden="true">▾</span></button>' +
+      '<div class="desp-lista-filter-menu" hidden data-filter-menu="' + esc(id) + '">' +
+      items.map(function (it) {
+        return '<label class="desp-lista-filter-option">' +
+          '<input type="checkbox" data-filter-check="' + esc(id) + '" value="' + esc(it.value) + '"' +
+          (it.checked ? ' checked' : '') + '> ' + esc(it.label) + '</label>';
+      }).join('') +
+      '</div></div>';
+  }
+
+  function renderTvFilters(availableDays) {
+    var fechaItems = [{ value: 'all', label: 'Todas', checked: !filterFechas }];
+    availableDays.forEach(function (d) {
+      fechaItems.push({
+        value: d,
+        label: shortDayLabel(d) + '/' + d.slice(0, 4),
+        checked: !!(filterFechas && filterFechas.indexOf(d) >= 0)
+      });
+    });
+    var fechaSummaryItems = (filterFechas || []).map(function (d) {
+      return { value: d, label: shortDayLabel(d) };
+    });
+    var fechaSummary = filterSummaryLabel(fechaSummaryItems, 'Todas', 'Elegir fecha');
+
+    var store = DS();
+    var estadoItems = [{ value: 'all', label: 'Todos', checked: !filterEstados }];
+    (store && store.VALIDADOR_ESTADOS ? store.VALIDADOR_ESTADOS : []).forEach(function (id) {
+      var e = store.ESTADOS[id];
+      estadoItems.push({
+        value: id,
+        label: (e && (e.short || e.label)) || id,
+        checked: !!(filterEstados && filterEstados.indexOf(id) >= 0)
+      });
+    });
+    var estadoSummaryItems = (filterEstados || []).map(function (id) {
+      var e = store && store.ESTADOS[id];
+      return { value: id, label: (e && (e.short || e.label)) || id };
+    });
+    var estadoSummary = filterSummaryLabel(estadoSummaryItems, 'Todos', 'Elegir estado');
+
+    return {
+      fecha: renderFilterDropdown({
+        id: 'fecha',
+        title: 'Fechas',
+        summary: fechaSummary,
+        items: fechaItems
+      }),
+      estado: renderFilterDropdown({
+        id: 'estado',
+        title: 'Estado',
+        summary: estadoSummary,
+        items: estadoItems
+      })
+    };
+  }
+
+  function bindTvFilters(share, data) {
+    if (!mountEl) return;
+    mountEl.querySelectorAll('[data-filter-toggle]').forEach(function (btn) {
+      btn.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        var id = btn.getAttribute('data-filter-toggle');
+        var menu = mountEl.querySelector('[data-filter-menu="' + id + '"]');
+        var open = menu && !menu.hidden;
+        mountEl.querySelectorAll('[data-filter-menu]').forEach(function (m) { m.hidden = true; });
+        mountEl.querySelectorAll('[data-filter-toggle]').forEach(function (b) {
+          b.setAttribute('aria-expanded', 'false');
+        });
+        if (menu && !open) {
+          menu.hidden = false;
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+    mountEl.querySelectorAll('[data-filter-check]').forEach(function (input) {
+      input.addEventListener('change', function () {
+        var id = input.getAttribute('data-filter-check');
+        var boxes = Array.prototype.slice.call(
+          mountEl.querySelectorAll('[data-filter-check="' + id + '"]')
+        );
+        if (input.value === 'all' && input.checked) {
+          boxes.forEach(function (b) { if (b.value !== 'all') b.checked = false; });
+        } else if (input.value !== 'all' && input.checked) {
+          boxes.forEach(function (b) { if (b.value === 'all') b.checked = false; });
+        }
+        var selected = boxes
+          .filter(function (b) { return b.value !== 'all' && b.checked; })
+          .map(function (b) { return b.value; });
+        if (id === 'fecha') filterFechas = selected.length ? selected : null;
+        if (id === 'estado') filterEstados = selected.length ? selected : null;
+        lastSig = '';
+        renderMount(share, data);
+      });
+    });
   }
 
   function renderTableFoot(counts, updatedAt) {
     if (!counts) return '';
     var syncLbl = updatedAt ? fmtDtLista(updatedAt) : '—';
     return '<tfoot><tr class="desp-lista-present-foot">' +
-      '<td colspan="9">' +
+      '<td colspan="7">' +
       '<span class="desp-lista-present-foot-item">IDC visibles: <strong>' + esc(String(counts.total || 0)) + '</strong></span>' +
       '<span class="desp-lista-present-foot-item">Pendiente: <strong>' + esc(String(counts.pendiente_carga || 0)) + '</strong></span>' +
       '<span class="desp-lista-present-foot-item">Validado: <strong>' + esc(String(counts.en_validacion || 0)) + '</strong></span>' +
@@ -119,13 +277,10 @@
 
   function renderTableRows(pedidos) {
     if (!pedidos.length) {
-      return '<tr><td colspan="9" class="desp-lista-present-empty">Sin IDC registrados todavía.</td></tr>';
+      return '<tr><td colspan="7" class="desp-lista-present-empty">Sin IDC registrados todavía.</td></tr>';
     }
     return pedidos.map(function (p) {
       var store = DS();
-      var etapas = store && store.fechasEtapasValidador
-        ? store.fechasEtapasValidador(p)
-        : {};
       var idc = store ? store.formatIdc(p.idc) : p.idc;
       var cliente = p.cliente ? String(p.cliente).trim() : '—';
       var validador = p.validadorAsignado ? String(p.validadorAsignado).trim() : '—';
@@ -133,7 +288,9 @@
       var cargaTxt = store && store.formatCargasEquipoResumen
         ? store.formatCargasEquipoResumen(p, { withTotal: true })
         : '—';
+      var regIso = registroIso(p);
       return '<tr>' +
+        '<td class="desp-lista-present-registro">' + esc(regIso ? fmtDtLista(regIso) : '—') + '</td>' +
         '<td class="desp-lista-present-idc">' + esc(idc) + '</td>' +
         '<td class="desp-lista-present-cliente">' + esc(cliente) + '</td>' +
         '<td class="desp-lista-present-jaula">' + esc(p.jaula || '—') + '</td>' +
@@ -141,19 +298,16 @@
         '<span class="desp-lista-present-validador-pill">' + esc(validador) + '</span></td>' +
         '<td class="desp-lista-present-carga">' + esc(cargaTxt) + '</td>' +
         '<td class="desp-lista-present-estado-cell-only">' + estadoHtml(p.estado) + '</td>' +
-        fechaEtapaCellHtml(etapas.pendiente_carga, 'pendiente_carga') +
-        fechaEtapaCellHtml(etapas.en_validacion, 'en_validacion') +
-        fechaEtapaCellHtml(etapas.listo_despacho, 'listo_despacho') +
         '</tr>';
     }).join('');
   }
 
-  function renderKpiCards(data) {
+  function renderKpiCards(pedidos) {
     if (!displayMode) return '';
     var store = DS();
     if (!store) return '';
     var counts = store.countResumenValidador
-      ? store.countResumenValidador(data.pedidos || [])
+      ? store.countResumenValidador(pedidos || [])
       : { total: 0 };
     return '<div class="desp-lista-present-kpis" role="group" aria-label="Totales por estado">' +
       store.VALIDADOR_ESTADOS.map(function (id) {
@@ -246,6 +400,37 @@
       '<div class="desp-val-chart-rows">' + rows + '</div></aside>';
   }
 
+  function renderProdSide(pedidos) {
+    var store = DS();
+    if (!store || !store.resumenPorValidador) {
+      return '<aside class="desp-lista-prod-side" aria-label="Productividad validadores">' +
+        '<h2 class="desp-lista-prod-title">Productividad validadores</h2>' +
+        '<p class="desp-lista-prod-empty">Sin datos</p></aside>';
+    }
+    var resumen = store.resumenPorValidador(pedidos || []);
+    var filas = (resumen.filas || []).filter(function (r) {
+      return (r.validado || 0) > 0 || (r.cargado || 0) > 0;
+    });
+    var scaleMax = barScaleGlobal(filas);
+    var cards = filas.map(function (r) {
+      var cargado = r.cargado != null ? r.cargado : 0;
+      return '<div class="desp-lista-prod-person">' +
+        '<div class="desp-lista-prod-name">' + esc(r.nombre) + '</div>' +
+        '<div class="desp-lista-prod-meta"><span>Validados</span><strong>' + esc(String(r.validado || 0)) + '</strong></div>' +
+        renderBarFlex(r.validado, scaleMax, 'validado') +
+        '<div class="desp-lista-prod-meta"><span>Cargados</span><strong>' + esc(String(cargado)) + '</strong></div>' +
+        renderBarFlex(cargado, scaleMax, 'cargado') +
+        '</div>';
+    }).join('');
+    if (!cards) {
+      cards = '<p class="desp-lista-prod-empty">Sin IDC validados ni cargados.</p>';
+    }
+    return '<aside class="desp-lista-prod-side" aria-label="Productividad validadores">' +
+      '<h2 class="desp-lista-prod-title">Productividad validadores</h2>' +
+      cards +
+      '</aside>';
+  }
+
   function renderMount(share, data) {
     if (!mountEl) return;
     if (!shouldShowOnThisPage() || !share || !share.active) {
@@ -260,9 +445,12 @@
     }
 
     data = data || (DS() ? DS().load() : { pedidos: [] });
-    var pedidos = DS() ? DS().getPedidosVisiblesValidador(data.pedidos) : [];
-    var counts = DS() && DS().countResumenValidador ? DS().countResumenValidador(data.pedidos) : null;
-    var resumen = DS() && DS().resumenPorValidador ? DS().resumenPorValidador(data.pedidos) : null;
+    var allPedidos = DS() ? DS().getPedidosVisiblesValidador(data.pedidos) : [];
+    var availableDays = collectAvailableDays(allPedidos);
+    var pedidos = applyTvFilters(allPedidos);
+    var counts = DS() && DS().countResumenValidador ? DS().countResumenValidador(pedidos) : null;
+    var resumen = DS() && DS().resumenPorValidador ? DS().resumenPorValidador(pedidos) : null;
+    var filters = renderTvFilters(availableDays);
 
     mountEl.hidden = false;
     mountEl.setAttribute('aria-hidden', 'false');
@@ -270,27 +458,35 @@
 
     mountEl.innerHTML =
       '<div class="desp-lista-present-shell">' +
-      '<div class="desp-lista-present-inner">' +
-      '<div class="desp-lista-present-toolbar">' +
-      renderKpiCards(data) +
-      renderResumenGrafico(data.pedidos) +
+      '<div class="desp-lista-present-inner desp-lista-present-layout-v2">' +
+      '<div class="desp-lista-top-band">' +
+      '<div class="desp-lista-top-left">' +
+      renderKpiCards(pedidos) +
+      '<div class="desp-lista-filter-fecha">' + filters.fecha + '</div>' +
       '</div>' +
+      '<div class="desp-lista-filter-estado">' + filters.estado + '</div>' +
+      '</div>' +
+      '<div class="desp-lista-body-band">' +
       '<div class="desp-lista-present-table-wrap">' +
       '<table class="desp-lista-present-table" aria-label="Lista IDC en seguimiento validador">' +
-      '<colgroup><col class="desp-lista-present-col-idc"><col class="desp-lista-present-col-cliente">' +
-      '<col class="desp-lista-present-col-jaula"><col class="desp-lista-present-col-validador">' +
-      '<col class="desp-lista-present-col-carga"><col class="desp-lista-present-col-estado"><col class="desp-lista-present-col-f1">' +
-      '<col class="desp-lista-present-col-f2"><col class="desp-lista-present-col-f3"></colgroup>' +
-      '<thead><tr><th>IDC</th><th>Cliente</th><th>Jaula</th><th>Validador</th><th>Carga</th>' +
-      '<th class="desp-lista-present-th-estado">Estado</th>' +
-      '<th class="desp-lista-present-th-fecha-etapa">Registro IDC</th>' +
-      '<th class="desp-lista-present-th-fecha-etapa">Validado</th>' +
-      '<th class="desp-lista-present-th-fecha-etapa">Cargado</th></tr></thead>' +
+      '<colgroup><col class="desp-lista-present-col-reg"><col class="desp-lista-present-col-idc">' +
+      '<col class="desp-lista-present-col-cliente"><col class="desp-lista-present-col-jaula">' +
+      '<col class="desp-lista-present-col-validador"><col class="desp-lista-present-col-carga">' +
+      '<col class="desp-lista-present-col-estado"></colgroup>' +
+      '<thead><tr>' +
+      '<th>Registro IDC</th><th>IDC</th><th>Cliente</th><th>Jaula</th><th>Validador</th>' +
+      '<th>Carga</th><th class="desp-lista-present-th-estado">Estado</th>' +
+      '</tr></thead>' +
       '<tbody>' + renderTableRows(pedidos) + '</tbody>' +
       renderTableFoot(counts, data.updatedAt) +
-      '</table></div></div></div>';
+      '</table></div>' +
+      renderProdSide(pedidos) +
+      '</div></div></div>';
 
-    lastSig = listaSignature(share, pedidos, counts, resumen, data.updatedAt);
+    bindTvFilters(share, data);
+    lastSig = listaSignature(share, allPedidos, counts, resumen, data.updatedAt) +
+      '::f=' + (filterFechas ? filterFechas.join(',') : 'all') +
+      '::e=' + (filterEstados ? filterEstados.join(',') : 'all');
   }
 
   function refreshFromStore() {
@@ -306,10 +502,13 @@
       renderMount(null);
       return;
     }
-    var pedidos = store.getPedidosVisiblesValidador(data.pedidos);
-    var counts = store.countResumenValidador ? store.countResumenValidador(data.pedidos) : null;
-    var resumen = store.resumenPorValidador ? store.resumenPorValidador(data.pedidos) : null;
-    var sig = listaSignature(share, pedidos, counts, resumen, data.updatedAt);
+    var allPedidos = store.getPedidosVisiblesValidador(data.pedidos);
+    var pedidos = applyTvFilters(allPedidos);
+    var counts = store.countResumenValidador ? store.countResumenValidador(pedidos) : null;
+    var resumen = store.resumenPorValidador ? store.resumenPorValidador(pedidos) : null;
+    var sig = listaSignature(share, allPedidos, counts, resumen, data.updatedAt) +
+      '::f=' + (filterFechas ? filterFechas.join(',') : 'all') +
+      '::e=' + (filterEstados ? filterEstados.join(',') : 'all');
     if (sig === lastSig) return;
     renderMount(share, data);
   }

@@ -98,24 +98,26 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
 .rec-tc-app .rbl-kpi-grid--rec5,
 .rec-tc-app .rbl-kpi-grid--rec6,
 .rec-tc-app .rbl-kpi-grid--rec7 {
-  display: flex;
-  flex-wrap: nowrap;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: stretch;
-  justify-content: flex-start;
-  gap: 0.5rem !important;
+  gap: 0.55rem !important;
   width: 100%;
   box-sizing: border-box;
-  overflow-x: auto;
 }
 
 .rec-tc-app .rbl-kpi-grid--rec5 .rbl-kpi,
 .rec-tc-app .rbl-kpi-grid--rec6 .rbl-kpi {
-  flex: 0 0 auto;
-  width: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
   min-width: 0;
   box-sizing: border-box;
-  padding: 0.55rem 0.75rem 0.55rem 0.6rem;
-  gap: 0.45rem;
+  padding: 0.7rem 0.55rem 0.65rem;
+  gap: 0.4rem;
   border-radius: 12px;
 }
 
@@ -123,14 +125,18 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
 .rec-tc-app .rbl-kpi-grid--rec6 .rbl-kpi-text {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   min-width: 0;
+  width: 100%;
 }
 
 .rec-tc-app .rbl-kpi-grid--rec5 .rbl-kpi-icon,
 .rec-tc-app .rbl-kpi-grid--rec6 .rbl-kpi-icon {
-  width: 2.2rem;
-  height: 2.2rem;
-  border-radius: 9px;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 11px;
   flex-shrink: 0;
 }
 
@@ -138,23 +144,43 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
 .rec-tc-app .rbl-kpi-grid--rec5 .rbl-icon,
 .rec-tc-app .rbl-kpi-grid--rec6 .rbl-kpi-icon-img,
 .rec-tc-app .rbl-kpi-grid--rec6 .rbl-icon {
-  width: 1.3rem;
-  height: 1.3rem;
+  width: 1.85rem;
+  height: 1.85rem;
 }
 
 .rec-tc-app .rbl-kpi-grid--rec5 .rbl-kpi-num,
 .rec-tc-app .rbl-kpi-grid--rec6 .rbl-kpi-num {
-  font-size: 1.35rem !important;
+  font-size: 1.55rem !important;
   line-height: 1.05;
   font-weight: 800 !important;
+  text-align: center;
+  width: 100%;
 }
 
 .rec-tc-app .rbl-kpi-grid--rec5 .rbl-kpi-lbl,
 .rec-tc-app .rbl-kpi-grid--rec6 .rbl-kpi-lbl {
-  font-size: 0.8rem !important;
+  font-size: 0.86rem !important;
   letter-spacing: 0.02em;
-  line-height: 1.15;
+  line-height: 1.2;
   white-space: nowrap;
+  text-align: center;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 900px) {
+  .rec-tc-app .rbl-kpi-grid--rec5,
+  .rec-tc-app .rbl-kpi-grid--rec6 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .rec-tc-app .rbl-kpi-grid--rec5,
+  .rec-tc-app .rbl-kpi-grid--rec6 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .rec-tc-app .rbl-kpi-grid--rec6 .rbl-kpi.is-filter-on {

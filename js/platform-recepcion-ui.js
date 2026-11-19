@@ -310,17 +310,17 @@
     return '<div class="rbl-kpi-grid rbl-kpi-grid--rec5" role="group" aria-label="Resumen recepción">' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--blue">' +
-      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-contenedor.svg?v=2" alt="" width="36" height="36"></div>' +
+      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-contenedor.svg?v=2" alt="" width="48" height="48"></div>' +
       '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.total || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Contenedores</span></div></div>' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--teal">' +
-      '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-paletas-gen.png?v=1" alt="" width="36" height="36"></div>' +
+      '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-paletas-gen.png?v=1" alt="" width="48" height="48"></div>' +
       '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.paletas || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Paletas recibidas</span></div></div>' +
       '<div class="' + kpiCls('validar') + '" data-rec-kpi-estado="validar">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--amber">' +
-      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-jaula.svg?v=2" alt="" width="36" height="36"></div>' +
+      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-jaula.svg?v=2" alt="" width="48" height="48"></div>' +
       '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteValidar || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Pend. Validar</span></div></div>' +
       '<div class="' + kpiCls('remision') + '" data-rec-kpi-estado="remision">' +

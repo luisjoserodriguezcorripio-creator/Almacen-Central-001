@@ -51,13 +51,199 @@
   function emptyPayload() {
     return {
       module: 'recepcion',
-      version: 1,
+      version: 2,
       updatedAt: nowIso(),
       registroCounter: 0,
       contenedores: [],
       actividadLog: [],
-      liveShareBoard: null
+      liveShareBoard: null,
+      planilla: null,
+      planillaHistorico: {}
     };
+  }
+
+  function currentMonthKey(dateObj) {
+    var d = dateObj || new Date();
+    try {
+      var parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: TZ,
+        year: 'numeric',
+        month: '2-digit'
+      }).formatToParts(d);
+      var y = '';
+      var m = '';
+      parts.forEach(function (p) {
+        if (p.type === 'year') y = p.value;
+        if (p.type === 'month') m = p.value;
+      });
+      if (y && m) return y + '-' + m;
+    } catch (e) { /* noop */ }
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+  }
+
+  function snapshotPlanilla(planilla) {
+    if (!planilla) return null;
+    return {
+      monthKey: planilla.monthKey || '',
+      fileName: planilla.fileName || '',
+      uploadedAt: planilla.uploadedAt || nowIso(),
+      uploadedBy: planilla.uploadedBy || '—',
+      sheet: planilla.sheet || 'Reporte Diario',
+      headers: (planilla.headers || []).slice(),
+      rows: (planilla.rows || []).map(function (r) {
+        return {
+          values: (r.values || []).slice(),
+          fechaKey: r.fechaKey || '',
+          fechaLlegadaKey: r.fechaLlegadaKey || '',
+          fechaDescargaKey: r.fechaDescargaKey || ''
+        };
+      })
+    };
+  }
+
+  function normalizePlanilla(p) {
+    if (!p || !Array.isArray(p.headers) || !Array.isArray(p.rows)) return null;
+    return snapshotPlanilla(p);
+  }
+
+  function normalizeHistorico(h) {
+    var out = {};
+    if (!h || typeof h !== 'object') return out;
+    Object.keys(h).forEach(function (k) {
+      var snap = normalizePlanilla(h[k]);
+      if (snap) out[k] = snap;
+    });
+    return out;
+  }
+
+  function statusFromText(v) {
+    var s = String(v || '').trim().toUpperCase();
+    if (!s) return 'pendiente';
+    if (s === 'OK' || s === 'SI' || s === 'SÍ' || s === 'YES') return 'ok';
+    return 'pendiente';
+  }
+
+  function mapPlanillaToContenedores(planilla) {
+    if (!planilla || !Array.isArray(planilla.rows)) return [];
+    return planilla.rows.map(function (r, idx) {
+      var v = r.values || [];
+      var fechaIso = '';
+      if (r.fechaKey) fechaIso = r.fechaKey + 'T12:00:00.000Z';
+      else fechaIso = nowIso();
+      var validado = statusFromText(v[12]);
+      var remision = statusFromText(v[13]);
+      var ubicado = String(v[18] || '').trim() ? 'ok' : 'pendiente';
+      return normalizeContenedor({
+        id: 'pl_' + idx + '_' + String(v[0] || idx),
+        registro: String(v[6] || v[0] || ('FILA-' + (idx + 1))).trim().toUpperCase(),
+        fecha: fechaIso,
+        contenedor: String(v[4] || '').trim().toUpperCase() || ('SIN-CONT-' + (idx + 1)),
+        tipo: /local/i.test(String(v[20] || '')) ? 'local' : 'importado',
+        division: String(v[3] || '').trim(),
+        descripcion: String(v[8] || '').trim(),
+        paletas: parseInt(v[21], 10) || 0,
+        muelle: String(v[15] || '').trim().toUpperCase(),
+        validado: validado,
+        entrada: remision,
+        ubicado: ubicado,
+        atDescargado: fechaIso,
+        operadorDescarga: String(v[16] || '').trim() || '—',
+        atValidado: validado === 'ok' ? fechaIso : '',
+        validadorPor: String(v[17] || '').trim(),
+        atEntrada: remision === 'ok' ? fechaIso : '',
+        entradaPor: String(v[19] || '').trim(),
+        atUbicado: ubicado === 'ok' ? fechaIso : '',
+        ubicadorPor: String(v[18] || '').trim(),
+        createdAt: fechaIso,
+        createdBy: planilla.uploadedBy || 'planilla',
+        updatedAt: planilla.uploadedAt || nowIso(),
+        updatedBy: planilla.uploadedBy || 'planilla',
+        historial: []
+      });
+    });
+  }
+
+  function importPlanilla(parsed, usuario) {
+    if (!parsed || !parsed.ok) {
+      return { ok: false, error: (parsed && parsed.error) || 'Planilla inválida.' };
+    }
+    var data = load();
+    var monthKey = currentMonthKey();
+    data.planillaHistorico = data.planillaHistorico || {};
+
+    // Si hay carga de un mes anterior, asegure el histórico de ese mes.
+    if (data.planilla && data.planilla.monthKey && data.planilla.monthKey !== monthKey) {
+      if (!data.planillaHistorico[data.planilla.monthKey]) {
+        data.planillaHistorico[data.planilla.monthKey] = snapshotPlanilla(data.planilla);
+      }
+    }
+
+    var planilla = {
+      monthKey: monthKey,
+      fileName: parsed.fileName || 'planilla.xlsx',
+      uploadedAt: nowIso(),
+      uploadedBy: usuario || '—',
+      sheet: parsed.sheet || 'Reporte Diario',
+      headers: (parsed.headers || []).slice(),
+      rows: (parsed.rows || []).map(function (r) {
+        return {
+          values: (r.values || []).slice(),
+          fechaKey: r.fechaKey || '',
+          fechaLlegadaKey: r.fechaLlegadaKey || '',
+          fechaDescargaKey: r.fechaDescargaKey || ''
+        };
+      })
+    };
+
+    // Cada carga reemplaza la anterior.
+    data.planilla = planilla;
+    // El último archivo del mes queda en histórico mensual.
+    data.planillaHistorico[monthKey] = snapshotPlanilla(planilla);
+    data.contenedores = mapPlanillaToContenedores(planilla);
+
+    appendActividadLog(data, {
+      registro: 'PLANILLA',
+      contenedor: planilla.fileName
+    }, {
+      at: planilla.uploadedAt,
+      usuario: usuario || '—',
+      accion: 'registro',
+      nota: 'Carga Excel «' + planilla.sheet + '» · ' + planilla.rows.length + ' filas · reemplazo completo'
+    });
+
+    save(data);
+    return {
+      ok: true,
+      data: data,
+      planilla: planilla,
+      count: planilla.rows.length,
+      monthKey: monthKey
+    };
+  }
+
+  function getPlanilla(data) {
+    data = data || load();
+    return data.planilla || null;
+  }
+
+  function getPlanillaHistorico(data) {
+    data = data || load();
+    return data.planillaHistorico || {};
+  }
+
+  function filterPlanillaRows(planilla, opts) {
+    opts = opts || {};
+    var rows = (planilla && planilla.rows) || [];
+    var desde = String(opts.desde || '').trim();
+    var hasta = String(opts.hasta || '').trim();
+    if (!desde && !hasta) return rows.slice();
+    return rows.filter(function (r) {
+      var key = r.fechaKey || r.fechaDescargaKey || r.fechaLlegadaKey || '';
+      if (!key) return false;
+      if (desde && key < desde) return false;
+      if (hasta && key > hasta) return false;
+      return true;
+    });
   }
 
   function formatRegistroNum(n) {
@@ -130,11 +316,14 @@
   function normalizePayload(data) {
     data = data || emptyPayload();
     data.module = 'recepcion';
+    data.version = Math.max(2, parseInt(data.version, 10) || 2);
     data.registroCounter = Math.max(0, parseInt(data.registroCounter, 10) || 0);
     data.contenedores = (data.contenedores || []).map(normalizeContenedor);
     ensureRegistroNumbers(data);
     data.actividadLog = migrateActividadLog(data);
     data.liveShareBoard = normalizeLiveShare(data.liveShareBoard);
+    data.planilla = normalizePlanilla(data.planilla);
+    data.planillaHistorico = normalizeHistorico(data.planillaHistorico);
     return data;
   }
 
@@ -668,6 +857,12 @@
     startLiveShareBoard: startLiveShareBoard,
     stopLiveShareBoard: stopLiveShareBoard,
     toggleLiveShareBoard: toggleLiveShareBoard,
-    bindSync: bindSync
+    bindSync: bindSync,
+    currentMonthKey: currentMonthKey,
+    importPlanilla: importPlanilla,
+    getPlanilla: getPlanilla,
+    getPlanillaHistorico: getPlanillaHistorico,
+    filterPlanillaRows: filterPlanillaRows,
+    mapPlanillaToContenedores: mapPlanillaToContenedores
   };
 })(typeof window !== 'undefined' ? window : this);

@@ -568,3 +568,206 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
     grid-template-columns: 1fr;
   }
 }
+
+/* Filtro rango de fecha */
+.rec-tc-app .rec-fecha-filter {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 0.85rem 1rem 0.95rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  flex-shrink: 0;
+}
+
+.rec-tc-app .rec-fecha-filter__label {
+  margin: 0 0 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #334155;
+}
+
+.rec-tc-app .rec-fecha-filter__row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.rec-tc-app .rec-fecha-filter__field {
+  flex: 1;
+  min-width: 140px;
+}
+
+.rec-tc-app .rec-fecha-filter__field span {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 0.28rem;
+}
+
+.rec-tc-app .rec-fecha-filter__field input {
+  width: 100%;
+  height: 2.5rem;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 0 0.7rem;
+  font: inherit;
+  font-size: 0.92rem;
+  color: #0f172a;
+  background: #fff;
+  -webkit-text-fill-color: #0f172a;
+}
+
+.rec-tc-app .rec-fecha-filter__dash {
+  width: 14px;
+  height: 3px;
+  margin-bottom: 1.1rem;
+  border-radius: 2px;
+  background: #b91c1c;
+  flex-shrink: 0;
+}
+
+.rec-tc-app .rec-fecha-filter__presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.7rem;
+}
+
+.rec-tc-app .rec-fecha-preset {
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #0f172a;
+  border-radius: 999px;
+  padding: 0.4rem 0.75rem;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rec-tc-app .rec-fecha-preset:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.rec-tc-app .rec-fecha-preset.is-active {
+  background: #b91c1c;
+  border-color: #b91c1c;
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+}
+
+.rec-tc-app .rec-fecha-filter__hint {
+  margin: 0.55rem 0 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+/* Carga planilla Excel */
+.rec-tc-app .rec-planilla-lead {
+  margin: 0 0 0.75rem;
+  font-size: 0.86rem;
+  line-height: 1.4;
+  color: #334155;
+}
+
+.rec-tc-app .rec-planilla-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  min-height: 7.5rem;
+  padding: 1rem;
+  border: 2px dashed #94a3b8;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #f8fafc, #fff);
+  cursor: pointer;
+  text-align: center;
+}
+
+.rec-tc-app .rec-planilla-drop:hover {
+  border-color: #b91c1c;
+  background: #fff5f5;
+}
+
+.rec-tc-app .rec-planilla-drop__title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.rec-tc-app .rec-planilla-drop__sub {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.rec-tc-app .rec-planilla-meta {
+  margin: 0.7rem 0 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 650;
+  color: #334155;
+}
+
+.rec-tc-app .rec-planilla-note {
+  margin: 0 0 0.85rem;
+  font-size: 0.74rem;
+  line-height: 1.35;
+  color: #64748b;
+}
+
+.rec-tc-app .rec-planilla-hist-wrap h4 {
+  margin: 0 0 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #475569;
+}
+
+.rec-tc-app .rec-planilla-hist {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.8rem;
+  color: #334155;
+}
+
+.rec-tc-app .rec-planilla-empty {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+/* Tabla planilla (encabezados Excel) */
+.rec-tc-app .rec-table--planilla {
+  min-width: 1680px;
+  table-layout: auto;
+}
+
+.rec-tc-app .rec-table--planilla th {
+  font-size: 0.66rem;
+  padding: 0.55rem 0.4rem;
+  white-space: nowrap;
+}
+
+.rec-tc-app .rec-table--planilla td {
+  font-size: 0.78rem;
+  padding: 0.45rem 0.4rem;
+  white-space: nowrap;
+  max-width: 14rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rec-tc-app .rec-table--planilla .rec-col-planilla--strong {
+  font-weight: 700;
+  color: #0f172a;
+}

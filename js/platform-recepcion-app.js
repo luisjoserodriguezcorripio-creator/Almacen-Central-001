@@ -20,7 +20,14 @@
   function dataRenderSig(data) {
     if (!data) return '';
     var ids = (data.contenedores || []).map(function (c) { return c.id; }).join(',');
-    return String(data.updatedAt || '') + '::' + ids;
+    var planillaSig = data.planilla
+      ? String(data.planilla.uploadedAt || '') + ':' + String((data.planilla.rows && data.planilla.rows.length) || 0)
+      : '';
+    var filter = global.PlatformRecepcionUI && global.PlatformRecepcionUI.loadFechaFilter
+      ? global.PlatformRecepcionUI.loadFechaFilter()
+      : {};
+    var filterSig = String(filter.desde || '') + '|' + String(filter.hasta || '') + '|' + String(filter.preset || '');
+    return String(data.updatedAt || '') + '::' + ids + '::' + planillaSig + '::' + filterSig;
   }
 
   function getDisplayUrl() {
@@ -95,6 +102,8 @@
     root.innerHTML = ui.renderApp(state.user, data);
     ui.bindApp(root, state.user, {
       onRegister: handleRegister,
+      onImportPlanilla: handleImportPlanilla,
+      onFechaFilterChange: handleFechaFilterChange,
       onValidar: handleValidar,
       onGuardarMuelle: handleGuardarMuelle,
       onEntrada: handleEntrada,
@@ -147,6 +156,44 @@
       } catch (e) { /* noop */ }
     }
     renderApp(true);
+  }
+
+  function handleFechaFilterChange() {
+    lastRenderSig = '';
+    renderApp(true);
+  }
+
+  function handleImportPlanilla(file, input) {
+    var Planilla = global.PlatformRecepcionPlanilla;
+    var store = global.PlatformRecepcionStore;
+    if (!Planilla || !Planilla.parseFile) {
+      toast('Parser de planilla no disponible.', 'err');
+      return;
+    }
+    toast('Leyendo planilla…', 'info');
+    Planilla.parseFile(file).then(function (parsed) {
+      if (!parsed || !parsed.ok) {
+        toast((parsed && parsed.error) || 'No se pudo importar la planilla.', 'err');
+        if (input) input.value = '';
+        return;
+      }
+      var res = store.importPlanilla(parsed, Auth.getDisplayName(state.user));
+      if (!res.ok) {
+        toast(res.error || 'Error al guardar la planilla.', 'err');
+        if (input) input.value = '';
+        return;
+      }
+      lastRenderSig = '';
+      toast(
+        'Planilla cargada · ' + res.count + ' filas · mes ' + res.monthKey + ' (reemplazo completo).',
+        'ok'
+      );
+      if (input) input.value = '';
+      renderApp(true);
+    }).catch(function (err) {
+      toast(String((err && err.message) || err || 'Error al leer el archivo.'), 'err');
+      if (input) input.value = '';
+    });
   }
 
   function handleValidar(id) {

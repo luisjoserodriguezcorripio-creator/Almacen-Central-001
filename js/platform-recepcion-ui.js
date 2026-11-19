@@ -46,6 +46,156 @@
     }
   }
 
+  var FILTER_KEY = 'rec_planilla_fecha_filter';
+  var DEFAULT_HEADERS = (global.PlatformRecepcionPlanilla && global.PlatformRecepcionPlanilla.EXPECTED_HEADERS) || [
+    'NO.', 'FECHA LLEGADA', 'FECHA DESCARGA', 'Bahias', '# CONT. / FACTURA', '# OC/OT', '#IDC', 'Turno',
+    'ARTICULO', 'Fecha de vencimiento', 'VIDA UTIL (DIAS)', 'DESCARGADO', 'VALIDADO', 'REMISION',
+    'NO.REMISION', 'MUELLE', 'OPERADOR', 'VALIDADOR', 'UBICADOR', 'DIGITADOR', 'TIPO', 'PALETA',
+    'HORA RAMPA', 'COMENTARIOS'
+  ];
+
+  function loadFechaFilter() {
+    try {
+      var raw = sessionStorage.getItem(FILTER_KEY);
+      if (!raw) return { desde: '', hasta: '', preset: 'todas' };
+      var parsed = JSON.parse(raw);
+      return {
+        desde: parsed.desde || '',
+        hasta: parsed.hasta || '',
+        preset: parsed.preset || 'todas'
+      };
+    } catch (e) {
+      return { desde: '', hasta: '', preset: 'todas' };
+    }
+  }
+
+  function saveFechaFilter(filter) {
+    try {
+      sessionStorage.setItem(FILTER_KEY, JSON.stringify(filter || {}));
+    } catch (e) { /* noop */ }
+  }
+
+  function addDaysIso(iso, n) {
+    var d = new Date(iso + 'T12:00:00');
+    d.setDate(d.getDate() + n);
+    return d.toISOString().slice(0, 10);
+  }
+
+  function startOfWeekIso(iso) {
+    var d = new Date(iso + 'T12:00:00');
+    var day = d.getDay();
+    var diff = day === 0 ? -6 : 1 - day;
+    d.setDate(d.getDate() + diff);
+    return d.toISOString().slice(0, 10);
+  }
+
+  function startOfMonthIso(iso) {
+    return iso.slice(0, 8) + '01';
+  }
+
+  function monthsShort() {
+    return ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  }
+
+  function labelFechaIso(iso) {
+    if (!iso) return '—';
+    var p = String(iso).split('-');
+    if (p.length < 3) return iso;
+    return Number(p[2]) + ' ' + monthsShort()[Number(p[1]) - 1] + ' ' + p[0];
+  }
+
+  function filterHintText(filter) {
+    filter = filter || {};
+    if (!filter.desde && !filter.hasta) return 'Se muestran todos los registros';
+    if (filter.desde && filter.hasta && filter.desde === filter.hasta) {
+      return 'Se muestran registros del ' + labelFechaIso(filter.desde);
+    }
+    if (filter.desde && filter.hasta) {
+      return 'Se muestran registros del ' + labelFechaIso(filter.desde) + ' al ' + labelFechaIso(filter.hasta);
+    }
+    if (filter.desde) return 'Se muestran registros desde ' + labelFechaIso(filter.desde);
+    return 'Se muestran registros hasta ' + labelFechaIso(filter.hasta);
+  }
+
+  function resolvePresetRange(preset, today) {
+    today = today || todayInputValue();
+    if (preset === 'hoy') return { desde: today, hasta: today, preset: 'hoy' };
+    if (preset === 'semana') {
+      return { desde: startOfWeekIso(today), hasta: today, preset: 'semana' };
+    }
+    if (preset === '7d') {
+      return { desde: addDaysIso(today, -6), hasta: today, preset: '7d' };
+    }
+    if (preset === 'mes') {
+      return { desde: startOfMonthIso(today), hasta: today, preset: 'mes' };
+    }
+    return { desde: '', hasta: '', preset: 'todas' };
+  }
+
+  function renderFechaFilter(filter) {
+    filter = filter || loadFechaFilter();
+    var presets = [
+      { id: 'hoy', label: 'Hoy' },
+      { id: 'semana', label: 'Esta semana' },
+      { id: '7d', label: 'Últimos 7 días' },
+      { id: 'mes', label: 'Este mes' },
+      { id: 'todas', label: 'Todas' }
+    ];
+    return '<section class="rec-fecha-filter" aria-label="Rango de fecha">' +
+      '<p class="rec-fecha-filter__label">Rango de fecha</p>' +
+      '<div class="rec-fecha-filter__row">' +
+      '<label class="rec-fecha-filter__field"><span>Desde</span>' +
+      '<input type="date" id="recFechaDesde" value="' + esc(filter.desde || '') + '"></label>' +
+      '<span class="rec-fecha-filter__dash" aria-hidden="true"></span>' +
+      '<label class="rec-fecha-filter__field"><span>Hasta</span>' +
+      '<input type="date" id="recFechaHasta" value="' + esc(filter.hasta || '') + '"></label>' +
+      '</div>' +
+      '<div class="rec-fecha-filter__presets" id="recFechaPresets">' +
+      presets.map(function (p) {
+        return '<button type="button" class="rec-fecha-preset' +
+          (filter.preset === p.id ? ' is-active' : '') +
+          '" data-rec-fecha-preset="' + esc(p.id) + '">' + esc(p.label) + '</button>';
+      }).join('') +
+      '</div>' +
+      '<p class="rec-fecha-filter__hint" id="recFechaHint">' + esc(filterHintText(filter)) + '</p>' +
+      '</section>';
+  }
+
+  function renderPlanillaUploadCard(user, planilla) {
+    if (!A().canRegister(user)) return '';
+    var hist = S().getPlanillaHistorico ? S().getPlanillaHistorico() : {};
+    var months = Object.keys(hist).sort().reverse();
+    var meta = planilla
+      ? ('Última carga: ' + (planilla.fileName || '—') + ' · ' +
+        (planilla.rows ? planilla.rows.length : 0) + ' filas · ' +
+        S().formatFecha(planilla.uploadedAt))
+      : 'Aún no se ha cargado la planilla del mes.';
+    var histHtml = months.length
+      ? '<ul class="rec-planilla-hist">' + months.slice(0, 6).map(function (m) {
+        var snap = hist[m] || {};
+        return '<li><strong>' + esc(m) + '</strong> · ' +
+          esc(snap.fileName || '—') + ' · ' +
+          esc(String((snap.rows && snap.rows.length) || 0)) + ' filas</li>';
+      }).join('') + '</ul>'
+      : '<p class="rec-planilla-empty">Sin histórico mensual todavía.</p>';
+
+    return '<div class="rbl-card rbl-f-form rec-planilla-card">' +
+      '<div class="rbl-card-head"><h3>Cargar planilla</h3>' +
+      '<span class="rbl-reg">Reporte Diario</span></div>' +
+      '<div class="rbl-card-body rec-panel rec-panel--form">' +
+      '<p class="rec-planilla-lead">Sube el Excel de recepción. Solo se importa la hoja <strong>Reporte Diario</strong>. Cada carga reemplaza la anterior; al cerrar el mes se conserva el último archivo en el histórico.</p>' +
+      '<label class="rec-planilla-drop" for="recPlanillaFile">' +
+      '<input type="file" id="recPlanillaFile" accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" hidden>' +
+      '<span class="rec-planilla-drop__title">Elegir archivo Excel o CSV</span>' +
+      '<span class="rec-planilla-drop__sub">Planilla de Recepción · hoja Reporte Diario</span>' +
+      '</label>' +
+      '<p class="rec-planilla-meta" id="recPlanillaMeta">' + esc(meta) + '</p>' +
+      '<p class="rec-planilla-note">Si el archivo tiene DRM corporativo, guarde una copia .xlsx sin restricción o exporte la hoja a CSV.</p>' +
+      '<div class="rec-planilla-hist-wrap">' +
+      '<h4>Histórico por mes</h4>' + histHtml +
+      '</div></div></div>';
+  }
+
   function countMuellesOcupados(contenedores) {
     var set = Object.create(null);
     (contenedores || []).forEach(function (c) {
@@ -139,34 +289,8 @@
       '<span class="rbl-kpi-sub">TV recepción · en vivo</span></div></button></div>';
   }
 
-  function renderRegistroFormCard(user) {
-    if (!A().canRegister(user)) return '';
-    var store = S();
-    var nextReg = store.peekNextRegistro ? store.peekNextRegistro() : '';
-    var divOpts = (store.DIVISIONES || []).map(function (d) {
-      return '<option value="' + esc(d) + '">' + esc(d) + '</option>';
-    }).join('');
-    var operadorField = renderEquipoSelect('recOperadorSentado', 'Operador sentado', store.OPERADORES_SENTADO);
-    return '<div class="rbl-card rbl-f-form">' +
-      '<div class="rbl-card-head"><h3>Nuevo contenedor</h3>' +
-      (nextReg ? '<span class="rbl-reg">' + esc(nextReg) + '</span>' : '') + '</div>' +
-      '<div class="rbl-card-body rec-panel rec-panel--form">' +
-      '<form id="recRegistroForm" class="rec-form" novalidate>' +
-      '<div class="rec-form-grid">' +
-      '<label class="rec-field"><span>Fecha</span><input type="date" id="recFecha" class="rec-input" value="' + esc(todayInputValue()) + '" required></label>' +
-      '<label class="rec-field"><span>Contenedor</span><input type="text" id="recContenedor" class="rec-input" placeholder="COR-20003645" maxlength="32" required autocapitalize="characters"></label>' +
-      '<label class="rec-field"><span>Tipo</span><select id="recTipo" class="rec-input" required>' +
-      '<option value="importado">Importado</option><option value="local">Local</option></select></label>' +
-      '<label class="rec-field"><span>División</span><select id="recDivision" class="rec-input" required>' +
-      '<option value="">Seleccione…</option>' + divOpts + '</select></label>' +
-      '<label class="rec-field rec-field--wide"><span>Descripción</span><input type="text" id="recDescripcion" class="rec-input" placeholder="PAMPERS / GATORADE…" maxlength="120" required></label>' +
-      operadorField +
-      '<div class="rec-form-row-pair">' +
-      '<label class="rec-field"><span>Paletas</span><input type="number" id="recPaletas" class="rec-input" min="0" max="999" value="0"></label>' +
-      '<label class="rec-field"><span>Muelle (opcional)</span><input type="text" id="recMuelle" class="rec-input" placeholder="J9" maxlength="12" autocapitalize="characters"></label>' +
-      '</div></div>' +
-      '<button type="submit" class="rec-btn rec-btn--primary">Registrar contenedor</button>' +
-      '</form></div></div>';
+  function renderRegistroFormCard(user, planilla) {
+    return renderPlanillaUploadCard(user, planilla);
   }
 
   function renderTorreCfg(user, liveActive) {
@@ -331,6 +455,36 @@
       '<tbody>' + body + '</tbody></table></div></section>';
   }
 
+  function renderStatusCell(val) {
+    var s = String(val || '').trim();
+    if (!s) return '—';
+    if (/^ok$/i.test(s)) return '<span class="rec-badge rec-badge--ok">OK</span>';
+    return esc(s);
+  }
+
+  function renderPlanillaRows(rows, headers) {
+    var colCount = (headers && headers.length) || DEFAULT_HEADERS.length;
+    if (!rows.length) {
+      return '<tr><td colspan="' + colCount + '" class="rec-empty">Sin filas para el rango seleccionado. Cargue la planilla o ajuste el filtro de fechas.</td></tr>';
+    }
+    return rows.map(function (r, idx) {
+      var values = r.values || [];
+      return '<tr data-rec-planilla-row="' + idx + '">' + values.map(function (val, ci) {
+        var h = (headers && headers[ci]) || '';
+        var cls = 'rec-col-planilla';
+        if (/cont\.|factura|articulo/i.test(h)) cls += ' rec-col-planilla--strong';
+        if (/validado|descargado|remision/i.test(h)) {
+          return '<td class="' + cls + '">' + renderStatusCell(val) + '</td>';
+        }
+        var text = String(val || '').trim() || '—';
+        if (/cont\.|factura|#idc|no\./i.test(h) && text !== '—') {
+          return '<td class="' + cls + '"><strong>' + esc(text) + '</strong></td>';
+        }
+        return '<td class="' + cls + '">' + esc(text) + '</td>';
+      }).join('') + '</tr>';
+    }).join('');
+  }
+
   function renderTableRows(contenedores, user) {
     var store = S();
     if (!contenedores.length) {
@@ -392,8 +546,23 @@
   function renderApp(user, data) {
     var store = S();
     data = data || store.load();
-    var contenedores = store.getContenedoresActivos(data.contenedores);
-    var counts = store.countResumen(data.contenedores);
+    var planilla = store.getPlanilla ? store.getPlanilla(data) : data.planilla;
+    var filter = loadFechaFilter();
+    var filteredRows = store.filterPlanillaRows
+      ? store.filterPlanillaRows(planilla, filter)
+      : ((planilla && planilla.rows) || []);
+    var headers = (planilla && planilla.headers && planilla.headers.length)
+      ? planilla.headers
+      : DEFAULT_HEADERS;
+    var mapped = store.mapPlanillaToContenedores
+      ? store.mapPlanillaToContenedores({
+        headers: headers,
+        rows: filteredRows,
+        uploadedBy: planilla && planilla.uploadedBy,
+        uploadedAt: planilla && planilla.uploadedAt
+      })
+      : store.getContenedoresActivos(data.contenedores);
+    var counts = store.countResumen(mapped);
     var liveActive = store.isLiveShareBoardActive(data);
 
     return '<div class="rec-tc-app rbl-f">' +
@@ -401,21 +570,23 @@
       '<div class="rbl-stage"><div class="rbl-f-wrap">' +
       renderTorreHero() +
       '<div class="rbl-f-screen is-on" data-rec-screen="ops">' +
-      renderTorreKpis(counts, contenedores, liveActive) +
+      renderFechaFilter(filter) +
+      renderTorreKpis(counts, mapped, liveActive) +
       '<div class="rbl-f-grid">' +
       '<div class="rbl-card rbl-card--manifest">' +
       '<div class="rbl-card-head"><h3>Manifiesto de recepción</h3>' +
-      '<span>' + esc(String(contenedores.length)) + ' en seguimiento</span></div>' +
+      '<span>' + esc(String(filteredRows.length)) + ' en seguimiento</span></div>' +
       '<div class="rbl-card-body rbl-card-body--flush">' +
       '<div class="rec-table-wrap rec-table-wrap--manifest">' +
-      '<table class="rec-table rec-table--manifest" aria-label="Contenedores en recepción">' +
+      '<table class="rec-table rec-table--manifest rec-table--planilla" aria-label="Manifiesto Reporte Diario">' +
       '<thead><tr>' +
-      '<th>Fecha</th><th>Registro</th><th>Contenedor</th><th>Tipo</th><th>División</th><th>Descripción</th>' +
-      '<th>Paletas</th><th>Muelle</th><th>Validado</th><th>Entrada</th><th>Ubicado</th><th></th>' +
+      headers.map(function (h) {
+        return '<th title="' + esc(h) + '">' + esc(h) + '</th>';
+      }).join('') +
       '</tr></thead>' +
-      '<tbody id="recTableBody">' + renderTableRows(contenedores, user) + '</tbody>' +
+      '<tbody id="recTableBody">' + renderPlanillaRows(filteredRows, headers) + '</tbody>' +
       '</table></div></div></div>' +
-      renderRegistroFormCard(user) +
+      renderRegistroFormCard(user, planilla) +
       '</div></div>' +
       '<div class="rbl-f-screen" data-rec-screen="hist">' + renderRegistroLogCard(data) + '</div>' +
       renderTorreCfg(user, liveActive) +
@@ -577,12 +748,68 @@
         if (cbs.onRegister) cbs.onRegister(payload, form);
       });
     }
+
+    bindFechaFilter(root);
+    bindPlanillaUpload(root);
+  }
+
+  function bindFechaFilter(root) {
+    if (!root || root.__recFechaBound) return;
+    root.__recFechaBound = true;
+
+    function applyFilter(next, rerender) {
+      saveFechaFilter(next);
+      var hint = root.querySelector('#recFechaHint');
+      if (hint) hint.textContent = filterHintText(next);
+      root.querySelectorAll('[data-rec-fecha-preset]').forEach(function (btn) {
+        btn.classList.toggle('is-active', btn.getAttribute('data-rec-fecha-preset') === next.preset);
+      });
+      var cbs = root.__recAppCallbacks || {};
+      if (rerender && cbs.onFechaFilterChange) cbs.onFechaFilterChange(next);
+    }
+
+    root.addEventListener('change', function (ev) {
+      var t = ev.target;
+      if (!t || (t.id !== 'recFechaDesde' && t.id !== 'recFechaHasta')) return;
+      var desdeEl = root.querySelector('#recFechaDesde');
+      var hastaEl = root.querySelector('#recFechaHasta');
+      applyFilter({
+        desde: desdeEl ? desdeEl.value : '',
+        hasta: hastaEl ? hastaEl.value : '',
+        preset: 'custom'
+      }, true);
+    });
+
+    root.addEventListener('click', function (ev) {
+      var btn = ev.target.closest('[data-rec-fecha-preset]');
+      if (!btn) return;
+      var preset = btn.getAttribute('data-rec-fecha-preset') || 'todas';
+      var next = resolvePresetRange(preset, todayInputValue());
+      var desdeEl = root.querySelector('#recFechaDesde');
+      var hastaEl = root.querySelector('#recFechaHasta');
+      if (desdeEl) desdeEl.value = next.desde || '';
+      if (hastaEl) hastaEl.value = next.hasta || '';
+      applyFilter(next, true);
+    });
+  }
+
+  function bindPlanillaUpload(root) {
+    if (!root || root.__recPlanillaBound) return;
+    root.__recPlanillaBound = true;
+    root.addEventListener('change', function (ev) {
+      var input = ev.target && ev.target.id === 'recPlanillaFile' ? ev.target : null;
+      if (!input || !input.files || !input.files[0]) return;
+      var cbs = root.__recAppCallbacks || {};
+      if (cbs.onImportPlanilla) cbs.onImportPlanilla(input.files[0], input);
+    });
   }
 
   global.PlatformRecepcionUI = {
     renderApp: renderApp,
     bindApp: bindApp,
     renderTableRows: renderTableRows,
-    renderKpis: renderKpis
+    renderKpis: renderKpis,
+    loadFechaFilter: loadFechaFilter,
+    saveFechaFilter: saveFechaFilter
   };
 })(typeof window !== 'undefined' ? window : this);

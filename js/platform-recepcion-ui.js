@@ -315,7 +315,7 @@
       '<span class="rbl-kpi-lbl">Contenedores</span></div></div>' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--teal">' +
-      '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-paletas-gen.png?v=1" alt="" width="48" height="48"></div>' +
+      '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-paletas-contenedor.png?v=1" alt="" width="48" height="48"></div>' +
       '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.paletas || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Paletas</span></div></div>' +
       '<div class="' + kpiCls('validar') + '" data-rec-kpi-estado="validar">' +

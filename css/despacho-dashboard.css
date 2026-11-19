@@ -2534,11 +2534,37 @@ body.desp-controller-mode .desp-live-present-lista {
   touch-action: pan-x pan-y;
 }
 
+.desp-resumen-camiones-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin: 0.35rem 0 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted, #64748b);
+}
+
+.desp-resumen-camiones-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.desp-resumen-swatch {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.desp-resumen-swatch--val { background: #d97706; }
+.desp-resumen-swatch--cam { background: #059669; }
+
 .desp-resumen-camiones {
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem 0.65rem;
-  margin: 0.5rem 0 0.75rem;
+  margin: 0 0 0.75rem;
   padding: 0.65rem 0.75rem;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.04);
@@ -2554,10 +2580,10 @@ body.desp-controller-mode .desp-live-present-lista {
   display: inline-flex;
   align-items: baseline;
   gap: 0.4rem;
-  padding: 0.35rem 0.55rem;
+  padding: 0.4rem 0.65rem;
   border-radius: 999px;
-  background: rgba(52, 211, 153, 0.1);
-  border: 1px solid rgba(52, 211, 153, 0.28);
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(148, 163, 184, 0.28);
   font-size: 0.78rem;
 }
 
@@ -2572,8 +2598,15 @@ body.desp-controller-mode .desp-live-present-lista {
 }
 
 .desp-resumen-camiones-val strong {
-  color: #34d399;
   font-weight: 800;
+}
+
+.desp-resumen-camiones-val--val strong { color: #d97706; }
+.desp-resumen-camiones-val--cam strong { color: #059669; }
+
+html[data-theme="light"] .desp-resumen-camiones {
+  background: #f8fafc;
+  border-color: #e2e8f0;
 }
 
 .desp-table--lista-vivo .desp-btn-archive--live {

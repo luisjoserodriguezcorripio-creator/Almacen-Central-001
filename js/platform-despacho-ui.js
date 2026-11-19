@@ -796,19 +796,44 @@
   function renderResumenCamionesValidador(pedidos) {
     if (!DS.resumenPorValidador) return '';
     var resumen = DS.resumenPorValidador(pedidos || []);
-    var activos = (resumen.filas || []).filter(function (r) {
-      return (r.cargado || 0) > 0;
+    var byName = {};
+    (resumen.filas || []).forEach(function (r) {
+      if (r && r.nombre) byName[r.nombre] = r;
     });
-    if (!activos.length) {
-      return '<p class="desp-muted desp-resumen-camiones-empty">Sin camiones registrados todavía.</p>';
+    var catalog = DS.getValidadoresAsignables ? DS.getValidadoresAsignables() : [];
+    var seen = {};
+    var filas = [];
+    catalog.forEach(function (name) {
+      if (!name || seen[name]) return;
+      seen[name] = true;
+      filas.push(byName[name] || { nombre: name, validado: 0, cargado: 0 });
+    });
+    (resumen.filas || []).forEach(function (r) {
+      if (!r || !r.nombre || seen[r.nombre]) return;
+      seen[r.nombre] = true;
+      filas.push(r);
+    });
+    filas.sort(function (a, b) {
+      var ta = (a.validado || 0) + (a.cargado || 0);
+      var tb = (b.validado || 0) + (b.cargado || 0);
+      if (tb !== ta) return tb - ta;
+      return String(a.nombre).localeCompare(String(b.nombre), 'es');
+    });
+    if (!filas.length) {
+      return '<p class="desp-muted desp-resumen-camiones-empty">Sin validadores en catálogo.</p>';
     }
-    return '<div class="desp-resumen-camiones" aria-label="Camiones por validador">' +
-      activos.map(function (r) {
-        var short = String(r.nombre || '').split(' ')[0];
+    return '<div class="desp-resumen-camiones-legend" aria-hidden="true">' +
+      '<span class="desp-resumen-camiones-legend-item"><i class="desp-resumen-swatch desp-resumen-swatch--val"></i>Validado</span>' +
+      '<span class="desp-resumen-camiones-legend-item"><i class="desp-resumen-swatch desp-resumen-swatch--cam"></i>Cargados</span>' +
+      '</div>' +
+      '<div class="desp-resumen-camiones" aria-label="Productividad por validador">' +
+      filas.map(function (r) {
         return '<div class="desp-resumen-camiones-item" title="' + esc(r.nombre) + '">' +
-          '<span class="desp-resumen-camiones-name">' + esc(short) + '</span>' +
-          '<span class="desp-resumen-camiones-val"><strong>' + esc(String(r.cargado || 0)) + '</strong> cam.</span>' +
-          '<span class="desp-resumen-camiones-val">' + esc(String(r.validado || 0)) + ' val.</span>' +
+          '<span class="desp-resumen-camiones-name">' + esc(r.nombre) + '</span>' +
+          '<span class="desp-resumen-camiones-val desp-resumen-camiones-val--val">' +
+          '<strong>' + esc(String(r.validado || 0)) + '</strong> Validado</span>' +
+          '<span class="desp-resumen-camiones-val desp-resumen-camiones-val--cam">' +
+          '<strong>' + esc(String(r.cargado || 0)) + '</strong> Cargados</span>' +
           '</div>';
       }).join('') +
       '</div>';
@@ -927,10 +952,10 @@
       '</section>' +
       renderTablaValidacion(data, opts) +
       renderGestionValidadores(canRemove) +
-      '<section class="desp-panel desp-panel--personal-fondo" aria-label="Resumen de carga">' +
+      '<section class="desp-panel desp-panel--personal-fondo" aria-label="Productividad validadores">' +
       '<header class="desp-panel-head">' +
       '<div><span class="desp-eyebrow">Resumen</span>' +
-      '<h3>Carga por validador</h3></div>' +
+      '<h3>Productividad validadores</h3></div>' +
       '</header>' +
       renderResumenCamionesValidador(data.pedidos) +
       '</section>' +

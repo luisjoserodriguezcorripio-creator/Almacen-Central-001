@@ -283,9 +283,7 @@
       '<div class="rbl-f-logo-text">' +
       '<h1>Gestión de Recepción y Ubicación</h1>' +
       '<p>Almacén Central 001 · Recepción de contenedores</p>' +
-      '</div></div>' +
-      '<a class="rec-tablon-back" href="./index.html">← Tablón informativo</a>' +
-      '</div></header>';
+      '</div></div></div></header>';
   }
 
   function renderTorreDrawer(user) {

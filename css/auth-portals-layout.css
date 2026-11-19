@@ -195,17 +195,20 @@ body.auth-locked:has(.auth-layout--hub-news) .auth-video-scrim {
   box-shadow: 0 4px 16px rgba(197, 165, 114, 0.14);
 }
 
-.auth-portal-card--recepcion .auth-portal-icon--recepcion,
-.auth-layout--hub.auth-layout--portals-only .auth-portal-card--recepcion .auth-portal-icon--recepcion,
-.hub-drawer .auth-portal-card--recepcion .auth-portal-icon--recepcion {
+.auth-portal-icon--letter {
   display: inline-grid;
   place-items: center;
-  font-size: 1.45rem !important;
   font-weight: 900;
-  letter-spacing: 0;
+  letter-spacing: -0.02em;
   line-height: 1;
   color: #fff;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+}
+
+.auth-portal-card--recepcion .auth-portal-icon--recepcion,
+.auth-layout--hub.auth-layout--portals-only .auth-portal-card--recepcion .auth-portal-icon--recepcion,
+.hub-drawer .auth-portal-card--recepcion .auth-portal-icon--recepcion {
+  font-size: 1.45rem !important;
   background: linear-gradient(145deg, #7f1d1d 0%, #c8102e 55%, #9f1239 100%);
   border-color: rgba(248, 113, 113, 0.5);
   box-shadow: 0 4px 16px rgba(200, 16, 46, 0.28);
@@ -213,6 +216,35 @@ body.auth-locked:has(.auth-layout--hub-news) .auth-video-scrim {
 
 .auth-portal-card--recepcion .auth-portal-cta {
   color: #ff8a80;
+}
+
+.auth-portal-card--udm .auth-portal-icon--udm,
+.auth-layout--hub.auth-layout--portals-only .auth-portal-card--udm .auth-portal-icon--udm,
+.hub-drawer .auth-portal-card--udm .auth-portal-icon--udm {
+  font-size: 1.45rem !important;
+  background: linear-gradient(145deg, #92400e 0%, #d97706 55%, #b45309 100%);
+  border-color: rgba(251, 191, 36, 0.5);
+  box-shadow: 0 4px 16px rgba(217, 119, 6, 0.28);
+}
+
+.auth-portal-card--dim-despacho .auth-portal-icon--dim-despacho,
+.auth-layout--hub.auth-layout--portals-only .auth-portal-card--dim-despacho .auth-portal-icon--dim-despacho,
+.hub-drawer .auth-portal-card--dim-despacho .auth-portal-icon--dim-despacho {
+  font-size: 1.05rem !important;
+  letter-spacing: 0.02em;
+  background: linear-gradient(145deg, #9a3412 0%, #ea580c 55%, #c2410c 100%);
+  border-color: rgba(251, 146, 60, 0.5);
+  box-shadow: 0 4px 16px rgba(234, 88, 12, 0.28);
+}
+
+.auth-portal-card--dim-recepcion .auth-portal-icon--dim-recepcion,
+.auth-layout--hub.auth-layout--portals-only .auth-portal-card--dim-recepcion .auth-portal-icon--dim-recepcion,
+.hub-drawer .auth-portal-card--dim-recepcion .auth-portal-icon--dim-recepcion {
+  font-size: 1.05rem !important;
+  letter-spacing: 0.02em;
+  background: linear-gradient(145deg, #7f1d1d 0%, #dc2626 55%, #b91c1c 100%);
+  border-color: rgba(248, 113, 113, 0.5);
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.28);
 }
 
 @media (max-width: 900px) {

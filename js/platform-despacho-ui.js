@@ -925,11 +925,11 @@
       '<p class="desp-share-status desp-share-status--lista" id="despListaShareStatus"' + (sharing ? '' : ' hidden') + '>' +
       statusTxt + '</p>' +
       '</section>' +
-      renderGestionValidadores(canRemove) +
       renderTablaValidacion(data, opts) +
-      '<section class="desp-panel desp-panel--personal-fondo" aria-label="Resumen de personal">' +
+      renderGestionValidadores(canRemove) +
+      '<section class="desp-panel desp-panel--personal-fondo" aria-label="Resumen de carga">' +
       '<header class="desp-panel-head">' +
-      '<div><span class="desp-eyebrow">Personal</span>' +
+      '<div><span class="desp-eyebrow">Resumen</span>' +
       '<h3>Carga por validador</h3></div>' +
       '</header>' +
       renderResumenCamionesValidador(data.pedidos) +

@@ -301,36 +301,40 @@
       '<div class="rbl-drawer-foot">' + esc(name) + '</div></aside>';
   }
 
-  function renderTorreKpis(counts) {
+  function renderTorreKpis(counts, estadoActivo) {
     counts = counts || {};
+    estadoActivo = String(estadoActivo || '');
+    function kpiCls(key) {
+      return 'rbl-kpi' + (estadoActivo && estadoActivo === key ? ' is-filter-on' : '');
+    }
     return '<div class="rbl-kpi-grid rbl-kpi-grid--rec6" role="group" aria-label="Resumen recepción">' +
-      '<div class="rbl-kpi">' +
+      '<div class="' + kpiCls('') + '">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--blue">' +
       '<img class="rbl-kpi-icon-img" src="assets/img/kpi-contenedor.svg?v=2" alt="" width="36" height="36"></div>' +
       '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.total || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Contenedores</span></div></div>' +
-      '<div class="rbl-kpi">' +
+      '<div class="' + kpiCls('') + '">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--teal">' +
       '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-paletas-gen.png?v=1" alt="" width="36" height="36"></div>' +
       '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.paletas || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Paletas recibidas</span></div></div>' +
-      '<div class="rbl-kpi">' +
+      '<div class="' + kpiCls('validar') + '" data-rec-kpi-estado="validar">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--amber">' +
       '<img class="rbl-kpi-icon-img" src="assets/img/kpi-jaula.svg?v=2" alt="" width="36" height="36"></div>' +
       '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteValidar || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Pend. Validar</span></div></div>' +
-      '<div class="rbl-kpi">' +
+      '<div class="' + kpiCls('descargar') + '" data-rec-kpi-estado="descargar">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--teal">' +
       '<img class="rbl-kpi-icon-img" src="assets/img/kpi-montacargas.svg?v=1" alt="" width="36" height="36"></div>' +
       '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteDescargar || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Pend. Descargar</span></div></div>' +
-      '<div class="rbl-kpi">' +
+      '<div class="' + kpiCls('remision') + '" data-rec-kpi-estado="remision">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--navy">' +
       '<svg class="rbl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
       '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>' +
       '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteRemision || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Pend. Remision</span></div></div>' +
-      '<div class="rbl-kpi">' +
+      '<div class="' + kpiCls('ubicar') + '" data-rec-kpi-estado="ubicar">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--amber">' +
       '<svg class="rbl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
       '<path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>' +
@@ -610,11 +614,8 @@
     var headers = (planilla && planilla.headers && planilla.headers.length)
       ? planilla.headers
       : DEFAULT_HEADERS;
-    var dateFiltered = store.filterPlanillaRows
-      ? store.filterPlanillaRows(planilla, { desde: filter.desde, hasta: filter.hasta })
-      : ((planilla && planilla.rows) || []);
     var counts = store.countPlanillaKpis
-      ? store.countPlanillaKpis(dateFiltered)
+      ? store.countPlanillaKpis(filteredRows)
       : store.countResumen(data.contenedores);
     var liveActive = store.isLiveShareBoardActive(data);
 
@@ -624,7 +625,7 @@
       renderTorreHero() +
       '<div class="rbl-f-screen is-on" data-rec-screen="ops">' +
       renderFechaFilter(filter, liveActive) +
-      renderTorreKpis(counts) +
+      renderTorreKpis(counts, filter.estado || '') +
       '<div class="rbl-card rbl-card--manifest">' +
       '<div class="rbl-card-head"><h3>Manifiesto de recepción</h3>' +
       '<span>' + esc(formatQty(filteredRows.length)) + ' en seguimiento</span></div>' +

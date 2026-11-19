@@ -146,6 +146,12 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
   white-space: nowrap;
 }
 
+.rec-tc-app .rbl-kpi-grid--rec6 .rbl-kpi.is-filter-on {
+  border-color: rgba(185, 28, 28, 0.45);
+  box-shadow: 0 0 0 2px rgba(185, 28, 28, 0.12);
+  background: #fff7f7;
+}
+
 .rec-tc-app .rbl-f-grid {
   align-items: stretch;
   flex: 1;

@@ -328,6 +328,27 @@
     }
   }
 
+  function updateDespachoCloudBanner(status) {
+    var banner = $('despCloudBanner');
+    if (!banner) return;
+    status = status || {};
+    if (status.level === 'err') {
+      banner.hidden = false;
+      banner.className = 'desp-cloud-banner desp-cloud-banner--err';
+      banner.textContent = status.text || 'Sync entre PCs no disponible.';
+      return;
+    }
+    if (status.level === 'warn') {
+      banner.hidden = false;
+      banner.className = 'desp-cloud-banner desp-cloud-banner--warn';
+      banner.textContent = status.text || '';
+      return;
+    }
+    banner.hidden = true;
+    banner.textContent = '';
+    banner.className = 'desp-cloud-banner';
+  }
+
   function enterApp(user) {
     state.user = user;
     state.despachoArea = user.despachoArea === 'validador' ? 'validador' : 'preparador';
@@ -425,9 +446,10 @@
 
       var cloudWarnShown = false;
       document.addEventListener('despacho-cloud-status', function (ev) {
-        if (!state.user || cloudWarnShown) return;
+        if (!state.user) return;
         var d = ev.detail || {};
-        if (d.level === 'err') {
+        updateDespachoCloudBanner(d);
+        if (d.level === 'err' && !cloudWarnShown) {
           cloudWarnShown = true;
           toast(d.text, 'warn');
         }

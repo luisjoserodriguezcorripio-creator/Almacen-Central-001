@@ -382,7 +382,7 @@
         lastJsonBinError = Date.now();
         if (!warnedJsonBin && res.status === 403) {
           warnedJsonBin = true;
-          showSyncBanner('warn', 'Sync web — use Firebase (Ctrl+F5). JSONBin ya no es necesario.');
+          showSyncBanner('err', 'JSONBin agotado (403). Ejecute SETUP-WEB-SYNC.bat con Master Key nueva de jsonbin.io y Ctrl+F5 en todas las PCs.');
         }
         throw new Error('jsonbin ' + res.status);
       }

@@ -277,7 +277,7 @@
               '<button type="button" class="btn btn-ghost desp-btn-hist" data-pedido-id="' + esc(r.pedidoId) + '">Ver</button>' +
               '</li>';
           }).join('') + '</ul>'
-        : '<p class="desp-muted">Sin movimientos registrados hoy todavía. Si digitaron en otra PC, abra Despacho en esa PC (los datos viven en ese equipo si no hay sync nube).</p>') +
+        : '<p class="desp-muted">Sin movimientos registrados hoy todavía. Si digitaron en otra PC y no aparecen aquí, la sync nube está caída: ejecute <strong>SETUP-WEB-SYNC.bat</strong> (Master Key nueva en jsonbin.io) y haga Ctrl+F5 en todas las PCs.</p>') +
       '</section>';
   }
 

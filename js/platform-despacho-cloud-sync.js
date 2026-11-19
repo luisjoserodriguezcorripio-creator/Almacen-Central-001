@@ -850,14 +850,20 @@
     if (isLanHost() && serverReachable) {
       return { level: 'ok', text: 'Servidor local activo — operador y validador sincronizados' };
     }
-    if (getJsonBinConfig() && lastJsonBinError && (Date.now() - lastJsonBinError) < 30000 && !lastJsonBinOk) {
-      return {
-        level: 'err',
-        text: 'JSONBin agotado. Ejecute SETUP-WEB-SYNC.bat y abra la misma URL en TODAS las PCs'
-      };
-    }
-    if (isPublicHost() && lastPullAt) {
-      return { level: 'warn', text: 'Lectura desde GitHub · el operador debe usar servidor LAN para escribir' };
+    if (getJsonBinConfig()) {
+      var jsonBinAlive = lastJsonBinOk && (!lastJsonBinError || lastJsonBinOk >= lastJsonBinError);
+      if (!jsonBinAlive && lastJsonBinError) {
+        return {
+          level: 'err',
+          text: 'Sync nube caída (JSONBin agotado/403). Los datos de otras PCs no se ven. Ejecute SETUP-WEB-SYNC.bat con Master Key nueva de jsonbin.io y Ctrl+F5 en TODAS las PCs'
+        };
+      }
+      if (jsonBinAlive && lastPullAt) {
+        return {
+          level: 'ok',
+          text: 'Sync nube activa · hace ' + Math.round((Date.now() - lastPullAt) / 1000) + ' s'
+        };
+      }
     }
     if (isCloudConfigured() && lastPullAt) {
       return { level: 'ok', text: 'Sync automático · hace ' + Math.round((Date.now() - lastPullAt) / 1000) + ' s' };

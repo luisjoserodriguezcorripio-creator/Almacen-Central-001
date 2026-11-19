@@ -13,6 +13,8 @@ WMS · Despacho · Averías · Recepción · Temperatura · Agenda (en Despacho 
 WMS · Despacho · Averías · Recepción · Temperatura · Agenda (en Despacho entra como Preparador si tiene permiso),MODESTO.ANDRES,Modesto Andres,supervisor,00000,Usuario / contraseña,Sí,Publicado 2026-11-17
 WMS · Despacho · Averías · Recepción · Temperatura · Agenda (en Despacho entra como Preparador si tiene permiso),JOSE.PICHARDO,José Pichardo,colaborador,00000,Usuario / contraseña,Sí,Publicado 2026-11-17
 WMS · Despacho · Averías · Recepción · Temperatura · Agenda (en Despacho entra como Preparador si tiene permiso),JOSE.POLANCO,Jose Polanco,colaborador,00000,Usuario / contraseña,Sí,Publicado 2026-11-17
+WMS · Despacho · Averías · Recepción · Temperatura · Agenda,Oficina,Oficina,colaborador,00000,Usuario / contraseña,Sí,Publicado 2026-11-19 · Recepción
+WMS · Despacho · Averías · Recepción · Temperatura · Agenda,Admin,Admin,administrador,00000,Usuario / contraseña,Sí,Publicado 2026-11-19 · No es el admin primario luisjose
 Inventario RF,51192,Jansel Castro,COUNT,(sin clave — solo código),Código empleado,Sí,Contador
 Inventario RF,51963,Luis José Rodríguez Ruíz,COUNT,(sin clave — solo código),Código empleado,Sí,Contador
 Inventario RF,12345,María López,COUNT,(sin clave — solo código),Código empleado,Sí,Contador demo

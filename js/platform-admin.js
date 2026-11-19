@@ -79,7 +79,7 @@
   // Cuenta propia — cambie usuario/hash aquí (no desde la UI).
   var PRIMARY_ADMIN_USERNAME = 'luisjose';
   var ADMIN_DEFAULT_PASSWORD_HASH = 'a8ffef0576b53a79c84409727674ee096bf2d67961aa9ebd613f2b06a2fc423c';
-  var CREDENTIALS_VERSION = 5;
+  var CREDENTIALS_VERSION = 6;
   var PRIMARY_LOGIN_ALIASES = ['admin', 'administrador'];
 
   var DEFAULT_USERS = [
@@ -208,9 +208,7 @@
         primary = syncPrimaryFromCode(u);
         return;
       }
-      if (un === 'admin' && u.role === 'administrador') {
-        return;
-      }
+      /* Permitir usuario staff "Admin" (no primario); el primario sigue siendo luisjose. */
       if (u.isPrimaryAdmin) {
         return;
       }
@@ -487,14 +485,14 @@
   }
 
   function authenticate(username, passwordHash) {
-    if (!isPrimaryLoginName(username)) {
-      var un = String(username || '').toLowerCase().trim();
-      var user = getUsers().find(function (u) {
-        return u.active && !isPrimaryAdminUser(u) && u.username.toLowerCase() === un;
-      });
-      if (!user || user.passwordHash !== passwordHash) return null;
-      return normalizeUser(Object.assign({}, user));
+    var un = String(username || '').toLowerCase().trim();
+    var staffUser = getUsers().find(function (u) {
+      return u.active && !isPrimaryAdminUser(u) && String(u.username || '').toLowerCase() === un;
+    });
+    if (staffUser && staffUser.passwordHash === passwordHash) {
+      return normalizeUser(Object.assign({}, staffUser));
     }
+    if (!isPrimaryLoginName(username)) return null;
     if (!isPrimaryPasswordHash(passwordHash)) return null;
     var users = getUsers();
     var primary = users.find(isPrimaryAdminUser);

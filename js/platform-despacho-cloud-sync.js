@@ -146,13 +146,22 @@
       });
     }
 
-    // Firebase vacío: subir la base local (PC con datos vivos, p.ej. Pichardo)
+    // Firebase vacío: subir la base local (PC con datos vivos, p.ej. Pichardo).
+    // Si la nube ya tiene pedidos, NUNCA sobrescribir con una copia local incompleta.
     if (hasFirebaseConfig()) {
       return pullFirebaseInitial().then(function (remote) {
+        if (remote && hasLiveContent(remote)) {
+          var remoteN = asPedidoList(remote.pedidos).length;
+          var localN = asPedidoList(local.pedidos).length;
+          if (remoteN >= localN) {
+            applyRemote(mergeDespacho(local, remote), 'firebase');
+            return false;
+          }
+        }
         if (remote && hasLiveContent(remote)) return false;
         return pushLocal(3, { force: true });
       }).catch(function () {
-        return pushLocal(3, { force: true });
+        return Promise.resolve(false);
       });
     }
 
@@ -350,15 +359,30 @@
     return (upload.liveShareSeq || 0) < (cloud.liveShareSeq || 0);
   }
 
+  function asPedidoList(value) {
+    if (!value) return [];
+    if (Array.isArray(value)) return value.filter(Boolean);
+    if (typeof value === 'object') {
+      return Object.keys(value).map(function (k) { return value[k]; }).filter(Boolean);
+    }
+    return [];
+  }
+
   function mergeDespacho(local, remote) {
     if (!remote) return local;
-    if (!local) return remote;
+    if (!local) {
+      var onlyRemote = Object.assign({}, remote, {
+        module: 'despacho',
+        pedidos: asPedidoList(remote.pedidos)
+      });
+      return onlyRemote;
+    }
 
     var map = {};
-    (local.pedidos || []).forEach(function (p) {
+    asPedidoList(local.pedidos).forEach(function (p) {
       if (p && p.id) map[p.id] = p;
     });
-    (remote.pedidos || []).forEach(function (p) {
+    asPedidoList(remote.pedidos).forEach(function (p) {
       if (!p || !p.id) return;
       var prev = map[p.id];
       if (!prev || pedidoTime(p) >= pedidoTime(prev)) map[p.id] = p;
@@ -395,7 +419,7 @@
 
   function dataSignature(data) {
     if (!data) return '';
-    var ped = (data.pedidos || []).map(pedidoSigPiece).sort().join('|');
+    var ped = asPedidoList(data.pedidos).map(pedidoSigPiece).sort().join('|');
     var ls = data.liveShare && data.liveShare.active
       ? String(data.liveShare.idc) + '~' + String(data.liveShare.jaula) + '@' + String(data.liveShare.updatedAt) +
         '#' + String(data.liveShareBarcodeSeq || 0)
@@ -410,7 +434,24 @@
     if (!data) return false;
     if (data.liveShare && data.liveShare.active) return true;
     if (data.liveShareLista && data.liveShareLista.active) return true;
-    return !!(data.pedidos && data.pedidos.length);
+    return asPedidoList(data.pedidos).length > 0;
+  }
+
+  function prepareFirebasePayload(local) {
+    var base = Object.assign({}, local || {}, { module: 'despacho' });
+    return pullFirebaseInitial().then(function (remote) {
+      var merged = mergeDespacho(base, remote);
+      merged.updatedAt = nowIso();
+      if (remote && asPedidoList(remote.pedidos).length > asPedidoList(merged.pedidos).length) {
+        merged = mergeDespacho(remote, base);
+        merged.updatedAt = nowIso();
+      }
+      persistMergedQuiet(merged, 'firebase-merge');
+      return merged;
+    }).catch(function () {
+      base.updatedAt = nowIso();
+      return base;
+    });
   }
 
   function notifyApplied(data, source) {
@@ -565,12 +606,18 @@
 
   function pullFirebaseInitial() {
     if (!hasFirebaseConfig() || !global.PlatformFirebaseBridge) return Promise.resolve(null);
-    if (global.PlatformFirebaseBridge.pull) {
-      return global.PlatformFirebaseBridge.pull('despacho/snapshot');
-    }
-    if (!firebaseDb) return Promise.resolve(null);
-    return firebaseDb.ref('despacho/snapshot').once('value').then(function (snap) {
-      return snap.val() || null;
+    var ready = global.PlatformFirebaseBridge.ensureReady
+      ? global.PlatformFirebaseBridge.ensureReady()
+      : Promise.resolve(null);
+    return ready.then(function (adapter) {
+      if (adapter) firebaseDb = adapter;
+      if (global.PlatformFirebaseBridge.pull) {
+        return global.PlatformFirebaseBridge.pull('despacho/snapshot');
+      }
+      if (!firebaseDb) return null;
+      return firebaseDb.ref('despacho/snapshot').once('value').then(function (snap) {
+        return snap.val() || null;
+      });
     }).catch(function () { return null; });
   }
 
@@ -759,17 +806,18 @@
       }
 
       if (hasFirebaseConfig()) {
-        var fastPayload = Object.assign({}, local, { module: 'despacho', updatedAt: nowIso() });
-        return pushToFirebase(fastPayload).then(function (ok) {
-          if (ok) {
-            lastPushOkAt = Date.now();
-            if (broadcast) {
-              try { broadcast.postMessage({ type: 'despacho-sync', at: Date.now() }); } catch (e) { /* noop */ }
+        return prepareFirebasePayload(local).then(function (payload) {
+          return pushToFirebase(payload).then(function (ok) {
+            if (ok) {
+              lastPushOkAt = Date.now();
+              if (broadcast) {
+                try { broadcast.postMessage({ type: 'despacho-sync', at: Date.now() }); } catch (e) { /* noop */ }
+              }
+              updateSyncUi();
+              return true;
             }
-            updateSyncUi();
-            return true;
-          }
-          return pushLocalFallback(retries);
+            return pushLocalFallback(retries);
+          });
         }).finally(function () {
           pushing = false;
           drainPushQueue();
@@ -921,7 +969,7 @@
       }
       return 4000;
     }
-    if (firebaseLive()) return 10000;
+    if (firebaseLive()) return 2000;
     var sec = (siteConfig && siteConfig.pollSeconds) || 4;
     if (siteConfig && siteConfig.realtime === false) sec = 5;
     return Math.max(1, sec) * 1000;

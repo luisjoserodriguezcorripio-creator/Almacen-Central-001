@@ -422,30 +422,30 @@
       PC.bindOnce($('despBtnLogout'), 'click', logout);
       PC.bindOnce($('despBtnRefresh'), 'click', renderDespacho);
 
-      document.addEventListener('despacho-updated', function () {
+      global.addEventListener('despacho-updated', function () {
         if (state.user) {
           renderDespacho();
         }
       });
 
-      document.addEventListener('despacho-live-share', function () { /* pantalla externa */ });
-      document.addEventListener('despacho-live-lista', function () { /* pantalla externa */ });
+      global.addEventListener('despacho-live-share', function () { /* pantalla externa */ });
+      global.addEventListener('despacho-live-lista', function () { /* pantalla externa */ });
 
       clearLocalPresentOverlays();
 
-      document.addEventListener('despacho-web-wiped', function () {
+      global.addEventListener('despacho-web-wiped', function () {
         if (!state.user) return;
         if (typeof renderDespacho === 'function') renderDespacho();
         updateDespachoSyncLabel();
       });
 
-      document.addEventListener('lan-sync', function (ev) {
+      global.addEventListener('lan-sync', function (ev) {
         if (!state.user) return;
         if (!ev.detail || ev.detail.store === 'despacho') updateDespachoSyncLabel();
       });
 
       var cloudWarnShown = false;
-      document.addEventListener('despacho-cloud-status', function (ev) {
+      global.addEventListener('despacho-cloud-status', function (ev) {
         if (!state.user) return;
         var d = ev.detail || {};
         updateDespachoCloudBanner(d);
@@ -454,7 +454,7 @@
           toast(d.text, 'warn');
         }
       });
-      document.addEventListener('firebase-connection', function (ev) {
+      global.addEventListener('firebase-connection', function (ev) {
         if (!state.user) return;
         if (ev.detail && ev.detail.connected) {
           var mode = ev.detail.mode === 'rest' ? ' (nube directa)' : ' (Firebase)';

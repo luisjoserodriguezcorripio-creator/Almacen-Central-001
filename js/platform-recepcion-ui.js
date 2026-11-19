@@ -310,7 +310,7 @@
     return '<div class="rbl-kpi-grid rbl-kpi-grid--rec5" role="group" aria-label="Resumen recepción">' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--blue">' +
-      '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-contenedor-rastra.png?v=1" alt="" width="48" height="48"></div>' +
+      '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-contenedor-rastra.webp?v=2" alt="" width="48" height="48"></div>' +
       '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.total || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Contenedores</span></div></div>' +
       '<div class="rbl-kpi">' +

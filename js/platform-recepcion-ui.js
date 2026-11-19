@@ -161,36 +161,46 @@
       '</section>';
   }
 
+  function formatQty(n) {
+    var num = Number(n) || 0;
+    try {
+      return new Intl.NumberFormat('en-US').format(num);
+    } catch (e) {
+      return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+  }
+
   function renderPlanillaUploadCard(user, planilla) {
     if (!A().canRegister(user)) return '';
     var hist = S().getPlanillaHistorico ? S().getPlanillaHistorico() : {};
     var months = Object.keys(hist).sort().reverse();
+    var rowsN = planilla && planilla.rows ? planilla.rows.length : 0;
     var meta = planilla
       ? ('Última carga: ' + (planilla.fileName || '—') + ' · ' +
-        (planilla.rows ? planilla.rows.length : 0) + ' filas · ' +
+        formatQty(rowsN) + ' filas · ' +
         S().formatFecha(planilla.uploadedAt))
-      : 'Aún no se ha cargado la planilla del mes.';
+      : 'Sin archivo cargado.';
     var histHtml = months.length
       ? '<ul class="rec-planilla-hist">' + months.slice(0, 6).map(function (m) {
         var snap = hist[m] || {};
         return '<li><strong>' + esc(m) + '</strong> · ' +
           esc(snap.fileName || '—') + ' · ' +
-          esc(String((snap.rows && snap.rows.length) || 0)) + ' filas</li>';
+          esc(formatQty((snap.rows && snap.rows.length) || 0)) + ' filas</li>';
       }).join('') + '</ul>'
-      : '<p class="rec-planilla-empty">Sin histórico mensual todavía.</p>';
+      : '<p class="rec-planilla-empty">Sin histórico mensual.</p>';
 
-    return '<div class="rbl-card rbl-f-form rec-planilla-card">' +
-      '<div class="rbl-card-head"><h3>Cargar planilla</h3>' +
-      '<span class="rbl-reg">Reporte Diario</span></div>' +
-      '<div class="rbl-card-body rec-panel rec-panel--form">' +
-      '<p class="rec-planilla-lead">Sube el Excel de recepción. Solo se importa la hoja <strong>Reporte Diario</strong>. Cada carga reemplaza la anterior; al cerrar el mes se conserva el último archivo en el histórico.</p>' +
+    return '<div class="rec-planilla-bar">' +
+      '<div class="rec-planilla-card">' +
+      '<div class="rec-planilla-card__head">' +
+      '<h3>Cargar CSV</h3>' +
+      '<span>Reemplaza la carga actual</span>' +
+      '</div>' +
       '<label class="rec-planilla-drop" for="recPlanillaFile">' +
-      '<input type="file" id="recPlanillaFile" accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" hidden>' +
-      '<span class="rec-planilla-drop__title">Elegir archivo Excel o CSV</span>' +
-      '<span class="rec-planilla-drop__sub">Planilla de Recepción · hoja Reporte Diario</span>' +
+      '<input type="file" id="recPlanillaFile" accept=".csv,text/csv" hidden>' +
+      '<span class="rec-planilla-drop__title">Seleccionar archivo CSV</span>' +
+      '<span class="rec-planilla-drop__sub">Cada carga sustituye la anterior</span>' +
       '</label>' +
       '<p class="rec-planilla-meta" id="recPlanillaMeta">' + esc(meta) + '</p>' +
-      '<p class="rec-planilla-note">Si el archivo tiene DRM corporativo, guarde una copia .xlsx sin restricción o exporte la hoja a CSV.</p>' +
       '<div class="rec-planilla-hist-wrap">' +
       '<h4>Histórico por mes</h4>' + histHtml +
       '</div></div></div>';
@@ -254,39 +264,36 @@
       '<div class="rbl-drawer-foot">' + esc(name) + '</div></aside>';
   }
 
-  function renderTorreKpis(counts, contenedores, liveActive) {
+  function renderTorreKpis(counts) {
     counts = counts || {};
-    var muelles = countMuellesOcupados(contenedores);
-    var paletas = sumPaletas(contenedores);
-    return '<div class="rbl-kpi-grid" role="group" aria-label="Resumen recepción">' +
+    return '<div class="rbl-kpi-grid rbl-kpi-grid--rec5" role="group" aria-label="Resumen recepción">' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--blue">' +
       '<img class="rbl-kpi-icon-img" src="assets/img/kpi-contenedor.svg?v=2" alt="" width="52" height="52"></div>' +
-      '<div><span class="rbl-kpi-num">' + esc(String(counts.total || 0)) + '</span>' +
-      '<span class="rbl-kpi-lbl">Contenedores activos</span></div></div>' +
-      '<div class="rbl-kpi">' +
-      '<div class="rbl-kpi-icon rbl-kpi-icon--amber">' +
-      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-jaula.svg?v=2" alt="" width="52" height="52"></div>' +
-      '<div><span class="rbl-kpi-num">' + esc(String(muelles)) + '</span>' +
-      '<span class="rbl-kpi-lbl">Muelles ocupados</span></div></div>' +
+      '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.total || 0)) + '</span>' +
+      '<span class="rbl-kpi-lbl">Contenedores</span></div></div>' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--teal">' +
       '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-paletas-gen.png?v=1" alt="" width="52" height="52"></div>' +
-      '<div><span class="rbl-kpi-num">' + esc(String(paletas)) + '</span>' +
+      '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.paletas || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Paletas recibidas</span></div></div>' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--navy">' +
       '<svg class="rbl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
       '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>' +
-      '<div><span class="rbl-kpi-num">' + esc(String(counts.pendienteValidar || 0)) + '</span>' +
-      '<span class="rbl-kpi-lbl">Pend. validar</span></div></div>' +
-      '<button type="button" class="rbl-kpi rbl-kpi--action' + (liveActive ? ' is-live' : '') + '" id="recBtnShare"' +
-      (liveActive ? ' aria-pressed="true"' : '') + ' title="Compartir manifiesto en pantalla TV">' +
+      '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteValidar || 0)) + '</span>' +
+      '<span class="rbl-kpi-lbl">Pend. Validar</span></div></div>' +
+      '<div class="rbl-kpi">' +
+      '<div class="rbl-kpi-icon rbl-kpi-icon--amber">' +
+      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-jaula.svg?v=2" alt="" width="52" height="52"></div>' +
+      '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteDescargar || 0)) + '</span>' +
+      '<span class="rbl-kpi-lbl">Pend. Descargar</span></div></div>' +
+      '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--cast">' +
       '<img class="rbl-kpi-icon-img" src="assets/img/kpi-pantalla.svg?v=2" alt="" width="52" height="52"></div>' +
-      '<div><span class="rbl-kpi-lbl rbl-kpi-lbl--action">' +
-      (liveActive ? '● Pantalla en vivo' : 'Compartir pantalla') + '</span>' +
-      '<span class="rbl-kpi-sub">TV recepción · en vivo</span></div></button></div>';
+      '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteRemision || 0)) + '</span>' +
+      '<span class="rbl-kpi-lbl">Pend. Remision</span></div></div>' +
+      '</div>';
   }
 
   function renderRegistroFormCard(user, planilla) {
@@ -476,6 +483,12 @@
         if (/validado|descargado|remision/i.test(h)) {
           return '<td class="' + cls + '">' + renderStatusCell(val) + '</td>';
         }
+        if (/^paleta/i.test(h) && String(val || '').trim() !== '') {
+          var qty = parseInt(val, 10);
+          if (!isNaN(qty)) {
+            return '<td class="' + cls + '">' + esc(formatQty(qty)) + '</td>';
+          }
+        }
         var text = String(val || '').trim() || '—';
         if (/cont\.|factura|#idc|no\./i.test(h) && text !== '—') {
           return '<td class="' + cls + '"><strong>' + esc(text) + '</strong></td>';
@@ -554,15 +567,9 @@
     var headers = (planilla && planilla.headers && planilla.headers.length)
       ? planilla.headers
       : DEFAULT_HEADERS;
-    var mapped = store.mapPlanillaToContenedores
-      ? store.mapPlanillaToContenedores({
-        headers: headers,
-        rows: filteredRows,
-        uploadedBy: planilla && planilla.uploadedBy,
-        uploadedAt: planilla && planilla.uploadedAt
-      })
-      : store.getContenedoresActivos(data.contenedores);
-    var counts = store.countResumen(mapped);
+    var counts = store.countPlanillaKpis
+      ? store.countPlanillaKpis(filteredRows)
+      : store.countResumen(data.contenedores);
     var liveActive = store.isLiveShareBoardActive(data);
 
     return '<div class="rec-tc-app rbl-f">' +
@@ -571,14 +578,13 @@
       renderTorreHero() +
       '<div class="rbl-f-screen is-on" data-rec-screen="ops">' +
       renderFechaFilter(filter) +
-      renderTorreKpis(counts, mapped, liveActive) +
-      '<div class="rbl-f-grid">' +
+      renderTorreKpis(counts) +
       '<div class="rbl-card rbl-card--manifest">' +
       '<div class="rbl-card-head"><h3>Manifiesto de recepción</h3>' +
-      '<span>' + esc(String(filteredRows.length)) + ' en seguimiento</span></div>' +
+      '<span>' + esc(formatQty(filteredRows.length)) + ' en seguimiento</span></div>' +
       '<div class="rbl-card-body rbl-card-body--flush">' +
-      '<div class="rec-table-wrap rec-table-wrap--manifest">' +
-      '<table class="rec-table rec-table--manifest rec-table--planilla" aria-label="Manifiesto Reporte Diario">' +
+      '<div class="rec-table-wrap rec-table-wrap--manifest rec-table-wrap--rows20">' +
+      '<table class="rec-table rec-table--manifest rec-table--planilla" aria-label="Manifiesto de recepción">' +
       '<thead><tr>' +
       headers.map(function (h) {
         return '<th title="' + esc(h) + '">' + esc(h) + '</th>';
@@ -587,7 +593,7 @@
       '<tbody id="recTableBody">' + renderPlanillaRows(filteredRows, headers) + '</tbody>' +
       '</table></div></div></div>' +
       renderRegistroFormCard(user, planilla) +
-      '</div></div>' +
+      '</div>' +
       '<div class="rbl-f-screen" data-rec-screen="hist">' + renderRegistroLogCard(data) + '</div>' +
       renderTorreCfg(user, liveActive) +
       '</div></div>' +

@@ -143,6 +143,7 @@
         descripcion: String(v[8] || '').trim(),
         paletas: parseInt(v[21], 10) || 0,
         muelle: String(v[15] || '').trim().toUpperCase(),
+        descargado: statusFromText(v[11]),
         validado: validado,
         entrada: remision,
         ubicado: ubicado,
@@ -339,6 +340,7 @@
       descripcion: String(c.descripcion || '').trim(),
       paletas: Math.max(0, parseInt(c.paletas, 10) || 0),
       muelle: String(c.muelle || '').trim().toUpperCase(),
+      descargado: c.descargado === 'ok' ? 'ok' : 'pendiente',
       validado: c.validado === 'ok' ? 'ok' : 'pendiente',
       entrada: c.entrada === 'ok' ? 'ok' : 'pendiente',
       ubicado: c.ubicado === 'ok' ? 'ok' : 'pendiente',
@@ -688,6 +690,9 @@
       importado: 0,
       local: 0,
       pendienteValidar: 0,
+      pendienteDescargar: 0,
+      pendienteRemision: 0,
+      paletas: 0,
       validado: 0,
       conEntrada: 0,
       conUbicado: 0,
@@ -696,11 +701,37 @@
     list.forEach(function (c) {
       if (c.tipo === 'local') out.local += 1;
       else out.importado += 1;
+      out.paletas += Number(c.paletas) || 0;
       if (c.validado !== 'ok') out.pendienteValidar += 1;
       else out.validado += 1;
+      if (c.descargado && c.descargado !== 'ok') out.pendienteDescargar += 1;
+      if (c.entrada !== 'ok') out.pendienteRemision += 1;
       if (c.entrada === 'ok') out.conEntrada += 1;
       if (c.ubicado === 'ok') out.conUbicado += 1;
       if (c.entrada === 'ok' && c.ubicado !== 'ok') out.pendienteUbicar += 1;
+    });
+    return out;
+  }
+
+  function isOkStatus(v) {
+    return statusFromText(v) === 'ok';
+  }
+
+  function countPlanillaKpis(rows) {
+    var list = rows || [];
+    var out = {
+      total: list.length,
+      paletas: 0,
+      pendienteValidar: 0,
+      pendienteDescargar: 0,
+      pendienteRemision: 0
+    };
+    list.forEach(function (r) {
+      var v = r.values || [];
+      out.paletas += parseInt(v[21], 10) || 0;
+      if (!isOkStatus(v[12])) out.pendienteValidar += 1;
+      if (!isOkStatus(v[11])) out.pendienteDescargar += 1;
+      if (!isOkStatus(v[13])) out.pendienteRemision += 1;
     });
     return out;
   }
@@ -849,6 +880,7 @@
     eliminarContenedor: eliminarContenedor,
     getContenedoresActivos: getContenedoresActivos,
     countResumen: countResumen,
+    countPlanillaKpis: countPlanillaKpis,
     resumenEquipoTv: resumenEquipoTv,
     validarPersonaEnRoster: validarPersonaEnRoster,
     resolverNombreEnRoster: resolverNombreEnRoster,

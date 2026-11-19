@@ -297,8 +297,8 @@
   function parseFile(file) {
     if (!file) return Promise.resolve({ ok: false, error: 'Seleccione un archivo.' });
     var name = String(file.name || '').toLowerCase();
-    if (!/\.(xlsx|xls|csv)$/.test(name)) {
-      return Promise.resolve({ ok: false, error: 'Solo se admiten archivos .xlsx, .xls o .csv.' });
+    if (!/\.csv$/.test(name)) {
+      return Promise.resolve({ ok: false, error: 'Solo se admiten archivos CSV.' });
     }
     return new Promise(function (resolve) {
       var reader = new FileReader();

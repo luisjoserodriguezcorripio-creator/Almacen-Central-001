@@ -368,12 +368,44 @@
     return [];
   }
 
+  function mergeHistorial(a, b) {
+    var seen = {};
+    var out = [];
+    asPedidoList(a).concat(asPedidoList(b)).forEach(function (h) {
+      if (!h) return;
+      var key = String(h.at || '') + '|' + String(h.usuario || '') + '|' +
+        String(h.hacia || '') + '|' + String(h.desde || '') + '|' + String(h.nota || '');
+      if (seen[key]) return;
+      seen[key] = true;
+      out.push(h);
+    });
+    out.sort(function (x, y) {
+      return String(x.at || '').localeCompare(String(y.at || ''));
+    });
+    return out;
+  }
+
+  function mergePedidoPair(a, b) {
+    if (!a) return b;
+    if (!b) return a;
+    var newer = pedidoTime(b) >= pedidoTime(a) ? b : a;
+    var older = newer === b ? a : b;
+    var out = Object.assign({}, older, newer);
+    out.historial = mergeHistorial(a.historial, b.historial);
+    out.cargasEquipo = asPedidoList(newer.cargasEquipo && newer.cargasEquipo.length
+      ? newer.cargasEquipo
+      : (older.cargasEquipo || newer.cargasEquipo));
+    return out;
+  }
+
   function mergeDespacho(local, remote) {
     if (!remote) return local;
     if (!local) {
       var onlyRemote = Object.assign({}, remote, {
         module: 'despacho',
-        pedidos: asPedidoList(remote.pedidos)
+        pedidos: asPedidoList(remote.pedidos).map(function (p) {
+          return Object.assign({}, p, { historial: asPedidoList(p.historial) });
+        })
       });
       return onlyRemote;
     }
@@ -384,8 +416,7 @@
     });
     asPedidoList(remote.pedidos).forEach(function (p) {
       if (!p || !p.id) return;
-      var prev = map[p.id];
-      if (!prev || pedidoTime(p) >= pedidoTime(prev)) map[p.id] = p;
+      map[p.id] = mergePedidoPair(map[p.id], p);
     });
 
     var merged = Object.assign({}, (Date.parse(remote.updatedAt) || 0) >= (Date.parse(local.updatedAt) || 0) ? remote : local, {
@@ -841,6 +872,36 @@
     return pushLocal(5, { force: true });
   }
 
+  /** Trae la nube y la impone sobre datos locales viejos (usar en Polanco si se quedó en el día anterior). */
+  function forceResyncFromCloud() {
+    return loadSiteConfig().then(function () {
+      return global.PlatformFirebaseBridge && global.PlatformFirebaseBridge.ensureReady
+        ? global.PlatformFirebaseBridge.ensureReady()
+        : null;
+    }).then(function () {
+      return pullFirebaseInitial();
+    }).then(function (remote) {
+      if (!remote || !hasLiveContent(remote)) {
+        return pullAll();
+      }
+      var local = getLocalData();
+      var merged = mergeDespacho(local, remote);
+      applyingRemote = true;
+      try {
+        if (global.localStorage) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+        }
+      } finally {
+        applyingRemote = false;
+      }
+      lastAppliedSig = dataSignature(merged);
+      lastPullAt = Date.now();
+      notifyApplied(merged, 'firebase-force');
+      updateSyncUi();
+      return merged;
+    });
+  }
+
   function pushLocalFallback(retries) {
     var local = getLocalData();
     if (!local) return Promise.resolve(false);
@@ -1079,6 +1140,7 @@
     pullAll: pullAll,
     pushLocal: pushLocal,
     pushLocalForce: pushLocalForce,
+    forceResyncFromCloud: forceResyncFromCloud,
     isConfigured: isCloudConfigured,
     getLastPullAt: function () { return lastPullAt; },
     getStatus: syncStatusMessage

@@ -420,7 +420,18 @@
       initTheme();
       initAuth();
       PC.bindOnce($('despBtnLogout'), 'click', logout);
-      PC.bindOnce($('despBtnRefresh'), 'click', renderDespacho);
+      PC.bindOnce($('despBtnRefresh'), 'click', function () {
+        var cloud = global.PlatformDespachoCloudSync;
+        var done = function () { renderDespacho(); };
+        if (cloud && cloud.forceResyncFromCloud) {
+          toast('Sincronizando desde la nube…', 'ok');
+          cloud.forceResyncFromCloud().then(done).catch(done);
+        } else if (cloud && cloud.pullAll) {
+          cloud.pullAll().then(done).catch(done);
+        } else {
+          done();
+        }
+      });
 
       global.addEventListener('despacho-updated', function () {
         if (state.user) {

@@ -226,11 +226,20 @@
     return dayKeySantoDomingo(new Date().toISOString());
   }
 
+  function historialList(value) {
+    if (!value) return [];
+    if (Array.isArray(value)) return value.filter(Boolean);
+    if (typeof value === 'object') {
+      return Object.keys(value).map(function (k) { return value[k]; }).filter(Boolean);
+    }
+    return [];
+  }
+
   function collectActividadHoy(pedidos) {
     var hoy = hoyKeySantoDomingo();
     var rows = [];
     (pedidos || []).forEach(function (p) {
-      (p.historial || []).forEach(function (h) {
+      historialList(p.historial).forEach(function (h) {
         if (!h || dayKeySantoDomingo(h.at) !== hoy) return;
         rows.push({
           at: h.at,

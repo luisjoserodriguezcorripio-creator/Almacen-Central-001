@@ -278,10 +278,10 @@
   function renderProductivityBoard(chart) {
     chart = chart || {};
     return '<section class="rec-tv-prod-board" aria-label="Productividad por rol">' +
-      renderProdCard('Operadores (Cont. Descargados)', chart.operadores, 'rec-tv-prod-card--op', 'rec-tv-prod-fill--op') +
-      renderProdCard('Validadores (Cont. Validados)', chart.validadores, 'rec-tv-prod-card--val', 'rec-tv-prod-fill--val') +
-      renderProdCard('Ubicadores (Cont. Ubicados)', chart.ubicadores, 'rec-tv-prod-card--ubi', 'rec-tv-prod-fill--ubi') +
-      renderProdCard('Digitadores (Remisiones)', chart.digitadores, 'rec-tv-prod-card--dig', 'rec-tv-prod-fill--dig') +
+      renderProdCard('Contenedores Descargados', chart.operadores, 'rec-tv-prod-card--op', 'rec-tv-prod-fill--op') +
+      renderProdCard('Contenedores Validados', chart.validadores, 'rec-tv-prod-card--val', 'rec-tv-prod-fill--val') +
+      renderProdCard('Contenedores Ubicados', chart.ubicadores, 'rec-tv-prod-card--ubi', 'rec-tv-prod-fill--ubi') +
+      renderProdCard('Remisiones completadas', chart.digitadores, 'rec-tv-prod-card--dig', 'rec-tv-prod-fill--dig') +
       '</section>';
   }
 
@@ -407,7 +407,7 @@
       '<img class="jc-logo-img jc-logo-img--present" src="assets/img/ac001-logo.svg?v=4" alt="AC" width="56" height="56">' +
       '<div class="rec-present-header-copy"><p class="rec-present-eyebrow">Almacén Central AC · EN VIVO</p>' +
       '<h1 class="rec-present-title">Productividad en recepción</h1>' +
-      '<p class="rec-present-sub">Operadores · Validadores · Ubicadores · Digitadores</p></div></div>' +
+      '<p class="rec-present-sub">Descargados · Validados · Ubicados · Remisiones</p></div></div>' +
       renderDateFilter(view.range) +
       '</header>' +
       renderToolbar(view.counts, view.chart) +

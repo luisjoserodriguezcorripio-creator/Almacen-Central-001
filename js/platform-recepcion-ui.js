@@ -274,23 +274,23 @@
       '<span class="rbl-kpi-lbl">Contenedores</span></div></div>' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--teal">' +
-      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-montacargas.svg?v=1" alt="" width="52" height="52"></div>' +
+      '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-paletas-gen.png?v=1" alt="" width="52" height="52"></div>' +
       '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.paletas || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Paletas recibidas</span></div></div>' +
+      '<div class="rbl-kpi">' +
+      '<div class="rbl-kpi-icon rbl-kpi-icon--amber">' +
+      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-jaula.svg?v=2" alt="" width="52" height="52"></div>' +
+      '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteValidar || 0)) + '</span>' +
+      '<span class="rbl-kpi-lbl">Pend. Validar</span></div></div>' +
+      '<div class="rbl-kpi">' +
+      '<div class="rbl-kpi-icon rbl-kpi-icon--teal">' +
+      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-montacargas.svg?v=1" alt="" width="52" height="52"></div>' +
+      '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteDescargar || 0)) + '</span>' +
+      '<span class="rbl-kpi-lbl">Pend. Descargar</span></div></div>' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--navy">' +
       '<svg class="rbl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
       '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>' +
-      '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteValidar || 0)) + '</span>' +
-      '<span class="rbl-kpi-lbl">Pend. Validar</span></div></div>' +
-      '<div class="rbl-kpi">' +
-      '<div class="rbl-kpi-icon rbl-kpi-icon--amber">' +
-      '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-paletas-gen.png?v=1" alt="" width="52" height="52"></div>' +
-      '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteDescargar || 0)) + '</span>' +
-      '<span class="rbl-kpi-lbl">Pend. Descargar</span></div></div>' +
-      '<div class="rbl-kpi">' +
-      '<div class="rbl-kpi-icon rbl-kpi-icon--amber">' +
-      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-jaula.svg?v=2" alt="" width="52" height="52"></div>' +
       '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteRemision || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Pend. Remision</span></div></div>' +
       '<button type="button" class="rbl-kpi rbl-kpi--action' + (liveActive ? ' is-live' : '') + '" id="recBtnShare"' +

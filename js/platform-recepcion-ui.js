@@ -264,9 +264,9 @@
       '<div class="rbl-drawer-foot">' + esc(name) + '</div></aside>';
   }
 
-  function renderTorreKpis(counts) {
+  function renderTorreKpis(counts, liveActive) {
     counts = counts || {};
-    return '<div class="rbl-kpi-grid rbl-kpi-grid--rec5" role="group" aria-label="Resumen recepción">' +
+    return '<div class="rbl-kpi-grid rbl-kpi-grid--rec6" role="group" aria-label="Resumen recepción">' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--blue">' +
       '<img class="rbl-kpi-icon-img" src="assets/img/kpi-contenedor.svg?v=2" alt="" width="52" height="52"></div>' +
@@ -274,7 +274,7 @@
       '<span class="rbl-kpi-lbl">Contenedores</span></div></div>' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--teal">' +
-      '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-paletas-gen.png?v=1" alt="" width="52" height="52"></div>' +
+      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-montacargas.svg?v=1" alt="" width="52" height="52"></div>' +
       '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.paletas || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Paletas recibidas</span></div></div>' +
       '<div class="rbl-kpi">' +
@@ -285,14 +285,21 @@
       '<span class="rbl-kpi-lbl">Pend. Validar</span></div></div>' +
       '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--amber">' +
-      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-jaula.svg?v=2" alt="" width="52" height="52"></div>' +
+      '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-paletas-gen.png?v=1" alt="" width="52" height="52"></div>' +
       '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteDescargar || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Pend. Descargar</span></div></div>' +
       '<div class="rbl-kpi">' +
-      '<div class="rbl-kpi-icon rbl-kpi-icon--cast">' +
-      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-pantalla.svg?v=2" alt="" width="52" height="52"></div>' +
+      '<div class="rbl-kpi-icon rbl-kpi-icon--amber">' +
+      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-jaula.svg?v=2" alt="" width="52" height="52"></div>' +
       '<div><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteRemision || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Pend. Remision</span></div></div>' +
+      '<button type="button" class="rbl-kpi rbl-kpi--action' + (liveActive ? ' is-live' : '') + '" id="recBtnShare"' +
+      (liveActive ? ' aria-pressed="true"' : '') + ' title="Proyectar manifiesto en pantalla TV">' +
+      '<div class="rbl-kpi-icon rbl-kpi-icon--cast">' +
+      '<img class="rbl-kpi-icon-img" src="assets/img/kpi-pantalla.svg?v=2" alt="" width="52" height="52"></div>' +
+      '<div><span class="rbl-kpi-lbl rbl-kpi-lbl--action">' +
+      (liveActive ? '● En proyección' : 'Proyectar') + '</span>' +
+      '<span class="rbl-kpi-sub">TV recepción</span></div></button>' +
       '</div>';
   }
 
@@ -578,7 +585,7 @@
       renderTorreHero() +
       '<div class="rbl-f-screen is-on" data-rec-screen="ops">' +
       renderFechaFilter(filter) +
-      renderTorreKpis(counts) +
+      renderTorreKpis(counts, liveActive) +
       '<div class="rbl-card rbl-card--manifest">' +
       '<div class="rbl-card-head"><h3>Manifiesto de recepción</h3>' +
       '<span>' + esc(formatQty(filteredRows.length)) + ' en seguimiento</span></div>' +

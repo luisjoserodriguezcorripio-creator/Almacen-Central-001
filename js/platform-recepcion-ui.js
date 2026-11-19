@@ -59,11 +59,13 @@
       var raw = sessionStorage.getItem(FILTER_KEY);
       if (!raw) return { desde: '', hasta: '', preset: 'todas', estado: '' };
       var parsed = JSON.parse(raw);
+      var estado = parsed.estado || '';
+      if (estado === 'descargar') estado = '';
       return {
         desde: parsed.desde || '',
         hasta: parsed.hasta || '',
         preset: parsed.preset || 'todas',
-        estado: parsed.estado || ''
+        estado: estado
       };
     } catch (e) {
       return { desde: '', hasta: '', preset: 'todas', estado: '' };
@@ -108,7 +110,6 @@
   function estadoLabel(estado) {
     var map = {
       validar: 'Pend. Validar',
-      descargar: 'Pend. Descargar',
       remision: 'Pend. Remision',
       ubicar: 'Pend. Ubicar'
     };
@@ -161,7 +162,6 @@
     var estados = [
       { id: '', label: 'Todos' },
       { id: 'validar', label: 'Pend. Validar' },
-      { id: 'descargar', label: 'Pend. Descargar' },
       { id: 'remision', label: 'Pend. Remision' },
       { id: 'ubicar', label: 'Pend. Ubicar' }
     ];
@@ -323,11 +323,11 @@
       '<img class="rbl-kpi-icon-img" src="assets/img/kpi-jaula.svg?v=2" alt="" width="36" height="36"></div>' +
       '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteValidar || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Pend. Validar</span></div></div>' +
-      '<div class="' + kpiCls('descargar') + '" data-rec-kpi-estado="descargar">' +
+      '<div class="rbl-kpi">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--teal">' +
       '<img class="rbl-kpi-icon-img" src="assets/img/kpi-montacargas.svg?v=1" alt="" width="36" height="36"></div>' +
-      '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteDescargar || 0)) + '</span>' +
-      '<span class="rbl-kpi-lbl">Pend. Descargar</span></div></div>' +
+      '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.contDescargados || 0)) + '</span>' +
+      '<span class="rbl-kpi-lbl">Cont. Descargados</span></div></div>' +
       '<div class="' + kpiCls('remision') + '" data-rec-kpi-estado="remision">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--navy">' +
       '<svg class="rbl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +

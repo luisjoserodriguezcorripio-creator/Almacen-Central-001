@@ -736,6 +736,7 @@
       total: list.length,
       paletas: 0,
       pendienteValidar: 0,
+      contDescargados: 0,
       pendienteDescargar: 0,
       pendienteRemision: 0,
       pendienteUbicar: 0
@@ -744,7 +745,8 @@
       var v = r.values || [];
       out.paletas += parseInt(v[22], 10) || 0;
       if (!isOkStatus(v[12])) out.pendienteValidar += 1;
-      if (!isOkStatus(v[11])) out.pendienteDescargar += 1;
+      if (isOkStatus(v[11])) out.contDescargados += 1;
+      else out.pendienteDescargar += 1;
       if (!isOkStatus(v[13])) out.pendienteUbicar += 1;
       if (!isOkStatus(v[14])) out.pendienteRemision += 1;
     });

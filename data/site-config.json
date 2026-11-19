@@ -1,6 +1,6 @@
 {
     "version":  1,
-    "updatedAt":  "2026-11-18T14:14:28.1128170Z",
+    "updatedAt":  "2026-11-19T21:40:00.000Z",
     "owner":  "luisjoserodriguezcorripio-creator",
     "project":  "Almacen-Central-001",
     "publicSyncBaseUrl":  "",
@@ -11,33 +11,33 @@
     "realtime":  true,
     "syncTargetMs":  4000,
     "firebase":  {
-                     "enabled":  false,
-                     "apiKey":  "",
-                     "authDomain":  "",
-                     "databaseURL":  "",
-                     "projectId":  "",
-                     "storageBucket":  "",
-                     "messagingSenderId":  "",
-                     "appId":  "",
-                     "measurementId":  ""
+                     "enabled":  true,
+                     "apiKey":  "AIzaSyAEkGhbUSyJemF4yMSE2B4b17ijWvGL7Y4",
+                     "authDomain":  "almacen-central-001.firebaseapp.com",
+                     "databaseURL":  "https://almacen-central-001-default-rtdb.firebaseio.com",
+                     "projectId":  "almacen-central-001",
+                     "storageBucket":  "almacen-central-001.firebasestorage.app",
+                     "messagingSenderId":  "372683299516",
+                     "appId":  "1:372683299516:web:c849d2ffc9b51eb8180eb9",
+                     "measurementId":  "G-V777N18DNL"
                  },
     "averiasJsonBin":  {
                            "binId":  "6afdb2c2ffd5d16053cb89c2",
                            "keyType":  "master",
                            "accessKey":  "$2a$10$BVgPkAiddz0XEx.Ud5X3le18H5lB5iib3Tk3ko3A.fwbdYPdemzf6",
-                           "enabled":  true
+                           "enabled":  false
                        },
     "despachoJsonBin":  {
                             "binId":  "6afdb2c3ffd5d16053cb89c3",
                             "keyType":  "master",
                             "accessKey":  "$2a$10$BVgPkAiddz0XEx.Ud5X3le18H5lB5iib3Tk3ko3A.fwbdYPdemzf6",
-                            "enabled":  true
+                            "enabled":  false
                         },
     "platformJsonBin":  {
                             "binId":  "6afdb2c3ffd5d16053cb89c4",
                             "keyType":  "master",
                             "accessKey":  "$2a$10$BVgPkAiddz0XEx.Ud5X3le18H5lB5iib3Tk3ko3A.fwbdYPdemzf6",
-                            "enabled":  true
+                            "enabled":  false
                         },
     "supabase":  {
                      "enabled":  false,
@@ -49,7 +49,7 @@
                      "anonKey":  "",
                      "help":  "Configure su propio proyecto Supabase. Los servicios del colaborador anterior fueron desconectados."
                  },
-    "help":  "Sync web activa: todos ven lo mismo en index.html, despacho.html y averias.html (~1s).",
+    "help":  "Sync web activa via Firebase RTDB. JSONBin desactivado.",
     "security":  {
                      "turnstileSiteKey":  "",
                      "humanVerifyMinMs":  1200,

@@ -1,21 +1,16 @@
 @echo off
-title Firebase sync - Almacen Central DC
+title Firebase sync - Almacen Central 001
 cd /d "%~dp0"
 echo.
 echo ============================================================
 echo   FIREBASE - Sync en vivo (telefono + PC)
 echo ============================================================
 echo.
-echo  Proyecto: janselcastro-cd748
+echo  Proyecto: almacen-central-001
 echo  Base:     Realtime Database (gratis, plan Spark)
+echo  URL:      https://almacen-central-001-default-rtdb.firebaseio.com
 echo.
-echo  IMPORTANTE - API Key valida (opcional pero recomendada):
-echo    1. Abra https://console.firebase.google.com/
-echo    2. Proyecto janselcastro - Configuracion del proyecto
-echo    3. Copie la "apiKey" de la app Web
-echo    4. Peguela en data/site-config.json - firebase.apiKey
-echo.
-echo  La sync REST funciona aun sin API key valida.
+echo  Config ya esta en data/site-config.json (firebase.enabled=true).
 echo  Reglas RTDB deben permitir lectura/escritura en:
 echo    despacho/snapshot, platform/snapshot, averias/snapshot
 echo.

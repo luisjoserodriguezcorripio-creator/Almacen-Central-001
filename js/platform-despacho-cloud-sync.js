@@ -134,15 +134,29 @@
   }
 
   function promoteDespachoToCloudIfNeeded() {
-    if (!isSupabasePrimary()) return Promise.resolve();
     var local = getLocalData();
     if (!local || !hasLiveContent(local)) return Promise.resolve();
-    return pullFromSupabase().then(function (remote) {
-      var merged = mergeDespacho(local, remote);
-      if (!remote || !hasLiveContent(remote) || dataSignature(merged) !== dataSignature(remote)) {
-        return pushToSupabase(merged);
-      }
-    });
+
+    if (isSupabasePrimary()) {
+      return pullFromSupabase().then(function (remote) {
+        var merged = mergeDespacho(local, remote);
+        if (!remote || !hasLiveContent(remote) || dataSignature(merged) !== dataSignature(remote)) {
+          return pushToSupabase(merged);
+        }
+      });
+    }
+
+    // Firebase vacío: subir la base local (PC con datos vivos, p.ej. Pichardo)
+    if (hasFirebaseConfig()) {
+      return pullFirebaseInitial().then(function (remote) {
+        if (remote && hasLiveContent(remote)) return false;
+        return pushLocal(3, { force: true });
+      }).catch(function () {
+        return pushLocal(3, { force: true });
+      });
+    }
+
+    return Promise.resolve();
   }
 
   function pullFromSupabase() {
@@ -620,6 +634,13 @@
 
           if (getJsonBinConfig() && jsonBinData == null && hasLiveContent(localBefore)) {
             global.setTimeout(function () { pushLocal(1); }, 200);
+          }
+
+          var firebasePart = parts[5];
+          if (hasFirebaseConfig() && !isSupabasePrimary() &&
+              (firebasePart == null || !hasLiveContent(firebasePart)) &&
+              hasLiveContent(localBefore)) {
+            global.setTimeout(function () { pushLocal(2, { force: true }); }, 300);
           }
         }
         return merged;

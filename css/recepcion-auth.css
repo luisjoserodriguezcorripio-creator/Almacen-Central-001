@@ -95,8 +95,16 @@ body.auth-locked .auth-overlay.rec-auth-overlay {
   color: #fff;
 }
 
+.rec-auth-brand-title {
+  color: #ffffff !important;
+  font-size: clamp(1.45rem, 2.4vw, 1.85rem);
+  line-height: 1.2;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+}
+
 .rec-auth-tag {
-  color: #ffcdd2;
+  color: #ffe4e6 !important;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -104,8 +112,10 @@ body.auth-locked .auth-overlay.rec-auth-overlay {
 }
 
 .rec-auth-desc {
-  color: rgba(255, 255, 255, 0.82);
-  line-height: 1.55;
+  color: #f8fafc !important;
+  line-height: 1.6;
+  font-size: 0.98rem;
+  opacity: 1;
 }
 
 .rec-auth-steps {
@@ -116,18 +126,20 @@ body.auth-locked .auth-overlay.rec-auth-overlay {
 }
 
 .rec-auth-step {
-  padding: 0.35rem 0.65rem;
+  padding: 0.4rem 0.75rem;
   border-radius: 999px;
-  border: 1px solid rgba(255, 138, 128, 0.35);
-  background: rgba(198, 40, 40, 0.18);
-  font-size: 0.78rem;
-  font-weight: 700;
+  border: 1px solid rgba(255, 205, 210, 0.55);
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff !important;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
 }
 
 .rec-auth-glass {
-  border-color: rgba(255, 138, 128, 0.35) !important;
-  background: rgba(18, 2, 5, 0.78) !important;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 205, 210, 0.45) !important;
+  background: rgba(28, 6, 10, 0.88) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
 }
 
@@ -137,7 +149,7 @@ body.auth-locked .auth-overlay.rec-auth-overlay {
 }
 
 .rec-auth-subheading {
-  color: rgba(255, 255, 255, 0.72) !important;
+  color: #f1f5f9 !important;
 }
 
 .rec-auth-back {
@@ -171,24 +183,92 @@ body.auth-locked .auth-overlay.rec-auth-overlay {
 }
 
 body.rec-portal .auth-field label,
-body.rec-portal .auth-field span {
-  color: #fff;
+body.rec-portal .auth-field span,
+.rec-auth-overlay .auth-field label,
+.rec-auth-overlay .auth-remember,
+.rec-auth-overlay .auth-pwd-toggle {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
-body.rec-portal .auth-field-input {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 138, 128, 0.35);
-  color: #fff;
+.rec-auth-overlay .auth-welcome-line {
+  color: #fecdd3 !important;
+}
+
+body.rec-portal .auth-field-input,
+.rec-auth-overlay .auth-field-input,
+.rec-auth-overlay input.auth-field-input,
+.rec-auth-overlay input[type="text"],
+.rec-auth-overlay input[type="password"],
+.rec-auth-overlay input[type="number"] {
+  background: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  caret-color: #0f172a;
+  font-weight: 600;
+}
+
+body.rec-portal .auth-field-input::placeholder,
+.rec-auth-overlay .auth-field-input::placeholder {
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+  opacity: 1;
+}
+
+body.rec-portal .auth-field-input:focus,
+.rec-auth-overlay .auth-field-input:focus {
+  background: #ffffff !important;
+  border-color: #fecdd3 !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  outline: 2px solid rgba(239, 68, 68, 0.35);
+  outline-offset: 1px;
+}
+
+.rec-auth-overlay .auth-field-input:-webkit-autofill,
+.rec-auth-overlay .auth-field-input:-webkit-autofill:hover,
+.rec-auth-overlay .auth-field-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #0f172a !important;
+  box-shadow: 0 0 0 1000px #ffffff inset !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+.rec-auth-overlay .auth-human-verify,
+.rec-auth-overlay .auth-human-verify label,
+.rec-auth-overlay .auth-human-verify span,
+.rec-auth-overlay .auth-human-verify p {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.rec-auth-overlay .auth-hub-link {
+  color: #ffffff !important;
+  border-color: rgba(255, 205, 210, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.rec-auth-overlay .auth-hub-link:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffe4e6 !important;
+}
+
+.rec-auth-overlay .auth-form-error {
+  color: #fecaca !important;
 }
 
 body.rec-portal .btn-primary,
+.rec-auth-overlay .btn-primary,
 .rec-btn--primary {
-  background: linear-gradient(180deg, #ef5350, #c62828);
-  border-color: #ff8a80;
-  color: #fff;
+  background: linear-gradient(180deg, #ef5350, #c62828) !important;
+  border-color: #ff8a80 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800;
 }
 
 body.rec-portal .btn-primary:hover,
+.rec-auth-overlay .btn-primary:hover,
 .rec-btn--primary:hover {
   filter: brightness(1.06);
 }

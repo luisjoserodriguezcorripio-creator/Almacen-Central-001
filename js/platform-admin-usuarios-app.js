@@ -12,7 +12,8 @@
   var state = {
     user: null,
     editId: '',
-    filter: ''
+    filter: '',
+    selected: {}
   };
 
   function $(id) { return document.getElementById(id); }
@@ -135,20 +136,38 @@
     });
   }
 
+  function selectedIds() {
+    return Object.keys(state.selected).filter(function (id) { return !!state.selected[id]; });
+  }
+
+  function syncBulkBar() {
+    var bar = $('auBulkBar');
+    var countEl = $('auBulkCount');
+    var ids = selectedIds();
+    if (bar) bar.hidden = !ids.length;
+    if (countEl) countEl.textContent = String(ids.length);
+  }
+
   function renderTable() {
     var host = $('auUsersTable');
     if (!host) return;
     var rows = staffList();
     if (!rows.length) {
       host.innerHTML = '<p class="au-empty">No hay usuarios' + (state.filter ? ' con ese filtro' : '') + '.</p>';
+      syncBulkBar();
       return;
     }
+    var allSelected = rows.length > 0 && rows.every(function (u) { return !!state.selected[u.id]; });
     host.innerHTML =
       '<div class="au-table-wrap"><table class="au-table">' +
-      '<thead><tr><th>Usuario</th><th>Nombre</th><th>Rol</th><th>Agenda</th><th>Estado</th><th></th></tr></thead>' +
+      '<thead><tr>' +
+      '<th class="au-col-check"><input type="checkbox" id="auSelectAll" title="Seleccionar todos"' + (allSelected ? ' checked' : '') + '></th>' +
+      '<th>Usuario</th><th>Nombre</th><th>Rol</th><th>Agenda</th><th>Estado</th><th></th></tr></thead>' +
       '<tbody>' + rows.map(function (u) {
         var agenda = (Auth.getAgendaPuestoLabel && Auth.getAgendaPuestoLabel(u.agendaPuesto)) || u.agendaPuesto || '—';
-        return '<tr data-user-id="' + esc(u.id) + '">' +
+        var checked = state.selected[u.id] ? ' checked' : '';
+        return '<tr data-user-id="' + esc(u.id) + '"' + (checked ? ' class="au-row--selected"' : '') + '>' +
+          '<td class="au-col-check"><input type="checkbox" class="au-row-check" data-user-id="' + esc(u.id) + '"' + checked + '></td>' +
           '<td><strong>' + esc(u.username) + '</strong></td>' +
           '<td>' + esc(u.name) + '</td>' +
           '<td>' + esc(roleLabel(u.role)) + '</td>' +
@@ -160,6 +179,7 @@
           '<button type="button" class="au-btn au-btn--danger" data-au-action="delete" data-user-id="' + esc(u.id) + '">Borrar</button>' +
           '</td></tr>';
       }).join('') + '</tbody></table></div>';
+    syncBulkBar();
   }
 
   function syncCloudBadge(ok) {
@@ -302,8 +322,36 @@
       toast(res.message || 'No se pudo eliminar.', 'err');
       return;
     }
+    delete state.selected[userId];
     if (state.editId === userId) resetForm();
     afterMutation('Usuario eliminado.');
+  }
+
+  function deleteSelectedUsers() {
+    var ids = selectedIds();
+    if (!ids.length) {
+      toast('Seleccione al menos un usuario.', 'err');
+      return;
+    }
+    if (!global.confirm('¿Eliminar ' + ids.length + ' usuario(s) seleccionado(s)?')) return;
+    var ok = 0;
+    var fail = 0;
+    ids.forEach(function (id) {
+      var res = Auth.deleteUser(id);
+      if (res && res.ok) {
+        ok += 1;
+        delete state.selected[id];
+        if (state.editId === id) resetForm();
+      } else {
+        fail += 1;
+      }
+    });
+    if (!ok) {
+      toast((fail ? 'No se pudieron eliminar.' : 'Sin cambios.'), 'err');
+      renderTable();
+      return;
+    }
+    afterMutation(ok + ' usuario(s) eliminado(s)' + (fail ? ' · ' + fail + ' no se pudo' : '') + '.');
   }
 
   function enterApp(user) {
@@ -402,20 +450,58 @@
         if (action === 'password') changePassword(id);
         if (action === 'delete') deleteUser(id);
       });
+      host.addEventListener('change', function (ev) {
+        var t = ev.target;
+        if (t && t.id === 'auSelectAll') {
+          var on = !!t.checked;
+          staffList().forEach(function (u) {
+            if (on) state.selected[u.id] = true;
+            else delete state.selected[u.id];
+          });
+          renderTable();
+          return;
+        }
+        if (t && t.classList && t.classList.contains('au-row-check')) {
+          var uid = t.getAttribute('data-user-id');
+          if (!uid) return;
+          if (t.checked) state.selected[uid] = true;
+          else delete state.selected[uid];
+          syncBulkBar();
+          var row = t.closest('tr');
+          if (row) row.classList.toggle('au-row--selected', !!t.checked);
+          var all = $('auSelectAll');
+          if (all) {
+            var list = staffList();
+            all.checked = list.length > 0 && list.every(function (u) { return !!state.selected[u.id]; });
+          }
+        }
+      });
+    }
+    var bulkDelete = $('auBulkDelete');
+    if (bulkDelete) {
+      bulkDelete.addEventListener('click', deleteSelectedUsers);
+    }
+    var bulkClear = $('auBulkClear');
+    if (bulkClear) {
+      bulkClear.addEventListener('click', function () {
+        state.selected = {};
+        renderTable();
+      });
     }
     var menuToggle = $('auMenuToggle');
     var menuPanel = $('auMenuPanel');
     if (menuToggle && menuPanel) {
-      menuToggle.addEventListener('click', function () {
+      menuToggle.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
         var open = menuToggle.getAttribute('aria-expanded') === 'true';
         menuToggle.setAttribute('aria-expanded', open ? 'false' : 'true');
         menuPanel.hidden = open;
       });
       document.addEventListener('click', function (ev) {
-        if (!ev.target.closest('#auMenu')) {
-          menuToggle.setAttribute('aria-expanded', 'false');
-          menuPanel.hidden = true;
-        }
+        if (ev.target.closest('#auMenu')) return;
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuPanel.hidden = true;
       });
     }
   }

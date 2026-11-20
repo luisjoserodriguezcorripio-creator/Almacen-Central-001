@@ -13,7 +13,7 @@
   <link rel="icon" type="image/png" href="assets/img/ac001-logo.svg?v=1">
   <link rel="stylesheet" href="css/platform.css?v=32">
   <link rel="stylesheet" href="css/agenda-portal.css?v=11">
-  <link rel="stylesheet" href="css/admin-usuarios.css?v=1">
+  <link rel="stylesheet" href="css/admin-usuarios.css?v=2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -40,17 +40,17 @@
   <div id="adminUsersApp" class="au-app is-hidden">
     <header class="au-header">
       <div class="au-header__left">
-        <div class="agenda-menu" id="auMenu">
-          <button type="button" class="agenda-menu__toggle" id="auMenuToggle"
-            aria-expanded="false" aria-controls="auMenuPanel" aria-label="Menú">
+        <div class="au-menu" id="auMenu">
+          <button type="button" class="au-menu__toggle" id="auMenuToggle"
+            aria-expanded="false" aria-controls="auMenuPanel" aria-haspopup="true" aria-label="Menú">
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
           </button>
-          <div class="agenda-menu__panel" id="auMenuPanel" role="menu" hidden>
-            <a href="agenda.html" class="agenda-menu__item" role="menuitem">Volver a Agenda</a>
-            <a href="index.html" class="agenda-menu__item" role="menuitem">Menú del portal</a>
-            <button type="button" class="agenda-menu__item" role="menuitem" id="auLogout">Cerrar sesión</button>
+          <div class="au-menu__panel" id="auMenuPanel" role="menu" hidden>
+            <a href="agenda.html" class="au-menu__item" role="menuitem">Volver a Agenda</a>
+            <a href="index.html" class="au-menu__item" role="menuitem">Menú del portal</a>
+            <button type="button" class="au-menu__item" role="menuitem" id="auLogout">Cerrar sesión</button>
           </div>
         </div>
         <div>
@@ -105,6 +105,13 @@
         <div class="au-toolbar">
           <input id="auSearch" type="search" placeholder="Buscar por usuario, nombre o rol" maxlength="80">
         </div>
+        <div class="au-bulk-bar" id="auBulkBar" hidden>
+          <span><strong id="auBulkCount">0</strong> seleccionado(s)</span>
+          <div class="au-bulk-actions">
+            <button type="button" class="au-btn au-btn--danger" id="auBulkDelete">Borrar seleccionados</button>
+            <button type="button" class="au-btn au-btn--ghost" id="auBulkClear">Limpiar selección</button>
+          </div>
+        </div>
         <div id="auUsersTable"></div>
       </section>
     </main>
@@ -118,6 +125,6 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
   <script src="js/platform-firebase-bridge.js?v=5"></script>
-  <script src="js/platform-admin-usuarios-app.js?v=1"></script>
+  <script src="js/platform-admin-usuarios-app.js?v=2"></script>
 </body>
 </html>

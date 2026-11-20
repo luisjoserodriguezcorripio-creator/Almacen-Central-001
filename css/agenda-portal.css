@@ -137,9 +137,6 @@
   border-bottom: 1px solid var(--ag-border);
   background: var(--ag-surface);
   box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
-  position: sticky;
-  top: 0;
-  z-index: 20;
 }
 
 .agenda-header__left {
@@ -803,9 +800,6 @@
 }
 
 .agenda-save-bar {
-  position: sticky;
-  bottom: 0;
-  z-index: 15;
   margin-top: 1rem;
   padding: 0.85rem 1rem;
   display: flex;
@@ -815,9 +809,8 @@
   gap: 0.75rem;
   border: 1px solid var(--ag-border);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 -6px 20px rgba(15, 23, 42, 0.06);
-  backdrop-filter: blur(6px);
+  background: var(--ag-surface);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
 }
 
 .agenda-save-bar__status {

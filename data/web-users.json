@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-19T15:45:00.000Z",
+  "updatedAt": "2026-11-20T19:00:00.000Z",
   "users": [
     {
-      "id": "u_enmanuel_vasquez",
-      "username": "ENMANUEL.VASQUEZ",
-      "name": "Enmanuel Vasquez",
+      "id": "u_josue_martinez",
+      "username": "Josue.Martinez",
+      "name": "Josue Martinez",
       "role": "administrador",
       "passwordHash": "e7042ac7d09c7bc41c8cfa5749e41858f6980643bc0db1a83cc793d3e24d3f77",
       "areas": [],
@@ -73,9 +73,9 @@
       ]
     },
     {
-      "id": "u_elizabeth_cruz",
-      "username": "ELIZABETH.CRUZ",
-      "name": "Elizabeth Cruz",
+      "id": "u_diana_ferreira",
+      "username": "Diana.Ferreira",
+      "name": "Diana Ferreira",
       "role": "colaborador",
       "passwordHash": "e7042ac7d09c7bc41c8cfa5749e41858f6980643bc0db1a83cc793d3e24d3f77",
       "areas": [],
@@ -97,9 +97,9 @@
       ]
     },
     {
-      "id": "u_claudia_santos",
-      "username": "CLAUDIA.SANTOS",
-      "name": "Claudia de los Santos",
+      "id": "u_julio_nolasco",
+      "username": "Julio.Nolasco",
+      "name": "Julio Nolasco",
       "role": "colaborador",
       "passwordHash": "e7042ac7d09c7bc41c8cfa5749e41858f6980643bc0db1a83cc793d3e24d3f77",
       "areas": [],

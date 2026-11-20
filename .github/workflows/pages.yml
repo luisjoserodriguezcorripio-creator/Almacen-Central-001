@@ -52,3 +52,6 @@ jobs:
       - name: Publicar
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # Reintento implícito ante fallos intermitentes del API de Pages
+          timeout: 600000

@@ -411,9 +411,12 @@
     var link = $('agendaMenuAdmin');
     if (!link) return;
     var show = !!(state.user && (
+      (state.user.isPrimaryAdmin) ||
+      state.user.role === 'administrador' ||
       C().canEditActivities(state.user) ||
       (Auth && Auth.can && Auth.can(state.user.role, 'users.manage', state.user))
     ));
+    link.hidden = !show;
     link.classList.toggle('is-hidden', !show);
   }
 

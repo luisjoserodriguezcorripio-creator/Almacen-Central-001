@@ -1136,3 +1136,14 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
   font-weight: 700;
   color: #0f172a;
 }
+
+.rec-tc-app .rec-table--planilla th.rec-col-planilla--no,
+.rec-tc-app .rec-table--planilla td.rec-col-planilla--no {
+  width: 2.4rem;
+  max-width: 2.6rem;
+  min-width: 2.2rem;
+  padding-left: 0.35rem;
+  padding-right: 0.25rem;
+  text-align: center;
+  white-space: nowrap;
+}

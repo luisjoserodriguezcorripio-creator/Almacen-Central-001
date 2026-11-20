@@ -534,6 +534,7 @@
       return '<tr data-rec-planilla-row="' + idx + '">' + values.map(function (val, ci) {
         var h = (headers && headers[ci]) || '';
         var cls = 'rec-col-planilla';
+        if (/^no\.?$/i.test(String(h || '').trim()) || ci === 0) cls += ' rec-col-planilla--no';
         if (/cont\.|factura|articulo/i.test(h)) cls += ' rec-col-planilla--strong';
         if (/validado|descargado|ubicado|remision/i.test(h)) {
           return '<td class="' + cls + '">' + renderStatusCell(val) + '</td>';
@@ -545,7 +546,10 @@
           }
         }
         var text = String(val || '').trim() || '—';
-        if (/cont\.|factura|#idc|no\./i.test(h) && text !== '—') {
+        if (/^no\.?$/i.test(String(h || '').trim()) && text !== '—') {
+          return '<td class="' + cls + '"><strong>' + esc(text) + '</strong></td>';
+        }
+        if (/cont\.|factura|#idc|no\.remision/i.test(h) && text !== '—') {
           return '<td class="' + cls + '"><strong>' + esc(text) + '</strong></td>';
         }
         return '<td class="' + cls + '">' + esc(text) + '</td>';
@@ -642,7 +646,8 @@
       '<table class="rec-table rec-table--manifest rec-table--planilla" aria-label="Manifiesto de recepción">' +
       '<thead><tr>' +
       headers.map(function (h) {
-        return '<th title="' + esc(h) + '">' + esc(h) + '</th>';
+        var thCls = /^no\.?$/i.test(String(h || '').trim()) ? ' class="rec-col-planilla--no"' : '';
+        return '<th' + thCls + ' title="' + esc(h) + '">' + esc(h) + '</th>';
       }).join('') +
       '</tr></thead>' +
       '<tbody id="recTableBody">' + renderPlanillaRows(filteredRows, headers) + '</tbody>' +

@@ -60,6 +60,28 @@
       .replace(/[\u0300-\u036f]/g, '');
   }
 
+  /** Alias SharePoint / Excel Online ↔ encabezados canónicos (claves ya normalizadas) */
+  var HEADER_ALIASES = {
+    'no': 'no.',
+    'bahia': 'bahias',
+    'descarga': 'descargado',
+    'validacion': 'validado',
+    'o. remis': 'no.remision',
+    'o remis': 'no.remision',
+    'oremis': 'no.remision',
+    'no remision': 'no.remision',
+    'no. remision': 'no.remision',
+    '#cont. / factura': '# cont. / factura',
+    'cont. / factura': '# cont. / factura',
+    'cont / factura': '# cont. / factura',
+    'vida util dias': 'vida util (dias)'
+  };
+
+  function canonicalHeader(h) {
+    var n = normHeader(h);
+    return HEADER_ALIASES[n] || n;
+  }
+
   function loadScriptOnce(src) {
     return new Promise(function (resolve, reject) {
       var existing = document.querySelector('script[data-rec-xlsx]');
@@ -133,7 +155,7 @@
   }
 
   function findHeaderRow(matrix) {
-    var want = EXPECTED_HEADERS.map(normHeader);
+    var want = EXPECTED_HEADERS.map(canonicalHeader);
     var best = { idx: -1, score: 0, map: [] };
     var maxScan = Math.min(40, matrix.length);
     for (var r = 0; r < maxScan; r++) {
@@ -141,7 +163,7 @@
       var map = [];
       var score = 0;
       for (var c = 0; c < row.length; c++) {
-        var nh = normHeader(row[c]);
+        var nh = canonicalHeader(row[c]);
         if (!nh) continue;
         var hi = want.indexOf(nh);
         if (hi >= 0 && map[hi] == null) {
@@ -210,22 +232,12 @@
     }) || [];
   }
 
-  function parseWorkbook(wb, fileName) {
-    var sheetName = findSheet(wb);
-    if (!sheetName) {
-      return {
-        ok: false,
-        error: 'No se encontró la hoja «Reporte Diario». Hojas: ' +
-          ((wb.SheetNames || []).join(', ') || 'ninguna') + '.'
-      };
-    }
-    var XLSX = global.XLSX;
-    var matrix = matrixFromSheet(wb.Sheets[sheetName], XLSX);
+  function parseMatrix(matrix, fileName, sheetLabel) {
     var found = findHeaderRow(matrix);
     if (!found) {
       return {
         ok: false,
-        error: 'En «Reporte Diario» no se reconocieron los encabezados esperados.'
+        error: 'No se reconocieron los encabezados (incluya la fila de títulos: FECHA LLEGADA, # CONT. / FACTURA, ARTICULO, etc.).'
       };
     }
 
@@ -259,16 +271,110 @@
     }
 
     if (!rows.length) {
-      return { ok: false, error: 'La hoja «Reporte Diario» no tiene filas de datos.' };
+      return { ok: false, error: 'No hay filas de datos debajo de los encabezados.' };
     }
 
     return {
       ok: true,
       fileName: fileName || 'planilla.xlsx',
-      sheet: sheetName,
+      sheet: sheetLabel || SHEET_NAME,
       headers: headers,
       rows: rows
     };
+  }
+
+  function parseWorkbook(wb, fileName) {
+    var sheetName = findSheet(wb);
+    if (!sheetName) {
+      return {
+        ok: false,
+        error: 'No se encontró la hoja «Reporte Diario». Hojas: ' +
+          ((wb.SheetNames || []).join(', ') || 'ninguna') + '.'
+      };
+    }
+    var XLSX = global.XLSX;
+    var matrix = matrixFromSheet(wb.Sheets[sheetName], XLSX);
+    return parseMatrix(matrix, fileName, sheetName);
+  }
+
+  function splitDelimitedLine(line, delim) {
+    if (delim === '\t') {
+      return String(line || '').split('\t').map(function (c) {
+        return c.replace(/^"|"$/g, '').replace(/""/g, '"');
+      });
+    }
+    var out = [];
+    var cur = '';
+    var inQ = false;
+    var s = String(line || '');
+    for (var i = 0; i < s.length; i++) {
+      var ch = s[i];
+      if (ch === '"') {
+        if (inQ && s[i + 1] === '"') {
+          cur += '"';
+          i += 1;
+        } else {
+          inQ = !inQ;
+        }
+        continue;
+      }
+      if (!inQ && ch === delim) {
+        out.push(cur);
+        cur = '';
+        continue;
+      }
+      cur += ch;
+    }
+    out.push(cur);
+    return out;
+  }
+
+  function detectDelimiter(sampleLines) {
+    var tabs = 0;
+    var semis = 0;
+    var commas = 0;
+    (sampleLines || []).forEach(function (line) {
+      tabs += (String(line).match(/\t/g) || []).length;
+      semis += (String(line).match(/;/g) || []).length;
+      commas += (String(line).match(/,/g) || []).length;
+    });
+    if (tabs >= semis && tabs >= commas && tabs > 0) return '\t';
+    if (semis >= commas && semis > 0) return ';';
+    return ',';
+  }
+
+  function textToMatrix(text) {
+    var raw = String(text || '')
+      .replace(/^\uFEFF/, '')
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n');
+    if (!raw.trim()) return [];
+    var lines = raw.split('\n');
+    // Quitar líneas totalmente vacías al final
+    while (lines.length && !String(lines[lines.length - 1] || '').trim()) lines.pop();
+    var probe = lines.slice(0, Math.min(12, lines.length));
+    var delim = detectDelimiter(probe);
+    return lines.map(function (line) {
+      return splitDelimitedLine(line, delim).map(function (c) {
+        return cellText(c);
+      });
+    });
+  }
+
+  /**
+   * Pegado desde Excel Online / SharePoint (Ctrl+C → Ctrl+V).
+   * Incluya la fila de encabezados + filas de datos.
+   */
+  function parseClipboardText(text, sourceName) {
+    var matrix = textToMatrix(text);
+    if (!matrix.length) {
+      return Promise.resolve({
+        ok: false,
+        error: 'Pegue las celdas del Excel (incluya la fila de títulos).'
+      });
+    }
+    var parsed = parseMatrix(matrix, sourceName || 'Pegado SharePoint', 'Pegado');
+    return Promise.resolve(parsed);
   }
 
   function parseArrayBuffer(buf, fileName) {
@@ -350,6 +456,7 @@
     SHEET_NAME: SHEET_NAME,
     EXPECTED_HEADERS: EXPECTED_HEADERS,
     parseFile: parseFile,
+    parseClipboardText: parseClipboardText,
     parseFlexibleDate: parseFlexibleDate,
     normHeader: normHeader
   };

@@ -229,13 +229,26 @@
     return '<div class="rec-planilla-bar">' +
       '<div class="rec-planilla-card">' +
       '<div class="rec-planilla-card__head">' +
-      '<h3>Cargar CSV</h3>' +
+      '<h3>Cargar planilla</h3>' +
       '<span>Reemplaza la carga actual</span>' +
       '</div>' +
+      '<div class="rec-planilla-paste">' +
+      '<label class="rec-planilla-paste__label" for="recPlanillaPaste">' +
+      '<strong>Pegar desde SharePoint / Excel</strong>' +
+      '<span>En el Excel: seleccione encabezados + filas → Ctrl+C → pegue aquí → Aplicar</span>' +
+      '</label>' +
+      '<textarea id="recPlanillaPaste" class="rec-planilla-paste__area" rows="5" ' +
+      'placeholder="Pegue aquí las celdas copiadas (incluye la fila de títulos)…" spellcheck="false"></textarea>' +
+      '<div class="rec-planilla-paste__actions">' +
+      '<button type="button" class="rec-planilla-paste__btn rec-planilla-paste__btn--apply" id="recPlanillaPasteApply">Aplicar pegado</button>' +
+      '<button type="button" class="rec-planilla-paste__btn" id="recPlanillaPasteClear">Limpiar</button>' +
+      '</div>' +
+      '</div>' +
+      '<div class="rec-planilla-or" aria-hidden="true">o</div>' +
       '<label class="rec-planilla-drop" for="recPlanillaFile">' +
       '<input type="file" id="recPlanillaFile" accept=".csv,text/csv" hidden>' +
       '<span class="rec-planilla-drop__title">Seleccionar archivo CSV</span>' +
-      '<span class="rec-planilla-drop__sub">Cada carga sustituye la anterior</span>' +
+      '<span class="rec-planilla-drop__sub">Si puede descargar el archivo</span>' +
       '</label>' +
       '<p class="rec-planilla-meta" id="recPlanillaMeta">' + esc(meta) + '</p>' +
       '<div class="rec-planilla-hist-wrap">' +
@@ -870,6 +883,21 @@
       if (!input || !input.files || !input.files[0]) return;
       var cbs = root.__recAppCallbacks || {};
       if (cbs.onImportPlanilla) cbs.onImportPlanilla(input.files[0], input);
+    });
+    root.addEventListener('click', function (ev) {
+      var cbs = root.__recAppCallbacks || {};
+      var applyBtn = ev.target && ev.target.closest && ev.target.closest('#recPlanillaPasteApply');
+      if (applyBtn) {
+        var area = root.querySelector('#recPlanillaPaste');
+        var text = area ? String(area.value || '') : '';
+        if (cbs.onImportPlanillaPaste) cbs.onImportPlanillaPaste(text, area);
+        return;
+      }
+      var clearBtn = ev.target && ev.target.closest && ev.target.closest('#recPlanillaPasteClear');
+      if (clearBtn) {
+        var paste = root.querySelector('#recPlanillaPaste');
+        if (paste) paste.value = '';
+      }
     });
   }
 

@@ -104,6 +104,7 @@
     ui.bindApp(root, state.user, {
       onRegister: handleRegister,
       onImportPlanilla: handleImportPlanilla,
+      onImportPlanillaPaste: handleImportPlanillaPaste,
       onFechaFilterChange: handleFechaFilterChange,
       onValidar: handleValidar,
       onGuardarMuelle: handleGuardarMuelle,
@@ -164,36 +165,56 @@
     renderApp(true);
   }
 
+  function applyParsedPlanilla(parsed, clearEl) {
+    var store = global.PlatformRecepcionStore;
+    if (!parsed || !parsed.ok) {
+      toast((parsed && parsed.error) || 'No se pudo importar la planilla.', 'err');
+      return;
+    }
+    var res = store.importPlanilla(parsed, Auth.getDisplayName(state.user));
+    if (!res.ok) {
+      toast(res.error || 'Error al guardar la planilla.', 'err');
+      return;
+    }
+    lastRenderSig = '';
+    toast(
+      'Planilla cargada · ' + res.count + ' filas · mes ' + res.monthKey + ' (reemplazo completo).',
+      'ok'
+    );
+    if (clearEl) clearEl.value = '';
+    renderApp(true);
+  }
+
   function handleImportPlanilla(file, input) {
     var Planilla = global.PlatformRecepcionPlanilla;
-    var store = global.PlatformRecepcionStore;
     if (!Planilla || !Planilla.parseFile) {
       toast('Parser de planilla no disponible.', 'err');
       return;
     }
     toast('Leyendo planilla…', 'info');
     Planilla.parseFile(file).then(function (parsed) {
-      if (!parsed || !parsed.ok) {
-        toast((parsed && parsed.error) || 'No se pudo importar la planilla.', 'err');
-        if (input) input.value = '';
-        return;
-      }
-      var res = store.importPlanilla(parsed, Auth.getDisplayName(state.user));
-      if (!res.ok) {
-        toast(res.error || 'Error al guardar la planilla.', 'err');
-        if (input) input.value = '';
-        return;
-      }
-      lastRenderSig = '';
-      toast(
-        'Planilla cargada · ' + res.count + ' filas · mes ' + res.monthKey + ' (reemplazo completo).',
-        'ok'
-      );
-      if (input) input.value = '';
-      renderApp(true);
+      applyParsedPlanilla(parsed, input);
     }).catch(function (err) {
       toast(String((err && err.message) || err || 'Error al leer el archivo.'), 'err');
       if (input) input.value = '';
+    });
+  }
+
+  function handleImportPlanillaPaste(text, area) {
+    var Planilla = global.PlatformRecepcionPlanilla;
+    if (!Planilla || !Planilla.parseClipboardText) {
+      toast('Pegado de planilla no disponible.', 'err');
+      return;
+    }
+    if (!String(text || '').trim()) {
+      toast('Pegue primero las celdas del Excel (Ctrl+V).', 'err');
+      return;
+    }
+    toast('Leyendo pegado…', 'info');
+    Planilla.parseClipboardText(text, 'Pegado SharePoint').then(function (parsed) {
+      applyParsedPlanilla(parsed, area);
+    }).catch(function (err) {
+      toast(String((err && err.message) || err || 'Error al leer el pegado.'), 'err');
     });
   }
 

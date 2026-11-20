@@ -431,14 +431,15 @@
         });
       });
     }
-    var logout = $('auLogout');
-    if (logout) {
-      logout.addEventListener('click', function () {
-        clearSession();
-        state.user = null;
-        setAuthVisible(true);
-      });
+    function doLogout() {
+      clearSession();
+      state.user = null;
+      setAuthVisible(true);
     }
+    var logout = $('auLogout');
+    if (logout) logout.addEventListener('click', doLogout);
+    var logoutTop = $('auLogoutTop');
+    if (logoutTop) logoutTop.addEventListener('click', doLogout);
     var host = $('auUsersTable');
     if (host) {
       host.addEventListener('click', function (ev) {

@@ -134,6 +134,13 @@ body.rec-dash-view.rbl-theme-f.auth-locked {
   box-sizing: border-box;
 }
 
+/* Orden fijo: Paletas → Contenedores → pendientes */
+.rec-tc-app .rbl-kpi-grid--rec5 .rbl-kpi[data-kpi="paletas"] { order: 1; }
+.rec-tc-app .rbl-kpi-grid--rec5 .rbl-kpi[data-kpi="contenedores"] { order: 2; }
+.rec-tc-app .rbl-kpi-grid--rec5 .rbl-kpi[data-kpi="validar"] { order: 3; }
+.rec-tc-app .rbl-kpi-grid--rec5 .rbl-kpi[data-kpi="remision"] { order: 4; }
+.rec-tc-app .rbl-kpi-grid--rec5 .rbl-kpi[data-kpi="ubicar"] { order: 5; }
+
 .rec-tc-app .rbl-kpi-grid--rec5 .rbl-kpi,
 .rec-tc-app .rbl-kpi-grid--rec6 .rbl-kpi {
   display: flex;

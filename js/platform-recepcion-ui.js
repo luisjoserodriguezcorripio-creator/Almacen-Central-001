@@ -323,27 +323,27 @@
       return 'rbl-kpi' + (estadoActivo && estadoActivo === key ? ' is-filter-on' : '');
     }
     return '<div class="rbl-kpi-grid rbl-kpi-grid--rec5" role="group" aria-label="Resumen recepción">' +
-      '<div class="rbl-kpi">' +
+      '<div class="rbl-kpi" data-kpi="paletas" style="order:1">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--teal">' +
       '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-paletas.png?v=20261119b" alt="" width="48" height="48"></div>' +
       '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.paletas || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Paletas</span></div></div>' +
-      '<div class="rbl-kpi">' +
+      '<div class="rbl-kpi" data-kpi="contenedores" style="order:2">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--blue">' +
       '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-contenedor-rastra.webp?v=2" alt="" width="48" height="48"></div>' +
       '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.total || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Contenedores</span></div></div>' +
-      '<div class="' + kpiCls('validar') + '" data-rec-kpi-estado="validar">' +
+      '<div class="' + kpiCls('validar') + '" data-kpi="validar" data-rec-kpi-estado="validar" style="order:3">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--navy">' +
       '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-handheld-zebra.png?v=1" alt="" width="48" height="48"></div>' +
       '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteValidar || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Pend. Validar</span></div></div>' +
-      '<div class="' + kpiCls('remision') + '" data-rec-kpi-estado="remision">' +
+      '<div class="' + kpiCls('remision') + '" data-kpi="remision" data-rec-kpi-estado="remision" style="order:4">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--cast">' +
       '<img class="rbl-kpi-icon-img" src="assets/img/kpi-pantalla.svg?v=2" alt="" width="48" height="48"></div>' +
       '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteRemision || 0)) + '</span>' +
       '<span class="rbl-kpi-lbl">Pend. Remision</span></div></div>' +
-      '<div class="' + kpiCls('ubicar') + '" data-rec-kpi-estado="ubicar">' +
+      '<div class="' + kpiCls('ubicar') + '" data-kpi="ubicar" data-rec-kpi-estado="ubicar" style="order:5">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--amber">' +
       '<img class="rbl-kpi-icon-img" src="assets/img/kpi-jaula.svg?v=2" alt="" width="48" height="48"></div>' +
       '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.pendienteUbicar || 0)) + '</span>' +

@@ -287,8 +287,16 @@
       renderHeroStats(stats) +
       '<p class="agenda-help">Toque el botón de estado en cada tarea para marcar el avance. Puede añadir un comentario si lo necesita.</p>' +
       renderFiltersSection('agenda-filters--detail') +
-      '<div class="agenda-task-list">' + (rows || '<p class="agenda-task-list__empty">Sin tareas para los filtros seleccionados.</p>') + '</div>';
+      '<div class="agenda-task-list">' + (rows || emptyTasksMessage(data)) + '</div>';
     syncFilterControls();
+  }
+
+  function emptyTasksMessage(data) {
+    var n = data && data.state && data.state.templates ? data.state.templates.length : 0;
+    if (!n) {
+      return '<p class="agenda-task-list__empty">Plantillas no cargadas. Pulse <strong>Actualizar</strong> o recargue con Ctrl+F5.</p>';
+    }
+    return '<p class="agenda-task-list__empty">Sin tareas para los filtros seleccionados.</p>';
   }
 
   function renderNoAccess() {

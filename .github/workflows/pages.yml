@@ -12,7 +12,8 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  # false: evita fallos en "Publicar" cuando un deploy anterior aún cierra
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -32,10 +33,12 @@ jobs:
             --exclude '.github' \
             --exclude '_site' \
             --exclude 'node_modules' \
-            --exclude 'mockups/apk-inventario-rf' \
+            --exclude 'mockups' \
+            --exclude 'docs' \
             --exclude 'pages-fail-logs' \
             --exclude 'pages-fail.zip' \
             --exclude 'pages-job.log' \
+            --exclude '.mock-*' \
             ./ _site/
 
       - name: Configurar Pages

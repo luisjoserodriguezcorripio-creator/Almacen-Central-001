@@ -228,6 +228,13 @@
     return Admin.can(user.role, 'agenda.all', user);
   }
 
+  /** Solo administradores pueden crear/editar/eliminar actividades. agenda.all no alcanza. */
+  function canEditActivities(user) {
+    if (!user) return false;
+    if (user.isPrimaryAdmin) return true;
+    return user.role === 'administrador';
+  }
+
   function getUserAgendaPuesto(user) {
     if (!user) return '';
     return normalizeAgendaPuesto(user.agendaPuesto);
@@ -295,6 +302,7 @@
     statsForPuesto: statsForPuesto,
     statsAllPuestos: statsAllPuestos,
     canManageAll: canManageAll,
+    canEditActivities: canEditActivities,
     getUserAgendaPuesto: getUserAgendaPuesto,
     resolveUserPuestos: resolveUserPuestos,
     userHasAgendaAccess: userHasAgendaAccess,

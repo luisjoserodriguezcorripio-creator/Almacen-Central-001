@@ -189,6 +189,9 @@
   }
 
   function saveTemplates(templates, user) {
+    if (!C().canEditActivities(user)) {
+      return Promise.resolve({ ok: false, msg: 'Solo el administrador puede editar actividades.' });
+    }
     var st = C().normalizeState(shared.state);
     st.templates = (templates || []).map(C().normalizeTemplate).filter(Boolean);
     st.updatedAt = new Date().toISOString();
@@ -199,6 +202,9 @@
   }
 
   function upsertTemplate(template, user) {
+    if (!C().canEditActivities(user)) {
+      return Promise.resolve({ ok: false, msg: 'Solo el administrador puede editar actividades.' });
+    }
     var st = C().normalizeState(shared.state);
     var t = C().normalizeTemplate(template);
     if (!t) return Promise.resolve({ ok: false, msg: 'Actividad inválida' });
@@ -211,6 +217,9 @@
   }
 
   function removeTemplate(taskId, user) {
+    if (!C().canEditActivities(user)) {
+      return Promise.resolve({ ok: false, msg: 'Solo el administrador puede editar actividades.' });
+    }
     var st = C().normalizeState(shared.state);
     var list = st.templates.filter(function (t) { return t.id !== taskId; });
     return saveTemplates(list, user);

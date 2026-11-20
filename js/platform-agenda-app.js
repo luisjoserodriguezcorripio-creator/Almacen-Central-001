@@ -249,14 +249,14 @@
         '</div></button>';
     }).join('');
 
-    var isAdmin = C().canManageAll(state.user);
+    var canEdit = C().canEditActivities(state.user);
     host.innerHTML =
       '<header class="agenda-topbar">' +
       '<div><p class="agenda-eyebrow">Panel supervisor</p><h1>Puestos del almacén</h1>' +
       '<p class="agenda-sub">Resumen del día · ' + esc(C().formatDateDisplay(dayKey)) + '</p></div>' +
       '<div class="agenda-topbar__actions">' +
       '<button type="button" class="agenda-btn agenda-btn--ghost" data-agenda-action="refresh">↻ Actualizar</button>' +
-      (isAdmin
+      (canEdit
         ? '<button type="button" class="agenda-btn agenda-btn--primary" data-agenda-action="hint-edit">✎ Editar actividades</button>'
         : '') +
       '<button type="button" class="agenda-btn agenda-btn--ghost" data-agenda-action="logout">Salir</button>' +
@@ -274,8 +274,9 @@
     if (!puesto) return;
     var data = S().getState();
     var dayKey = state.dayKey || C().todayKey();
-    var isAdmin = C().canManageAll(state.user);
-    var editing = isAdmin && state.editMode;
+    var canSeeAll = C().canManageAll(state.user);
+    var canEdit = C().canEditActivities(state.user);
+    var editing = canEdit && state.editMode;
     var tasks = filterTasks(C().tasksForDay(data.state, dayKey, state.puestoId));
     var stats = C().statsForPuesto(data.state, dayKey, state.puestoId);
 
@@ -317,14 +318,14 @@
         '</div></article>';
     }).join('');
 
-    var showBack = isAdmin;
+    var showBack = canSeeAll;
     host.innerHTML =
       '<header class="agenda-topbar">' +
       '<div>' + (showBack ? '<button type="button" class="agenda-back" data-agenda-action="back">← Todos los puestos</button>' : '') +
       '<p class="agenda-eyebrow">' + (editing ? 'Edición de actividades' : 'Checklist del puesto') + '</p>' +
       '<h1>' + esc(puesto.label) + '</h1><p class="agenda-sub">' + esc(C().formatDateDisplay(dayKey)) + '</p></div>' +
       '<div class="agenda-topbar__actions">' +
-      (isAdmin
+      (canEdit
         ? '<button type="button" class="agenda-btn ' + (editing ? 'agenda-btn--primary' : 'agenda-btn--ghost') +
           '" data-agenda-action="toggle-edit">' + (editing ? '✓ Terminar edición' : '✎ Editar actividades') + '</button>'
         : '') +
@@ -333,7 +334,7 @@
       '</div></header>' +
       (editing ? '' : renderHeroStats(stats)) +
       '<p class="agenda-help">' + (editing
-        ? 'Como admin puede cambiar el texto, frecuencia y minutos. Guarde cada actividad. Los cambios quedan en este navegador (y en la nube si Supabase está activo).'
+        ? 'Solo administradores pueden cambiar el texto, frecuencia y minutos. Guarde cada actividad.'
         : 'Toque el estado de cada tarea para marcar avance. Use filtros si necesita.') + '</p>' +
       (editing ? '' : renderFiltersSection('agenda-filters--detail')) +
       (editing
@@ -415,8 +416,8 @@
       return;
     }
     if (action === 'toggle-edit') {
-      if (!C().canManageAll(state.user)) {
-        toast('Solo admin / agenda.all puede editar actividades.', 'err');
+      if (!C().canEditActivities(state.user)) {
+        toast('Solo el administrador puede editar actividades.', 'err');
         return;
       }
       state.editMode = !state.editMode;
@@ -443,8 +444,8 @@
   }
 
   function handleEditAction(action, taskId, article) {
-    if (!C().canManageAll(state.user)) {
-      toast('Sin permiso para editar.', 'err');
+    if (!C().canEditActivities(state.user)) {
+      toast('Solo el administrador puede editar actividades.', 'err');
       return;
     }
     if (action === 'add') {

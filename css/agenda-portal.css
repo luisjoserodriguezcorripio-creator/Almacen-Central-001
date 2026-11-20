@@ -781,6 +781,44 @@
   margin: 0 0 0.75rem;
 }
 
+.agenda-chip--saved {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.agenda-puesto-card--saved {
+  border-color: #86efac;
+}
+
+.agenda-save-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 15;
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid var(--ag-border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 -6px 20px rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(6px);
+}
+
+.agenda-save-bar__status {
+  margin: 0;
+  font-size: var(--ag-text-sm);
+  color: var(--ag-muted);
+  font-weight: 500;
+}
+
+.agenda-btn--save {
+  min-width: 11rem;
+}
+
 .agenda-task--edit {
   border: 1px solid var(--ag-blue-mid);
   background: var(--ag-blue-soft);

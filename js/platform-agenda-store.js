@@ -76,7 +76,8 @@
         Object.keys(daySrc).forEach(function (puesto) {
           if (!out[day][puesto]) out[day][puesto] = { tasks: {} };
           if (!out[day][puesto].tasks) out[day][puesto].tasks = {};
-          var tasks = (daySrc[puesto] && daySrc[puesto].tasks) || {};
+          var srcBucket = daySrc[puesto] || {};
+          var tasks = srcBucket.tasks || {};
           Object.keys(tasks).forEach(function (taskId) {
             var cur = out[day][puesto].tasks[taskId];
             var incoming = tasks[taskId];
@@ -88,6 +89,19 @@
             var tb = Date.parse(incoming && incoming.updatedAt) || 0;
             if (tb >= ta) out[day][puesto].tasks[taskId] = incoming;
           });
+          var outSavedAt = Date.parse(out[day][puesto].savedAt) || 0;
+          var srcSavedAt = Date.parse(srcBucket.savedAt) || 0;
+          if (srcBucket.saved && srcSavedAt >= outSavedAt) {
+            out[day][puesto].saved = true;
+            out[day][puesto].savedAt = srcBucket.savedAt;
+            out[day][puesto].savedBy = srcBucket.savedBy || '';
+          } else if (out[day][puesto].saved) {
+            /* keep existing */
+          } else if (srcBucket.saved) {
+            out[day][puesto].saved = true;
+            out[day][puesto].savedAt = srcBucket.savedAt || '';
+            out[day][puesto].savedBy = srcBucket.savedBy || '';
+          }
         });
       });
     }
@@ -284,6 +298,46 @@
     return Promise.resolve({ ok: true, progress: rec, local: true });
   }
 
+  function saveAudit(dayKey, puestoId, user, commentMap) {
+    if (!dayKey || !puestoId) {
+      return Promise.resolve({ ok: false, msg: 'Falta fecha o persona.' });
+    }
+    var name = user && (user.name || user.username) || '';
+    var st = C().normalizeState(shared.state || readLocal() || null);
+    var bucket = C().ensurePuestoDay(st, dayKey, puestoId);
+    var tasks = bucket.tasks;
+    if (commentMap && typeof commentMap === 'object') {
+      Object.keys(commentMap).forEach(function (taskId) {
+        var rec = Object.assign({}, tasks[taskId] || C().emptyTaskProgress());
+        rec.comentarios = String(commentMap[taskId] || '');
+        rec.updatedAt = new Date().toISOString();
+        rec.updatedBy = name;
+        tasks[taskId] = rec;
+      });
+    }
+    bucket.saved = true;
+    bucket.savedAt = new Date().toISOString();
+    bucket.savedBy = name;
+    st.updatedAt = bucket.savedAt;
+    st.updatedBy = name;
+    shared.state = st;
+    writeLocal(st);
+    notify();
+
+    var sync = Sync();
+    if (sync && sync.isLive && sync.isLive() && sync.pushState) {
+      return sync.pushState(st).then(function () {
+        shared.live = true;
+        notify();
+        return { ok: true, savedAt: bucket.savedAt, local: false };
+      }).catch(function () {
+        shared.live = false;
+        return { ok: true, savedAt: bucket.savedAt, local: true };
+      });
+    }
+    return Promise.resolve({ ok: true, savedAt: bucket.savedAt, local: true });
+  }
+
   function pullFresh() {
     return C().loadSeed().then(function (seed) {
       applySeedPayload(seed, { force: true });
@@ -348,6 +402,7 @@
     subscribe: subscribe,
     getState: getState,
     updateTask: updateTask,
+    saveAudit: saveAudit,
     pullFresh: pullFresh,
     saveTemplates: saveTemplates,
     upsertTemplate: upsertTemplate,

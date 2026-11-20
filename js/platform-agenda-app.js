@@ -239,8 +239,12 @@
       var personLine = p.nombrePersona
         ? '<p class="agenda-puesto-card__person">' + esc(p.nombrePersona) + '</p>'
         : '';
+      var meta = C().getAuditMeta(data.state, dayKey, p.id);
+      var savedChip = meta.saved
+        ? '<span class="agenda-chip agenda-chip--saved">Guardada</span>'
+        : '';
       var title = p.puestoNombre || p.label;
-      return '<button type="button" class="agenda-puesto-card' + (alert ? ' agenda-puesto-card--alert' : '') + '" data-agenda-puesto="' + esc(p.id) + '">' +
+      return '<button type="button" class="agenda-puesto-card' + (alert ? ' agenda-puesto-card--alert' : '') + (meta.saved ? ' agenda-puesto-card--saved' : '') + '" data-agenda-puesto="' + esc(p.id) + '">' +
         '<div class="agenda-puesto-card__head"><strong>' + esc(title) + '</strong>' +
         renderProgressRing(st, 'agenda-puesto-card__pct') + '</div>' +
         personLine +
@@ -249,6 +253,7 @@
         '<span class="agenda-chip agenda-chip--done">' + st.done + ' hechas</span>' +
         '<span class="agenda-chip agenda-chip--progress">' + st.inProg + ' en proceso</span>' +
         '<span class="agenda-chip agenda-chip--pending">' + st.pending + ' pendientes</span>' +
+        savedChip +
         '</div></button>';
     }).join('');
 
@@ -316,6 +321,18 @@
     }).join('');
 
     var showBack = canSeeAll;
+    var auditMeta = C().getAuditMeta(data.state, dayKey, state.puestoId);
+    var saveBar = editing ? '' :
+      '<div class="agenda-save-bar">' +
+      (auditMeta.saved
+        ? '<p class="agenda-save-bar__status">Auditoría guardada' +
+          (auditMeta.savedBy ? ' por ' + esc(auditMeta.savedBy) : '') +
+          (auditMeta.savedAt ? ' · ' + esc(String(auditMeta.savedAt).replace('T', ' ').slice(0, 16)) : '') +
+          '</p>'
+        : '<p class="agenda-save-bar__status">Revise los estados y pulse Guardar para finalizar.</p>') +
+      '<button type="button" class="agenda-btn agenda-btn--primary agenda-btn--save" data-agenda-action="save-audit">' +
+      (auditMeta.saved ? '✓ Guardar de nuevo' : '💾 Guardar auditoría') +
+      '</button></div>';
     host.innerHTML =
       '<header class="agenda-topbar">' +
       '<div>' + (showBack ? '<button type="button" class="agenda-back" data-agenda-action="back">← Todos los puestos</button>' : '') +
@@ -328,17 +345,22 @@
         ? '<button type="button" class="agenda-btn ' + (editing ? 'agenda-btn--primary' : 'agenda-btn--ghost') +
           '" data-agenda-action="toggle-edit">' + (editing ? '✓ Terminar edición' : '✎ Editar actividades') + '</button>'
         : '') +
+      (!editing
+        ? '<button type="button" class="agenda-btn agenda-btn--primary" data-agenda-action="save-audit">' +
+          (auditMeta.saved ? '✓ Guardada' : 'Guardar') + '</button>'
+        : '') +
       '<button type="button" class="agenda-btn agenda-btn--ghost" data-agenda-action="refresh">↻ Actualizar</button>' +
       '</div></header>' +
       (editing ? '' : renderHeroStats(stats)) +
       '<p class="agenda-help">' + (editing
         ? 'Solo administradores pueden cambiar el texto y minutos. Guarde cada actividad.'
-        : 'Marque el estado de cada actividad según el desempeño auditado en esta fecha.') + '</p>' +
+        : 'Marque el estado de cada actividad según el desempeño auditado en esta fecha. Al terminar, pulse Guardar.') + '</p>' +
       (editing ? '' : renderFiltersSection('agenda-filters--detail')) +
       (editing
         ? '<div class="agenda-edit-toolbar"><button type="button" class="agenda-btn agenda-btn--primary" data-agenda-edit="add">+ Agregar actividad</button></div>'
         : '') +
-      '<div class="agenda-task-list">' + (rows || emptyTasksMessage(data)) + '</div>';
+      '<div class="agenda-task-list">' + (rows || emptyTasksMessage(data)) + '</div>' +
+      saveBar;
     syncFilterControls();
   }
 
@@ -430,7 +452,44 @@
     }
     if (action === 'hint-edit') {
       toast('Abra un puesto (filtro o tarjeta) y pulse «Editar actividades».', 'ok');
+      return;
     }
+    if (action === 'save-audit') {
+      saveCurrentAudit();
+    }
+  }
+
+  function collectCommentMap() {
+    var map = {};
+    var host = $('agendaMain');
+    if (!host) return map;
+    host.querySelectorAll('.agenda-comment[data-task-id]').forEach(function (input) {
+      var id = input.getAttribute('data-task-id');
+      if (id) map[id] = input.value;
+    });
+    return map;
+  }
+
+  function saveCurrentAudit() {
+    if (!state.puestoId || !state.dayKey) {
+      toast('Abra una persona y elija la fecha de auditoría.', 'err');
+      return;
+    }
+    if (state.editMode) {
+      toast('Termine la edición de actividades antes de guardar la auditoría.', 'err');
+      return;
+    }
+    var comments = collectCommentMap();
+    S().saveAudit(state.dayKey, state.puestoId, state.user, comments).then(function (res) {
+      if (!res.ok) {
+        toast(res.msg || 'No se pudo guardar.', 'err');
+        return;
+      }
+      toast(res.local
+        ? 'Auditoría guardada en este equipo.'
+        : 'Auditoría guardada.', 'ok');
+      render();
+    });
   }
 
   function readEditFields(article) {

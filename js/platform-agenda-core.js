@@ -163,11 +163,25 @@
     return state.daily[dayKey];
   }
 
-  function ensurePuestoBucket(state, dayKey, puestoId) {
+  function ensurePuestoDay(state, dayKey, puestoId) {
     var day = ensureDayBucket(state, dayKey);
     if (!day[puestoId]) day[puestoId] = { tasks: {} };
     if (!day[puestoId].tasks) day[puestoId].tasks = {};
-    return day[puestoId].tasks;
+    return day[puestoId];
+  }
+
+  function ensurePuestoBucket(state, dayKey, puestoId) {
+    return ensurePuestoDay(state, dayKey, puestoId).tasks;
+  }
+
+  function getAuditMeta(state, dayKey, puestoId) {
+    var bucket = state && state.daily && state.daily[dayKey] && state.daily[dayKey][puestoId];
+    if (!bucket) return { saved: false, savedAt: '', savedBy: '' };
+    return {
+      saved: !!bucket.saved,
+      savedAt: String(bucket.savedAt || ''),
+      savedBy: String(bucket.savedBy || '')
+    };
   }
 
   function getTaskProgress(state, dayKey, puestoId, taskId) {
@@ -317,7 +331,9 @@
     normalizeState: normalizeState,
     normalizeAgendaPuesto: normalizeAgendaPuesto,
     emptyTaskProgress: emptyTaskProgress,
+    ensurePuestoDay: ensurePuestoDay,
     ensurePuestoBucket: ensurePuestoBucket,
+    getAuditMeta: getAuditMeta,
     getTaskProgress: getTaskProgress,
     templatesForPuesto: templatesForPuesto,
     tasksForDay: tasksForDay,

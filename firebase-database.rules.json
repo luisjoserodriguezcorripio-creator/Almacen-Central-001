@@ -4,6 +4,10 @@
       ".read": true,
       ".write": true
     },
+    "agenda": {
+      ".read": true,
+      ".write": true
+    },
     "platform": {
       ".read": true,
       ".write": true

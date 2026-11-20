@@ -11,7 +11,7 @@ echo  2. Copie TODO el contenido (Ctrl+A, Ctrl+C)
 echo  3. En Firebase Console - Reglas - pegue y PUBLICAR
 echo.
 echo  Las reglas deben permitir:
-echo    despacho, platform, averias  (.read / .write true)
+echo    despacho, agenda, platform, averias  (.read / .write true)
 echo.
 start "" notepad "%~dp0firebase-database.rules.json"
 timeout /t 2 /nobreak >nul

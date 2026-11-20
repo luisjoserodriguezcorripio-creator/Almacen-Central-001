@@ -283,11 +283,12 @@
     notify();
 
     var sync = Sync();
-    if (sync && sync.isLive && sync.isLive() && sync.pushState) {
+    if (sync && sync.pushState) {
       return sync.pushState(st).then(function () {
-        shared.live = true;
+        shared.live = !!sync.isLive();
+        shared.error = '';
         notify();
-        return { ok: true, progress: rec };
+        return { ok: true, progress: rec, local: !shared.live };
       }).catch(function () {
         shared.live = false;
         shared.error = 'Guardado local. Nube no disponible.';
@@ -325,13 +326,16 @@
     notify();
 
     var sync = Sync();
-    if (sync && sync.isLive && sync.isLive() && sync.pushState) {
+    if (sync && sync.pushState) {
       return sync.pushState(st).then(function () {
-        shared.live = true;
+        shared.live = !!sync.isLive();
+        shared.error = '';
         notify();
-        return { ok: true, savedAt: bucket.savedAt, local: false };
+        return { ok: true, savedAt: bucket.savedAt, local: !shared.live };
       }).catch(function () {
         shared.live = false;
+        shared.error = 'Guardado local. Nube no disponible.';
+        notify();
         return { ok: true, savedAt: bucket.savedAt, local: true };
       });
     }
@@ -339,24 +343,41 @@
   }
 
   function pullFresh() {
+    var sync = Sync();
     return C().loadSeed().then(function (seed) {
-      applySeedPayload(seed, { force: true });
-      var sync = Sync();
+      if (seed && seed.puestos && seed.puestos.length) C().applyPuestos(seed.puestos);
       if (!sync || !sync.pullState) {
+        applySeedPayload(seed, { force: false });
         shared.live = false;
         notify();
         return shared;
       }
-      return sync.pullState().then(function (data) {
-        // No dejar que una nube vacía/vieja pise el seed nuevo
-        if (data && data.templates && data.templates.length) {
-          var localN = shared.state && shared.state.templates ? shared.state.templates.length : 0;
-          if (data.templates.length >= localN) applyRemote(data);
+      return sync.pullState().then(function (remote) {
+        var merged = sync.mergeAgendaStates
+          ? sync.mergeAgendaStates(remote, shared.state)
+          : remote;
+        if ((!merged.templates || !merged.templates.length) && seed && seed.templates) {
+          merged.templates = seed.templates;
         }
+        applyRemote(merged, { force: false });
         shared.live = !!sync.isLive();
+        // Si esta PC tiene avance y la nube estaba vacía, publicar
+        if (sync.pushState && shared.state) {
+          return sync.pushState(shared.state).then(function () {
+            shared.live = true;
+            notify();
+            return shared;
+          }).catch(function () {
+            notify();
+            return shared;
+          });
+        }
         notify();
         return shared;
-      }).catch(function () { return shared; });
+      }).catch(function () {
+        applySeedPayload(seed, { force: false });
+        return shared;
+      });
     });
   }
 
@@ -406,6 +427,7 @@
     pullFresh: pullFresh,
     saveTemplates: saveTemplates,
     upsertTemplate: upsertTemplate,
-    removeTemplate: removeTemplate
+    removeTemplate: removeTemplate,
+    mergeDaily: mergeDaily
   };
 })(typeof window !== 'undefined' ? window : this);

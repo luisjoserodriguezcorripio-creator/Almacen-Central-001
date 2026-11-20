@@ -31,20 +31,28 @@
     SEMANAL: 'Semanal'
   };
 
-  var PUESTOS = [
-    { id: 'supervisor_inventario', label: 'Supervisor de Inventario', short: 'Inv. supervisor' },
-    { id: 'digitadora_inventario', label: 'Digitadora de Inventario', short: 'Digitadora' },
-    { id: 'coordinador_almacen', label: 'Coordinador Almacén', short: 'Coord. almacén' },
-    { id: 'auxiliar_despacho', label: 'Auxiliar de Despacho', short: 'Aux. despacho' },
-    { id: 'supervisor_despacho', label: 'Supervisor de Despacho', short: 'Sup. despacho' },
-    { id: 'supervisor_validadores', label: 'Supervisor de Validadores', short: 'Validadores' },
-    { id: 'supervisor_devoluciones', label: 'Supervisor de Devoluciones', short: 'Devoluciones' },
-    { id: 'coordinador_recepcion', label: 'Coordinador Recepción', short: 'Recepción' },
-    { id: 'supervisora_oficina', label: 'Supervisora de Oficina', short: 'Oficina' }
-  ];
-
+  /** Se reemplaza al cargar agenda-seed.json (una tarjeta por persona a medir). */
+  var PUESTOS = [];
   var PUESTO_BY_ID = {};
-  PUESTOS.forEach(function (p) { PUESTO_BY_ID[p.id] = p; });
+
+  function applyPuestos(list) {
+    PUESTOS.length = 0;
+    Object.keys(PUESTO_BY_ID).forEach(function (k) { delete PUESTO_BY_ID[k]; });
+    (list || []).forEach(function (raw) {
+      if (!raw || !raw.id) return;
+      var p = {
+        id: String(raw.id),
+        label: String(raw.label || raw.id),
+        short: String(raw.short || raw.nombrePersona || raw.label || raw.id).slice(0, 24),
+        puestoBase: raw.puestoBase ? String(raw.puestoBase) : '',
+        puestoNombre: raw.puestoNombre ? String(raw.puestoNombre) : '',
+        nombrePersona: raw.nombrePersona ? String(raw.nombrePersona) : ''
+      };
+      PUESTOS.push(p);
+      PUESTO_BY_ID[p.id] = p;
+    });
+    return PUESTOS;
+  }
 
   function partsInTZ(d) {
     d = d || new Date();
@@ -255,14 +263,28 @@
     return !!getUserAgendaPuesto(user);
   }
 
-  function loadSeedTemplates() {
+  function loadSeed() {
     return fetch(SEED_URL, { cache: 'no-store' })
       .then(function (res) { return res.ok ? res.json() : null; })
       .then(function (data) {
-        if (!data || !data.templates) return [];
-        return data.templates.map(normalizeTemplate).filter(Boolean);
+        if (!data) return { templates: [], puestos: [], revision: '', version: 1 };
+        if (data.puestos && data.puestos.length) applyPuestos(data.puestos);
+        var templates = (data.templates || []).map(normalizeTemplate).filter(Boolean);
+        return {
+          templates: templates,
+          puestos: PUESTOS.slice(),
+          revision: String(data.updatedAt || data.version || ''),
+          version: Number(data.version) || 1,
+          updatedAt: String(data.updatedAt || '')
+        };
       })
-      .catch(function () { return []; });
+      .catch(function () {
+        return { templates: [], puestos: [], revision: '', version: 1 };
+      });
+  }
+
+  function loadSeedTemplates() {
+    return loadSeed().then(function (seed) { return seed.templates || []; });
   }
 
   function nextEstado(current) {
@@ -287,6 +309,7 @@
     FREQ_LABELS: FREQ_LABELS,
     PUESTOS: PUESTOS,
     PUESTO_BY_ID: PUESTO_BY_ID,
+    applyPuestos: applyPuestos,
     todayKey: todayKey,
     formatDateDisplay: formatDateDisplay,
     formatClockTime: formatClockTime,
@@ -307,6 +330,7 @@
     resolveUserPuestos: resolveUserPuestos,
     userHasAgendaAccess: userHasAgendaAccess,
     puestoLabel: puestoLabel,
+    loadSeed: loadSeed,
     loadSeedTemplates: loadSeedTemplates,
     nextEstado: nextEstado
   };

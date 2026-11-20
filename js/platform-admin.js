@@ -64,15 +64,13 @@
   };
 
   var AGENDA_PUESTO_IDS = {
-    supervisor_inventario: 'Supervisor de Inventario',
-    digitadora_inventario: 'Digitadora de Inventario',
-    coordinador_almacen: 'Coordinador Almacén',
-    auxiliar_despacho: 'Auxiliar de Despacho',
-    supervisor_despacho: 'Supervisor de Despacho',
-    supervisor_validadores: 'Supervisor de Validadores',
-    supervisor_devoluciones: 'Supervisor de Devoluciones',
-    coordinador_recepcion: 'Coordinador Recepción',
-    supervisora_oficina: 'Supervisora de Oficina'
+    supervisor_inventario__eliezer_beltre: 'Supervisor de Inventario · Eliezer Beltré',
+    supervisor_despacho__cesar_astacio: 'Supervisor de Despacho · Cesar Astacio',
+    supervisor_despacho__anthony_sanchez: 'Supervisor de Despacho · Anthony Sanchez',
+    supervisor_validadores__jose_polanco: 'Supervisor de Validadores · Jose Polanco',
+    supervisor_recepcion__wandel_jerez: 'Supervisor de Recepción · Wandel Jerez',
+    supervisor_recepcion__eliezer_ravelo: 'Supervisor de Recepción · Eliezer Ravelo',
+    supervisora_oficina__maria_ramos: 'Supervisora de Oficina · Maria Ramos'
   };
 
   // Administrador general — usuario y contraseña SOLO se cambian aquí (Cursor), no en la plataforma.

@@ -238,9 +238,14 @@
     var rows = puestos.map(function (p) {
       var st = C().statsForPuesto(data.state, dayKey, p.id);
       var alert = st.pending > 0 && st.pct < 100;
+      var personLine = p.nombrePersona
+        ? '<p class="agenda-puesto-card__person">' + esc(p.nombrePersona) + '</p>'
+        : '';
+      var title = p.puestoNombre || p.label;
       return '<button type="button" class="agenda-puesto-card' + (alert ? ' agenda-puesto-card--alert' : '') + '" data-agenda-puesto="' + esc(p.id) + '">' +
-        '<div class="agenda-puesto-card__head"><strong>' + esc(p.label) + '</strong>' +
+        '<div class="agenda-puesto-card__head"><strong>' + esc(title) + '</strong>' +
         renderProgressRing(st, 'agenda-puesto-card__pct') + '</div>' +
+        personLine +
         renderProgressBar(st) +
         '<div class="agenda-puesto-card__counts">' +
         '<span class="agenda-chip agenda-chip--done">' + st.done + ' hechas</span>' +

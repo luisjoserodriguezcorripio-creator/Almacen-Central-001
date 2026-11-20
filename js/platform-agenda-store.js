@@ -6,7 +6,8 @@
 
   var C = function () { return global.PlatformAgendaCore; };
   var Sync = function () { return global.PlatformAgendaSync; };
-  var LS_KEY = 'almacen_agenda_state_v1';
+  var LS_KEY = 'almacen_agenda_state_v2';
+  var LS_SEED_REV = 'almacen_agenda_seed_rev_v2';
   var shared = { state: null, live: false, error: '' };
   var listeners = [];
   var initPromise = null;
@@ -57,12 +58,20 @@
     return tb >= ta ? b : a;
   }
 
+  function readSeedRev() {
+    try { return localStorage.getItem(LS_SEED_REV) || ''; } catch (e) { return ''; }
+  }
+
+  function writeSeedRev(rev) {
+    try { if (rev) localStorage.setItem(LS_SEED_REV, rev); } catch (e) { /* noop */ }
+  }
+
   function applyRemote(data, opts) {
     opts = opts || {};
     var incoming = C().normalizeState(data);
     var local = readLocal();
-    var next = preferRicher(incoming, local);
-    if ((!next.templates || !next.templates.length) && local && local.templates && local.templates.length) {
+    var next = opts.force ? incoming : preferRicher(incoming, local);
+    if (!opts.force && (!next.templates || !next.templates.length) && local && local.templates && local.templates.length) {
       next = local;
     }
     shared.state = next;
@@ -71,6 +80,19 @@
     }
     shared.error = '';
     notify();
+  }
+
+  function applySeedPayload(seed, opts) {
+    opts = opts || {};
+    if (seed && seed.puestos && seed.puestos.length) C().applyPuestos(seed.puestos);
+    var daily = (shared.state && shared.state.daily) || {};
+    applyRemote({
+      version: seed && seed.version || 2,
+      templates: (seed && seed.templates) || [],
+      daily: daily,
+      updatedAt: (seed && seed.updatedAt) || new Date().toISOString()
+    }, { force: !!opts.force });
+    if (seed && seed.revision) writeSeedRev(seed.revision);
   }
 
   function persistAndMaybePush(state) {
@@ -101,48 +123,55 @@
     shared.error = '';
     notify();
 
-    var sync = Sync();
-    if (!sync) {
-      return C().loadSeedTemplates().then(function (seed) {
-        if (!shared.state.templates || !shared.state.templates.length) {
-          applyRemote({ templates: seed, daily: (shared.state && shared.state.daily) || {} });
+    function ensureSeedApplied() {
+      return C().loadSeed().then(function (seed) {
+        var rev = seed.revision || '';
+        var known = readSeedRev();
+        var empty = !shared.state.templates || !shared.state.templates.length;
+        var stale = !!(rev && rev !== known);
+        if (empty || stale || (seed.puestos && seed.puestos.length && !C().PUESTOS.length)) {
+          applySeedPayload(seed, { force: empty || stale });
+        } else if (seed.puestos && seed.puestos.length) {
+          C().applyPuestos(seed.puestos);
         }
-        shared.error = 'Modo local — plantillas cargadas.';
-        notify();
         return shared;
       });
     }
 
+    var sync = Sync();
+    if (!sync) {
+      initPromise = ensureSeedApplied().then(function () {
+        shared.error = 'Modo local — plantillas cargadas.';
+        notify();
+        return shared;
+      });
+      return initPromise;
+    }
+
     initPromise = sync.ready().then(function (res) {
       shared.live = !!(res && res.ok && !res.degraded && !res.local);
-      if (res && res.data) {
+      if (res && res.data && res.data.templates && res.data.templates.length) {
         applyRemote(res.data);
-      } else if (!shared.state.templates || !shared.state.templates.length) {
-        return C().loadSeedTemplates().then(function (seed) {
-          applyRemote({ templates: seed, daily: {} });
-          return shared;
+      }
+      return ensureSeedApplied().then(function () {
+        if (res && (res.degraded || res.local)) {
+          shared.error = 'Modo local — checklist activo.';
+        } else {
+          shared.error = '';
+        }
+        notify();
+        if (unsub) unsub();
+        unsub = sync.onChange(function (kind, data) {
+          if (kind === 'sync' && data) {
+            applyRemote(data);
+            shared.live = !!sync.isLive();
+            notify();
+          }
         });
-      }
-      if (res && (res.degraded || res.local)) {
-        shared.error = 'Modo local — checklist activo.';
-      } else {
-        shared.error = '';
-      }
-      notify();
-      if (unsub) unsub();
-      unsub = sync.onChange(function (kind, data) {
-        if (kind === 'sync' && data) {
-          applyRemote(data);
-          shared.live = !!sync.isLive();
-          notify();
-        }
+        return shared;
       });
-      return shared;
     }).catch(function () {
-      return C().loadSeedTemplates().then(function (seed) {
-        if (!shared.state.templates || !shared.state.templates.length) {
-          applyRemote({ templates: seed, daily: {} });
-        }
+      return ensureSeedApplied().then(function () {
         shared.live = false;
         shared.error = 'Modo local.';
         notify();
@@ -178,14 +207,25 @@
   }
 
   function pullFresh() {
-    var sync = Sync();
-    if (!sync || !sync.pullState) return Promise.resolve(shared);
-    return sync.pullState().then(function (data) {
-      applyRemote(data);
-      shared.live = !!sync.isLive();
-      notify();
-      return shared;
-    }).catch(function () { return shared; });
+    return C().loadSeed().then(function (seed) {
+      applySeedPayload(seed, { force: true });
+      var sync = Sync();
+      if (!sync || !sync.pullState) {
+        shared.live = false;
+        notify();
+        return shared;
+      }
+      return sync.pullState().then(function (data) {
+        // No dejar que una nube vacía/vieja pise el seed nuevo
+        if (data && data.templates && data.templates.length) {
+          var localN = shared.state && shared.state.templates ? shared.state.templates.length : 0;
+          if (data.templates.length >= localN) applyRemote(data);
+        }
+        shared.live = !!sync.isLive();
+        notify();
+        return shared;
+      }).catch(function () { return shared; });
+    });
   }
 
   function saveTemplates(templates, user) {

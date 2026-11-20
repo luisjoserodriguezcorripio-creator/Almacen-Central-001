@@ -414,6 +414,13 @@
   margin-bottom: 0.75rem;
 }
 
+.agenda-puesto-card__person {
+  margin: 0.15rem 0 0.35rem;
+  font-size: var(--ag-text-sm, 0.9rem);
+  font-weight: 600;
+  color: var(--ag-accent, #1d4ed8);
+}
+
 .agenda-puesto-card__head strong {
   font-size: var(--ag-text-lg);
   font-weight: 600;

@@ -343,25 +343,55 @@
     return ensureUserRegistry(Object.values(map));
   }
 
-  function importWebUsers(payload) {
+  function importWebUsers(payload, options) {
     var remote = [];
     var updatedAt = '';
+    var opts = options || {};
     if (Array.isArray(payload)) {
       remote = payload;
     } else if (payload && Array.isArray(payload.users)) {
       remote = payload.users;
       updatedAt = String(payload.updatedAt || '');
     }
-    if (!remote.length) {
+    if (!remote.length && !opts.replace) {
       return { count: 0, updatedAt: updatedAt };
     }
-    var local = getUsers();
-    var merged = mergeWebUsersFromRemote(local, remote);
-    saveUsers(merged);
+    var merged;
+    if (opts.replace) {
+      // Snapshot autoritativo (p. ej. Firebase tras borrar): no reintroducir staff local.
+      merged = replaceStaffUsers(remote);
+    } else {
+      var local = getUsers();
+      merged = mergeWebUsersFromRemote(local, remote);
+      saveUsers(merged);
+    }
     if (updatedAt && global.localStorage) {
       localStorage.setItem(KEYS.users + '_web', updatedAt);
     }
-    return { count: remote.length, updatedAt: updatedAt, total: merged.length };
+    return { count: remote.length, updatedAt: updatedAt, total: merged.length, replaced: !!opts.replace };
+  }
+
+  /** Sustituye todo el personal por la lista remota; conserva al administrador principal. */
+  function replaceStaffUsers(remoteList) {
+    var primary = getPrimaryAdmin() || syncPrimaryFromCode({
+      id: 'u_primary_admin',
+      name: 'Administrador general',
+      areas: [],
+      extraPermissions: []
+    });
+    var staff = [];
+    (Array.isArray(remoteList) ? remoteList : []).forEach(function (u) {
+      if (!u || !u.username) return;
+      if (isPrimaryAdminUser(u)) return;
+      if (String(u.username || '').toLowerCase() === PRIMARY_ADMIN_USERNAME.toLowerCase()) return;
+      var copy = normalizeUser(Object.assign({}, u, { isPrimaryAdmin: false }));
+      if (copy.role === 'administrador') copy.isPrimaryAdmin = false;
+      staff.push(copy);
+    });
+    staff = dedupeStaffByUsername(staff);
+    var next = [primary].concat(staff);
+    saveUsers(next);
+    return next;
   }
 
   function mergeUserRegistries(localList, remoteList) {
@@ -513,7 +543,8 @@
   }
 
   function findUserById(id) {
-    return getUsers().find(function (u) { return u.id === id; }) || null;
+    var targetId = String(id || '');
+    return getUsers().find(function (u) { return String(u.id) === targetId; }) || null;
   }
 
   function createUser(data) {
@@ -563,12 +594,16 @@
   }
 
   function deleteUser(id) {
-    var target = findUserById(id);
+    var targetId = String(id || '');
+    var target = findUserById(targetId);
     if (target && isPrimaryAdminUser(target)) {
       return { ok: false, message: 'No se puede eliminar al administrador principal.' };
     }
-    var users = getUsers().filter(function (u) { return u.id !== id; });
-    if (users.length === getUsers().length) return { ok: false };
+    var before = getUsers();
+    var users = before.filter(function (u) { return String(u.id) !== targetId; });
+    if (users.length === before.length) {
+      return { ok: false, message: 'Usuario no encontrado.' };
+    }
     if (users.filter(function (u) { return u.role === 'administrador'; }).length === 0) {
       return { ok: false, message: 'Debe existir al menos un administrador.' };
     }
@@ -690,6 +725,7 @@
     mergeUserRegistries: mergeUserRegistries,
     exportStaffForWeb: exportStaffForWeb,
     importWebUsers: importWebUsers,
+    replaceStaffUsers: replaceStaffUsers,
     getAreas: getAreas,
     saveAreas: saveAreas,
     getLogs: getLogs,

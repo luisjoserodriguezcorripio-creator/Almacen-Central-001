@@ -211,18 +211,30 @@
     });
   }
 
+  function applyFirebaseUsers(data) {
+    if (!data || !Array.isArray(data.users)) return false;
+    // Lista completa de la nube: replace evita que web-users.json resurrecte borrados.
+    if (Auth.importWebUsers) {
+      Auth.importWebUsers(data, { replace: true });
+    } else if (Auth.replaceStaffUsers) {
+      Auth.replaceStaffUsers(data.users);
+    } else {
+      return false;
+    }
+    syncCloudBadge(true);
+    return true;
+  }
+
   function pullUsersFromFirebase() {
     var bridge = global.PlatformFirebaseBridge;
-    if (!bridge || !bridge.ensureReady || !Auth.importWebUsers) {
+    if (!bridge || !bridge.ensureReady) {
       return Promise.resolve(false);
     }
     return bridge.ensureReady().then(function () {
       return bridge.pull(FB_PATH);
     }).then(function (data) {
-      if (!data || !data.users || !data.users.length) return false;
-      Auth.importWebUsers(data);
-      syncCloudBadge(true);
-      return true;
+      if (!data || !Array.isArray(data.users)) return false;
+      return applyFirebaseUsers(data);
     }).catch(function () {
       return false;
     });
@@ -231,14 +243,20 @@
   function afterMutation(msg) {
     renderTable();
     return pushUsersToFirebase().then(function (cloudOk) {
-      if (global.PlatformWebUsers && global.PlatformWebUsers.publishLive) {
+      if (!cloudOk) {
+        toast((msg || 'Guardado') + ' en este equipo (sin nube)', 'err');
+        return;
+      }
+      // En GitHub Pages no hay servidor local: no reimportar web-users.json tras borrar.
+      if (global.PlatformWebUsers && global.PlatformWebUsers.publishLive &&
+          !(global.PlatformWebUsers.isPublicWeb && global.PlatformWebUsers.isPublicWeb())) {
         return global.PlatformWebUsers.publishLive().then(function () {
-          toast((msg || 'Guardado') + (cloudOk ? ' · nube' : ''), 'ok');
+          toast((msg || 'Guardado') + ' · nube', 'ok');
         }).catch(function () {
-          toast((msg || 'Guardado') + (cloudOk ? ' · nube' : ' en este equipo'), cloudOk ? 'ok' : 'err');
+          toast((msg || 'Guardado') + ' · nube', 'ok');
         });
       }
-      toast((msg || 'Guardado') + (cloudOk ? ' · sincronizado' : ' en este equipo'), cloudOk ? 'ok' : 'ok');
+      toast((msg || 'Guardado') + ' · sincronizado', 'ok');
     });
   }
 
@@ -361,10 +379,13 @@
     if ($('auUserLabel')) $('auUserLabel').textContent = user.name || user.username;
     fillAgendaPuestos('');
     resetForm();
-    pullUsersFromFirebase().then(function () {
+    pullUsersFromFirebase().then(function (fromCloud) {
+      // Solo usar web-users.json si Firebase aún no tiene snapshot (primera vez).
+      if (fromCloud) return fromCloud;
       if (global.PlatformWebUsers && global.PlatformWebUsers.ready) {
-        return global.PlatformWebUsers.ready();
+        return global.PlatformWebUsers.ready().then(function () { return false; });
       }
+      return false;
     }).finally(function () {
       renderTable();
       pushUsersToFirebase();
@@ -421,10 +442,10 @@
     var refresh = $('auRefresh');
     if (refresh) {
       refresh.addEventListener('click', function () {
-        pullUsersFromFirebase().then(function () {
-          if (global.PlatformWebUsers && global.PlatformWebUsers.refresh) {
-            return global.PlatformWebUsers.refresh();
-          }
+        pullUsersFromFirebase().then(function (fromCloud) {
+          if (fromCloud) return true;
+          // Sin snapshot en nube: no mezclar JSON estático encima de borrados locales.
+          return false;
         }).finally(function () {
           renderTable();
           toast('Lista actualizada.', 'ok');

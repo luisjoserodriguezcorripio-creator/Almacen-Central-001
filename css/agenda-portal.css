@@ -712,6 +712,58 @@
 
 .agenda-table-wrap { display: none; }
 
+.agenda-btn--primary {
+  background: var(--ag-blue);
+  color: #fff;
+  border-color: var(--ag-blue-dark);
+}
+
+.agenda-btn--primary:hover {
+  background: var(--ag-blue-dark);
+}
+
+.agenda-edit-toolbar {
+  margin: 0 0 0.75rem;
+}
+
+.agenda-task--edit {
+  border: 1px solid var(--ag-blue-mid);
+  background: var(--ag-blue-soft);
+}
+
+.agenda-edit-grid {
+  display: grid;
+  grid-template-columns: 72px 1fr 88px;
+  gap: 0.55rem;
+  margin-bottom: 0.55rem;
+}
+
+.agenda-edit-grid label,
+.agenda-edit-actividad {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ag-muted);
+}
+
+.agenda-edit-grid input,
+.agenda-edit-grid select,
+.agenda-edit-actividad textarea {
+  border: 1px solid var(--ag-border);
+  border-radius: 8px;
+  padding: 0.45rem 0.55rem;
+  font: inherit;
+  color: var(--ag-text);
+  background: #fff;
+}
+
+.agenda-edit-actividad textarea {
+  resize: vertical;
+  min-height: 2.8rem;
+}
+
 @media (max-width: 900px) {
   .agenda-header {
     grid-template-columns: 1fr;

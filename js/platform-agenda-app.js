@@ -14,9 +14,11 @@
     user: null,
     view: 'dashboard',
     puestoId: null,
+    puestoFilter: 'ALL',
     freqFilter: 'ALL',
     statusFilter: 'ALL',
-    dayKey: null
+    dayKey: null,
+    editMode: false
   };
 
   function $(id) { return document.getElementById(id); }
@@ -155,10 +157,23 @@
     return C().ESTADO_LABELS[next] || next;
   }
 
-  function renderFiltersSection(extraClass) {
+  function renderFiltersSection(extraClass, opts) {
+    opts = opts || {};
     var cls = 'agenda-filters' + (extraClass ? ' ' + extraClass : '');
+    var puestoSelect = '';
+    if (opts.showPuestoFilter) {
+      var puestos = allowedPuestos();
+      puestoSelect =
+        '<label><span>Puesto</span><select id="agendaFilterPuesto">' +
+        '<option value="ALL">Todos los puestos</option>' +
+        puestos.map(function (p) {
+          return '<option value="' + esc(p.id) + '">' + esc(p.label) + '</option>';
+        }).join('') +
+        '</select></label>';
+    }
     return '<section class="' + cls + '">' +
-      '<p class="agenda-filters__title">Filtrar tareas</p>' +
+      '<p class="agenda-filters__title">Filtrar</p>' +
+      puestoSelect +
       '<label><span>Frecuencia</span><select id="agendaFilterFreq">' +
       '<option value="ALL">Todas</option>' +
       '<option value="DIARIA">Diaria</option>' +
@@ -175,8 +190,10 @@
   function syncFilterControls() {
     var ff = $('agendaFilterFreq');
     var fs = $('agendaFilterStatus');
+    var fp = $('agendaFilterPuesto');
     if (ff) ff.value = state.freqFilter;
     if (fs) fs.value = state.statusFilter;
+    if (fp) fp.value = state.puestoFilter || 'ALL';
   }
 
   function filterTasks(tasks) {
@@ -215,7 +232,9 @@
     if (!host) return;
     var data = S().getState();
     var dayKey = state.dayKey || C().todayKey();
-    var puestos = allowedPuestos();
+    var puestos = allowedPuestos().filter(function (p) {
+      return state.puestoFilter === 'ALL' || p.id === state.puestoFilter;
+    });
     var rows = puestos.map(function (p) {
       var st = C().statsForPuesto(data.state, dayKey, p.id);
       var alert = st.pending > 0 && st.pct < 100;
@@ -230,17 +249,21 @@
         '</div></button>';
     }).join('');
 
+    var isAdmin = C().canManageAll(state.user);
     host.innerHTML =
       '<header class="agenda-topbar">' +
       '<div><p class="agenda-eyebrow">Panel supervisor</p><h1>Puestos del almacén</h1>' +
       '<p class="agenda-sub">Resumen del día · ' + esc(C().formatDateDisplay(dayKey)) + '</p></div>' +
       '<div class="agenda-topbar__actions">' +
       '<button type="button" class="agenda-btn agenda-btn--ghost" data-agenda-action="refresh">↻ Actualizar</button>' +
+      (isAdmin
+        ? '<button type="button" class="agenda-btn agenda-btn--primary" data-agenda-action="hint-edit">✎ Editar actividades</button>'
+        : '') +
       '<button type="button" class="agenda-btn agenda-btn--ghost" data-agenda-action="logout">Salir</button>' +
       '</div></header>' +
-      '<p class="agenda-help">Seleccione un puesto para ver y actualizar sus tareas del día.</p>' +
-      renderFiltersSection() +
-      '<div class="agenda-puesto-grid">' + rows + '</div>';
+      '<p class="agenda-help">Filtre por puesto o selecciónelo arriba / en una tarjeta para ver su checklist.</p>' +
+      renderFiltersSection('', { showPuestoFilter: true }) +
+      '<div class="agenda-puesto-grid">' + (rows || '<p class="agenda-task-list__empty">No hay puestos con ese filtro.</p>') + '</div>';
     syncFilterControls();
   }
 
@@ -251,6 +274,8 @@
     if (!puesto) return;
     var data = S().getState();
     var dayKey = state.dayKey || C().todayKey();
+    var isAdmin = C().canManageAll(state.user);
+    var editing = isAdmin && state.editMode;
     var tasks = filterTasks(C().tasksForDay(data.state, dayKey, state.puestoId));
     var stats = C().statsForPuesto(data.state, dayKey, state.puestoId);
 
@@ -258,6 +283,24 @@
       var t = row.template;
       var p = row.progress;
       var freqKey = String(t.frecuencia || '').toLowerCase().replace('_', '_');
+      if (editing) {
+        return '<article class="agenda-task agenda-task--edit" data-task-id="' + esc(t.id) + '">' +
+          '<div class="agenda-edit-grid">' +
+          '<label><span>#</span><input type="number" min="1" class="agenda-edit-num" data-field="numero" value="' + esc(t.numero || 1) + '"></label>' +
+          '<label><span>Frecuencia</span><select class="agenda-edit-freq" data-field="frecuencia">' +
+          '<option value="DIARIA"' + (t.frecuencia === 'DIARIA' ? ' selected' : '') + '>Diaria</option>' +
+          '<option value="INTER_DIARIA"' + (t.frecuencia === 'INTER_DIARIA' ? ' selected' : '') + '>Inter-diaria</option>' +
+          '<option value="SEMANAL"' + (t.frecuencia === 'SEMANAL' ? ' selected' : '') + '>Semanal</option>' +
+          '</select></label>' +
+          '<label><span>Min</span><input type="number" min="0" class="agenda-edit-min" data-field="minutos" value="' + esc(t.minutos || 0) + '"></label>' +
+          '</div>' +
+          '<label class="agenda-edit-actividad"><span>Actividad</span>' +
+          '<textarea data-field="actividad" rows="2">' + esc(t.actividad) + '</textarea></label>' +
+          '<div class="agenda-task__foot">' +
+          '<button type="button" class="agenda-btn agenda-btn--primary" data-agenda-edit="save" data-task-id="' + esc(t.id) + '">Guardar</button>' +
+          '<button type="button" class="agenda-btn agenda-btn--ghost" data-agenda-edit="delete" data-task-id="' + esc(t.id) + '">Eliminar</button>' +
+          '</div></article>';
+      }
       return '<article class="agenda-task ' + statusClass(p.estado) + '" data-task-id="' + esc(t.id) + '">' +
         '<div class="agenda-task__head">' +
         '<span class="agenda-task__num">' + esc(t.numero || '·') + '</span>' +
@@ -274,19 +317,28 @@
         '</div></article>';
     }).join('');
 
-    var showBack = C().canManageAll(state.user);
+    var showBack = isAdmin;
     host.innerHTML =
       '<header class="agenda-topbar">' +
       '<div>' + (showBack ? '<button type="button" class="agenda-back" data-agenda-action="back">← Todos los puestos</button>' : '') +
-      '<p class="agenda-eyebrow">Mi agenda</p>' +
+      '<p class="agenda-eyebrow">' + (editing ? 'Edición de actividades' : 'Checklist del puesto') + '</p>' +
       '<h1>' + esc(puesto.label) + '</h1><p class="agenda-sub">' + esc(C().formatDateDisplay(dayKey)) + '</p></div>' +
       '<div class="agenda-topbar__actions">' +
+      (isAdmin
+        ? '<button type="button" class="agenda-btn ' + (editing ? 'agenda-btn--primary' : 'agenda-btn--ghost') +
+          '" data-agenda-action="toggle-edit">' + (editing ? '✓ Terminar edición' : '✎ Editar actividades') + '</button>'
+        : '') +
       '<button type="button" class="agenda-btn agenda-btn--ghost" data-agenda-action="refresh">↻ Actualizar</button>' +
       '<button type="button" class="agenda-btn agenda-btn--ghost" data-agenda-action="logout">Salir</button>' +
       '</div></header>' +
-      renderHeroStats(stats) +
-      '<p class="agenda-help">Toque el botón de estado en cada tarea para marcar el avance. Puede añadir un comentario si lo necesita.</p>' +
-      renderFiltersSection('agenda-filters--detail') +
+      (editing ? '' : renderHeroStats(stats)) +
+      '<p class="agenda-help">' + (editing
+        ? 'Como admin puede cambiar el texto, frecuencia y minutos. Guarde cada actividad. Los cambios quedan en este navegador (y en la nube si Supabase está activo).'
+        : 'Toque el estado de cada tarea para marcar avance. Use filtros si necesita.') + '</p>' +
+      (editing ? '' : renderFiltersSection('agenda-filters--detail')) +
+      (editing
+        ? '<div class="agenda-edit-toolbar"><button type="button" class="agenda-btn agenda-btn--primary" data-agenda-edit="add">+ Agregar actividad</button></div>'
+        : '') +
       '<div class="agenda-task-list">' + (rows || emptyTasksMessage(data)) + '</div>';
     syncFilterControls();
   }
@@ -351,10 +403,100 @@
   }
 
   function handleAction(action) {
-    if (action === 'back') { state.view = 'dashboard'; render(); return; }
+    if (action === 'back') {
+      state.view = 'dashboard';
+      state.editMode = false;
+      render();
+      return;
+    }
     if (action === 'logout') { logout(); return; }
     if (action === 'refresh') {
       S().pullFresh().then(function () { render(); toast('Agenda actualizada.', 'ok'); });
+      return;
+    }
+    if (action === 'toggle-edit') {
+      if (!C().canManageAll(state.user)) {
+        toast('Solo admin / agenda.all puede editar actividades.', 'err');
+        return;
+      }
+      state.editMode = !state.editMode;
+      render();
+      return;
+    }
+    if (action === 'hint-edit') {
+      toast('Abra un puesto (arriba o en una tarjeta) y pulse «Editar actividades».', 'ok');
+    }
+  }
+
+  function readEditFields(article) {
+    if (!article) return null;
+    var act = article.querySelector('[data-field="actividad"]');
+    var freq = article.querySelector('[data-field="frecuencia"]');
+    var min = article.querySelector('[data-field="minutos"]');
+    var num = article.querySelector('[data-field="numero"]');
+    return {
+      actividad: act ? String(act.value || '').trim() : '',
+      frecuencia: freq ? freq.value : 'DIARIA',
+      minutos: min ? Number(min.value) || 0 : 0,
+      numero: num ? Number(num.value) || 1 : 1
+    };
+  }
+
+  function handleEditAction(action, taskId, article) {
+    if (!C().canManageAll(state.user)) {
+      toast('Sin permiso para editar.', 'err');
+      return;
+    }
+    if (action === 'add') {
+      var nextNum = 1;
+      var existing = (S().getState().state.templates || []).filter(function (t) {
+        return t.puesto === state.puestoId;
+      });
+      existing.forEach(function (t) {
+        if ((t.numero || 0) >= nextNum) nextNum = (t.numero || 0) + 1;
+      });
+      var id = state.puestoId + '-' + Date.now().toString(36);
+      S().upsertTemplate({
+        id: id,
+        puesto: state.puestoId,
+        numero: nextNum,
+        frecuencia: 'DIARIA',
+        actividad: 'Nueva actividad',
+        minutos: 15
+      }, state.user).then(function (res) {
+        if (!res.ok) toast(res.msg || 'No se pudo agregar', 'err');
+        else toast('Actividad agregada. Edítela y guarde.', 'ok');
+        render();
+      });
+      return;
+    }
+    if (action === 'delete') {
+      if (!global.confirm('¿Eliminar esta actividad del puesto?')) return;
+      S().removeTemplate(taskId, state.user).then(function (res) {
+        if (!res.ok) toast(res.msg || 'No se pudo eliminar', 'err');
+        else toast('Actividad eliminada.', 'ok');
+        render();
+      });
+      return;
+    }
+    if (action === 'save') {
+      var fields = readEditFields(article);
+      if (!fields || !fields.actividad) {
+        toast('Escriba el texto de la actividad.', 'err');
+        return;
+      }
+      S().upsertTemplate({
+        id: taskId,
+        puesto: state.puestoId,
+        numero: fields.numero,
+        frecuencia: fields.frecuencia,
+        actividad: fields.actividad,
+        minutos: fields.minutos
+      }, state.user).then(function (res) {
+        if (!res.ok) toast(res.msg || 'No se pudo guardar', 'err');
+        else toast(res.local ? 'Guardado en este equipo (modo local).' : 'Actividad guardada.', 'ok');
+        render();
+      });
     }
   }
 
@@ -365,11 +507,26 @@
 
     root.addEventListener('click', function (ev) {
       var puestoBtn = ev.target.closest('[data-agenda-puesto]');
-      if (puestoBtn) { openPuesto(puestoBtn.getAttribute('data-agenda-puesto')); return; }
+      if (puestoBtn) {
+        state.puestoFilter = puestoBtn.getAttribute('data-agenda-puesto') || 'ALL';
+        openPuesto(state.puestoFilter);
+        return;
+      }
       var navBtn = ev.target.closest('[data-agenda-nav]');
-      if (navBtn) { openPuesto(navBtn.getAttribute('data-agenda-nav')); return; }
+      if (navBtn) {
+        state.puestoFilter = navBtn.getAttribute('data-agenda-nav') || 'ALL';
+        openPuesto(state.puestoFilter);
+        return;
+      }
+      var editBtn = ev.target.closest('[data-agenda-edit]');
+      if (editBtn) {
+        var art = editBtn.closest('.agenda-task');
+        handleEditAction(editBtn.getAttribute('data-agenda-edit'), editBtn.getAttribute('data-task-id'), art);
+        return;
+      }
       var statusBtn = ev.target.closest('[data-agenda-status]');
       if (statusBtn) {
+        if (state.editMode) return;
         var taskId = statusBtn.getAttribute('data-task-id');
         var next = C().nextEstado(statusBtn.getAttribute('data-agenda-status'));
         S().updateTask(state.dayKey, state.puestoId, taskId, { estado: next }, state.user).then(function (res) {
@@ -391,11 +548,21 @@
         state.statusFilter = ev.target.value;
         render();
       }
+      if (ev.target.id === 'agendaFilterPuesto') {
+        state.puestoFilter = ev.target.value || 'ALL';
+        if (state.puestoFilter !== 'ALL') {
+          openPuesto(state.puestoFilter);
+        } else {
+          state.view = 'dashboard';
+          state.editMode = false;
+          render();
+        }
+      }
     });
 
     root.addEventListener('blur', function (ev) {
       var input = ev.target.closest('.agenda-comment');
-      if (!input || !state.puestoId) return;
+      if (!input || !state.puestoId || state.editMode) return;
       var taskId = input.getAttribute('data-task-id');
       S().updateTask(state.dayKey, state.puestoId, taskId, { comentarios: input.value }, state.user);
     }, true);

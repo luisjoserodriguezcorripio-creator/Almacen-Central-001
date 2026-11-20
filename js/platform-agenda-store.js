@@ -1,11 +1,12 @@
 /**
- * Agenda operativa — store en memoria + suscripción
+ * Agenda operativa — store en memoria + localStorage + sync
  */
 (function (global) {
   'use strict';
 
   var C = function () { return global.PlatformAgendaCore; };
   var Sync = function () { return global.PlatformAgendaSync; };
+  var LS_KEY = 'almacen_agenda_state_v1';
   var shared = { state: null, live: false, error: '' };
   var listeners = [];
   var initPromise = null;
@@ -24,33 +25,88 @@
     };
   }
 
-  function applyRemote(data) {
-    var sync = Sync();
-    var normalized = C().normalizeState(data);
-    if ((!normalized.templates || !normalized.templates.length) &&
-        sync && typeof sync.mergeSeedIfEmpty === 'function') {
-      // Defensa: si llega vacío, el sync ya debió mergear; no borrar checklist.
-      shared.state = normalized;
-    } else {
-      shared.state = normalized;
+  function readLocal() {
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      if (!raw) return null;
+      return C().normalizeState(JSON.parse(raw));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function writeLocal(state) {
+    try {
+      var payload = C().normalizeState(state);
+      localStorage.setItem(LS_KEY, JSON.stringify(payload));
+    } catch (e) { /* noop */ }
+  }
+
+  function preferRicher(a, b) {
+    var na = a && a.templates ? a.templates.length : 0;
+    var nb = b && b.templates ? b.templates.length : 0;
+    if (na && !nb) return a;
+    if (nb && !na) return b;
+    if (!a) return b;
+    if (!b) return a;
+    var ta = Date.parse(a.updatedAt) || 0;
+    var tb = Date.parse(b.updatedAt) || 0;
+    // Preferir el que tenga más plantillas; si empatan, el más reciente
+    if (nb > na) return b;
+    if (na > nb) return a;
+    return tb >= ta ? b : a;
+  }
+
+  function applyRemote(data, opts) {
+    opts = opts || {};
+    var incoming = C().normalizeState(data);
+    var local = readLocal();
+    var next = preferRicher(incoming, local);
+    if ((!next.templates || !next.templates.length) && local && local.templates && local.templates.length) {
+      next = local;
+    }
+    shared.state = next;
+    if (!opts.skipPersist && next.templates && next.templates.length) {
+      writeLocal(next);
     }
     shared.error = '';
     notify();
   }
 
+  function persistAndMaybePush(state) {
+    var next = C().normalizeState(state);
+    next.updatedAt = new Date().toISOString();
+    shared.state = next;
+    writeLocal(next);
+    notify();
+    var sync = Sync();
+    if (!sync || !sync.pushState) return Promise.resolve({ ok: true, local: true });
+    return sync.pushState(next).then(function () {
+      shared.live = !!sync.isLive();
+      notify();
+      return { ok: true };
+    }).catch(function () {
+      shared.live = false;
+      shared.error = 'Guardado local. Nube no disponible.';
+      notify();
+      return { ok: true, local: true };
+    });
+  }
+
   function init() {
     if (initPromise) return initPromise;
-    shared.state = C().normalizeState(null);
+    var cached = readLocal();
+    shared.state = cached || C().normalizeState(null);
     shared.live = false;
     shared.error = '';
     notify();
 
     var sync = Sync();
     if (!sync) {
-      shared.error = 'No se pudo cargar la conexión.';
       return C().loadSeedTemplates().then(function (seed) {
-        shared.state = C().normalizeState({ templates: seed, daily: {} });
-        shared.live = false;
+        if (!shared.state.templates || !shared.state.templates.length) {
+          applyRemote({ templates: seed, daily: (shared.state && shared.state.daily) || {} });
+        }
         shared.error = 'Modo local — plantillas cargadas.';
         notify();
         return shared;
@@ -61,16 +117,14 @@
       shared.live = !!(res && res.ok && !res.degraded && !res.local);
       if (res && res.data) {
         applyRemote(res.data);
-      } else {
+      } else if (!shared.state.templates || !shared.state.templates.length) {
         return C().loadSeedTemplates().then(function (seed) {
           applyRemote({ templates: seed, daily: {} });
           return shared;
         });
       }
-      if (res && res.degraded) {
-        shared.error = 'Modo local — checklist activo sin nube.';
-      } else if (res && res.local) {
-        shared.error = 'Modo local — Supabase no configurado.';
+      if (res && (res.degraded || res.local)) {
+        shared.error = 'Modo local — checklist activo.';
       } else {
         shared.error = '';
       }
@@ -86,9 +140,11 @@
       return shared;
     }).catch(function () {
       return C().loadSeedTemplates().then(function (seed) {
-        applyRemote({ templates: seed, daily: {} });
+        if (!shared.state.templates || !shared.state.templates.length) {
+          applyRemote({ templates: seed, daily: {} });
+        }
         shared.live = false;
-        shared.error = 'Modo local — no se pudo conectar.';
+        shared.error = 'Modo local.';
         notify();
         return shared;
       });
@@ -103,21 +159,27 @@
 
   function updateTask(dayKey, puestoId, taskId, patch, user) {
     var sync = Sync();
-    if (!sync) return Promise.resolve({ ok: false, msg: shared.error || 'Sin sync' });
     var name = user && (user.name || user.username);
-    return sync.updateTaskProgress(dayKey, puestoId, taskId, patch, name).then(function (rec) {
-      // En modo local el sync ya notificó; en nube re-pull con seed merge.
-      return pullFresh().then(function () {
+    if (sync && sync.updateTaskProgress) {
+      return sync.updateTaskProgress(dayKey, puestoId, taskId, patch, name).then(function (rec) {
+        // Mantener copia local también
+        var st = C().normalizeState(shared.state);
+        var tasks = C().ensurePuestoBucket(st, dayKey, puestoId);
+        tasks[taskId] = rec;
+        writeLocal(st);
+        shared.state = st;
+        notify();
         return { ok: true, progress: rec };
+      }).catch(function (err) {
+        return { ok: false, msg: (err && err.message) || 'No se pudo guardar.' };
       });
-    }).catch(function (err) {
-      return { ok: false, msg: (err && err.message) || 'No se pudo guardar.' };
-    });
+    }
+    return Promise.resolve({ ok: false, msg: 'Sin sync' });
   }
 
   function pullFresh() {
     var sync = Sync();
-    if (!sync) return Promise.resolve(shared);
+    if (!sync || !sync.pullState) return Promise.resolve(shared);
     return sync.pullState().then(function (data) {
       applyRemote(data);
       shared.live = !!sync.isLive();
@@ -126,11 +188,42 @@
     }).catch(function () { return shared; });
   }
 
+  function saveTemplates(templates, user) {
+    var st = C().normalizeState(shared.state);
+    st.templates = (templates || []).map(C().normalizeTemplate).filter(Boolean);
+    st.updatedAt = new Date().toISOString();
+    st.updatedBy = user && (user.name || user.username) || '';
+    return persistAndMaybePush(st).then(function (res) {
+      return { ok: true, local: !!(res && res.local), count: st.templates.length };
+    });
+  }
+
+  function upsertTemplate(template, user) {
+    var st = C().normalizeState(shared.state);
+    var t = C().normalizeTemplate(template);
+    if (!t) return Promise.resolve({ ok: false, msg: 'Actividad inválida' });
+    var list = st.templates.slice();
+    var idx = -1;
+    list.forEach(function (x, i) { if (x.id === t.id) idx = i; });
+    if (idx >= 0) list[idx] = t;
+    else list.push(t);
+    return saveTemplates(list, user);
+  }
+
+  function removeTemplate(taskId, user) {
+    var st = C().normalizeState(shared.state);
+    var list = st.templates.filter(function (t) { return t.id !== taskId; });
+    return saveTemplates(list, user);
+  }
+
   global.PlatformAgendaStore = {
     init: init,
     subscribe: subscribe,
     getState: getState,
     updateTask: updateTask,
-    pullFresh: pullFresh
+    pullFresh: pullFresh,
+    saveTemplates: saveTemplates,
+    upsertTemplate: upsertTemplate,
+    removeTemplate: removeTemplate
   };
 })(typeof window !== 'undefined' ? window : this);

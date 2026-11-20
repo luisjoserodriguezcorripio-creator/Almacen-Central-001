@@ -5,7 +5,13 @@
   'use strict';
 
   var TZ = 'America/Santo_Domingo';
-  var SEED_URL = 'data/agenda-seed.json';
+  var SEED_URL = (function () {
+    try {
+      var h = global.location && global.location.hostname || '';
+      if (h.indexOf('github.io') >= 0) return '/Almacen-Central-001/data/agenda-seed.json';
+    } catch (e) { /* noop */ }
+    return 'data/agenda-seed.json';
+  })();
 
   var ESTADO_PENDIENTE = 'PENDIENTE';
   var ESTADO_EN_PROCESO = 'EN_PROCESO';

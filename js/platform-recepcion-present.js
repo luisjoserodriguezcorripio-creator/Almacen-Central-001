@@ -117,20 +117,26 @@
 
   function applyPreset(mode) {
     var today = todayYmd();
-    if (mode === 'today') setDateRange(today, today);
-    else if (mode === 'week') setDateRange(startOfWeekYmd(today), today);
+    if (mode === 'today' || mode === 'hoy') setDateRange(today, today);
+    else if (mode === 'yesterday' || mode === 'ayer') {
+      var ayer = addDaysYmd(today, -1);
+      setDateRange(ayer, ayer);
+    }
+    else if (mode === 'week' || mode === 'semana') setDateRange(startOfWeekYmd(today), today);
     else if (mode === '7d') setDateRange(addDaysYmd(today, -6), today);
-    else if (mode === 'month') setDateRange(startOfMonthYmd(today), today);
-    else if (mode === 'all') setDateRange('', '');
+    else if (mode === 'month' || mode === 'mes') setDateRange(startOfMonthYmd(today), today);
+    else if (mode === 'all' || mode === 'todas') setDateRange('', '');
   }
 
   function activePreset(r) {
     var today = todayYmd();
-    if (!r.desde && !r.hasta) return 'all';
-    if (r.desde === today && r.hasta === today) return 'today';
-    if (r.desde === startOfWeekYmd(today) && r.hasta === today) return 'week';
+    var ayer = addDaysYmd(today, -1);
+    if (!r.desde && !r.hasta) return 'todas';
+    if (r.desde === today && r.hasta === today) return 'hoy';
+    if (r.desde === ayer && r.hasta === ayer) return 'ayer';
+    if (r.desde === startOfWeekYmd(today) && r.hasta === today) return 'semana';
     if (r.desde === addDaysYmd(today, -6) && r.hasta === today) return '7d';
-    if (r.desde === startOfMonthYmd(today) && r.hasta === today) return 'month';
+    if (r.desde === startOfMonthYmd(today) && r.hasta === today) return 'mes';
     return '';
   }
 
@@ -252,9 +258,9 @@
       '<span class="rec-tv-prod-num">' + item.n + '</span></div>';
   }
 
-  function renderProdCard(label, rows, roleCls, fillCls) {
+  function renderProdCard(label, rows, roleCls, fillCls, totalOverride) {
     rows = (rows || []).slice();
-    var total = sumN(rows);
+    var total = totalOverride != null ? Number(totalOverride) || 0 : sumN(rows);
     var top = rows.length ? rows[0] : null;
     var body;
     if (!rows.length) {
@@ -277,8 +283,9 @@
 
   function renderProductivityBoard(chart) {
     chart = chart || {};
+    var descTotal = chart.contDescargados != null ? chart.contDescargados : sumN(chart.operadores);
     return '<section class="rec-tv-prod-board" aria-label="Productividad por rol">' +
-      renderProdCard('Contenedores Descargados', chart.operadores, 'rec-tv-prod-card--op', 'rec-tv-prod-fill--op') +
+      renderProdCard('Contenedores Descargados', chart.operadores, 'rec-tv-prod-card--op', 'rec-tv-prod-fill--op', descTotal) +
       renderProdCard('Contenedores Validados', chart.validadores, 'rec-tv-prod-card--val', 'rec-tv-prod-fill--val') +
       renderProdCard('Contenedores Ubicados', chart.ubicadores, 'rec-tv-prod-card--ubi', 'rec-tv-prod-fill--ubi') +
       renderProdCard('Remisiones completadas', chart.digitadores, 'rec-tv-prod-card--dig', 'rec-tv-prod-fill--dig') +
@@ -306,11 +313,12 @@
       'value="' + esc(r.hasta || '') + '" aria-label="Fecha hasta"></label>' +
       '</div>' +
       '<div class="rec-present-date-presets">' +
-      btn('today', 'Hoy') +
-      btn('week', 'Esta semana') +
-      btn('7d', 'Últimos 7 días') +
-      btn('month', 'Este mes') +
-      btn('all', 'Todas') +
+      btn('hoy', 'Hoy') +
+      btn('ayer', 'Ayer') +
+      btn('semana', 'Semana') +
+      btn('7d', '7 días') +
+      btn('mes', 'Mes') +
+      btn('todas', 'Todas') +
       '</div>' +
       '<p class="rec-present-date-hint">' + esc(rangeHint(r)) + '</p>' +
       '</div>';

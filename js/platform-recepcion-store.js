@@ -709,15 +709,17 @@
       validado: 0,
       conEntrada: 0,
       conUbicado: 0,
-      pendienteUbicar: 0
+      pendienteUbicar: 0,
+      contDescargados: 0
     };
     list.forEach(function (c) {
       if (c.tipo === 'local') out.local += 1;
       else out.importado += 1;
       out.paletas += Number(c.paletas) || 0;
+      if (c.descargado === 'ok') out.contDescargados += 1;
+      else if (c.descargado && c.descargado !== 'ok') out.pendienteDescargar += 1;
       if (c.validado !== 'ok') out.pendienteValidar += 1;
       else out.validado += 1;
-      if (c.descargado && c.descargado !== 'ok') out.pendienteDescargar += 1;
       if (c.entrada !== 'ok') out.pendienteRemision += 1;
       if (c.entrada === 'ok') out.conEntrada += 1;
       if (c.ubicado === 'ok') out.conUbicado += 1;
@@ -745,8 +747,11 @@
       var v = r.values || [];
       out.paletas += parseInt(v[22], 10) || 0;
       if (!isOkStatus(v[12])) out.pendienteValidar += 1;
-      if (isOkStatus(v[11])) out.contDescargados += 1;
-      else out.pendienteDescargar += 1;
+      // Misma regla que la TV: descarga OK (o vacía legacy) + operador asignado.
+      var op = String(v[17] || '').trim();
+      var descOk = isOkStatus(v[11]) || !String(v[11] || '').trim();
+      if (descOk && op) out.contDescargados += 1;
+      else if (!isOkStatus(v[11])) out.pendienteDescargar += 1;
       if (!isOkStatus(v[13])) out.pendienteUbicar += 1;
       if (!isOkStatus(v[14])) out.pendienteRemision += 1;
     });
@@ -802,15 +807,23 @@
   }
 
   function resumenEquipoTv(contenedores) {
+    var list = contenedores || [];
+    // Solo descargados con operador cuentan en productividad (alineado al KPI Contenedores).
+    var descargados = list.filter(function (c) {
+      if (c.descargado && c.descargado !== 'ok') return false;
+      var op = String(c.operadorDescarga || '').trim();
+      return !!op && op !== '—';
+    });
     return {
-      operadores: tallyCampo(contenedores, 'operadorDescarga'),
-      validadores: tallyCampo(contenedores, 'validadorPor', function (c) {
+      operadores: tallyCampo(descargados, 'operadorDescarga'),
+      contDescargados: descargados.length,
+      validadores: tallyCampo(list, 'validadorPor', function (c) {
         return c.validado === 'ok';
       }),
-      ubicadores: tallyCampo(contenedores, 'ubicadorPor', function (c) {
+      ubicadores: tallyCampo(list, 'ubicadorPor', function (c) {
         return c.ubicado === 'ok';
       }),
-      digitadores: tallyCampo(contenedores, 'entradaPor', function (c) {
+      digitadores: tallyCampo(list, 'entradaPor', function (c) {
         return c.entrada === 'ok';
       })
     };

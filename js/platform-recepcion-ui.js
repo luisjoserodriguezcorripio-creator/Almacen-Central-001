@@ -138,6 +138,10 @@
     today = today || todayInputValue();
     var base = { estado: estado || '' };
     if (preset === 'hoy') return Object.assign({ desde: today, hasta: today, preset: 'hoy' }, base);
+    if (preset === 'ayer') {
+      var ayer = addDaysIso(today, -1);
+      return Object.assign({ desde: ayer, hasta: ayer, preset: 'ayer' }, base);
+    }
     if (preset === 'semana') {
       return Object.assign({ desde: startOfWeekIso(today), hasta: today, preset: 'semana' }, base);
     }
@@ -154,6 +158,7 @@
     filter = filter || loadFechaFilter();
     var presets = [
       { id: 'hoy', label: 'Hoy' },
+      { id: 'ayer', label: 'Ayer' },
       { id: 'semana', label: 'Semana' },
       { id: '7d', label: '7 días' },
       { id: 'mes', label: 'Mes' },
@@ -331,7 +336,9 @@
       '<div class="rbl-kpi" data-kpi="contenedores" style="order:2">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--blue">' +
       '<img class="rbl-kpi-icon-img rbl-kpi-icon-img--photo" src="assets/img/kpi-contenedor-rastra.webp?v=2" alt="" width="48" height="48"></div>' +
-      '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(counts.total || 0)) + '</span>' +
+      '<div class="rbl-kpi-text"><span class="rbl-kpi-num">' + esc(formatQty(
+        counts.contDescargados != null ? counts.contDescargados : (counts.total || 0)
+      )) + '</span>' +
       '<span class="rbl-kpi-lbl">Contenedores</span></div></div>' +
       '<div class="' + kpiCls('validar') + '" data-kpi="validar" data-rec-kpi-estado="validar" style="order:3">' +
       '<div class="rbl-kpi-icon rbl-kpi-icon--navy">' +

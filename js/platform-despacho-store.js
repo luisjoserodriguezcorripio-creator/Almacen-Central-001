@@ -346,7 +346,18 @@
       if (migrated) persistData(data, { silent: true });
       return data;
     } catch (e) {
-      return emptyPayload();
+      console.warn('[DespachoStore] load error — conservando datos crudos', e);
+      try {
+        var rawFail = localStorage.getItem(STORAGE_KEY);
+        if (!rawFail) return emptyPayload();
+        var fallback = JSON.parse(rawFail);
+        if (!fallback) return emptyPayload();
+        fallback.module = 'despacho';
+        fallback.pedidos = asList(fallback.pedidos);
+        return fallback;
+      } catch (e2) {
+        return emptyPayload();
+      }
     }
   }
 

@@ -125,37 +125,40 @@
   }
 
   function persistMergedQuiet(merged, source) {
-    if (!global.localStorage || !merged) return;
+    if (!global.localStorage || !merged) return merged;
+    // Crítico: re-leer local ANTES de escribir. Si Pichardo registró durante el await
+    // de red, el snapshot capturado al inicio del push ya está viejo y borraría el pedido.
+    var cur = getLocalData();
+    if (cur) merged = mergeDespacho(cur, merged);
+    merged.pedidos = asPedidoList(merged.pedidos).map(function (p) {
+      if (!p) return p;
+      p.historial = asPedidoList(p.historial);
+      return p;
+    });
     var sig = dataSignature(merged);
-    if (sig === lastAppliedSig) return;
+    if (sig === lastAppliedSig) return merged;
     applyingRemote = true;
     try {
-      merged.pedidos = asPedidoList(merged.pedidos).map(function (p) {
-        if (!p) return p;
-        p.historial = asPedidoList(p.historial);
-        return p;
-      });
       localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
     } finally {
       applyingRemote = false;
     }
     lastAppliedSig = sig;
     notifyApplied(merged, source || 'push-merge');
-    pendingPush = true;
-    global.setTimeout(function () { drainPushQueue(); }, 100);
+    return merged;
   }
 
   function prepareDataForPush(data) {
     if (!isSupabasePrimary()) return Promise.resolve(data);
-    var base = Object.assign({}, data, { module: 'despacho' });
     return pullFromSupabase().then(function (remote) {
-      var merged = mergeDespacho(base, remote);
+      var fresh = getLocalData() || data;
+      var merged = mergeDespacho(Object.assign({}, fresh || {}, { module: 'despacho' }), remote);
       merged.updatedAt = nowIso();
-      persistMergedQuiet(merged, 'push-merge');
-      return merged;
+      return persistMergedQuiet(merged, 'push-merge') || merged;
     }).catch(function () {
-      base.updatedAt = nowIso();
-      return base;
+      var fresh = getLocalData() || data || {};
+      fresh = Object.assign({}, fresh, { module: 'despacho', updatedAt: nowIso() });
+      return fresh;
     });
   }
 
@@ -405,10 +408,11 @@
       seen[key] = true;
       out.push(h);
     });
+    // Más reciente primero — igual que pushHistorial (unshift) en el store
     out.sort(function (x, y) {
-      return String(x.at || '').localeCompare(String(y.at || ''));
+      return String(y.at || '').localeCompare(String(x.at || ''));
     });
-    return out;
+    return out.slice(0, 50);
   }
 
   function mergePedidoPair(a, b) {
@@ -418,9 +422,12 @@
     var older = newer === b ? a : b;
     var out = Object.assign({}, older, newer);
     out.historial = mergeHistorial(a.historial, b.historial);
-    out.cargasEquipo = asPedidoList(newer.cargasEquipo && newer.cargasEquipo.length
-      ? newer.cargasEquipo
-      : (older.cargasEquipo || newer.cargasEquipo));
+    // Array vacío es intencional (quitaron validadores); no resucitar el older
+    if (newer.cargasEquipo != null) {
+      out.cargasEquipo = asPedidoList(newer.cargasEquipo);
+    } else {
+      out.cargasEquipo = asPedidoList(older.cargasEquipo);
+    }
     return out;
   }
 
@@ -497,19 +504,20 @@
   }
 
   function prepareFirebasePayload(local) {
-    var base = Object.assign({}, local || {}, { module: 'despacho' });
     return pullFirebaseInitial().then(function (remote) {
+      // Re-leer DESPUÉS del await: el `local` del inicio del push puede estar viejo
+      var fresh = getLocalData() || local;
+      var base = Object.assign({}, fresh || {}, { module: 'despacho' });
       var merged = mergeDespacho(base, remote);
       merged.updatedAt = nowIso();
       if (remote && asPedidoList(remote.pedidos).length > asPedidoList(merged.pedidos).length) {
         merged = mergeDespacho(remote, base);
         merged.updatedAt = nowIso();
       }
-      persistMergedQuiet(merged, 'firebase-merge');
-      return merged;
+      return persistMergedQuiet(merged, 'firebase-merge') || merged;
     }).catch(function () {
-      base.updatedAt = nowIso();
-      return base;
+      var fresh = getLocalData() || local || {};
+      return Object.assign({}, fresh, { module: 'despacho', updatedAt: nowIso() });
     });
   }
 
@@ -1001,17 +1009,10 @@
     }
 
     return pullFromJsonBin().then(function (remote) {
-      var payload = mergeDespacho(local, remote);
-      if (payload) {
-        applyingRemote = true;
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-        } finally {
-          applyingRemote = false;
-        }
-        lastAppliedSig = dataSignature(payload);
-      }
-      return attempt(0, payload || local);
+      var fresh = getLocalData() || local;
+      var payload = mergeDespacho(fresh, remote);
+      payload = persistMergedQuiet(payload, 'fallback-merge') || payload || fresh;
+      return attempt(0, payload);
     });
   }
 

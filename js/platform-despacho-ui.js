@@ -16,6 +16,8 @@
   var lastEstadoEditAt = 0;
   var syncRefreshTimer = null;
   var formBusyUntil = 0;
+  var prepDraft = null;
+  var shareDraft = null;
   var knownValidatorIds = Object.create(null);
   var voiceAlertsReady = false;
 
@@ -94,15 +96,48 @@
     WL.setHeld('desp-barcode-share', DS.isLiveShareActive());
   }
 
+  function rememberPrepDraft(host) {
+    var snap = capturePrepForm(host);
+    if (!snap) return prepDraft;
+    prepDraft = {
+      idc: snap.idc || (prepDraft && prepDraft.idc) || '',
+      jaula: snap.jaula || (prepDraft && prepDraft.jaula) || '',
+      cliente: snap.cliente || (prepDraft && prepDraft.cliente) || '',
+      validadorAsignado: snap.validadorAsignado || (prepDraft && prepDraft.validadorAsignado) || '',
+      estado: snap.estado || (prepDraft && prepDraft.estado) || ''
+    };
+    return prepDraft;
+  }
+
+  function rememberShareDraft(host) {
+    var snap = captureShareForm(host);
+    if (!snap) return shareDraft;
+    shareDraft = {
+      idc: snap.idc || (shareDraft && shareDraft.idc) || '',
+      jaula: snap.jaula || (shareDraft && shareDraft.jaula) || '',
+      estado: snap.estado || (shareDraft && shareDraft.estado) || 'facturado'
+    };
+    return shareDraft;
+  }
+
+  function clearPrepDraft() {
+    prepDraft = null;
+  }
+
   function applyRemoteSyncRefresh(host, fresh, screen, opts) {
     // Nunca destruir el DOM del formulario mientras pegan/escriben (Ctrl+V en IDC)
     if (isFormBusy(host)) {
+      rememberPrepDraft(host);
+      rememberShareDraft(host);
       pendingSyncFresh = fresh || (DS && DS.load ? DS.load() : pendingSyncFresh);
       scheduleBusySyncRetry(host, screen, opts);
       return;
     }
-    var formSnap = screen === 'barcode' ? captureShareForm(host)
-      : (screen === 'registro' ? capturePrepForm(host) : null);
+    rememberPrepDraft(host);
+    rememberShareDraft(host);
+    var formSnap = screen === 'barcode'
+      ? (rememberShareDraft(host) || captureShareForm(host))
+      : (screen === 'registro' ? (rememberPrepDraft(host) || capturePrepForm(host)) : null);
     var focusSnap = captureFocusSnap(host);
     var searchEl = host.querySelector('#despSearch');
     var filtEl = host.querySelector('#despFilterEstado');
@@ -114,10 +149,10 @@
       filterFecha: fechaEl ? fechaEl.value : ((opts && opts.filterFecha) || '')
     }));
     if (screen === 'barcode') {
-      restoreShareForm(host, formSnap);
+      restoreShareForm(host, shareDraft || formSnap);
       applyRemoteLiveShareToForm(host, fresh);
     } else if (screen === 'registro') {
-      restorePrepForm(host, formSnap);
+      restorePrepForm(host, prepDraft || formSnap);
     }
     restoreFocusSnap(host, focusSnap);
     if (screen === 'barcode') updateShareScreenUi(host, fresh);
@@ -151,20 +186,36 @@
     host.querySelectorAll('input, textarea, select').forEach(function (el) {
       if (el.__despTypingSafeBound) return;
       el.__despTypingSafeBound = true;
-      function onBusy() { markFormBusy(1800); }
+      function onBusy() {
+        markFormBusy(1800);
+        rememberPrepDraft(host);
+        rememberShareDraft(host);
+      }
       el.addEventListener('keydown', onBusy);
       el.addEventListener('input', onBusy);
+      el.addEventListener('change', onBusy);
       el.addEventListener('paste', function () {
-        // Cubrir Ctrl+V: el value aún no está cuando llega keydown
-        markFormBusy(2200);
+        markFormBusy(2500);
+        global.setTimeout(function () {
+          rememberPrepDraft(host);
+          rememberShareDraft(host);
+        }, 0);
       });
       el.addEventListener('compositionstart', onBusy);
-      el.addEventListener('focus', function () { markFormBusy(600); });
+      el.addEventListener('focus', function () { markFormBusy(800); });
       el.addEventListener('blur', function () {
+        rememberPrepDraft(host);
+        rememberShareDraft(host);
+        // No re-render al pasar al siguiente campo: solo aplazar sync de listas
         global.setTimeout(function () {
           if (isFormBusy(host)) return;
+          // Si el foco sigue en el módulo, no destruir el formulario
+          if (host.contains(global.document.activeElement)) {
+            pendingSyncFresh = DS && DS.load ? DS.load() : pendingSyncFresh;
+            return;
+          }
           flushPendingSync(host, screen, opts);
-        }, 120);
+        }, 180);
       });
     });
   }
@@ -184,7 +235,9 @@
     input.setAttribute('data-lpignore', 'true');
     input.setAttribute('data-form-type', 'other');
     input.setAttribute('data-1p-ignore', 'true');
-    input.readOnly = true;
+    // No usar readOnly: en Chrome el Tab salta el campo y el sync re-render
+    // destruía el IDC pegado al “pasar a la siguiente pestaña/campo”.
+    input.readOnly = false;
 
     function purgeJunk() {
       if (isAutofillJunk(input.value)) {
@@ -194,7 +247,6 @@
     }
 
     input.addEventListener('focus', function () {
-      input.readOnly = false;
       purgeJunk();
       setTimeout(purgeJunk, 80);
     });
@@ -236,6 +288,17 @@
       try {
         input.dispatchEvent(new Event('input', { bubbles: true }));
       } catch (e2) { /* noop */ }
+      var host = input.closest('#despModule') || input.closest('.desp-app');
+      if (host) {
+        rememberPrepDraft(host);
+        rememberShareDraft(host);
+      } else if (input.id === 'despIdc') {
+        prepDraft = prepDraft || { idc: '', jaula: '', cliente: '', validadorAsignado: '', estado: '' };
+        prepDraft.idc = cleaned || next;
+      } else if (input.id === 'despShareIdc') {
+        shareDraft = shareDraft || { idc: '', jaula: '', estado: 'facturado' };
+        shareDraft.idc = cleaned || next;
+      }
     });
   }
 
@@ -1055,17 +1118,17 @@
   }
 
   function restorePrepForm(host, snap) {
+    snap = snap || prepDraft;
     if (!snap || !host) return;
     var idc = host.querySelector('#despIdc');
     var jaula = host.querySelector('#despJaula');
     var cliente = host.querySelector('#despCliente');
     var validador = host.querySelector('#despValidador');
-    if (idc && global.document.activeElement !== idc) idc.value = snap.idc || '';
-    if (cliente && global.document.activeElement !== cliente) cliente.value = snap.cliente || '';
-    if (validador && global.document.activeElement !== validador) validador.value = snap.validadorAsignado || '';
-    if (jaula && global.document.activeElement !== jaula) {
-      jaula.value = snap.jaula || '';
-    }
+    // Siempre restaurar borrador tras re-render (el activeElement viejo ya no existe)
+    if (idc) idc.value = snap.idc || '';
+    if (cliente) cliente.value = snap.cliente || '';
+    if (validador) validador.value = snap.validadorAsignado || '';
+    if (jaula) jaula.value = snap.jaula || '';
     if (snap.estado) {
       var radio = host.querySelector('input[name="prepEstado"][value="' + snap.estado + '"]');
       if (radio) radio.checked = true;
@@ -1589,16 +1652,34 @@
       btn.addEventListener('click', function () {
         var next = btn.getAttribute('data-desp-screen');
         if (!next || next === normalizeScreen(opts.screen || 'registro')) return;
+        rememberPrepDraft(host);
+        rememberShareDraft(host);
+        // Si pega IDC en código de barras y pasa a Registro, llevar el IDC
+        if (normalizeScreen(next) === 'registro' && shareDraft && shareDraft.idc) {
+          prepDraft = prepDraft || { idc: '', jaula: '', cliente: '', validadorAsignado: '', estado: '' };
+          if (!prepDraft.idc) prepDraft.idc = shareDraft.idc;
+          if (!prepDraft.jaula && shareDraft.jaula) prepDraft.jaula = shareDraft.jaula;
+        }
+        if (normalizeScreen(next) === 'barcode' && prepDraft && prepDraft.idc) {
+          shareDraft = shareDraft || { idc: '', jaula: '', estado: 'facturado' };
+          if (!shareDraft.idc) shareDraft.idc = prepDraft.idc;
+          if (!shareDraft.jaula && prepDraft.jaula) shareDraft.jaula = prepDraft.jaula;
+        }
         if (opts.onScreenChange) opts.onScreenChange(next);
         render(host, DS.load(), Object.assign({}, opts, { screen: next }));
+        if (normalizeScreen(next) === 'registro') restorePrepForm(host, prepDraft);
+        if (normalizeScreen(next) === 'barcode') restoreShareForm(host, shareDraft);
       });
     });
 
     var form = host.querySelector('#despPrepForm');
     if (form) {
+      // Restaurar borrador si el sync/re-render dejó el form vacío
+      if (prepDraft) restorePrepForm(host, prepDraft);
       var btnUpdate = host.querySelector('#despBtnUpdateIdc');
       if (btnUpdate) {
         btnUpdate.addEventListener('click', function () {
+          rememberPrepDraft(host);
           var vals = getPrepFormValues(host);
           var res = DS.registrarPedido(vals.idc, vals.jaula, vals.estado, userName, vals.cliente, vals.validadorAsignado);
           if (!res.ok) {
@@ -1606,9 +1687,8 @@
             return;
           }
           toast(res.updated ? 'IDC actualizado — en seguimiento validador' : 'IDC registrado — en seguimiento validador', 'success');
-          var snap = capturePrepForm(host);
+          clearPrepDraft();
           render(host, res.data, opts);
-          restorePrepForm(host, snap);
         });
       }
     }

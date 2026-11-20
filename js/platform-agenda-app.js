@@ -325,14 +325,12 @@
     var saveBar = editing ? '' :
       '<div class="agenda-save-bar">' +
       (auditMeta.saved
-        ? '<p class="agenda-save-bar__status">Auditoría guardada' +
+        ? '<p class="agenda-save-bar__status">Último guardado' +
           (auditMeta.savedBy ? ' por ' + esc(auditMeta.savedBy) : '') +
           (auditMeta.savedAt ? ' · ' + esc(String(auditMeta.savedAt).replace('T', ' ').slice(0, 16)) : '') +
-          '</p>'
-        : '<p class="agenda-save-bar__status">Revise los estados y pulse Guardar para finalizar.</p>') +
-      '<button type="button" class="agenda-btn agenda-btn--primary agenda-btn--save" data-agenda-action="save-audit">' +
-      (auditMeta.saved ? '✓ Guardar de nuevo' : '💾 Guardar auditoría') +
-      '</button></div>';
+          '. Puede modificar y guardar otra vez.</p>'
+        : '<p class="agenda-save-bar__status">Revise los estados y pulse Guardar. Luego podrá volver a entrar y modificar.</p>') +
+      '<button type="button" class="agenda-btn agenda-btn--primary agenda-btn--save" data-agenda-action="save-audit">Guardar auditoría</button></div>';
     host.innerHTML =
       '<header class="agenda-topbar">' +
       '<div>' + (showBack ? '<button type="button" class="agenda-back" data-agenda-action="back">← Todos los puestos</button>' : '') +
@@ -346,15 +344,14 @@
           '" data-agenda-action="toggle-edit">' + (editing ? '✓ Terminar edición' : '✎ Editar actividades') + '</button>'
         : '') +
       (!editing
-        ? '<button type="button" class="agenda-btn agenda-btn--primary" data-agenda-action="save-audit">' +
-          (auditMeta.saved ? '✓ Guardada' : 'Guardar') + '</button>'
+        ? '<button type="button" class="agenda-btn agenda-btn--primary" data-agenda-action="save-audit">Guardar</button>'
         : '') +
       '<button type="button" class="agenda-btn agenda-btn--ghost" data-agenda-action="refresh">↻ Actualizar</button>' +
       '</div></header>' +
       (editing ? '' : renderHeroStats(stats)) +
       '<p class="agenda-help">' + (editing
         ? 'Solo administradores pueden cambiar el texto y minutos. Guarde cada actividad.'
-        : 'Marque el estado de cada actividad según el desempeño auditado en esta fecha. Al terminar, pulse Guardar.') + '</p>' +
+        : 'Marque el estado de cada actividad. Pulse Guardar al terminar; puede volver a entrar y modificar cuando quiera.') + '</p>' +
       (editing ? '' : renderFiltersSection('agenda-filters--detail')) +
       (editing
         ? '<div class="agenda-edit-toolbar"><button type="button" class="agenda-btn agenda-btn--primary" data-agenda-edit="add">+ Agregar actividad</button></div>'
@@ -486,8 +483,8 @@
         return;
       }
       toast(res.local
-        ? 'Auditoría guardada en este equipo.'
-        : 'Auditoría guardada.', 'ok');
+        ? 'Guardado. Puede seguir modificando cuando quiera.'
+        : 'Guardado. Puede seguir modificando cuando quiera.', 'ok');
       render();
     });
   }

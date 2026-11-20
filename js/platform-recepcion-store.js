@@ -391,7 +391,8 @@
     if (global.localStorage) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
-    if (!opts.silent) notify(data);
+    // silent / skipCloud: no dispara eventos (evita bucles al aplicar remoto)
+    if (!opts.silent && !opts.skipCloud) notify(data);
     return data;
   }
 

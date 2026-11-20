@@ -26,6 +26,25 @@
   var broadcast = typeof global.BroadcastChannel !== 'undefined'
     ? new global.BroadcastChannel('despacho-cloud-live')
     : null;
+  var reliableQueue = null;
+  var stopWatchdog = null;
+
+  function ensureReliableQueue() {
+    if (reliableQueue) return reliableQueue;
+    var Rel = global.PlatformSyncReliable;
+    if (!Rel || !Rel.createPushQueue) return null;
+    reliableQueue = Rel.createPushQueue({
+      name: 'despacho',
+      isBlocked: function () { return applyingRemote; },
+      getPayload: function () { return getLocalData(); },
+      pushFn: function () {
+        return pushLocal(5, { force: true, fromReliable: true });
+      },
+      retryMs: 400,
+      maxRetryMs: 12000
+    });
+    return reliableQueue;
+  }
 
   function nowIso() {
     return new Date().toISOString();
@@ -111,12 +130,19 @@
     if (sig === lastAppliedSig) return;
     applyingRemote = true;
     try {
+      merged.pedidos = asPedidoList(merged.pedidos).map(function (p) {
+        if (!p) return p;
+        p.historial = asPedidoList(p.historial);
+        return p;
+      });
       localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
     } finally {
       applyingRemote = false;
     }
     lastAppliedSig = sig;
     notifyApplied(merged, source || 'push-merge');
+    pendingPush = true;
+    global.setTimeout(function () { drainPushQueue(); }, 100);
   }
 
   function prepareDataForPush(data) {
@@ -832,6 +858,10 @@
     // se pierden cambios de historial y la actividad “se detiene” en otras PCs.
     if (pushing || applyingRemote) {
       pendingPush = true;
+      if (!opts.fromReliable && ensureReliableQueue()) {
+        ensureReliableQueue().enqueue('busy');
+      }
+      global.setTimeout(function () { drainPushQueue(); }, 180);
       return Promise.resolve(false);
     }
     var local = getLocalData();
@@ -847,12 +877,14 @@
           return pushToSupabase(sbPayload).then(function (ok) {
             if (ok) {
               lastPushOkAt = Date.now();
+              pendingPush = false;
               if (broadcast) {
                 try { broadcast.postMessage({ type: 'despacho-sync', at: Date.now() }); } catch (e) { /* noop */ }
               }
               updateSyncUi();
               return true;
             }
+            pendingPush = true;
             return pushLocalFallback(retries);
           });
         }).finally(function () {
@@ -866,12 +898,14 @@
           return pushToFirebase(payload).then(function (ok) {
             if (ok) {
               lastPushOkAt = Date.now();
+              pendingPush = false;
               if (broadcast) {
                 try { broadcast.postMessage({ type: 'despacho-sync', at: Date.now() }); } catch (e) { /* noop */ }
               }
               updateSyncUi();
               return true;
             }
+            pendingPush = true;
             return pushLocalFallback(retries);
           });
         }).finally(function () {
@@ -1122,17 +1156,39 @@
       if (!isCloudConfigured()) return;
       startPolling();
       updateSyncUi();
+      ensureReliableQueue();
+      if (global.PlatformSyncReliable && global.PlatformSyncReliable.attachWatchdog) {
+        stopWatchdog = global.PlatformSyncReliable.attachWatchdog({
+          queue: ensureReliableQueue(),
+          intervalMs: 10000
+        });
+      }
+      // Heartbeat: si hace >20s sin push OK y hay datos, forzar publicación
+      global.setInterval(function () {
+        if (!hasLiveContent(getLocalData())) return;
+        if (lastPushOkAt && (Date.now() - lastPushOkAt) < 20000) return;
+        pendingPush = true;
+        pushLocalForce();
+      }, 15000);
       global.addEventListener('pageshow', function (ev) {
         if (!ev.persisted) return;
-        pullAll();
+        pullAll().then(function () { pushLocalForce(); });
       }, { passive: true });
       global.addEventListener('visibilitychange', function () {
         if (global.document.visibilityState === 'visible') {
-          probeCurrentServer().then(function () { pullAll(); });
+          probeCurrentServer().then(function () {
+            return pullAll();
+          }).then(function () { pushLocalForce(); });
         }
       }, { passive: true });
       global.addEventListener('focus', function () {
-        probeCurrentServer().then(function () { pullAll(); });
+        probeCurrentServer().then(function () {
+          return pullAll();
+        }).then(function () { pushLocalForce(); });
+      }, { passive: true });
+      global.addEventListener('online', function () {
+        pendingPush = true;
+        pushLocalForce();
       }, { passive: true });
       global.addEventListener('lan-sync', function (ev) {
         if (ev.detail && ev.detail.store === 'despacho') pullAll();
@@ -1143,6 +1199,8 @@
       });
       global.addEventListener('firebase-connection', function () {
         updateSyncUi();
+        pendingPush = true;
+        drainPushQueue();
       });
       if (broadcast) {
         broadcast.onmessage = function () { pullAll(); };

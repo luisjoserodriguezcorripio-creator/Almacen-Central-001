@@ -16,6 +16,35 @@
   var seedPromise = null;
   var pushing = false;
   var pendingPush = null;
+  var pushQueue = null;
+  var stopWatchdog = null;
+  var lastPushOkAt = 0;
+  var applyingRemote = false;
+
+  function ensureQueue() {
+    if (pushQueue) return pushQueue;
+    var Rel = global.PlatformSyncReliable;
+    if (!Rel || !Rel.createPushQueue) {
+      pushQueue = {
+        enqueue: function () { pushState(currentStoreState()); },
+        forceNow: function () { return pushState(currentStoreState()); },
+        hasPending: function () { return !!pendingPush; },
+        getLastOkAt: function () { return lastPushOkAt; }
+      };
+      return pushQueue;
+    }
+    pushQueue = Rel.createPushQueue({
+      name: 'agenda',
+      isBlocked: function () { return applyingRemote; },
+      getPayload: function () { return currentStoreState() || pendingPush; },
+      pushFn: function (state) {
+        return pushStateRaw(state);
+      },
+      retryMs: 400,
+      maxRetryMs: 12000
+    });
+    return pushQueue;
+  }
 
   function notify(kind, payload) {
     listeners.forEach(function (fn) {
@@ -129,40 +158,64 @@
     });
   }
 
-  function pushState(state) {
+  function pushStateRaw(state) {
     var bridge = FB();
     if (!bridge || !bridge.ensureReady) {
-      return Promise.reject(new Error('Sin Firebase'));
+      return Promise.resolve(false);
     }
-    pendingPush = state;
-    if (pushing) {
-      return Promise.resolve(state);
-    }
-    pushing = true;
-
-    function flush() {
-      var payload = pendingPush;
-      pendingPush = null;
-      return withSeed(payload).then(function (safe) {
-        if (!safe.templates || !safe.templates.length) {
-          throw new Error('Plantillas de agenda vacías — no se publica');
-        }
-        safe.updatedAt = new Date().toISOString();
-        return bridge.ensureReady().then(function () {
-          return bridge.push(FB_PATH, safe);
-        }).then(function (ok) {
-          if (!ok) throw new Error('No se pudo guardar Agenda en Firebase');
-          live = true;
-          notify('sync', safe);
-          return safe;
-        });
-      }).finally(function () {
-        pushing = false;
-        if (pendingPush) return flush();
+    return withSeed(state || currentStoreState()).then(function (safe) {
+      if (!safe.templates || !safe.templates.length) {
+        return false;
+      }
+      safe.updatedAt = new Date().toISOString();
+      return bridge.ensureReady().then(function () {
+        return bridge.push(FB_PATH, safe);
+      }).then(function (ok) {
+        if (!ok) return false;
+        live = true;
+        lastPushOkAt = Date.now();
+        notify('sync', safe);
+        return true;
       });
-    }
+    }).catch(function () {
+      return false;
+    });
+  }
 
-    return flush();
+  function pushState(state) {
+    pendingPush = state || currentStoreState() || pendingPush;
+    ensureQueue();
+    // Mantener compat: encola y fuerza ciclo de la cola confiable
+    return ensureQueue().forceNow().then(function (ok) {
+      if (!ok) {
+        // Aun si falla la nube, notificar estado local para no perder UX
+        var local = pendingPush || currentStoreState();
+        if (local) notify('sync', local);
+      }
+      return pendingPush || currentStoreState() || state;
+    });
+  }
+
+  function handleRemoteSnapshot(val) {
+    if (!val) return;
+    applyingRemote = true;
+    withSeed(val).then(function (remote) {
+      var local = currentStoreState();
+      var merged = mergeAgendaStates(remote, local || remote);
+      var remoteDaily = countDailyTasks(remote && remote.daily);
+      var mergedDaily = countDailyTasks(merged && merged.daily);
+      live = true;
+      notify('sync', merged);
+      // Si el local aportó progreso que la nube no tenía, re-publicar
+      if (mergedDaily > remoteDaily) {
+        ensureQueue().enqueue('local-ahead');
+      }
+    }).finally(function () {
+      applyingRemote = false;
+      if (ensureQueue().hasPending && ensureQueue().hasPending()) {
+        ensureQueue().enqueue('after-remote');
+      }
+    });
   }
 
   function subscribeRealtime() {
@@ -174,16 +227,11 @@
     }
     bridge.ensureReady().then(function (db) {
       if (!db || !db.ref) {
-        // REST adapter via bridge.ref
         if (bridge.ref) {
           var r = bridge.ref(FB_PATH);
           r.on('value', function (snap) {
             var val = snap && snap.val ? snap.val() : null;
-            if (!val) return;
-            live = true;
-            withSeed(val).then(function (merged) {
-              notify('sync', merged);
-            });
+            handleRemoteSnapshot(val);
           });
           unsub = function () { /* poller managed by bridge */ };
         }
@@ -192,11 +240,7 @@
       var ref = db.ref(FB_PATH);
       var handler = function (snap) {
         var val = snap && snap.val ? snap.val() : null;
-        if (!val) return;
-        live = true;
-        withSeed(val).then(function (merged) {
-          notify('sync', merged);
-        });
+        handleRemoteSnapshot(val);
       };
       ref.on('value', handler);
       unsub = function () {
@@ -218,6 +262,13 @@
     if (readyPromise) return readyPromise;
 
     readyPromise = loadSeedCached().then(function (seed) {
+      ensureQueue();
+      if (global.PlatformSyncReliable && global.PlatformSyncReliable.attachWatchdog) {
+        stopWatchdog = global.PlatformSyncReliable.attachWatchdog({
+          queue: pushQueue,
+          intervalMs: 10000
+        });
+      }
       if (!firebaseEnabled()) {
         return { ok: true, local: true, degraded: true, data: mergeSeedIfEmpty(null, seed) };
       }
@@ -242,6 +293,7 @@
         });
       }).catch(function () {
         subscribeRealtime();
+        ensureQueue().enqueue('ready-fallback');
         return { ok: true, data: mergeSeedIfEmpty(null, seed), degraded: true, local: true };
       });
     });
@@ -292,6 +344,10 @@
       try { unsub(); } catch (e) { /* noop */ }
     }
     unsub = null;
+    if (stopWatchdog) {
+      try { stopWatchdog(); } catch (e) { /* noop */ }
+      stopWatchdog = null;
+    }
   }
 
   global.PlatformAgendaSync = {

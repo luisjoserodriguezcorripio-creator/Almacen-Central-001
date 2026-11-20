@@ -98,6 +98,81 @@
     });
   }
 
+  /**
+   * PUT condicional (ETag): si otra PC cambió la nube, mergea y reintenta.
+   * Evita que un snapshot viejo borre pedidos recién registrados.
+   */
+  function restPushCas(path, data, mergeFn, maxAttempts) {
+    if (!fbConfig || !fbConfig.databaseURL) return Promise.resolve(false);
+    maxAttempts = maxAttempts == null ? 6 : maxAttempts;
+    var intended = sanitize(data);
+
+    function attempt(n) {
+      return fetchWithTimeout(restUrl(path) + '?t=' + Date.now(), {
+        headers: { 'X-Firebase-ETag': 'true' },
+        cache: 'no-store',
+        mode: 'cors'
+      }).then(function (res) {
+        var etag = res.headers.get('ETag') || res.headers.get('etag') || '';
+        if (res.status === 404) {
+          return { remote: null, etag: etag };
+        }
+        if (!res.ok) {
+          return res.text().then(function () { return { remote: null, etag: etag, readFailed: true }; });
+        }
+        return res.json().then(function (remote) {
+          return { remote: remote, etag: etag };
+        });
+      }).then(function (pack) {
+        var remote = pack.remote;
+        var etag = pack.etag;
+        var payload = intended;
+        if (remote != null && typeof mergeFn === 'function') {
+          try { payload = sanitize(mergeFn(remote, intended) || intended); }
+          catch (e) { payload = intended; }
+        }
+        var headers = { 'Content-Type': 'application/json' };
+        if (etag && !pack.readFailed) headers['If-Match'] = etag;
+        return fetchWithTimeout(restUrl(path), {
+          method: 'PUT',
+          headers: headers,
+          body: JSON.stringify(payload),
+          cache: 'no-store',
+          mode: 'cors'
+        }).then(function (putRes) {
+          if (putRes.ok) {
+            connected = true;
+            restMode = true;
+            dispatchConnection();
+            return { ok: true, data: payload };
+          }
+          if (putRes.status === 412 && n < maxAttempts) {
+            var nextEtag = putRes.headers.get('ETag') || putRes.headers.get('etag') || '';
+            return putRes.json().catch(function () { return null; }).then(function (latest) {
+              if (latest != null && typeof mergeFn === 'function') {
+                try { intended = sanitize(mergeFn(latest, intended) || intended); }
+                catch (e) { /* keep intended */ }
+              }
+              if (nextEtag) {
+                /* retry with merged intended */
+              }
+              return attempt(n + 1);
+            });
+          }
+          return putRes.text().then(function (txt) {
+            console.warn('[FirebaseBridge] REST CAS push', putRes.status, path, txt);
+            return { ok: false, data: null };
+          });
+        });
+      }).catch(function (err) {
+        console.warn('[FirebaseBridge] REST CAS error:', err && err.message ? err.message : err);
+        return { ok: false, data: null };
+      });
+    }
+
+    return attempt(0);
+  }
+
   function restPull(path) {
     if (!fbConfig || !fbConfig.databaseURL) return Promise.resolve(null);
     return fetchWithTimeout(restUrl(path) + '?t=' + Date.now(), {
@@ -143,6 +218,9 @@
     return {
       set: function (data) {
         return restPush(path, data);
+      },
+      setCas: function (data, mergeFn) {
+        return restPushCas(path, data, mergeFn).then(function (r) { return !!(r && r.ok); });
       },
       on: function (event, callback) {
         if (event !== 'value' || typeof callback !== 'function') return;
@@ -233,6 +311,7 @@
     getMode: function () { return restMode ? 'rest' : 'sdk'; },
     isEnabled: function () { return !!(fbConfig && fbConfig.enabled && fbConfig.databaseURL); },
     push: restPush,
+    pushCas: restPushCas,
     pull: restPull,
     ref: function (path) { return makeRef(path); },
     getPollMs: function () { return pollMs; }

@@ -187,6 +187,17 @@
           var mergedAverias = mergeAveriasSnapshots(local, remote);
           applyRemote(lsKey, mergedAverias, store);
           pushToServer(lsKey, JSON.stringify(mergedAverias));
+        } else if (store === 'despacho') {
+          var mergedDesp = remote;
+          if (global.PlatformDespachoCloudSync && global.PlatformDespachoCloudSync.mergeDespacho) {
+            mergedDesp = global.PlatformDespachoCloudSync.mergeDespacho(local, remote);
+          } else {
+            var ln = (local.pedidos && local.pedidos.length) || 0;
+            var rn = (remote.pedidos && remote.pedidos.length) || 0;
+            mergedDesp = ln >= rn ? local : remote;
+          }
+          applyRemote(lsKey, mergedDesp, store);
+          pushToServer(lsKey, JSON.stringify(mergedDesp));
         } else {
           var rTime = remoteWrap.mtime || getUpdatedAt(remote);
           var lTime = getUpdatedAt(local) || getLocalStoreTime(lsKey);
@@ -228,6 +239,19 @@
             var localAv = null;
             try { localAv = localAvRaw ? JSON.parse(localAvRaw) : null; } catch (e) { localAv = null; }
             merged = mergeAveriasSnapshots(localAv, res.data);
+          }
+          if (payload.store === 'despacho' && global.localStorage) {
+            var localDespRaw = localStorage.getItem(lsKey);
+            var localDesp = null;
+            try { localDesp = localDespRaw ? JSON.parse(localDespRaw) : null; } catch (e) { localDesp = null; }
+            if (localDesp && global.PlatformDespachoCloudSync && global.PlatformDespachoCloudSync.mergeDespacho) {
+              merged = global.PlatformDespachoCloudSync.mergeDespacho(localDesp, res.data);
+            } else if (localDesp && res.data) {
+              // fallback: no reemplazar a ciegas — preferir el que tenga más pedidos
+              var lN = (localDesp.pedidos && localDesp.pedidos.length) || 0;
+              var rN = (res.data.pedidos && res.data.pedidos.length) || 0;
+              if (lN > rN) merged = localDesp;
+            }
           }
           applyRemote(lsKey, merged, payload.store);
           if (payload.store === 'users' && global.PlatformAdmin && global.PlatformAdmin.forceSyncPrimaryCredentials) {

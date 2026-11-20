@@ -129,7 +129,7 @@
     // Crítico: re-leer local ANTES de escribir. Si Pichardo registró durante el await
     // de red, el snapshot capturado al inicio del push ya está viejo y borraría el pedido.
     var cur = getLocalData();
-    if (cur) merged = mergeDespacho(cur, merged);
+    if (cur) merged = retainAllPedidos(cur, mergeDespacho(cur, merged));
     merged.pedidos = asPedidoList(merged.pedidos).map(function (p) {
       if (!p) return p;
       p.historial = asPedidoList(p.historial);
@@ -139,11 +139,14 @@
     if (sig === lastAppliedSig) return merged;
     applyingRemote = true;
     try {
+      // Última salvaguarda: si hubo otro save mientras normalizábamos, no pisar
+      var again = getLocalData();
+      if (again) merged = retainAllPedidos(again, mergeDespacho(again, merged));
       localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
     } finally {
       applyingRemote = false;
     }
-    lastAppliedSig = sig;
+    lastAppliedSig = dataSignature(merged);
     notifyApplied(merged, source || 'push-merge');
     return merged;
   }
@@ -467,7 +470,33 @@
     var tLocal = Date.parse(local.updatedAt) || 0;
     var tRemote = Date.parse(remote.updatedAt) || 0;
     merged.updatedAt = new Date(Math.max(tLocal, tRemote)).toISOString();
-    return merged;
+    return retainAllPedidos(local, merged);
+  }
+
+  /** Nunca eliminar un pedido que ya existía localmente (solo wipeAll lo borra a propósito). */
+  function retainAllPedidos(prev, next) {
+    if (!next) return prev;
+    if (!prev) return next;
+    var map = {};
+    asPedidoList(next.pedidos).forEach(function (p) {
+      if (p && p.id) map[p.id] = p;
+    });
+    var restored = 0;
+    asPedidoList(prev.pedidos).forEach(function (p) {
+      if (!p || !p.id) return;
+      if (!map[p.id]) {
+        map[p.id] = p;
+        restored += 1;
+      } else {
+        map[p.id] = mergePedidoPair(map[p.id], p);
+      }
+    });
+    next.pedidos = Object.keys(map).map(function (k) { return map[k]; });
+    if (restored) {
+      next.updatedAt = nowIso();
+      pendingPush = true;
+    }
+    return next;
   }
 
   function pedidoSigPiece(p) {
@@ -553,9 +582,9 @@
     if (!global.localStorage || !data) return false;
     var local = getLocalData();
     var localHadExtra = false;
+    var remoteSig = dataSignature(data);
     if (local && data) {
-      var remoteSig = dataSignature(data);
-      data = mergeDespacho(local, data);
+      data = retainAllPedidos(local, mergeDespacho(local, data));
       // Si el merge aportó historial/pedidos que no estaban en la nube, re-empujar.
       localHadExtra = dataSignature(data) !== remoteSig;
     }
@@ -566,6 +595,9 @@
     }
     applyingRemote = true;
     try {
+      // Re-leer por si el operador registró durante el merge
+      var again = getLocalData();
+      if (again) data = retainAllPedidos(again, mergeDespacho(again, data));
       // Normalizar historial a arrays reales (Firebase a veces manda objetos indexados)
       data.pedidos = asPedidoList(data.pedidos).map(function (p) {
         if (!p) return p;
@@ -576,7 +608,8 @@
     } finally {
       applyingRemote = false;
     }
-    lastAppliedSig = sig;
+    lastAppliedSig = dataSignature(data);
+    localHadExtra = localHadExtra || dataSignature(data) !== remoteSig;
     notifyApplied(data, source);
     if (localHadExtra || pendingPush) {
       pendingPush = true;
@@ -708,7 +741,6 @@
   function pullAll() {
     if (pulling) return Promise.resolve(getLocalData());
     pulling = true;
-    var localBefore = getLocalData();
     return pullFromJsonBin().then(function (jsonBinData) {
       return Promise.all([
         Promise.resolve(jsonBinData),
@@ -718,15 +750,17 @@
         pullFromStatic(),
         pullFirebaseInitial()
       ]).then(function (parts) {
+        // Re-leer DESPUÉS de la red: el operador pudo registrar durante el await
+        var localNow = getLocalData();
         var sbData = parts[1];
         var merged;
         var applySource = 'merge';
 
         if (isSupabasePrimary() && sbData) {
-          merged = mergeDespacho(getLocalData(), sbData);
+          merged = mergeDespacho(localNow, sbData);
           applySource = 'supabase';
         } else {
-          merged = localBefore;
+          merged = localNow;
         }
 
         if (jsonBinData && !isSupabasePrimary()) {
@@ -742,9 +776,8 @@
           merged = mergeDespacho(merged, jsonBinData);
         }
 
-        if (!isSupabasePrimary() && localBefore && hasLiveContent(localBefore)) {
-          var withLocal = mergeDespacho(localBefore, merged);
-          if (dataSignature(withLocal) !== dataSignature(merged)) merged = withLocal;
+        if (!isSupabasePrimary() && localNow && hasLiveContent(localNow)) {
+          merged = retainAllPedidos(localNow, mergeDespacho(localNow, merged));
         }
 
         if (merged) {
@@ -763,14 +796,14 @@
             }
           }
 
-          if (getJsonBinConfig() && jsonBinData == null && hasLiveContent(localBefore)) {
+          if (getJsonBinConfig() && jsonBinData == null && hasLiveContent(localNow)) {
             global.setTimeout(function () { pushLocal(1); }, 200);
           }
 
           var firebasePart = parts[5];
           if (hasFirebaseConfig() && !isSupabasePrimary() &&
               (firebasePart == null || !hasLiveContent(firebasePart)) &&
-              hasLiveContent(localBefore)) {
+              hasLiveContent(localNow)) {
             global.setTimeout(function () { pushLocal(2, { force: true }); }, 300);
           }
         }
@@ -832,6 +865,35 @@
     return global.PlatformFirebaseBridge.ensureReady().then(function (adapter) {
       if (!adapter) return false;
       firebaseDb = adapter;
+      function casMerge(remote, intended) {
+        // Union de nube + lo que queremos subir + lo que haya ahora en esta PC
+        var fresh = getLocalData();
+        var merged = mergeDespacho(intended, remote);
+        if (fresh) merged = retainAllPedidos(fresh, mergeDespacho(fresh, merged));
+        merged.updatedAt = nowIso();
+        return merged;
+      }
+      // CAS evita que otra PC con snapshot viejo borre el IDC recién registrado
+      if (global.PlatformFirebaseBridge.pushCas) {
+        return global.PlatformFirebaseBridge.pushCas('despacho/snapshot', payload, casMerge)
+          .then(function (r) {
+            if (r && r.ok) {
+              if (r.data) persistMergedQuiet(r.data, 'firebase-cas');
+              return true;
+            }
+            console.warn('[DespachoCloud] Firebase CAS push falló — reintento con merge fresco');
+            var fresh = casMerge(null, getLocalData() || payload);
+            return adapter.ref('despacho/snapshot').set(sanitizeForCloud(fresh)).then(function (ok) {
+              return !!ok;
+            });
+          });
+      }
+      if (adapter.ref('despacho/snapshot').setCas) {
+        return adapter.ref('despacho/snapshot').setCas(payload, casMerge).then(function (ok) {
+          if (!ok) console.warn('[DespachoCloud] Firebase push falló');
+          return !!ok;
+        });
+      }
       return adapter.ref('despacho/snapshot').set(payload).then(function (ok) {
         if (!ok) console.warn('[DespachoCloud] Firebase push falló');
         return !!ok;
@@ -952,10 +1014,12 @@
         return pullAll();
       }
       var local = getLocalData();
-      var merged = mergeDespacho(local, remote);
+      var merged = retainAllPedidos(local, mergeDespacho(local, remote));
       applyingRemote = true;
       try {
         if (global.localStorage) {
+          var again = getLocalData();
+          if (again) merged = retainAllPedidos(again, mergeDespacho(again, merged));
           localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
         }
       } finally {
@@ -1161,16 +1225,18 @@
       if (global.PlatformSyncReliable && global.PlatformSyncReliable.attachWatchdog) {
         stopWatchdog = global.PlatformSyncReliable.attachWatchdog({
           queue: ensureReliableQueue(),
-          intervalMs: 10000
+          intervalMs: 15000,
+          staleMs: 45000
         });
       }
-      // Heartbeat: si hace >20s sin push OK y hay datos, forzar publicación
+      // Heartbeat suave: solo si hay pendiente real (no reescribir la nube a ciegas)
       global.setInterval(function () {
         if (!hasLiveContent(getLocalData())) return;
-        if (lastPushOkAt && (Date.now() - lastPushOkAt) < 20000) return;
-        pendingPush = true;
+        if (!(pendingPush || (reliableQueue && reliableQueue.hasPending && reliableQueue.hasPending()))) {
+          return;
+        }
         pushLocalForce();
-      }, 15000);
+      }, 20000);
       global.addEventListener('pageshow', function (ev) {
         if (!ev.persisted) return;
         pullAll().then(function () { pushLocalForce(); });
@@ -1225,6 +1291,7 @@
     pushLocal: pushLocal,
     pushLocalForce: pushLocalForce,
     forceResyncFromCloud: forceResyncFromCloud,
+    mergeDespacho: mergeDespacho,
     isConfigured: isCloudConfigured,
     getLastPullAt: function () { return lastPullAt; },
     getStatus: syncStatusMessage

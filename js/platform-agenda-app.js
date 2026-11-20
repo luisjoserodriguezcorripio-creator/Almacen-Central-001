@@ -141,6 +141,7 @@
   }
 
   function logout() {
+    closeMenu();
     clearSession();
     state.user = null;
     setAuthVisible(true);
@@ -264,9 +265,8 @@
       (canEdit
         ? '<button type="button" class="agenda-btn agenda-btn--primary" data-agenda-action="hint-edit">✎ Editar actividades</button>'
         : '') +
-      '<button type="button" class="agenda-btn agenda-btn--ghost" data-agenda-action="logout">Salir</button>' +
       '</div></header>' +
-      '<p class="agenda-help">Filtre por puesto o selecciónelo arriba / en una tarjeta para ver su checklist.</p>' +
+      '<p class="agenda-help">Filtre por puesto o abra una tarjeta para ver su checklist.</p>' +
       renderFiltersSection('', { showPuestoFilter: true }) +
       '<div class="agenda-puesto-grid">' + (rows || '<p class="agenda-task-list__empty">No hay puestos con ese filtro.</p>') + '</div>';
     syncFilterControls();
@@ -335,7 +335,6 @@
           '" data-agenda-action="toggle-edit">' + (editing ? '✓ Terminar edición' : '✎ Editar actividades') + '</button>'
         : '') +
       '<button type="button" class="agenda-btn agenda-btn--ghost" data-agenda-action="refresh">↻ Actualizar</button>' +
-      '<button type="button" class="agenda-btn agenda-btn--ghost" data-agenda-action="logout">Salir</button>' +
       '</div></header>' +
       (editing ? '' : renderHeroStats(stats)) +
       '<p class="agenda-help">' + (editing
@@ -364,27 +363,30 @@
       '<header class="agenda-topbar">' +
       '<div><h1>Agenda no disponible</h1>' +
       '<p class="agenda-sub">Su usuario no tiene un puesto de agenda asignado.</p></div>' +
-      '<div class="agenda-topbar__actions">' +
-      '<button type="button" class="agenda-btn agenda-btn--ghost" data-agenda-action="logout">Salir</button>' +
-      '</div></header>' +
+      '</header>' +
       '<section class="agenda-empty-state">' +
       '<p>Contacte al administrador para que le asigne su puesto en <strong>Usuarios → Agenda / Puesto</strong>.</p>' +
       '</section>';
   }
 
-  function renderSidebar() {
-    var nav = $('agendaSidebarNav');
-    if (!nav) return;
-    var puestos = allowedPuestos();
-    nav.innerHTML = puestos.map(function (p) {
-      var active = state.puestoId === p.id && state.view === 'detail' ? ' active' : '';
-      return '<button type="button" class="agenda-nav-item' + active + '" data-agenda-nav="' + esc(p.id) + '">' + esc(p.short || p.label) + '</button>';
-    }).join('');
+  function closeMenu() {
+    var toggle = $('agendaMenuToggle');
+    var panel = $('agendaMenuPanel');
+    if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    if (panel) panel.hidden = true;
+  }
+
+  function toggleMenu() {
+    var toggle = $('agendaMenuToggle');
+    var panel = $('agendaMenuPanel');
+    if (!toggle || !panel) return;
+    var open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', open ? 'false' : 'true');
+    panel.hidden = open;
   }
 
   function render() {
     state.dayKey = state.dayKey || C().todayKey();
-    renderSidebar();
     if (state.view === 'no-access') renderNoAccess();
     else if (state.view === 'detail') renderDetail();
     else renderDashboard();
@@ -415,7 +417,10 @@
       render();
       return;
     }
-    if (action === 'logout') { logout(); return; }
+    if (action === 'logout') {
+      logout();
+      return;
+    }
     if (action === 'refresh') {
       S().pullFresh().then(function () { render(); toast('Agenda actualizada.', 'ok'); });
       return;
@@ -430,7 +435,7 @@
       return;
     }
     if (action === 'hint-edit') {
-      toast('Abra un puesto (arriba o en una tarjeta) y pulse «Editar actividades».', 'ok');
+      toast('Abra un puesto (filtro o tarjeta) y pulse «Editar actividades».', 'ok');
     }
   }
 
@@ -512,15 +517,23 @@
     root.dataset.bound = '1';
 
     root.addEventListener('click', function (ev) {
+      var menuToggle = ev.target.closest('#agendaMenuToggle');
+      if (menuToggle) {
+        ev.stopPropagation();
+        toggleMenu();
+        return;
+      }
+      var menuItem = ev.target.closest('[data-agenda-menu]');
+      if (menuItem) {
+        closeMenu();
+        return;
+      }
+      if (!$('agendaMenu') || !$('agendaMenu').contains(ev.target)) {
+        closeMenu();
+      }
       var puestoBtn = ev.target.closest('[data-agenda-puesto]');
       if (puestoBtn) {
         state.puestoFilter = puestoBtn.getAttribute('data-agenda-puesto') || 'ALL';
-        openPuesto(state.puestoFilter);
-        return;
-      }
-      var navBtn = ev.target.closest('[data-agenda-nav]');
-      if (navBtn) {
-        state.puestoFilter = navBtn.getAttribute('data-agenda-nav') || 'ALL';
         openPuesto(state.puestoFilter);
         return;
       }
@@ -543,6 +556,10 @@
       }
       var actBtn = ev.target.closest('[data-agenda-action]');
       if (actBtn) handleAction(actBtn.getAttribute('data-agenda-action'));
+    });
+
+    document.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape') closeMenu();
     });
 
     root.addEventListener('change', function (ev) {

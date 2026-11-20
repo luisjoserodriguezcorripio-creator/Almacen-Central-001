@@ -13,16 +13,19 @@
     return 'data/agenda-seed.json';
   })();
 
-  var ESTADO_PENDIENTE = 'PENDIENTE';
-  var ESTADO_EN_PROCESO = 'EN_PROCESO';
+  var ESTADO_NO_COMPLETADO = 'NO_COMPLETADO';
   var ESTADO_COMPLETADO = 'COMPLETADO';
+  /** Compatibilidad con datos viejos */
+  var ESTADO_PENDIENTE = ESTADO_NO_COMPLETADO;
+  var ESTADO_EN_PROCESO = ESTADO_NO_COMPLETADO;
 
-  var ESTADOS = [ESTADO_PENDIENTE, ESTADO_EN_PROCESO, ESTADO_COMPLETADO];
+  var ESTADOS = [ESTADO_NO_COMPLETADO, ESTADO_COMPLETADO];
 
   var ESTADO_LABELS = {
-    PENDIENTE: 'Pendiente',
-    EN_PROCESO: 'En proceso',
-    COMPLETADO: 'Completado'
+    NO_COMPLETADO: 'No completado',
+    COMPLETADO: 'Completado',
+    PENDIENTE: 'No completado',
+    EN_PROCESO: 'No completado'
   };
 
   var FREQ_LABELS = {
@@ -146,9 +149,15 @@
     };
   }
 
+  function normalizeEstado(value) {
+    var e = String(value || '').toUpperCase();
+    if (e === ESTADO_COMPLETADO || e === 'COMPLETADO') return ESTADO_COMPLETADO;
+    return ESTADO_NO_COMPLETADO;
+  }
+
   function emptyTaskProgress() {
     return {
-      estado: ESTADO_PENDIENTE,
+      estado: ESTADO_NO_COMPLETADO,
       comentarios: '',
       horaEjecucion: '',
       updatedAt: '',
@@ -189,7 +198,7 @@
     var raw = bucket && bucket.tasks && bucket.tasks[taskId];
     if (!raw) return emptyTaskProgress();
     return {
-      estado: ESTADOS.indexOf(raw.estado) >= 0 ? raw.estado : ESTADO_PENDIENTE,
+      estado: normalizeEstado(raw.estado),
       comentarios: String(raw.comentarios || ''),
       horaEjecucion: String(raw.horaEjecucion || ''),
       updatedAt: String(raw.updatedAt || ''),
@@ -219,13 +228,58 @@
     var tasks = tasksForDay(state, dayKey, puestoId);
     var total = tasks.length;
     var done = tasks.filter(function (x) { return x.progress.estado === ESTADO_COMPLETADO; }).length;
-    var inProg = tasks.filter(function (x) { return x.progress.estado === ESTADO_EN_PROCESO; }).length;
-    var pending = total - done - inProg;
+    var pending = total - done;
     var pct = total ? Math.round((done / total) * 100) : 0;
     var minutesTotal = tasks.reduce(function (s, x) { return s + (x.template.minutos || 0); }, 0);
     var minutesDone = tasks.filter(function (x) { return x.progress.estado === ESTADO_COMPLETADO; })
       .reduce(function (s, x) { return s + (x.template.minutos || 0); }, 0);
-    return { total: total, done: done, inProg: inProg, pending: pending, pct: pct, minutesTotal: minutesTotal, minutesDone: minutesDone };
+    return {
+      total: total,
+      done: done,
+      inProg: 0,
+      pending: pending,
+      pct: pct,
+      minutesTotal: minutesTotal,
+      minutesDone: minutesDone,
+      savedDays: 0
+    };
+  }
+
+  /** Alcance en portada: solo días auditados y guardados (ignora el filtro de fecha). */
+  function statsForPuestoSavedAudits(state, puestoId) {
+    var templates = templatesForPuesto(state, puestoId);
+    var daily = (state && state.daily) || {};
+    var done = 0;
+    var total = 0;
+    var minutesTotal = 0;
+    var minutesDone = 0;
+    var savedDays = 0;
+    Object.keys(daily).forEach(function (dayKey) {
+      var bucket = daily[dayKey] && daily[dayKey][puestoId];
+      if (!bucket || !bucket.saved) return;
+      savedDays += 1;
+      templates.forEach(function (t) {
+        if (!isTaskDueOnDay(t, dayKey)) return;
+        total += 1;
+        minutesTotal += t.minutos || 0;
+        var prog = getTaskProgress(state, dayKey, puestoId, t.id);
+        if (prog.estado === ESTADO_COMPLETADO) {
+          done += 1;
+          minutesDone += t.minutos || 0;
+        }
+      });
+    });
+    var pct = total ? Math.round((done / total) * 100) : 0;
+    return {
+      total: total,
+      done: done,
+      inProg: 0,
+      pending: total - done,
+      pct: pct,
+      minutesTotal: minutesTotal,
+      minutesDone: minutesDone,
+      savedDays: savedDays
+    };
   }
 
   function statsAllPuestos(state, dayKey) {
@@ -301,9 +355,7 @@
   }
 
   function nextEstado(current) {
-    if (current === ESTADO_PENDIENTE) return ESTADO_EN_PROCESO;
-    if (current === ESTADO_EN_PROCESO) return ESTADO_COMPLETADO;
-    return ESTADO_PENDIENTE;
+    return normalizeEstado(current) === ESTADO_COMPLETADO ? ESTADO_NO_COMPLETADO : ESTADO_COMPLETADO;
   }
 
   function puestoLabel(id) {
@@ -316,9 +368,11 @@
     SEED_URL: SEED_URL,
     ESTADO_PENDIENTE: ESTADO_PENDIENTE,
     ESTADO_EN_PROCESO: ESTADO_EN_PROCESO,
+    ESTADO_NO_COMPLETADO: ESTADO_NO_COMPLETADO,
     ESTADO_COMPLETADO: ESTADO_COMPLETADO,
     ESTADOS: ESTADOS,
     ESTADO_LABELS: ESTADO_LABELS,
+    normalizeEstado: normalizeEstado,
     FREQ_LABELS: FREQ_LABELS,
     PUESTOS: PUESTOS,
     PUESTO_BY_ID: PUESTO_BY_ID,
@@ -338,6 +392,7 @@
     templatesForPuesto: templatesForPuesto,
     tasksForDay: tasksForDay,
     statsForPuesto: statsForPuesto,
+    statsForPuestoSavedAudits: statsForPuestoSavedAudits,
     statsAllPuestos: statsAllPuestos,
     canManageAll: canManageAll,
     canEditActivities: canEditActivities,

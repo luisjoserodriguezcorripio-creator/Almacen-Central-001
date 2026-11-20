@@ -147,14 +147,20 @@
   }
 
   function statusClass(estado) {
-    if (estado === C().ESTADO_COMPLETADO) return 'agenda-status--done';
-    if (estado === C().ESTADO_EN_PROCESO) return 'agenda-status--progress';
+    if (C().normalizeEstado(estado) === C().ESTADO_COMPLETADO) return 'agenda-status--done';
     return 'agenda-status--pending';
   }
 
-  function nextEstadoLabel(current) {
-    var next = C().nextEstado(current);
-    return C().ESTADO_LABELS[next] || next;
+  function renderStatusButtons(taskId, estado) {
+    var current = C().normalizeEstado(estado);
+    var doneActive = current === C().ESTADO_COMPLETADO ? ' is-active' : '';
+    var noActive = current !== C().ESTADO_COMPLETADO ? ' is-active' : '';
+    return '<div class="agenda-status-pair" role="group" aria-label="Estado de la actividad">' +
+      '<button type="button" class="agenda-status-choice agenda-status-choice--done' + doneActive + '"' +
+      ' data-agenda-set-status="' + esc(C().ESTADO_COMPLETADO) + '" data-task-id="' + esc(taskId) + '">Completado</button>' +
+      '<button type="button" class="agenda-status-choice agenda-status-choice--no' + noActive + '"' +
+      ' data-agenda-set-status="' + esc(C().ESTADO_NO_COMPLETADO) + '" data-task-id="' + esc(taskId) + '">No completado</button>' +
+      '</div>';
   }
 
   function renderFiltersSection(extraClass, opts) {
@@ -179,9 +185,8 @@
       puestoSelect +
       '<label><span>Estado</span><select id="agendaFilterStatus">' +
       '<option value="ALL">Todos</option>' +
-      '<option value="PENDIENTE">Pendiente</option>' +
-      '<option value="EN_PROCESO">En proceso</option>' +
-      '<option value="COMPLETADO">Completado</option></select></label>' +
+      '<option value="COMPLETADO">Completado</option>' +
+      '<option value="NO_COMPLETADO">No completado</option></select></label>' +
       '</section>';
   }
 
@@ -196,8 +201,8 @@
 
   function filterTasks(tasks) {
     return tasks.filter(function (row) {
-      if (state.statusFilter !== 'ALL' && row.progress.estado !== state.statusFilter) return false;
-      return true;
+      if (state.statusFilter === 'ALL') return true;
+      return C().normalizeEstado(row.progress.estado) === state.statusFilter;
     });
   }
 
@@ -207,12 +212,20 @@
       '<div class="agenda-ring__inner">' + stats.pct + '%</div></div>';
   }
 
-  function renderProgressBar(stats) {
+  function renderProgressBar(stats, opts) {
+    opts = opts || {};
+    var label = opts.label || 'Alcance auditado';
+    var sub = opts.sub || (
+      (stats.savedDays
+        ? stats.savedDays + ' día' + (stats.savedDays === 1 ? '' : 's') + ' guardado' + (stats.savedDays === 1 ? '' : 's') + ' · '
+        : '') +
+      stats.done + ' de ' + stats.total + ' completadas · ' +
+      stats.minutesDone + '/' + stats.minutesTotal + ' min'
+    );
     return '<div class="agenda-progress">' +
-      '<div class="agenda-progress__meta"><span>Desempeño auditado</span><strong>' + stats.pct + '%</strong></div>' +
+      '<div class="agenda-progress__meta"><span>' + esc(label) + '</span><strong>' + stats.pct + '%</strong></div>' +
       '<div class="agenda-progress__track"><div class="agenda-progress__fill" style="width:' + stats.pct + '%"></div></div>' +
-      '<p class="agenda-progress__sub">' + stats.done + ' de ' + stats.total + ' tareas · ' +
-      stats.minutesDone + '/' + stats.minutesTotal + ' min</p></div>';
+      '<p class="agenda-progress__sub">' + esc(sub) + '</p></div>';
   }
 
   function renderHeroStats(stats) {
@@ -221,7 +234,7 @@
       renderProgressRing(stats, 'agenda-hero__ring') +
       '<div class="agenda-hero__copy">' +
       '<strong>Desempeño · ' + esc(C().formatDateDisplay(dayKey)) + '</strong>' +
-      '<span>' + stats.done + ' completadas · ' + stats.inProg + ' en proceso · ' + stats.pending + ' pendientes</span>' +
+      '<span>' + stats.done + ' completadas · ' + stats.pending + ' no completadas</span>' +
       '</div></section>';
   }
 
@@ -234,25 +247,23 @@
       return state.puestoFilter === 'ALL' || p.id === state.puestoFilter;
     });
     var rows = puestos.map(function (p) {
-      var st = C().statsForPuesto(data.state, dayKey, p.id);
-      var alert = st.pending > 0 && st.pct < 100;
+      var st = C().statsForPuestoSavedAudits(data.state, p.id);
+      var alert = st.savedDays > 0 && st.pct < 100;
       var personLine = p.nombrePersona
         ? '<p class="agenda-puesto-card__person">' + esc(p.nombrePersona) + '</p>'
         : '';
-      var meta = C().getAuditMeta(data.state, dayKey, p.id);
-      var savedChip = meta.saved
-        ? '<span class="agenda-chip agenda-chip--saved">Guardada</span>'
-        : '';
+      var savedChip = st.savedDays
+        ? '<span class="agenda-chip agenda-chip--saved">' + st.savedDays + ' auditada' + (st.savedDays === 1 ? '' : 's') + '</span>'
+        : '<span class="agenda-chip agenda-chip--pending">Sin auditorías guardadas</span>';
       var title = p.puestoNombre || p.label;
-      return '<button type="button" class="agenda-puesto-card' + (alert ? ' agenda-puesto-card--alert' : '') + (meta.saved ? ' agenda-puesto-card--saved' : '') + '" data-agenda-puesto="' + esc(p.id) + '">' +
+      return '<button type="button" class="agenda-puesto-card' + (alert ? ' agenda-puesto-card--alert' : '') + (st.savedDays ? ' agenda-puesto-card--saved' : '') + '" data-agenda-puesto="' + esc(p.id) + '">' +
         '<div class="agenda-puesto-card__head"><strong>' + esc(title) + '</strong>' +
         renderProgressRing(st, 'agenda-puesto-card__pct') + '</div>' +
         personLine +
-        renderProgressBar(st) +
+        renderProgressBar(st, { label: 'Alcance (días guardados)' }) +
         '<div class="agenda-puesto-card__counts">' +
-        '<span class="agenda-chip agenda-chip--done">' + st.done + ' hechas</span>' +
-        '<span class="agenda-chip agenda-chip--progress">' + st.inProg + ' en proceso</span>' +
-        '<span class="agenda-chip agenda-chip--pending">' + st.pending + ' pendientes</span>' +
+        '<span class="agenda-chip agenda-chip--done">' + st.done + ' completadas</span>' +
+        '<span class="agenda-chip agenda-chip--pending">' + st.pending + ' no completadas</span>' +
         savedChip +
         '</div></button>';
     }).join('');
@@ -261,14 +272,15 @@
     host.innerHTML =
       '<header class="agenda-topbar">' +
       '<div><p class="agenda-eyebrow">Auditoría de gestores</p><h1>Desempeño por persona</h1>' +
-      '<p class="agenda-sub">Fecha de auditoría · ' + esc(C().formatDateDisplay(dayKey)) + '</p></div>' +
+      '<p class="agenda-sub">El % de alcance usa solo días auditados y guardados · Fecha de trabajo · ' +
+      esc(C().formatDateDisplay(dayKey)) + '</p></div>' +
       '<div class="agenda-topbar__actions">' +
       '<button type="button" class="agenda-btn agenda-btn--ghost" data-agenda-action="refresh">↻ Actualizar</button>' +
       (canEdit
         ? '<button type="button" class="agenda-btn agenda-btn--primary" data-agenda-action="hint-edit">✎ Editar actividades</button>'
         : '') +
       '</div></header>' +
-      '<p class="agenda-help">Elija la fecha en que audita el proceso y abra cada persona para marcar su desempeño.</p>' +
+      '<p class="agenda-help">Elija la fecha para auditar hoy. El porcentaje de la portada no depende de ese filtro: suma todas las auditorías guardadas.</p>' +
       renderFiltersSection('', { showPuestoFilter: true }) +
       '<div class="agenda-puesto-grid">' + (rows || '<p class="agenda-task-list__empty">No hay puestos con ese filtro.</p>') + '</div>';
     syncFilterControls();
@@ -311,10 +323,7 @@
         '<span class="agenda-task__min">' + esc(t.minutos) + ' min</span></div>' +
         '<p class="agenda-task__title">' + esc(t.actividad) + '</p>' +
         '<div class="agenda-task__foot">' +
-        '<button type="button" class="agenda-status-btn ' + statusClass(p.estado) + '" data-agenda-status="' + esc(p.estado) + '" data-task-id="' + esc(t.id) + '"' +
-        ' aria-label="Marcar como ' + esc(nextEstadoLabel(p.estado)) + '"' +
-        ' title="Toque para cambiar a ' + esc(nextEstadoLabel(p.estado)) + '">' +
-        esc(C().ESTADO_LABELS[p.estado] || p.estado) + ' → ' + esc(nextEstadoLabel(p.estado)) + '</button>' +
+        renderStatusButtons(t.id, p.estado) +
         '<span class="agenda-task__time" aria-label="Hora de ejecución">' + esc(p.horaEjecucion || '—') + '</span>' +
         '<input class="agenda-comment" type="text" maxlength="240" placeholder="Añadir comentario (opcional)" value="' + esc(p.comentarios) + '" data-task-id="' + esc(t.id) + '" aria-label="Comentario de la tarea">' +
         '</div></article>';
@@ -593,11 +602,11 @@
         handleEditAction(editBtn.getAttribute('data-agenda-edit'), editBtn.getAttribute('data-task-id'), art);
         return;
       }
-      var statusBtn = ev.target.closest('[data-agenda-status]');
-      if (statusBtn) {
+      var setStatusBtn = ev.target.closest('[data-agenda-set-status]');
+      if (setStatusBtn) {
         if (state.editMode) return;
-        var taskId = statusBtn.getAttribute('data-task-id');
-        var next = C().nextEstado(statusBtn.getAttribute('data-agenda-status'));
+        var taskId = setStatusBtn.getAttribute('data-task-id');
+        var next = C().normalizeEstado(setStatusBtn.getAttribute('data-agenda-set-status'));
         S().updateTask(state.dayKey, state.puestoId, taskId, { estado: next }, state.user).then(function (res) {
           if (!res.ok) toast(res.msg, 'err');
           render();

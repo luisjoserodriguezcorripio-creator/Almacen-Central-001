@@ -668,6 +668,50 @@
 .agenda-freq--inter_diaria { background: #f0f9ff; color: #0369a1; }
 .agenda-freq--semanal { background: #f8fafc; color: var(--ag-text-soft); border: 1px solid var(--ag-border); }
 
+.agenda-status-pair {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.agenda-status-choice {
+  border: 1px solid var(--ag-border);
+  border-radius: 10px;
+  padding: 0.55rem 0.9rem;
+  min-height: var(--ag-touch);
+  font: inherit;
+  font-size: var(--ag-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--ag-surface-muted);
+  color: var(--ag-muted);
+  transition: background 0.12s, color 0.12s, border-color 0.12s, transform 0.12s;
+}
+
+.agenda-status-choice:hover {
+  transform: translateY(-1px);
+  color: var(--ag-text);
+  border-color: var(--ag-border-strong);
+  background: #fff;
+}
+
+.agenda-status-choice:focus-visible {
+  outline: 2px solid var(--ag-blue);
+  outline-offset: 2px;
+}
+
+.agenda-status-choice--done.is-active {
+  background: var(--ag-done-soft);
+  color: var(--ag-done);
+  border-color: #a7f3d0;
+}
+
+.agenda-status-choice--no.is-active {
+  background: var(--ag-pending-soft);
+  color: var(--ag-pending);
+  border-color: #fecaca;
+}
+
 .agenda-status-btn {
   border: 1px solid transparent;
   border-radius: 10px;
@@ -677,38 +721,6 @@
   font-size: var(--ag-text-sm);
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.12s, transform 0.12s;
-}
-
-.agenda-status-btn:hover {
-  opacity: 0.92;
-  transform: translateY(-1px);
-}
-
-.agenda-status-btn:focus-visible {
-  outline: 2px solid var(--ag-blue);
-  outline-offset: 2px;
-}
-
-.agenda-status-btn.agenda-status--pending,
-.agenda-status--pending .agenda-status-btn {
-  background: var(--ag-pending-soft);
-  color: var(--ag-pending);
-  border-color: #fecaca;
-}
-
-.agenda-status-btn.agenda-status--progress,
-.agenda-status--progress .agenda-status-btn {
-  background: var(--ag-progress-soft);
-  color: var(--ag-progress);
-  border-color: #fde68a;
-}
-
-.agenda-status-btn.agenda-status--done,
-.agenda-status--done .agenda-status-btn {
-  background: var(--ag-done-soft);
-  color: var(--ag-done);
-  border-color: #a7f3d0;
 }
 
 .agenda-comment {
@@ -881,6 +893,11 @@
     align-items: stretch;
   }
 
+  .agenda-status-pair {
+    width: 100%;
+  }
+
+  .agenda-status-choice,
   .agenda-status-btn {
     width: 100%;
     justify-content: center;

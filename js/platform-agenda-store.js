@@ -238,8 +238,8 @@
   }
 
   function applyTaskPatch(rec, patch, userName) {
-    var prevEstado = rec.estado;
-    if (patch.estado) rec.estado = patch.estado;
+    var prevEstado = C().normalizeEstado(rec.estado);
+    if (patch.estado) rec.estado = C().normalizeEstado(patch.estado);
     if (patch.comentarios !== undefined) rec.comentarios = String(patch.comentarios || '');
     if (patch.horaEjecucion !== undefined) rec.horaEjecucion = String(patch.horaEjecucion || '');
     rec.updatedAt = new Date().toISOString();

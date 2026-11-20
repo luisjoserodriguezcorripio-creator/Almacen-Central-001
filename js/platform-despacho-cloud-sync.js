@@ -443,9 +443,11 @@
       return String(c.validador || '') + '=' + String(c.camiones || 0) +
         (c.explicit ? '!' : '');
     }).sort().join('+');
+    var histN = asPedidoList(p.historial).length;
     return String(p.id) + ':' + String(p.estado) + '@' + String(p.updatedAt || '') +
       '~' + String(p.validadorAsignado || '') + '~' + cargas +
-      '~' + String(p.jaula || '') + '~' + String(p.cliente || '');
+      '~' + String(p.jaula || '') + '~' + String(p.cliente || '') +
+      '~h' + histN;
   }
 
   function dataSignature(data) {
@@ -516,19 +518,36 @@
   function applyRemote(data, source) {
     if (!global.localStorage || !data) return false;
     var local = getLocalData();
+    var localHadExtra = false;
     if (local && data) {
+      var remoteSig = dataSignature(data);
       data = mergeDespacho(local, data);
+      // Si el merge aportó historial/pedidos que no estaban en la nube, re-empujar.
+      localHadExtra = dataSignature(data) !== remoteSig;
     }
     var sig = dataSignature(data);
-    if (sig === lastAppliedSig) return false;
+    if (sig === lastAppliedSig) {
+      if (localHadExtra) pendingPush = true;
+      return false;
+    }
     applyingRemote = true;
     try {
+      // Normalizar historial a arrays reales (Firebase a veces manda objetos indexados)
+      data.pedidos = asPedidoList(data.pedidos).map(function (p) {
+        if (!p) return p;
+        p.historial = asPedidoList(p.historial);
+        return p;
+      });
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } finally {
       applyingRemote = false;
     }
     lastAppliedSig = sig;
     notifyApplied(data, source);
+    if (localHadExtra || pendingPush) {
+      pendingPush = true;
+      global.setTimeout(function () { drainPushQueue(); }, 120);
+    }
     return true;
   }
 
@@ -798,15 +817,21 @@
   }
 
   function drainPushQueue() {
-    if (!pendingPush || pushing || applyingRemote) return;
+    if (!pendingPush) return;
+    if (pushing || applyingRemote) {
+      global.setTimeout(function () { drainPushQueue(); }, 220);
+      return;
+    }
     pendingPush = false;
-    pushLocal(5);
+    pushLocal(5, { force: true });
   }
 
   function pushLocal(retries, opts) {
     opts = opts || {};
+    // Siempre encolar: si se descarta el push (nube aplicando / otro push),
+    // se pierden cambios de historial y la actividad “se detiene” en otras PCs.
     if (pushing || applyingRemote) {
-      if (opts.force) pendingPush = true;
+      pendingPush = true;
       return Promise.resolve(false);
     }
     var local = getLocalData();

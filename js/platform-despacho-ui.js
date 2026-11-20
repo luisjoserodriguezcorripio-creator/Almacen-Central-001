@@ -239,7 +239,8 @@
     var hoy = hoyKeySantoDomingo();
     var rows = [];
     (pedidos || []).forEach(function (p) {
-      historialList(p.historial).forEach(function (h) {
+      var hist = historialList(p.historial);
+      hist.forEach(function (h) {
         if (!h || dayKeySantoDomingo(h.at) !== hoy) return;
         rows.push({
           at: h.at,
@@ -250,7 +251,7 @@
           nota: h.nota || ''
         });
       });
-      if (p.createdAt && dayKeySantoDomingo(p.createdAt) === hoy && !(p.historial || []).length) {
+      if (p.createdAt && dayKeySantoDomingo(p.createdAt) === hoy && !hist.length) {
         rows.push({
           at: p.createdAt,
           usuario: p.createdBy || '—',

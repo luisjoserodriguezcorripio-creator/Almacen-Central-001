@@ -286,16 +286,32 @@
     };
   }
 
+  function asList(value) {
+    if (!value) return [];
+    if (Array.isArray(value)) return value.filter(Boolean);
+    if (typeof value === 'object') {
+      return Object.keys(value).map(function (k) { return value[k]; }).filter(Boolean);
+    }
+    return [];
+  }
+
   function load() {
     if (!global.localStorage) return emptyPayload();
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return emptyPayload();
       var data = JSON.parse(raw);
-      if (!data || !Array.isArray(data.pedidos)) return emptyPayload();
+      if (!data) return emptyPayload();
+      // Firebase a veces guarda pedidos/historial como objeto indexado, no como array.
+      var pedidosList = asList(data.pedidos);
+      if (!pedidosList.length && data.pedidos && !Array.isArray(data.pedidos) &&
+          typeof data.pedidos === 'object' && Object.keys(data.pedidos).length) {
+        pedidosList = asList(data.pedidos);
+      }
+      if (!pedidosList.length && !data.updatedAt) return emptyPayload();
       data.module = 'despacho';
-      var migrated = false;
-      data.pedidos = (data.pedidos || []).map(function (p) {
+      var migrated = !Array.isArray(data.pedidos);
+      data.pedidos = pedidosList.map(function (p) {
         var before = p.estado;
         var beforeSeg = p.seguimientoValidador;
         var beforeCargas = JSON.stringify(p.cargasEquipo || []);
@@ -374,7 +390,7 @@
       validadoresTrabajo: [],
       updatedAt: p.updatedAt || p.createdAt || nowIso(),
       updatedBy: p.updatedBy || p.createdBy || '—',
-      historial: Array.isArray(p.historial) ? p.historial : []
+      historial: asList(p.historial)
     };
     pedido.cargasEquipo = reconcileCargasEquipo(p);
     syncCargasLegacyFields(pedido);

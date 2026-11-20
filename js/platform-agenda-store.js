@@ -66,14 +66,47 @@
     try { if (rev) localStorage.setItem(LS_SEED_REV, rev); } catch (e) { /* noop */ }
   }
 
+  function mergeDaily(a, b) {
+    var out = {};
+    function absorb(src) {
+      if (!src || typeof src !== 'object') return;
+      Object.keys(src).forEach(function (day) {
+        if (!out[day]) out[day] = {};
+        var daySrc = src[day] || {};
+        Object.keys(daySrc).forEach(function (puesto) {
+          if (!out[day][puesto]) out[day][puesto] = { tasks: {} };
+          if (!out[day][puesto].tasks) out[day][puesto].tasks = {};
+          var tasks = (daySrc[puesto] && daySrc[puesto].tasks) || {};
+          Object.keys(tasks).forEach(function (taskId) {
+            var cur = out[day][puesto].tasks[taskId];
+            var incoming = tasks[taskId];
+            if (!cur) {
+              out[day][puesto].tasks[taskId] = incoming;
+              return;
+            }
+            var ta = Date.parse(cur.updatedAt) || 0;
+            var tb = Date.parse(incoming && incoming.updatedAt) || 0;
+            if (tb >= ta) out[day][puesto].tasks[taskId] = incoming;
+          });
+        });
+      });
+    }
+    absorb(a);
+    absorb(b);
+    return out;
+  }
+
   function applyRemote(data, opts) {
     opts = opts || {};
     var incoming = C().normalizeState(data);
     var local = readLocal();
-    var next = opts.force ? incoming : preferRicher(incoming, local);
+    var mem = shared.state ? C().normalizeState(shared.state) : null;
+    var next = opts.force ? incoming : preferRicher(incoming, preferRicher(local, mem));
     if (!opts.force && (!next.templates || !next.templates.length) && local && local.templates && local.templates.length) {
       next = local;
     }
+    // Conservar avance diario: fusionar memoria + local + entrante
+    next.daily = mergeDaily(mergeDaily(mem && mem.daily, local && local.daily), incoming.daily);
     shared.state = next;
     if (!opts.skipPersist && next.templates && next.templates.length) {
       writeLocal(next);
@@ -85,7 +118,11 @@
   function applySeedPayload(seed, opts) {
     opts = opts || {};
     if (seed && seed.puestos && seed.puestos.length) C().applyPuestos(seed.puestos);
-    var daily = (shared.state && shared.state.daily) || {};
+    var localSnap = readLocal();
+    var daily = mergeDaily(
+      (shared.state && shared.state.daily) || {},
+      (localSnap && localSnap.daily) || {}
+    );
     applyRemote({
       version: seed && seed.version || 2,
       templates: (seed && seed.templates) || [],
@@ -186,24 +223,65 @@
     return shared;
   }
 
+  function applyTaskPatch(rec, patch, userName) {
+    var prevEstado = rec.estado;
+    if (patch.estado) rec.estado = patch.estado;
+    if (patch.comentarios !== undefined) rec.comentarios = String(patch.comentarios || '');
+    if (patch.horaEjecucion !== undefined) rec.horaEjecucion = String(patch.horaEjecucion || '');
+    rec.updatedAt = new Date().toISOString();
+    rec.updatedBy = String(userName || '');
+    rec.history = Array.isArray(rec.history) ? rec.history.slice() : [];
+    if (patch.estado && patch.estado !== prevEstado) {
+      rec.history.push({
+        from: prevEstado,
+        to: patch.estado,
+        at: rec.updatedAt,
+        by: rec.updatedBy
+      });
+      if (patch.estado === C().ESTADO_COMPLETADO && !rec.horaEjecucion) {
+        rec.horaEjecucion = C().formatClockTime().slice(0, 5);
+      }
+      if (patch.estado !== C().ESTADO_COMPLETADO && prevEstado === C().ESTADO_COMPLETADO) {
+        rec.horaEjecucion = '';
+      }
+    }
+    return rec;
+  }
+
   function updateTask(dayKey, puestoId, taskId, patch, user) {
-    var sync = Sync();
+    if (!dayKey || !puestoId || !taskId) {
+      return Promise.resolve({ ok: false, msg: 'Falta fecha, persona o actividad.' });
+    }
     var name = user && (user.name || user.username);
-    if (sync && sync.updateTaskProgress) {
-      return sync.updateTaskProgress(dayKey, puestoId, taskId, patch, name).then(function (rec) {
-        // Mantener copia local también
-        var st = C().normalizeState(shared.state);
-        var tasks = C().ensurePuestoBucket(st, dayKey, puestoId);
-        tasks[taskId] = rec;
-        writeLocal(st);
-        shared.state = st;
+    // Actualizar SIEMPRE sobre el estado en memoria (no re-seed vacío).
+    var st = C().normalizeState(shared.state || readLocal() || null);
+    var tasks = C().ensurePuestoBucket(st, dayKey, puestoId);
+    var rec = applyTaskPatch(
+      Object.assign({}, tasks[taskId] || C().emptyTaskProgress()),
+      patch || {},
+      name
+    );
+    tasks[taskId] = rec;
+    st.updatedAt = new Date().toISOString();
+    st.updatedBy = name || '';
+    shared.state = st;
+    writeLocal(st);
+    notify();
+
+    var sync = Sync();
+    if (sync && sync.isLive && sync.isLive() && sync.pushState) {
+      return sync.pushState(st).then(function () {
+        shared.live = true;
         notify();
         return { ok: true, progress: rec };
-      }).catch(function (err) {
-        return { ok: false, msg: (err && err.message) || 'No se pudo guardar.' };
+      }).catch(function () {
+        shared.live = false;
+        shared.error = 'Guardado local. Nube no disponible.';
+        notify();
+        return { ok: true, progress: rec, local: true };
       });
     }
-    return Promise.resolve({ ok: false, msg: 'Sin sync' });
+    return Promise.resolve({ ok: true, progress: rec, local: true });
   }
 
   function pullFresh() {

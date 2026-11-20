@@ -142,40 +142,54 @@
     return readyPromise;
   }
 
-  function updateTaskProgress(dayKey, puestoId, taskId, patch, userName) {
-    return pullState().then(function (state) {
-      return withSeed(state).then(function (safe) {
-        var tasks = C().ensurePuestoBucket(safe, dayKey, puestoId);
-        var rec = tasks[taskId] || C().emptyTaskProgress();
-        var prevEstado = rec.estado;
-        if (patch.estado) rec.estado = patch.estado;
-        if (patch.comentarios !== undefined) rec.comentarios = String(patch.comentarios || '');
-        if (patch.horaEjecucion !== undefined) rec.horaEjecucion = String(patch.horaEjecucion || '');
-        rec.updatedAt = new Date().toISOString();
-        rec.updatedBy = String(userName || '');
-        rec.history = Array.isArray(rec.history) ? rec.history : [];
-        if (patch.estado && patch.estado !== prevEstado) {
-          rec.history.push({
-            from: prevEstado,
-            to: patch.estado,
-            at: rec.updatedAt,
-            by: rec.updatedBy
-          });
-          if (patch.estado === C().ESTADO_COMPLETADO && !rec.horaEjecucion) {
-            rec.horaEjecucion = C().formatClockTime().slice(0, 5);
-          }
-        }
-        tasks[taskId] = rec;
+  function currentStoreState() {
+    var Store = global.PlatformAgendaStore;
+    if (Store && Store.getState) {
+      var snap = Store.getState();
+      if (snap && snap.state) return C().normalizeState(snap.state);
+    }
+    return null;
+  }
 
-        var B = Bridge();
-        if (!B || !B.isEnabled || !B.isEnabled()) {
-          notify('sync', safe);
-          return rec;
-        }
-        return pushState(safe).then(function () {
-          notify('sync', safe);
-          return rec;
+  function updateTaskProgress(dayKey, puestoId, taskId, patch, userName) {
+    // Partir del estado actual del store (incluye avance previo). Nunca de seed vacío.
+    var base = currentStoreState();
+    return withSeed(base).then(function (safe) {
+      if (base && base.daily) safe.daily = base.daily;
+      var tasks = C().ensurePuestoBucket(safe, dayKey, puestoId);
+      var rec = Object.assign({}, tasks[taskId] || C().emptyTaskProgress());
+      var prevEstado = rec.estado;
+      if (patch.estado) rec.estado = patch.estado;
+      if (patch.comentarios !== undefined) rec.comentarios = String(patch.comentarios || '');
+      if (patch.horaEjecucion !== undefined) rec.horaEjecucion = String(patch.horaEjecucion || '');
+      rec.updatedAt = new Date().toISOString();
+      rec.updatedBy = String(userName || '');
+      rec.history = Array.isArray(rec.history) ? rec.history.slice() : [];
+      if (patch.estado && patch.estado !== prevEstado) {
+        rec.history.push({
+          from: prevEstado,
+          to: patch.estado,
+          at: rec.updatedAt,
+          by: rec.updatedBy
         });
+        if (patch.estado === C().ESTADO_COMPLETADO && !rec.horaEjecucion) {
+          rec.horaEjecucion = C().formatClockTime().slice(0, 5);
+        }
+        if (patch.estado !== C().ESTADO_COMPLETADO && prevEstado === C().ESTADO_COMPLETADO) {
+          rec.horaEjecucion = '';
+        }
+      }
+      tasks[taskId] = rec;
+      safe.updatedAt = rec.updatedAt;
+
+      var B = Bridge();
+      if (!B || !B.isEnabled || !B.isEnabled()) {
+        notify('sync', safe);
+        return rec;
+      }
+      return pushState(safe).then(function () {
+        notify('sync', safe);
+        return rec;
       });
     });
   }

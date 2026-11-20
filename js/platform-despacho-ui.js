@@ -15,6 +15,7 @@
   var displayWindows = { barcode: null, lista: null };
   var lastEstadoEditAt = 0;
   var syncRefreshTimer = null;
+  var formBusyUntil = 0;
   var knownValidatorIds = Object.create(null);
   var voiceAlertsReady = false;
 
@@ -50,11 +51,21 @@
     return false;
   }
 
+  function markFormBusy(ms) {
+    formBusyUntil = Math.max(formBusyUntil, Date.now() + (ms == null ? 1600 : ms));
+  }
+
   function isTypingInDespForm(host) {
     var ae = global.document && global.document.activeElement;
     if (!ae || !host || !host.contains(ae)) return false;
     var tag = ae.tagName;
     return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+  }
+
+  /** True si el operador está en el formulario (focus, pegado Ctrl+V, tecleo reciente). */
+  function isFormBusy(host) {
+    if (Date.now() < formBusyUntil) return true;
+    return isTypingInDespForm(host);
   }
 
   function captureFocusSnap(host) {
@@ -84,6 +95,12 @@
   }
 
   function applyRemoteSyncRefresh(host, fresh, screen, opts) {
+    // Nunca destruir el DOM del formulario mientras pegan/escriben (Ctrl+V en IDC)
+    if (isFormBusy(host)) {
+      pendingSyncFresh = fresh || (DS && DS.load ? DS.load() : pendingSyncFresh);
+      scheduleBusySyncRetry(host, screen, opts);
+      return;
+    }
     var formSnap = screen === 'barcode' ? captureShareForm(host)
       : (screen === 'registro' ? capturePrepForm(host) : null);
     var focusSnap = captureFocusSnap(host);
@@ -107,8 +124,24 @@
     if (screen === 'validador') updateShareListaUi(host, fresh, opts);
   }
 
+  function scheduleBusySyncRetry(host, screen, opts) {
+    clearTimeout(syncRefreshTimer);
+    syncRefreshTimer = global.setTimeout(function () {
+      if (!host.isConnected) return;
+      if (isFormBusy(host)) {
+        scheduleBusySyncRetry(host, screen, opts);
+        return;
+      }
+      flushPendingSync(host, screen, opts);
+    }, 400);
+  }
+
   function flushPendingSync(host, screen, opts) {
     if (!pendingSyncFresh || !host.isConnected) return;
+    if (isFormBusy(host)) {
+      scheduleBusySyncRetry(host, screen, opts);
+      return;
+    }
     var fresh = pendingSyncFresh;
     pendingSyncFresh = null;
     applyRemoteSyncRefresh(host, fresh, screen, opts);
@@ -118,11 +151,20 @@
     host.querySelectorAll('input, textarea, select').forEach(function (el) {
       if (el.__despTypingSafeBound) return;
       el.__despTypingSafeBound = true;
+      function onBusy() { markFormBusy(1800); }
+      el.addEventListener('keydown', onBusy);
+      el.addEventListener('input', onBusy);
+      el.addEventListener('paste', function () {
+        // Cubrir Ctrl+V: el value aún no está cuando llega keydown
+        markFormBusy(2200);
+      });
+      el.addEventListener('compositionstart', onBusy);
+      el.addEventListener('focus', function () { markFormBusy(600); });
       el.addEventListener('blur', function () {
         global.setTimeout(function () {
-          if (isTypingInDespForm(host)) return;
+          if (isFormBusy(host)) return;
           flushPendingSync(host, screen, opts);
-        }, 0);
+        }, 120);
       });
     });
   }
@@ -161,6 +203,40 @@
     input.addEventListener('change', purgeJunk);
     setTimeout(purgeJunk, 0);
     setTimeout(purgeJunk, 350);
+  }
+
+  /** Ctrl+V / pegado desde Excel: limpiar saltos y bloquear refresh del sync que destruía el input. */
+  function guardIdcPasteField(input) {
+    if (!input || input.__despIdcPasteBound) return;
+    input.__despIdcPasteBound = true;
+    input.setAttribute('autocomplete', 'off');
+    input.setAttribute('autocorrect', 'off');
+    input.setAttribute('spellcheck', 'false');
+    input.addEventListener('keydown', function (ev) {
+      if ((ev.ctrlKey || ev.metaKey) && String(ev.key || '').toLowerCase() === 'v') {
+        markFormBusy(2500);
+      }
+    });
+    input.addEventListener('paste', function (ev) {
+      markFormBusy(2500);
+      var clip = ev.clipboardData || global.clipboardData;
+      var raw = clip && clip.getData ? clip.getData('text') : '';
+      if (raw == null || raw === '') return;
+      ev.preventDefault();
+      var cleaned = String(raw).replace(/\r/g, '\n').split('\n')[0]
+        .replace(/\t/g, ' ').replace(/\s+/g, ' ').trim();
+      var start = input.selectionStart != null ? input.selectionStart : input.value.length;
+      var end = input.selectionEnd != null ? input.selectionEnd : input.value.length;
+      var next = input.value.slice(0, start) + cleaned + input.value.slice(end);
+      input.value = next;
+      try {
+        var pos = start + cleaned.length;
+        input.setSelectionRange(pos, pos);
+      } catch (e) { /* noop */ }
+      try {
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      } catch (e2) { /* noop */ }
+    });
   }
 
   function liveStatusText(live) {
@@ -1407,14 +1483,24 @@
     unbindSync = DS.bindSync(function () {
       if (!host.isConnected) return;
       handleVoiceAlerts(DS.load(), lastOpts && lastOpts.despachoArea);
-      if (isTypingInDespForm(host)) {
+      if (isFormBusy(host)) {
         pendingSyncFresh = DS.load();
+        scheduleBusySyncRetry(host, screen, lastOpts || opts);
         return;
       }
       clearTimeout(syncRefreshTimer);
-      var delay = screen === 'validador' ? 450 : 120;
+      var delay = screen === 'validador' ? 450 : 180;
       syncRefreshTimer = global.setTimeout(function () {
-        if (Date.now() - lastEstadoEditAt < 1500) return;
+        if (Date.now() - lastEstadoEditAt < 1500) {
+          pendingSyncFresh = DS.load();
+          return;
+        }
+        // Revalidar: el operador pudo hacer focus/Ctrl+V durante el delay
+        if (isFormBusy(host)) {
+          pendingSyncFresh = DS.load();
+          scheduleBusySyncRetry(host, screen, lastOpts || opts);
+          return;
+        }
         applyRemoteSyncRefresh(host, DS.load(), screen, lastOpts || opts);
       }, delay);
     });
@@ -1496,6 +1582,8 @@
 
     guardJaulaField(host.querySelector('#despJaula'));
     guardJaulaField(host.querySelector('#despShareJaula'), onShareJaulaCleared);
+    guardIdcPasteField(host.querySelector('#despIdc'));
+    guardIdcPasteField(host.querySelector('#despShareIdc'));
 
     host.querySelectorAll('[data-desp-screen]').forEach(function (btn) {
       btn.addEventListener('click', function () {

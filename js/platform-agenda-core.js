@@ -26,9 +26,10 @@
   };
 
   var FREQ_LABELS = {
-    DIARIA: 'Diaria',
-    INTER_DIARIA: 'Inter-diaria',
-    SEMANAL: 'Semanal'
+    AUDITORIA: 'Auditoría',
+    DIARIA: 'Auditoría',
+    INTER_DIARIA: 'Auditoría',
+    SEMANAL: 'Auditoría'
   };
 
   /** Se reemplaza al cargar agenda-seed.json (una tarjeta por persona a medir). */
@@ -108,23 +109,21 @@
     return Math.floor((dt - start) / 86400000);
   }
 
+  /** Checklist de auditoría: todas las actividades aplican en la fecha seleccionada. */
   function isTaskDueOnDay(template, dayKey) {
-    if (!template) return false;
-    var freq = String(template.frecuencia || 'DIARIA').toUpperCase();
-    if (freq === 'DIARIA') return true;
-    var d = new Date(dayKey + 'T12:00:00');
-    if (freq === 'SEMANAL') return weekdayIndex(d) === 1;
-    if (freq === 'INTER_DIARIA') return dayOfYear(d) % 2 === 0;
+    if (!template || !dayKey) return false;
     return true;
   }
 
   function normalizeTemplate(raw) {
     if (!raw || !raw.id || !raw.puesto || !raw.actividad) return null;
+    var freq = String(raw.frecuencia || 'AUDITORIA').toUpperCase();
+    if (freq === 'DIARIA' || freq === 'INTER_DIARIA' || freq === 'SEMANAL') freq = 'AUDITORIA';
     return {
       id: String(raw.id),
       puesto: String(raw.puesto),
       numero: Number(raw.numero) || 0,
-      frecuencia: String(raw.frecuencia || 'DIARIA').toUpperCase(),
+      frecuencia: freq,
       actividad: String(raw.actividad).trim(),
       minutos: Math.max(Number(raw.minutos) || 0, 0)
     };

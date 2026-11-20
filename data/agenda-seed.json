@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "updatedAt": "2026-11-20T14:22:38.352Z",
+  "updatedAt": "2026-11-20T14:39:56.827Z",
   "source": "agenda-actividades-editar.xlsx",
   "puestos": [
     {
@@ -65,7 +65,7 @@
       "id": "supervisor_despacho__anthony_sanchez-1",
       "puesto": "supervisor_despacho__anthony_sanchez",
       "numero": 1,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Realizar Ponche y acomodar inicio de labores",
       "minutos": 2
     },
@@ -73,7 +73,7 @@
       "id": "supervisor_despacho__anthony_sanchez-2",
       "puesto": "supervisor_despacho__anthony_sanchez",
       "numero": 2,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Validar bandeja de correos y solicitudes",
       "minutos": 30
     },
@@ -81,7 +81,7 @@
       "id": "supervisor_despacho__anthony_sanchez-3",
       "puesto": "supervisor_despacho__anthony_sanchez",
       "numero": 3,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Recibir cambio de turno",
       "minutos": 30
     },
@@ -89,7 +89,7 @@
       "id": "supervisor_despacho__anthony_sanchez-4",
       "puesto": "supervisor_despacho__anthony_sanchez",
       "numero": 4,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Impatir Reunión Vespertina",
       "minutos": 30
     },
@@ -97,7 +97,7 @@
       "id": "supervisor_despacho__anthony_sanchez-5",
       "puesto": "supervisor_despacho__anthony_sanchez",
       "numero": 5,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Verificar cuantos contenedores hay para KA",
       "minutos": 15
     },
@@ -105,7 +105,7 @@
       "id": "supervisor_despacho__anthony_sanchez-6",
       "puesto": "supervisor_despacho__anthony_sanchez",
       "numero": 6,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Designar validadores a despachar KA",
       "minutos": 30
     },
@@ -113,7 +113,7 @@
       "id": "supervisor_despacho__anthony_sanchez-7",
       "puesto": "supervisor_despacho__anthony_sanchez",
       "numero": 7,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Gestionar contenedores pendientes para los KA",
       "minutos": 20
     },
@@ -121,7 +121,7 @@
       "id": "supervisor_despacho__anthony_sanchez-8",
       "puesto": "supervisor_despacho__anthony_sanchez",
       "numero": 8,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Colocar un IDC con 150 líneas o más",
       "minutos": 15
     },
@@ -129,7 +129,7 @@
       "id": "supervisor_despacho__anthony_sanchez-9",
       "puesto": "supervisor_despacho__anthony_sanchez",
       "numero": 9,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Analizar el sugerido y vencidos pendientes por facturar",
       "minutos": 30
     },
@@ -137,7 +137,7 @@
       "id": "supervisor_despacho__anthony_sanchez-10",
       "puesto": "supervisor_despacho__anthony_sanchez",
       "numero": 10,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Colocar en el seguimiento los IDC faltantes del plan",
       "minutos": 45
     },
@@ -145,7 +145,7 @@
       "id": "supervisor_despacho__anthony_sanchez-11",
       "puesto": "supervisor_despacho__anthony_sanchez",
       "numero": 11,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Monitear productividad de los saca pedidos",
       "minutos": 30
     },
@@ -153,7 +153,7 @@
       "id": "supervisor_despacho__anthony_sanchez-12",
       "puesto": "supervisor_despacho__anthony_sanchez",
       "numero": 12,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Facturar todo lo pendiente colocado",
       "minutos": 60
     },
@@ -161,7 +161,7 @@
       "id": "supervisor_despacho__anthony_sanchez-13",
       "puesto": "supervisor_despacho__anthony_sanchez",
       "numero": 13,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Realizar reporte BO con sus comentarios",
       "minutos": 30
     },
@@ -169,7 +169,7 @@
       "id": "supervisor_despacho__anthony_sanchez-14",
       "puesto": "supervisor_despacho__anthony_sanchez",
       "numero": 14,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Gestionar 5s a todos los pasillos",
       "minutos": 15
     },
@@ -177,7 +177,7 @@
       "id": "supervisor_despacho__anthony_sanchez-15",
       "puesto": "supervisor_despacho__anthony_sanchez",
       "numero": 15,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Verificar que todos los equipos estén guardados",
       "minutos": 15
     },
@@ -185,7 +185,7 @@
       "id": "supervisor_despacho__anthony_sanchez-16",
       "puesto": "supervisor_despacho__anthony_sanchez",
       "numero": 16,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Verificar personal con trabajos pendientes a finalizar",
       "minutos": 20
     },
@@ -193,7 +193,7 @@
       "id": "supervisor_despacho__anthony_sanchez-17",
       "puesto": "supervisor_despacho__anthony_sanchez",
       "numero": 17,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Cerrar el almacén",
       "minutos": 5
     },
@@ -201,7 +201,7 @@
       "id": "supervisor_despacho__cesar_astacio-1",
       "puesto": "supervisor_despacho__cesar_astacio",
       "numero": 1,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Realizar Ponche y acomodar inicio de labores",
       "minutos": 2
     },
@@ -209,7 +209,7 @@
       "id": "supervisor_despacho__cesar_astacio-2",
       "puesto": "supervisor_despacho__cesar_astacio",
       "numero": 2,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Validar bandeja de correos y solicitudes",
       "minutos": 30
     },
@@ -217,7 +217,7 @@
       "id": "supervisor_despacho__cesar_astacio-3",
       "puesto": "supervisor_despacho__cesar_astacio",
       "numero": 3,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Recibir cambio de turno",
       "minutos": 30
     },
@@ -225,7 +225,7 @@
       "id": "supervisor_despacho__cesar_astacio-4",
       "puesto": "supervisor_despacho__cesar_astacio",
       "numero": 4,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Impatir Reunión Vespertina",
       "minutos": 30
     },
@@ -233,7 +233,7 @@
       "id": "supervisor_despacho__cesar_astacio-5",
       "puesto": "supervisor_despacho__cesar_astacio",
       "numero": 5,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Verificar cuantos contenedores hay para KA",
       "minutos": 15
     },
@@ -241,7 +241,7 @@
       "id": "supervisor_despacho__cesar_astacio-6",
       "puesto": "supervisor_despacho__cesar_astacio",
       "numero": 6,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Designar validadores a despachar KA",
       "minutos": 30
     },
@@ -249,7 +249,7 @@
       "id": "supervisor_despacho__cesar_astacio-7",
       "puesto": "supervisor_despacho__cesar_astacio",
       "numero": 7,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Gestionar contenedores pendientes para los KA",
       "minutos": 20
     },
@@ -257,7 +257,7 @@
       "id": "supervisor_despacho__cesar_astacio-8",
       "puesto": "supervisor_despacho__cesar_astacio",
       "numero": 8,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Colocar un IDC con 150 líneas o más",
       "minutos": 15
     },
@@ -265,7 +265,7 @@
       "id": "supervisor_despacho__cesar_astacio-9",
       "puesto": "supervisor_despacho__cesar_astacio",
       "numero": 9,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Analizar el sugerido y vencidos pendientes por facturar",
       "minutos": 30
     },
@@ -273,7 +273,7 @@
       "id": "supervisor_despacho__cesar_astacio-10",
       "puesto": "supervisor_despacho__cesar_astacio",
       "numero": 10,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Colocar en el seguimiento los IDC faltantes del plan",
       "minutos": 45
     },
@@ -281,7 +281,7 @@
       "id": "supervisor_despacho__cesar_astacio-11",
       "puesto": "supervisor_despacho__cesar_astacio",
       "numero": 11,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Monitear productividad de los saca pedidos",
       "minutos": 30
     },
@@ -289,7 +289,7 @@
       "id": "supervisor_despacho__cesar_astacio-12",
       "puesto": "supervisor_despacho__cesar_astacio",
       "numero": 12,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Facturar todo lo pendiente colocado",
       "minutos": 60
     },
@@ -297,7 +297,7 @@
       "id": "supervisor_despacho__cesar_astacio-13",
       "puesto": "supervisor_despacho__cesar_astacio",
       "numero": 13,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Realizar reporte BO con sus comentarios",
       "minutos": 30
     },
@@ -305,7 +305,7 @@
       "id": "supervisor_despacho__cesar_astacio-14",
       "puesto": "supervisor_despacho__cesar_astacio",
       "numero": 14,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Gestionar 5s a todos los pasillos",
       "minutos": 15
     },
@@ -313,7 +313,7 @@
       "id": "supervisor_despacho__cesar_astacio-15",
       "puesto": "supervisor_despacho__cesar_astacio",
       "numero": 15,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Verificar que todos los equipos estén guardados",
       "minutos": 15
     },
@@ -321,7 +321,7 @@
       "id": "supervisor_despacho__cesar_astacio-16",
       "puesto": "supervisor_despacho__cesar_astacio",
       "numero": 16,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Verificar personal con trabajos pendientes a finalizar",
       "minutos": 20
     },
@@ -329,7 +329,7 @@
       "id": "supervisor_despacho__cesar_astacio-17",
       "puesto": "supervisor_despacho__cesar_astacio",
       "numero": 17,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Cerrar el almacén",
       "minutos": 5
     },
@@ -337,7 +337,7 @@
       "id": "supervisor_inventario__eliezer_beltre-1",
       "puesto": "supervisor_inventario__eliezer_beltre",
       "numero": 1,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Realizar Ponche y acomodar inicio de labores",
       "minutos": 2
     },
@@ -345,7 +345,7 @@
       "id": "supervisor_inventario__eliezer_beltre-2",
       "puesto": "supervisor_inventario__eliezer_beltre",
       "numero": 2,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Validar bandeja de correos y solicitudes",
       "minutos": 30
     },
@@ -353,7 +353,7 @@
       "id": "supervisor_inventario__eliezer_beltre-3",
       "puesto": "supervisor_inventario__eliezer_beltre",
       "numero": 3,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Reubicar paletas borradas",
       "minutos": 30
     },
@@ -361,7 +361,7 @@
       "id": "supervisor_inventario__eliezer_beltre-4",
       "puesto": "supervisor_inventario__eliezer_beltre",
       "numero": 4,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Realizar reporte de vencimiento",
       "minutos": 60
     },
@@ -369,7 +369,7 @@
       "id": "supervisor_inventario__eliezer_beltre-5",
       "puesto": "supervisor_inventario__eliezer_beltre",
       "numero": 5,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Eliminar 100 Reservas diarias",
       "minutos": 30
     },
@@ -377,7 +377,7 @@
       "id": "supervisor_inventario__eliezer_beltre-6",
       "puesto": "supervisor_inventario__eliezer_beltre",
       "numero": 6,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Realizar identificación de los SKU próximos a vencer",
       "minutos": 45
     },
@@ -385,7 +385,7 @@
       "id": "supervisor_inventario__eliezer_beltre-7",
       "puesto": "supervisor_inventario__eliezer_beltre",
       "numero": 7,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Actualizar seguimiento total de trabajos sistema",
       "minutos": 20
     },
@@ -393,7 +393,7 @@
       "id": "supervisor_inventario__eliezer_beltre-8",
       "puesto": "supervisor_inventario__eliezer_beltre",
       "numero": 8,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Realizar diarios a SKU vencidos",
       "minutos": 45
     },
@@ -401,7 +401,7 @@
       "id": "supervisor_inventario__eliezer_beltre-9",
       "puesto": "supervisor_inventario__eliezer_beltre",
       "numero": 9,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Verificar las ubicaciones fijas",
       "minutos": 15
     },
@@ -409,7 +409,7 @@
       "id": "supervisor_inventario__eliezer_beltre-10",
       "puesto": "supervisor_inventario__eliezer_beltre",
       "numero": 10,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Realizar reporte de SKU que no se pueden comercializar",
       "minutos": 45
     },
@@ -417,7 +417,7 @@
       "id": "supervisor_inventario__eliezer_beltre-11",
       "puesto": "supervisor_inventario__eliezer_beltre",
       "numero": 11,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Acuracidad de tramerias",
       "minutos": 15
     },
@@ -425,7 +425,7 @@
       "id": "supervisor_inventario__eliezer_beltre-12",
       "puesto": "supervisor_inventario__eliezer_beltre",
       "numero": 12,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Actualizar Reporte de avería diario.",
       "minutos": 15
     },
@@ -433,7 +433,7 @@
       "id": "supervisor_inventario__eliezer_beltre-13",
       "puesto": "supervisor_inventario__eliezer_beltre",
       "numero": 13,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Transferir CPH con empaque averiados",
       "minutos": 25
     },
@@ -441,7 +441,7 @@
       "id": "supervisor_inventario__eliezer_beltre-14",
       "puesto": "supervisor_inventario__eliezer_beltre",
       "numero": 14,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Trabajar las solicitudes de productos para donacion",
       "minutos": 30
     },
@@ -449,7 +449,7 @@
       "id": "supervisor_inventario__eliezer_beltre-15",
       "puesto": "supervisor_inventario__eliezer_beltre",
       "numero": 15,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Realizar las notas de debito",
       "minutos": 15
     },
@@ -457,7 +457,7 @@
       "id": "supervisor_inventario__eliezer_beltre-16",
       "puesto": "supervisor_inventario__eliezer_beltre",
       "numero": 16,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Acompañar proceso de reciclaje",
       "minutos": 60
     },
@@ -465,7 +465,7 @@
       "id": "supervisor_recepcion__eliezer_ravelo-1",
       "puesto": "supervisor_recepcion__eliezer_ravelo",
       "numero": 1,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Ronda gestión de recepción",
       "minutos": 20
     },
@@ -473,7 +473,7 @@
       "id": "supervisor_recepcion__eliezer_ravelo-2",
       "puesto": "supervisor_recepcion__eliezer_ravelo",
       "numero": 2,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Asginación de tareas al equipo",
       "minutos": 10
     },
@@ -481,7 +481,7 @@
       "id": "supervisor_recepcion__eliezer_ravelo-3",
       "puesto": "supervisor_recepcion__eliezer_ravelo",
       "numero": 3,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Revisión inventario del R001",
       "minutos": 30
     },
@@ -489,7 +489,7 @@
       "id": "supervisor_recepcion__eliezer_ravelo-4",
       "puesto": "supervisor_recepcion__eliezer_ravelo",
       "numero": 4,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Revisar estatus de correo",
       "minutos": 15
     },
@@ -497,7 +497,7 @@
       "id": "supervisor_recepcion__eliezer_ravelo-5",
       "puesto": "supervisor_recepcion__eliezer_ravelo",
       "numero": 5,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Seguimiento a casos o incidentes",
       "minutos": 20
     },
@@ -505,7 +505,7 @@
       "id": "supervisor_recepcion__eliezer_ravelo-6",
       "puesto": "supervisor_recepcion__eliezer_ravelo",
       "numero": 6,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Validar OT y OC abiertas",
       "minutos": 10
     },
@@ -513,7 +513,7 @@
       "id": "supervisor_recepcion__eliezer_ravelo-7",
       "puesto": "supervisor_recepcion__eliezer_ravelo",
       "numero": 7,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Cerrar trabajos abiertos",
       "minutos": 45
     },
@@ -521,7 +521,7 @@
       "id": "supervisor_recepcion__eliezer_ravelo-8",
       "puesto": "supervisor_recepcion__eliezer_ravelo",
       "numero": 8,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Revisar checklist de MC",
       "minutos": 20
     },
@@ -529,7 +529,7 @@
       "id": "supervisor_recepcion__eliezer_ravelo-9",
       "puesto": "supervisor_recepcion__eliezer_ravelo",
       "numero": 9,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Tratar anomalias del checkliste de MC",
       "minutos": 20
     },
@@ -537,7 +537,7 @@
       "id": "supervisor_recepcion__eliezer_ravelo-10",
       "puesto": "supervisor_recepcion__eliezer_ravelo",
       "numero": 10,
-      "frecuencia": "SEMANAL",
+      "frecuencia": "AUDITORIA",
       "actividad": "Auditoría - Procesos de Descarga",
       "minutos": 20
     },
@@ -545,7 +545,7 @@
       "id": "supervisor_recepcion__eliezer_ravelo-11",
       "puesto": "supervisor_recepcion__eliezer_ravelo",
       "numero": 11,
-      "frecuencia": "SEMANAL",
+      "frecuencia": "AUDITORIA",
       "actividad": "Auditoría - Procesos de Digitación",
       "minutos": 20
     },
@@ -553,7 +553,7 @@
       "id": "supervisor_recepcion__eliezer_ravelo-12",
       "puesto": "supervisor_recepcion__eliezer_ravelo",
       "numero": 12,
-      "frecuencia": "SEMANAL",
+      "frecuencia": "AUDITORIA",
       "actividad": "Auditoría - Procesos de Validación",
       "minutos": 20
     },
@@ -561,7 +561,7 @@
       "id": "supervisor_recepcion__eliezer_ravelo-13",
       "puesto": "supervisor_recepcion__eliezer_ravelo",
       "numero": 13,
-      "frecuencia": "SEMANAL",
+      "frecuencia": "AUDITORIA",
       "actividad": "Auditoría  - Procesos de Ubicación",
       "minutos": 20
     },
@@ -569,7 +569,7 @@
       "id": "supervisor_recepcion__eliezer_ravelo-14",
       "puesto": "supervisor_recepcion__eliezer_ravelo",
       "numero": 14,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Recepción de Choferes",
       "minutos": 45
     },
@@ -577,7 +577,7 @@
       "id": "supervisor_recepcion__eliezer_ravelo-15",
       "puesto": "supervisor_recepcion__eliezer_ravelo",
       "numero": 15,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Seguimiento pendientes por validar y por entrada",
       "minutos": 60
     },
@@ -585,7 +585,7 @@
       "id": "supervisor_recepcion__eliezer_ravelo-16",
       "puesto": "supervisor_recepcion__eliezer_ravelo",
       "numero": 16,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Entrega de turno",
       "minutos": 60
     },
@@ -593,7 +593,7 @@
       "id": "supervisor_recepcion__eliezer_ravelo-17",
       "puesto": "supervisor_recepcion__eliezer_ravelo",
       "numero": 17,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Validar agenda del equipo",
       "minutos": 20
     },
@@ -601,7 +601,7 @@
       "id": "supervisor_recepcion__wandel_jerez-1",
       "puesto": "supervisor_recepcion__wandel_jerez",
       "numero": 1,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Ronda gestión de recepción",
       "minutos": 20
     },
@@ -609,7 +609,7 @@
       "id": "supervisor_recepcion__wandel_jerez-2",
       "puesto": "supervisor_recepcion__wandel_jerez",
       "numero": 2,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Asginación de tareas al equipo",
       "minutos": 10
     },
@@ -617,7 +617,7 @@
       "id": "supervisor_recepcion__wandel_jerez-3",
       "puesto": "supervisor_recepcion__wandel_jerez",
       "numero": 3,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Revisión inventario del R001",
       "minutos": 30
     },
@@ -625,7 +625,7 @@
       "id": "supervisor_recepcion__wandel_jerez-4",
       "puesto": "supervisor_recepcion__wandel_jerez",
       "numero": 4,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Revisar estatus de correo",
       "minutos": 15
     },
@@ -633,7 +633,7 @@
       "id": "supervisor_recepcion__wandel_jerez-5",
       "puesto": "supervisor_recepcion__wandel_jerez",
       "numero": 5,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Seguimiento a casos o incidentes",
       "minutos": 20
     },
@@ -641,7 +641,7 @@
       "id": "supervisor_recepcion__wandel_jerez-6",
       "puesto": "supervisor_recepcion__wandel_jerez",
       "numero": 6,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Validar OT y OC abiertas",
       "minutos": 10
     },
@@ -649,7 +649,7 @@
       "id": "supervisor_recepcion__wandel_jerez-7",
       "puesto": "supervisor_recepcion__wandel_jerez",
       "numero": 7,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Cerrar trabajos abiertos",
       "minutos": 45
     },
@@ -657,7 +657,7 @@
       "id": "supervisor_recepcion__wandel_jerez-8",
       "puesto": "supervisor_recepcion__wandel_jerez",
       "numero": 8,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Revisar checklist de MC",
       "minutos": 20
     },
@@ -665,7 +665,7 @@
       "id": "supervisor_recepcion__wandel_jerez-9",
       "puesto": "supervisor_recepcion__wandel_jerez",
       "numero": 9,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Tratar anomalias del checkliste de MC",
       "minutos": 20
     },
@@ -673,7 +673,7 @@
       "id": "supervisor_recepcion__wandel_jerez-10",
       "puesto": "supervisor_recepcion__wandel_jerez",
       "numero": 10,
-      "frecuencia": "SEMANAL",
+      "frecuencia": "AUDITORIA",
       "actividad": "Auditoría - Procesos de Descarga",
       "minutos": 20
     },
@@ -681,7 +681,7 @@
       "id": "supervisor_recepcion__wandel_jerez-11",
       "puesto": "supervisor_recepcion__wandel_jerez",
       "numero": 11,
-      "frecuencia": "SEMANAL",
+      "frecuencia": "AUDITORIA",
       "actividad": "Auditoría - Procesos de Digitación",
       "minutos": 20
     },
@@ -689,7 +689,7 @@
       "id": "supervisor_recepcion__wandel_jerez-12",
       "puesto": "supervisor_recepcion__wandel_jerez",
       "numero": 12,
-      "frecuencia": "SEMANAL",
+      "frecuencia": "AUDITORIA",
       "actividad": "Auditoría - Procesos de Validación",
       "minutos": 20
     },
@@ -697,7 +697,7 @@
       "id": "supervisor_recepcion__wandel_jerez-13",
       "puesto": "supervisor_recepcion__wandel_jerez",
       "numero": 13,
-      "frecuencia": "SEMANAL",
+      "frecuencia": "AUDITORIA",
       "actividad": "Auditoría  - Procesos de Ubicación",
       "minutos": 20
     },
@@ -705,7 +705,7 @@
       "id": "supervisor_recepcion__wandel_jerez-14",
       "puesto": "supervisor_recepcion__wandel_jerez",
       "numero": 14,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Recepción de Choferes",
       "minutos": 45
     },
@@ -713,7 +713,7 @@
       "id": "supervisor_recepcion__wandel_jerez-15",
       "puesto": "supervisor_recepcion__wandel_jerez",
       "numero": 15,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Seguimiento pendientes por validar y por entrada",
       "minutos": 60
     },
@@ -721,7 +721,7 @@
       "id": "supervisor_recepcion__wandel_jerez-16",
       "puesto": "supervisor_recepcion__wandel_jerez",
       "numero": 16,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Entrega de turno",
       "minutos": 60
     },
@@ -729,7 +729,7 @@
       "id": "supervisor_recepcion__wandel_jerez-17",
       "puesto": "supervisor_recepcion__wandel_jerez",
       "numero": 17,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Validar agenda del equipo",
       "minutos": 20
     },
@@ -737,7 +737,7 @@
       "id": "supervisor_validadores__jose_polanco-1",
       "puesto": "supervisor_validadores__jose_polanco",
       "numero": 1,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Realizar ponchado",
       "minutos": 2
     },
@@ -745,7 +745,7 @@
       "id": "supervisor_validadores__jose_polanco-2",
       "puesto": "supervisor_validadores__jose_polanco",
       "numero": 2,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Seguimiento de Estatus de Carga e Identificar todas las OV Facturadas de días anteriores",
       "minutos": 30
     },
@@ -753,7 +753,7 @@
       "id": "supervisor_validadores__jose_polanco-3",
       "puesto": "supervisor_validadores__jose_polanco",
       "numero": 3,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Distribuir las distintas facturas por orden de FIFO",
       "minutos": 30
     },
@@ -761,7 +761,7 @@
       "id": "supervisor_validadores__jose_polanco-4",
       "puesto": "supervisor_validadores__jose_polanco",
       "numero": 4,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Realizar 3 auditorias al azar cargas validadas",
       "minutos": 60
     },
@@ -769,7 +769,7 @@
       "id": "supervisor_validadores__jose_polanco-5",
       "puesto": "supervisor_validadores__jose_polanco",
       "numero": 5,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Garantizar las 5s de los dueños de cada jaula",
       "minutos": 45
     },
@@ -777,7 +777,7 @@
       "id": "supervisor_validadores__jose_polanco-6",
       "puesto": "supervisor_validadores__jose_polanco",
       "numero": 6,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Clasificar por marcas familia",
       "minutos": 60
     },
@@ -785,7 +785,7 @@
       "id": "supervisor_validadores__jose_polanco-7",
       "puesto": "supervisor_validadores__jose_polanco",
       "numero": 7,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Garantizar que todas las paletas estén en su carril",
       "minutos": 30
     },
@@ -793,7 +793,7 @@
       "id": "supervisor_validadores__jose_polanco-8",
       "puesto": "supervisor_validadores__jose_polanco",
       "numero": 8,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Garantizar que solo estén los chóferes que van a cargar",
       "minutos": 15
     },
@@ -801,7 +801,7 @@
       "id": "supervisor_validadores__jose_polanco-9",
       "puesto": "supervisor_validadores__jose_polanco",
       "numero": 9,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Garantizar que los validadores coloquen lo esquineros",
       "minutos": 15
     },
@@ -809,7 +809,7 @@
       "id": "supervisor_validadores__jose_polanco-10",
       "puesto": "supervisor_validadores__jose_polanco",
       "numero": 10,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Garantizar distribución de uñeros por orden de prioridades",
       "minutos": 45
     },
@@ -817,7 +817,7 @@
       "id": "supervisor_validadores__jose_polanco-11",
       "puesto": "supervisor_validadores__jose_polanco",
       "numero": 11,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Participar en la reunión de cambio de turno",
       "minutos": 20
     },
@@ -825,7 +825,7 @@
       "id": "supervisora_oficina__maria_ramos-1",
       "puesto": "supervisora_oficina__maria_ramos",
       "numero": 1,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Validacion de Facturas",
       "minutos": 60
     },
@@ -833,7 +833,7 @@
       "id": "supervisora_oficina__maria_ramos-2",
       "puesto": "supervisora_oficina__maria_ramos",
       "numero": 2,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Facturas Recibidas Manual",
       "minutos": 80
     },
@@ -841,7 +841,7 @@
       "id": "supervisora_oficina__maria_ramos-3",
       "puesto": "supervisora_oficina__maria_ramos",
       "numero": 3,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Facturas Recibidas en la Mascota",
       "minutos": 60
     },
@@ -849,7 +849,7 @@
       "id": "supervisora_oficina__maria_ramos-4",
       "puesto": "supervisora_oficina__maria_ramos",
       "numero": 4,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Validacion de Facturas Pagos Por Tran.",
       "minutos": 15
     },
@@ -857,7 +857,7 @@
       "id": "supervisora_oficina__maria_ramos-5",
       "puesto": "supervisora_oficina__maria_ramos",
       "numero": 5,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Cuadre de Caja Chica",
       "minutos": 40
     },
@@ -865,7 +865,7 @@
       "id": "supervisora_oficina__maria_ramos-6",
       "puesto": "supervisora_oficina__maria_ramos",
       "numero": 6,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Retencion de CCN",
       "minutos": 5
     },
@@ -873,7 +873,7 @@
       "id": "supervisora_oficina__maria_ramos-7",
       "puesto": "supervisora_oficina__maria_ramos",
       "numero": 7,
-      "frecuencia": "DIARIA",
+      "frecuencia": "AUDITORIA",
       "actividad": "Reunion Equipo Creditos y Cobros",
       "minutos": 60
     }

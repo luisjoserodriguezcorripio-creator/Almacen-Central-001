@@ -403,7 +403,8 @@
   color: var(--ag-text);
 }
 
-.agenda-filters select {
+.agenda-filters select,
+.agenda-filters input[type="date"] {
   min-width: 0;
   width: 100%;
   min-height: var(--ag-touch);
@@ -416,6 +417,10 @@
   font-size: var(--ag-text-base);
   font-weight: 500;
   cursor: pointer;
+}
+
+.agenda-filters input[type="date"] {
+  min-width: 10.5rem;
 }
 
 /* —— Dashboard —— */
@@ -658,7 +663,8 @@
   border-radius: 8px;
 }
 
-.agenda-freq--diaria { background: var(--ag-blue-soft); color: var(--ag-blue-dark); }
+.agenda-freq--diaria,
+.agenda-freq--auditoria { background: var(--ag-blue-soft); color: var(--ag-blue-dark); }
 .agenda-freq--inter_diaria { background: #f0f9ff; color: #0369a1; }
 .agenda-freq--semanal { background: #f8fafc; color: var(--ag-text-soft); border: 1px solid var(--ag-border); }
 

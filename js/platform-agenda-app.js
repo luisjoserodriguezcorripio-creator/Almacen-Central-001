@@ -15,7 +15,6 @@
     view: 'dashboard',
     puestoId: null,
     puestoFilter: 'ALL',
-    freqFilter: 'ALL',
     statusFilter: 'ALL',
     dayKey: null,
     editMode: false
@@ -161,25 +160,23 @@
   function renderFiltersSection(extraClass, opts) {
     opts = opts || {};
     var cls = 'agenda-filters' + (extraClass ? ' ' + extraClass : '');
+    var dayKey = state.dayKey || C().todayKey();
     var puestoSelect = '';
     if (opts.showPuestoFilter) {
       var puestos = allowedPuestos();
       puestoSelect =
-        '<label><span>Puesto</span><select id="agendaFilterPuesto">' +
-        '<option value="ALL">Todos los puestos</option>' +
+        '<label><span>Persona / puesto</span><select id="agendaFilterPuesto">' +
+        '<option value="ALL">Todas las personas</option>' +
         puestos.map(function (p) {
-          return '<option value="' + esc(p.id) + '">' + esc(p.label) + '</option>';
+          return '<option value="' + esc(p.id) + '">' + esc(p.nombrePersona || p.label) + '</option>';
         }).join('') +
         '</select></label>';
     }
     return '<section class="' + cls + '">' +
-      '<p class="agenda-filters__title">Filtrar</p>' +
+      '<p class="agenda-filters__title">Auditoría</p>' +
+      '<label><span>Fecha de auditoría</span>' +
+      '<input type="date" id="agendaAuditDate" value="' + esc(dayKey) + '"></label>' +
       puestoSelect +
-      '<label><span>Frecuencia</span><select id="agendaFilterFreq">' +
-      '<option value="ALL">Todas</option>' +
-      '<option value="DIARIA">Diaria</option>' +
-      '<option value="INTER_DIARIA">Inter-diaria</option>' +
-      '<option value="SEMANAL">Semanal</option></select></label>' +
       '<label><span>Estado</span><select id="agendaFilterStatus">' +
       '<option value="ALL">Todos</option>' +
       '<option value="PENDIENTE">Pendiente</option>' +
@@ -189,17 +186,16 @@
   }
 
   function syncFilterControls() {
-    var ff = $('agendaFilterFreq');
+    var fd = $('agendaAuditDate');
     var fs = $('agendaFilterStatus');
     var fp = $('agendaFilterPuesto');
-    if (ff) ff.value = state.freqFilter;
+    if (fd) fd.value = state.dayKey || C().todayKey();
     if (fs) fs.value = state.statusFilter;
     if (fp) fp.value = state.puestoFilter || 'ALL';
   }
 
   function filterTasks(tasks) {
     return tasks.filter(function (row) {
-      if (state.freqFilter !== 'ALL' && row.template.frecuencia !== state.freqFilter) return false;
       if (state.statusFilter !== 'ALL' && row.progress.estado !== state.statusFilter) return false;
       return true;
     });
@@ -213,17 +209,18 @@
 
   function renderProgressBar(stats) {
     return '<div class="agenda-progress">' +
-      '<div class="agenda-progress__meta"><span>Avance del día</span><strong>' + stats.pct + '%</strong></div>' +
+      '<div class="agenda-progress__meta"><span>Desempeño auditado</span><strong>' + stats.pct + '%</strong></div>' +
       '<div class="agenda-progress__track"><div class="agenda-progress__fill" style="width:' + stats.pct + '%"></div></div>' +
       '<p class="agenda-progress__sub">' + stats.done + ' de ' + stats.total + ' tareas · ' +
       stats.minutesDone + '/' + stats.minutesTotal + ' min</p></div>';
   }
 
   function renderHeroStats(stats) {
+    var dayKey = state.dayKey || C().todayKey();
     return '<section class="agenda-hero">' +
       renderProgressRing(stats, 'agenda-hero__ring') +
       '<div class="agenda-hero__copy">' +
-      '<strong>Productividad del día</strong>' +
+      '<strong>Desempeño · ' + esc(C().formatDateDisplay(dayKey)) + '</strong>' +
       '<span>' + stats.done + ' completadas · ' + stats.inProg + ' en proceso · ' + stats.pending + ' pendientes</span>' +
       '</div></section>';
   }
@@ -258,15 +255,15 @@
     var canEdit = C().canEditActivities(state.user);
     host.innerHTML =
       '<header class="agenda-topbar">' +
-      '<div><p class="agenda-eyebrow">Panel supervisor</p><h1>Puestos del almacén</h1>' +
-      '<p class="agenda-sub">Resumen del día · ' + esc(C().formatDateDisplay(dayKey)) + '</p></div>' +
+      '<div><p class="agenda-eyebrow">Auditoría de gestores</p><h1>Desempeño por persona</h1>' +
+      '<p class="agenda-sub">Fecha de auditoría · ' + esc(C().formatDateDisplay(dayKey)) + '</p></div>' +
       '<div class="agenda-topbar__actions">' +
       '<button type="button" class="agenda-btn agenda-btn--ghost" data-agenda-action="refresh">↻ Actualizar</button>' +
       (canEdit
         ? '<button type="button" class="agenda-btn agenda-btn--primary" data-agenda-action="hint-edit">✎ Editar actividades</button>'
         : '') +
       '</div></header>' +
-      '<p class="agenda-help">Filtre por puesto o abra una tarjeta para ver su checklist.</p>' +
+      '<p class="agenda-help">Elija la fecha en que audita el proceso y abra cada persona para marcar su desempeño.</p>' +
       renderFiltersSection('', { showPuestoFilter: true }) +
       '<div class="agenda-puesto-grid">' + (rows || '<p class="agenda-task-list__empty">No hay puestos con ese filtro.</p>') + '</div>';
     syncFilterControls();
@@ -288,17 +285,12 @@
     var rows = tasks.map(function (row) {
       var t = row.template;
       var p = row.progress;
-      var freqKey = String(t.frecuencia || '').toLowerCase().replace('_', '_');
       if (editing) {
         return '<article class="agenda-task agenda-task--edit" data-task-id="' + esc(t.id) + '">' +
           '<div class="agenda-edit-grid">' +
           '<label><span>#</span><input type="number" min="1" class="agenda-edit-num" data-field="numero" value="' + esc(t.numero || 1) + '"></label>' +
-          '<label><span>Frecuencia</span><select class="agenda-edit-freq" data-field="frecuencia">' +
-          '<option value="DIARIA"' + (t.frecuencia === 'DIARIA' ? ' selected' : '') + '>Diaria</option>' +
-          '<option value="INTER_DIARIA"' + (t.frecuencia === 'INTER_DIARIA' ? ' selected' : '') + '>Inter-diaria</option>' +
-          '<option value="SEMANAL"' + (t.frecuencia === 'SEMANAL' ? ' selected' : '') + '>Semanal</option>' +
-          '</select></label>' +
           '<label><span>Min</span><input type="number" min="0" class="agenda-edit-min" data-field="minutos" value="' + esc(t.minutos || 0) + '"></label>' +
+          '<input type="hidden" data-field="frecuencia" value="AUDITORIA">' +
           '</div>' +
           '<label class="agenda-edit-actividad"><span>Actividad</span>' +
           '<textarea data-field="actividad" rows="2">' + esc(t.actividad) + '</textarea></label>' +
@@ -310,7 +302,7 @@
       return '<article class="agenda-task ' + statusClass(p.estado) + '" data-task-id="' + esc(t.id) + '">' +
         '<div class="agenda-task__head">' +
         '<span class="agenda-task__num">' + esc(t.numero || '·') + '</span>' +
-        '<span class="agenda-freq agenda-freq--' + esc(freqKey) + '">' + esc(C().FREQ_LABELS[t.frecuencia] || t.frecuencia) + '</span>' +
+        '<span class="agenda-freq agenda-freq--auditoria">' + esc(dayKey) + '</span>' +
         '<span class="agenda-task__min">' + esc(t.minutos) + ' min</span></div>' +
         '<p class="agenda-task__title">' + esc(t.actividad) + '</p>' +
         '<div class="agenda-task__foot">' +
@@ -327,8 +319,10 @@
     host.innerHTML =
       '<header class="agenda-topbar">' +
       '<div>' + (showBack ? '<button type="button" class="agenda-back" data-agenda-action="back">← Todos los puestos</button>' : '') +
-      '<p class="agenda-eyebrow">' + (editing ? 'Edición de actividades' : 'Checklist del puesto') + '</p>' +
-      '<h1>' + esc(puesto.label) + '</h1><p class="agenda-sub">' + esc(C().formatDateDisplay(dayKey)) + '</p></div>' +
+      '<p class="agenda-eyebrow">' + (editing ? 'Edición de actividades' : 'Checklist de auditoría') + '</p>' +
+      '<h1>' + esc(puesto.nombrePersona || puesto.label) + '</h1>' +
+      '<p class="agenda-sub">' + esc(puesto.puestoNombre || '') +
+      (puesto.puestoNombre ? ' · ' : '') + 'Auditoría · ' + esc(C().formatDateDisplay(dayKey)) + '</p></div>' +
       '<div class="agenda-topbar__actions">' +
       (canEdit
         ? '<button type="button" class="agenda-btn ' + (editing ? 'agenda-btn--primary' : 'agenda-btn--ghost') +
@@ -338,8 +332,8 @@
       '</div></header>' +
       (editing ? '' : renderHeroStats(stats)) +
       '<p class="agenda-help">' + (editing
-        ? 'Solo administradores pueden cambiar el texto, frecuencia y minutos. Guarde cada actividad.'
-        : 'Toque el estado de cada tarea para marcar avance. Use filtros si necesita.') + '</p>' +
+        ? 'Solo administradores pueden cambiar el texto y minutos. Guarde cada actividad.'
+        : 'Marque el estado de cada actividad según el desempeño auditado en esta fecha.') + '</p>' +
       (editing ? '' : renderFiltersSection('agenda-filters--detail')) +
       (editing
         ? '<div class="agenda-edit-toolbar"><button type="button" class="agenda-btn agenda-btn--primary" data-agenda-edit="add">+ Agregar actividad</button></div>'
@@ -447,7 +441,7 @@
     var num = article.querySelector('[data-field="numero"]');
     return {
       actividad: act ? String(act.value || '').trim() : '',
-      frecuencia: freq ? freq.value : 'DIARIA',
+      frecuencia: freq ? freq.value : 'AUDITORIA',
       minutos: min ? Number(min.value) || 0 : 0,
       numero: num ? Number(num.value) || 1 : 1
     };
@@ -471,7 +465,7 @@
         id: id,
         puesto: state.puestoId,
         numero: nextNum,
-        frecuencia: 'DIARIA',
+        frecuencia: 'AUDITORIA',
         actividad: 'Nueva actividad',
         minutos: 15
       }, state.user).then(function (res) {
@@ -563,9 +557,13 @@
     });
 
     root.addEventListener('change', function (ev) {
-      if (ev.target.id === 'agendaFilterFreq') {
-        state.freqFilter = ev.target.value;
-        render();
+      if (ev.target.id === 'agendaAuditDate') {
+        var nextDay = String(ev.target.value || '').trim();
+        if (/^\d{4}-\d{2}-\d{2}$/.test(nextDay)) {
+          state.dayKey = nextDay;
+          render();
+        }
+        return;
       }
       if (ev.target.id === 'agendaFilterStatus') {
         state.statusFilter = ev.target.value;

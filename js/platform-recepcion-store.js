@@ -710,20 +710,37 @@
       conEntrada: 0,
       conUbicado: 0,
       pendienteUbicar: 0,
-      contDescargados: 0
+      contDescargados: 0,
+      contValidados: 0,
+      contUbicados: 0,
+      contRemision: 0
     };
     list.forEach(function (c) {
       if (c.tipo === 'local') out.local += 1;
       else out.importado += 1;
       out.paletas += Number(c.paletas) || 0;
       if (c.descargado === 'ok') out.contDescargados += 1;
-      else if (c.descargado && c.descargado !== 'ok') out.pendienteDescargar += 1;
-      if (c.validado !== 'ok') out.pendienteValidar += 1;
-      else out.validado += 1;
-      if (c.entrada !== 'ok') out.pendienteRemision += 1;
-      if (c.entrada === 'ok') out.conEntrada += 1;
-      if (c.ubicado === 'ok') out.conUbicado += 1;
-      if (c.entrada === 'ok' && c.ubicado !== 'ok') out.pendienteUbicar += 1;
+      else out.pendienteDescargar += 1;
+      if (c.validado === 'ok') {
+        out.validado += 1;
+        out.contValidados += 1;
+      } else {
+        out.pendienteValidar += 1;
+      }
+      if (c.entrada === 'ok') {
+        out.conEntrada += 1;
+        out.contRemision += 1;
+      } else {
+        out.pendienteRemision += 1;
+      }
+      if (c.ubicado === 'ok') {
+        out.conUbicado += 1;
+        out.contUbicados += 1;
+      } else if (c.entrada === 'ok') {
+        out.pendienteUbicar += 1;
+      } else {
+        out.pendienteUbicar += 1;
+      }
     });
     return out;
   }
@@ -739,6 +756,9 @@
       paletas: 0,
       pendienteValidar: 0,
       contDescargados: 0,
+      contValidados: 0,
+      contUbicados: 0,
+      contRemision: 0,
       pendienteDescargar: 0,
       pendienteRemision: 0,
       pendienteUbicar: 0
@@ -746,14 +766,15 @@
     list.forEach(function (r) {
       var v = r.values || [];
       out.paletas += parseInt(v[22], 10) || 0;
-      if (!isOkStatus(v[12])) out.pendienteValidar += 1;
-      // Misma regla que la TV: descarga OK (o vacía legacy) + operador asignado.
-      var op = String(v[17] || '').trim();
-      var descOk = isOkStatus(v[11]) || !String(v[11] || '').trim();
-      if (descOk && op) out.contDescargados += 1;
-      else if (!isOkStatus(v[11])) out.pendienteDescargar += 1;
-      if (!isOkStatus(v[13])) out.pendienteUbicar += 1;
-      if (!isOkStatus(v[14])) out.pendienteRemision += 1;
+      // Totales = cantidad de celdas en OK (Descargado / Validado / Ubicado / Remisión)
+      if (isOkStatus(v[11])) out.contDescargados += 1;
+      else out.pendienteDescargar += 1;
+      if (isOkStatus(v[12])) out.contValidados += 1;
+      else out.pendienteValidar += 1;
+      if (isOkStatus(v[13])) out.contUbicados += 1;
+      else out.pendienteUbicar += 1;
+      if (isOkStatus(v[14])) out.contRemision += 1;
+      else out.pendienteRemision += 1;
     });
     return out;
   }
@@ -792,31 +813,47 @@
 
   function tallyCampo(contenedores, field, filterFn) {
     var map = Object.create(null);
+    var sinAsignar = 0;
     (contenedores || []).forEach(function (c) {
       if (filterFn && !filterFn(c)) return;
       var name = String(c[field] || '').trim();
-      if (!name || name === '—') return;
+      if (!name || name === '—') {
+        sinAsignar += 1;
+        return;
+      }
       map[name] = (map[name] || 0) + 1;
     });
-    return Object.keys(map).map(function (k) {
+    var rows = Object.keys(map).map(function (k) {
       return { name: k, n: map[k] };
     }).sort(function (a, b) {
       if (b.n !== a.n) return b.n - a.n;
       return String(a.name).localeCompare(String(b.name), 'es');
     });
+    if (sinAsignar) rows.push({ name: 'Sin asignar', n: sinAsignar });
+    return rows;
   }
 
   function resumenEquipoTv(contenedores) {
     var list = contenedores || [];
-    // Solo descargados con operador cuentan en productividad (alineado al KPI Contenedores).
-    var descargados = list.filter(function (c) {
-      if (c.descargado && c.descargado !== 'ok') return false;
-      var op = String(c.operadorDescarga || '').trim();
-      return !!op && op !== '—';
+    var contDescargados = 0;
+    var contValidados = 0;
+    var contUbicados = 0;
+    var contRemision = 0;
+    list.forEach(function (c) {
+      if (c.descargado === 'ok') contDescargados += 1;
+      if (c.validado === 'ok') contValidados += 1;
+      if (c.ubicado === 'ok') contUbicados += 1;
+      if (c.entrada === 'ok') contRemision += 1;
     });
+    // Totales = filas con OK; barras = persona (o Sin asignar)
     return {
-      operadores: tallyCampo(descargados, 'operadorDescarga'),
-      contDescargados: descargados.length,
+      contDescargados: contDescargados,
+      contValidados: contValidados,
+      contUbicados: contUbicados,
+      contRemision: contRemision,
+      operadores: tallyCampo(list, 'operadorDescarga', function (c) {
+        return c.descargado === 'ok';
+      }),
       validadores: tallyCampo(list, 'validadorPor', function (c) {
         return c.validado === 'ok';
       }),

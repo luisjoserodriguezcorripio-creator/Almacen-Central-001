@@ -283,12 +283,35 @@
 
   function renderProductivityBoard(chart) {
     chart = chart || {};
-    var descTotal = chart.contDescargados != null ? chart.contDescargados : sumN(chart.operadores);
     return '<section class="rec-tv-prod-board" aria-label="Productividad por rol">' +
-      renderProdCard('Contenedores Descargados', chart.operadores, 'rec-tv-prod-card--op', 'rec-tv-prod-fill--op', descTotal) +
-      renderProdCard('Contenedores Validados', chart.validadores, 'rec-tv-prod-card--val', 'rec-tv-prod-fill--val') +
-      renderProdCard('Contenedores Ubicados', chart.ubicadores, 'rec-tv-prod-card--ubi', 'rec-tv-prod-fill--ubi') +
-      renderProdCard('Remisiones completadas', chart.digitadores, 'rec-tv-prod-card--dig', 'rec-tv-prod-fill--dig') +
+      renderProdCard(
+        'Contenedores Descargados',
+        chart.operadores,
+        'rec-tv-prod-card--op',
+        'rec-tv-prod-fill--op',
+        chart.contDescargados != null ? chart.contDescargados : sumN(chart.operadores)
+      ) +
+      renderProdCard(
+        'Contenedores Validados',
+        chart.validadores,
+        'rec-tv-prod-card--val',
+        'rec-tv-prod-fill--val',
+        chart.contValidados != null ? chart.contValidados : sumN(chart.validadores)
+      ) +
+      renderProdCard(
+        'Contenedores Ubicados',
+        chart.ubicadores,
+        'rec-tv-prod-card--ubi',
+        'rec-tv-prod-fill--ubi',
+        chart.contUbicados != null ? chart.contUbicados : sumN(chart.ubicadores)
+      ) +
+      renderProdCard(
+        'Remisiones completadas',
+        chart.digitadores,
+        'rec-tv-prod-card--dig',
+        'rec-tv-prod-fill--dig',
+        chart.contRemision != null ? chart.contRemision : sumN(chart.digitadores)
+      ) +
       '</section>';
   }
 

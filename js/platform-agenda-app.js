@@ -407,6 +407,16 @@
     panel.hidden = open;
   }
 
+  function syncAdminMenu() {
+    var link = $('agendaMenuAdmin');
+    if (!link) return;
+    var show = !!(state.user && (
+      C().canEditActivities(state.user) ||
+      (Auth && Auth.can && Auth.can(state.user.role, 'users.manage', state.user))
+    ));
+    link.classList.toggle('is-hidden', !show);
+  }
+
   function render() {
     state.dayKey = state.dayKey || C().todayKey();
     if (state.view === 'no-access') renderNoAccess();
@@ -424,6 +434,7 @@
       var puestoLabel = puesto && C().PUESTO_BY_ID[puesto] ? C().PUESTO_BY_ID[puesto].short || C().PUESTO_BY_ID[puesto].label : '';
       userEl.textContent = (state.user.name || state.user.username) + (puestoLabel ? ' · ' + puestoLabel : '');
     }
+    syncAdminMenu();
   }
 
   function openPuesto(id) {

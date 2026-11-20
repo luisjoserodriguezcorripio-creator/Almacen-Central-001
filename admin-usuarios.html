@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Administrar usuarios — Almacén Central 001">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com https://www.gstatic.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.googleapis.com https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com; img-src 'self' data:; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Administrador — Usuarios</title>
+  <script src="js/relay-bootstrap.js?v=2"></script>
+  <link rel="icon" type="image/png" href="assets/img/ac001-logo.svg?v=1">
+  <link rel="stylesheet" href="css/platform.css?v=32">
+  <link rel="stylesheet" href="css/agenda-portal.css?v=11">
+  <link rel="stylesheet" href="css/admin-usuarios.css?v=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="au-body auth-locked">
+  <noscript><p class="noscript-msg">Activa JavaScript para administrar usuarios.</p></noscript>
+
+  <div class="au-auth" id="adminUsersAuth" role="dialog" aria-labelledby="auAuthTitle">
+    <div class="au-auth-card">
+      <img class="jc-logo-img jc-logo-img--portal" src="assets/img/ac001-logo.svg?v=1" alt="AC" width="48" height="48">
+      <h2 id="auAuthTitle">Administrador</h2>
+      <p>Gestión de usuarios del portal — solo administradores</p>
+      <form id="auAuthForm" novalidate>
+        <label><span>Usuario</span>
+          <input id="auAuthUsername" type="text" autocomplete="username" maxlength="64" required></label>
+        <label><span>Contraseña</span>
+          <input id="auAuthPassword" type="password" autocomplete="current-password" maxlength="128" required></label>
+        <button type="submit" class="au-btn au-btn--primary" style="width:100%">Entrar</button>
+      </form>
+      <a href="agenda.html" class="auth-portal-back" style="display:block;margin-top:1rem;text-align:center">← Volver a Agenda</a>
+    </div>
+  </div>
+
+  <div id="adminUsersApp" class="au-app is-hidden">
+    <header class="au-header">
+      <div class="au-header__left">
+        <div class="agenda-menu" id="auMenu">
+          <button type="button" class="agenda-menu__toggle" id="auMenuToggle"
+            aria-expanded="false" aria-controls="auMenuPanel" aria-label="Menú">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </button>
+          <div class="agenda-menu__panel" id="auMenuPanel" role="menu" hidden>
+            <a href="agenda.html" class="agenda-menu__item" role="menuitem">Volver a Agenda</a>
+            <a href="index.html" class="agenda-menu__item" role="menuitem">Menú del portal</a>
+            <button type="button" class="agenda-menu__item" role="menuitem" id="auLogout">Cerrar sesión</button>
+          </div>
+        </div>
+        <div>
+          <p class="au-brand-eyebrow">Almacén Central 001</p>
+          <h1 class="au-brand-title">Administrador · Usuarios</h1>
+        </div>
+      </div>
+      <div class="au-header__meta">
+        <span id="auCloudBadge">○ …</span>
+        <div id="auUserLabel">—</div>
+      </div>
+    </header>
+
+    <main class="au-main">
+      <section class="au-card">
+        <h2 id="auFormTitle">Nuevo usuario</h2>
+        <p class="au-help">Crear, modificar, cambiar contraseña o borrar. Los cambios se sincronizan en la nube para todos los dispositivos.</p>
+        <form id="auUserForm">
+          <input type="hidden" id="auEditId">
+          <div class="au-form-grid">
+            <label><span>Usuario de acceso</span>
+              <input id="auUsername" maxlength="64" required autocomplete="off"></label>
+            <label><span>Nombre completo</span>
+              <input id="auName" maxlength="120" required></label>
+            <label><span>Rol</span>
+              <select id="auRole">
+                <option value="administrador">Administrador</option>
+                <option value="supervisor">Supervisor</option>
+                <option value="validador">Validador</option>
+                <option value="preparador">Preparador</option>
+                <option value="colaborador" selected>Colaborador</option>
+                <option value="operador">Operador</option>
+              </select></label>
+            <label><span>Contraseña</span>
+              <input id="auPassword" type="password" maxlength="128" autocomplete="new-password" placeholder="Nueva o al crear"></label>
+            <label><span>Puesto Agenda</span>
+              <select id="auAgendaPuesto">
+                <option value="">Sin puesto de agenda</option>
+              </select></label>
+            <label class="au-check"><input type="checkbox" id="auActive" checked> Usuario activo</label>
+          </div>
+          <div class="au-form-actions">
+            <button type="submit" class="au-btn au-btn--primary" id="auSaveBtn">Crear usuario</button>
+            <button type="button" class="au-btn au-btn--ghost" id="auCancelEdit" hidden>Cancelar edición</button>
+            <button type="button" class="au-btn au-btn--ghost" id="auRefresh">↻ Actualizar lista</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="au-card">
+        <h2>Usuarios del almacén</h2>
+        <div class="au-toolbar">
+          <input id="auSearch" type="search" placeholder="Buscar por usuario, nombre o rol" maxlength="80">
+        </div>
+        <div id="auUsersTable"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/panel-core.js?v=19"></script>
+  <script src="js/platform-security.js?v=5"></script>
+  <script src="js/platform-web-users.js?v=19"></script>
+  <script src="js/platform-admin.js?v=20"></script>
+  <script src="js/platform-toast.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <script src="js/platform-firebase-bridge.js?v=5"></script>
+  <script src="js/platform-admin-usuarios-app.js?v=1"></script>
+</body>
+</html>

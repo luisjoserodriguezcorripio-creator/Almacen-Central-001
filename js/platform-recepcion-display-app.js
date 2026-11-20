@@ -69,6 +69,15 @@
       global.PlatformRecepcionPresent.bind({ displayMode: true });
     }
     refreshWaiting();
+    showWaiting('Conectando con la nube…');
+    if (global.PlatformRecepcionSync && global.PlatformRecepcionSync.ready) {
+      global.PlatformRecepcionSync.ready().finally(function () {
+        refreshWaiting();
+        onUpdate();
+      });
+    } else {
+      refreshWaiting();
+    }
     if (global.PlatformWakeLock) global.PlatformWakeLock.acquire('rec-display');
     global.addEventListener('recepcion-updated', onUpdate);
     global.addEventListener('recepcion-live-board', onUpdate);

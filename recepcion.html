@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#140305">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.supabase.co wss://*.supabase.co https://luisjoserodriguezcorripio-creator.github.io https://challenges.cloudflare.com; img-src 'self' data: https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com https://www.gstatic.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.googleapis.com https://*.supabase.co wss://*.supabase.co https://luisjoserodriguezcorripio-creator.github.io https://challenges.cloudflare.com; img-src 'self' data: https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
   <title>Gestión de Recepción y Ubicación — Almacén Central 001</title>
   <script src="js/relay-bootstrap.js?v=2"></script>
   <link rel="preload" href="assets/img/recepcion-login-poster.jpg?v=1" as="image">
@@ -93,10 +93,14 @@
   <script src="js/platform-web-users.js?v=20"></script>
   <script src="js/platform-admin.js?v=19"></script>
   <script src="js/platform-toast.js"></script>
-  <script src="js/platform-recepcion-store.js?v=20261120ok"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <script src="js/platform-firebase-bridge.js?v=5"></script>
+  <script src="js/platform-recepcion-store.js?v=20261120live"></script>
+  <script src="js/platform-recepcion-sync.js?v=1"></script>
   <script src="js/platform-recepcion-planilla.js?v=4"></script>
   <script src="js/platform-recepcion-auth.js?v=4"></script>
   <script src="js/platform-recepcion-ui.js?v=20261120ok"></script>
-  <script src="js/platform-recepcion-app.js?v=20261120kpi"></script>
+  <script src="js/platform-recepcion-app.js?v=20261120live"></script>
 </body>
 </html>

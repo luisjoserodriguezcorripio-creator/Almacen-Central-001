@@ -8,6 +8,10 @@
       ".read": true,
       ".write": true
     },
+    "recepcion": {
+      ".read": true,
+      ".write": true
+    },
     "platform": {
       ".read": true,
       ".write": true

@@ -390,19 +390,26 @@
 
   function handleToggleShare() {
     var store = global.PlatformRecepcionStore;
+    var Sync = global.PlatformRecepcionSync;
     var active = store.isLiveShareBoardActive(store.load());
     if (active) {
       store.toggleLiveShareBoard(Auth.getDisplayName(state.user));
+      if (Sync && Sync.pushNow) Sync.pushNow(store.load());
       toast('Pantalla TV detenida.', 'info');
       renderApp(true);
       return;
     }
     var win = openDisplayWindow();
     store.toggleLiveShareBoard(Auth.getDisplayName(state.user));
+    if (Sync && Sync.pushNow) {
+      Sync.pushNow(store.load()).then(function (ok) {
+        if (!ok) toast('Proyección local activa · nube no disponible aún.', 'info');
+      });
+    }
     toast(
       win
-        ? 'Compartiendo productividad en pantalla TV.'
-        : 'Transmisión activada. Si no se abrió sola, use Configuraciones → Abrir pantalla TV.',
+        ? 'Compartiendo en vivo (nube) · pantalla TV.'
+        : 'Transmisión en vivo activada. Abra la TV en otro equipo con el mismo enlace.',
       win ? 'ok' : 'info'
     );
     renderApp(true);
@@ -415,6 +422,11 @@
     state.unbindSync = global.PlatformRecepcionStore.bindSync(function () {
       scheduleSyncRender();
     });
+    if (global.PlatformRecepcionSync && global.PlatformRecepcionSync.ready) {
+      global.PlatformRecepcionSync.ready().finally(function () {
+        renderApp(true);
+      });
+    }
     renderApp(true);
   }
 

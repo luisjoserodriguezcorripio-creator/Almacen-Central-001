@@ -387,7 +387,7 @@
   function save(data, opts) {
     opts = opts || {};
     data = normalizePayload(data);
-    data.updatedAt = nowIso();
+    if (!opts.keepUpdatedAt) data.updatedAt = nowIso();
     if (global.localStorage) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }

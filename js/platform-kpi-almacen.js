@@ -418,30 +418,6 @@
     if ($('projOk')) $('projOk').textContent = String(c.ok);
     if ($('projBad')) $('projBad').textContent = String(c.bad);
     if ($('projPct')) $('projPct').textContent = scored ? Math.round((c.ok / scored) * 100) + '%' : '—';
-
-    var vsEl = $('execVs');
-    var prevOk = null;
-    if (state.period === 'day' || state.period === 'yesterday') {
-      var focus = state.period === 'day' ? state.dateKey : shiftDate(state.dateKey, -1);
-      var yKey = shiftDate(focus, -1);
-      var yDay = state.store[yKey];
-      if (yDay) {
-        var yAgg = { metrics: {} };
-        METRICS.forEach(function (m) {
-          var row = yDay[m.id] || {};
-          yAgg.metrics[m.id] = { status: evalMetric(m, num(row.plan), num(row.real)) };
-        });
-        prevOk = countFromAgg(yAgg).ok;
-      }
-    }
-    var label = '—';
-    if (prevOk != null) {
-      var delta = c.ok - prevOk;
-      label = (delta > 0 ? '+' : '') + delta + ' ok';
-    } else if (state.period === 'week' || state.period === 'month' || state.period === 'trimestre') {
-      label = agg.daysWithData + ' días';
-    }
-    if (vsEl) vsEl.textContent = label;
   }
 
   function renderExcept(agg) {

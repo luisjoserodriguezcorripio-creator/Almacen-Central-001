@@ -141,12 +141,12 @@ body.kpi-portal {
 
 .kpi-exec {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.75rem;
   margin-bottom: 1rem;
 }
 @media (max-width: 800px) {
-  .kpi-exec { grid-template-columns: 1fr 1fr; }
+  .kpi-exec { grid-template-columns: 1fr; }
   .kpi-actions { margin-left: 0; }
 }
 .kpi-exec-card {

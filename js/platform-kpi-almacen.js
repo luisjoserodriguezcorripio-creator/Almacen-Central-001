@@ -284,16 +284,7 @@
     return key === today || key === shiftDate(today, -1);
   }
 
-  function isDayComplete(day) {
-    if (!day) return false;
-    for (var i = 0; i < METRICS.length; i++) {
-      var row = day[METRICS[i].id] || {};
-      if (num(row.plan) == null || num(row.real) == null) return false;
-    }
-    return true;
-  }
-
-  /** Solo hoy y ayer se editan. Se puede guardar parcial; el día sigue abierto hasta completar todos. */
+  /** Solo hoy y ayer se editan. Se puede guardar parcial. */
   function isCaptureEditable() {
     if (!isSingleDayPeriod()) return false;
     return isWithinOpenWindow(captureTargetKey());

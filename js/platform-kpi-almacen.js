@@ -269,12 +269,70 @@
     return monthLabel(p.y + '-' + String(p.m).padStart(2, '0'));
   }
 
+  function isSingleDayPeriod() {
+    return state.period === 'day' || state.period === 'yesterday';
+  }
+
+  function captureTargetKey() {
+    var base = state.dateKey || todayLocal();
+    if (state.period === 'yesterday') return shiftDate(base, -1);
+    return base;
+  }
+
+  function isWithinOpenWindow(key) {
+    var today = todayLocal();
+    return key === today || key === shiftDate(today, -1);
+  }
+
+  function isDayComplete(day) {
+    if (!day) return false;
+    for (var i = 0; i < METRICS.length; i++) {
+      var row = day[METRICS[i].id] || {};
+      if (num(row.plan) == null || num(row.real) == null) return false;
+    }
+    return true;
+  }
+
+  /** Solo hoy y ayer se editan. Se puede guardar parcial; el día sigue abierto hasta completar todos. */
   function isCaptureEditable() {
-    return state.period === 'day';
+    if (!isSingleDayPeriod()) return false;
+    return isWithinOpenWindow(captureTargetKey());
+  }
+
+  function captureStatusText(key) {
+    if (!isSingleDayPeriod()) {
+      return { text: 'Vista acumulada (solo lectura)', cls: 'is-locked' };
+    }
+    if (!isWithinOpenWindow(key)) {
+      return { text: 'Solo lectura · fuera de hoy/ayer', cls: 'is-locked' };
+    }
+    var day = state.store[key];
+    var filled = 0;
+    METRICS.forEach(function (m) {
+      var row = (day && day[m.id]) || {};
+      if (num(row.plan) != null && num(row.real) != null) filled += 1;
+    });
+    if (isDayComplete(day)) {
+      return { text: 'Completo · ' + formatDisplayDate(key) + ' · editable hasta fin de ventana', cls: 'is-closed' };
+    }
+    return {
+      text: 'Abierto · ' + formatDisplayDate(key) + ' · ' + filled + '/' + METRICS.length + ' — guarda y completa',
+      cls: 'is-open'
+    };
+  }
+
+  function updateCaptureStatus() {
+    var el = $('kpiCaptureStatus');
+    if (!el) return;
+    var st = captureStatusText(captureTargetKey());
+    el.textContent = st.text;
+    el.classList.remove('is-open', 'is-closed', 'is-locked');
+    el.classList.add(st.cls);
   }
 
   function readFormIntoStore() {
     if (!isCaptureEditable()) return;
+    var key = captureTargetKey();
     var day = emptyDay();
     METRICS.forEach(function (m) {
       var planEl = $('plan_' + m.id);
@@ -286,18 +344,18 @@
         note: noteEl ? noteEl.value : ''
       };
     });
-    state.store[state.dateKey] = day;
+    state.store[key] = day;
     saveStore();
   }
 
-  function writeFormFromDay(day) {
+  function writeFormFromDay(day, editable) {
     day = day || emptyDay();
+    if (editable == null) editable = isCaptureEditable();
     METRICS.forEach(function (m) {
       var row = day[m.id] || {};
       var planEl = $('plan_' + m.id);
       var realEl = $('real_' + m.id);
       var noteEl = $('note_' + m.id);
-      var editable = isCaptureEditable();
       if (planEl) {
         planEl.value = row.plan == null ? '' : row.plan;
         planEl.readOnly = !editable;
@@ -487,6 +545,7 @@
     host.innerHTML = html;
     host.querySelectorAll('[data-date]').forEach(function (btn) {
       btn.addEventListener('click', function () {
+        if (isCaptureEditable()) readFormIntoStore();
         state.dateKey = btn.getAttribute('data-date');
         state.period = 'day';
         syncPeriodButtons();
@@ -512,12 +571,14 @@
     renderBoard('kpiProjBoard', agg, true);
     renderExcept(agg);
     renderMonth();
+    updateCaptureStatus();
   }
 
   function loadPeriodIntoUI() {
     var agg = aggregatePeriod();
-    if (isCaptureEditable()) {
-      writeFormFromDay(state.store[state.dateKey] || emptyDay());
+    if (isSingleDayPeriod()) {
+      var key = captureTargetKey();
+      writeFormFromDay(state.store[key] || emptyDay(), isCaptureEditable());
     } else {
       fillFormFromAggregate(agg);
     }
@@ -558,17 +619,27 @@
 
     if ($('kpiSave')) {
       $('kpiSave').addEventListener('click', function () {
-        if (!isCaptureEditable()) {
+        if (!isSingleDayPeriod()) {
           state.period = 'day';
+          state.dateKey = todayLocal();
+          if ($('kpiDate')) $('kpiDate').value = state.dateKey;
+          syncPeriodButtons();
+          loadPeriodIntoUI();
+        } else if (!isWithinOpenWindow(captureTargetKey())) {
+          state.period = 'day';
+          state.dateKey = todayLocal();
+          if ($('kpiDate')) $('kpiDate').value = state.dateKey;
           syncPeriodButtons();
           loadPeriodIntoUI();
         }
         readFormIntoStore();
-        renderViews();
+        loadPeriodIntoUI();
         var btn = $('kpiSave');
         var prev = btn.textContent;
-        btn.textContent = 'Guardado';
-        setTimeout(function () { btn.textContent = prev; }, 900);
+        var key = captureTargetKey();
+        var done = isDayComplete(state.store[key]);
+        btn.textContent = done ? 'Completo' : 'Guardado';
+        setTimeout(function () { btn.textContent = prev; }, 1100);
       });
     }
 

@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/kpi-almacen.css?v=4" />
+  <link rel="stylesheet" href="css/kpi-almacen.css?v=5" />
 </head>
 <body class="kpi-portal">
   <noscript><p style="padding:2rem;text-align:center">Activa JavaScript para usar KPIs de Almacén.</p></noscript>
@@ -65,7 +65,10 @@
 
     <div class="kpi-layout">
       <section class="kpi-panel capture-block" aria-labelledby="entryTitle">
-        <h2 id="entryTitle">Registro</h2>
+        <div class="kpi-panel-head">
+          <h2 id="entryTitle">Registro</h2>
+          <p class="kpi-sub" id="kpiCaptureStatus">—</p>
+        </div>
         <div class="kpi-cols"><span>Indicador</span><span>Desafío</span><span>Plan</span><span>Real</span></div>
         <div class="kpi-rows" id="kpiRows"></div>
       </section>
@@ -96,6 +99,6 @@
     </section>
   </div>
 
-  <script src="js/platform-kpi-almacen.js?v=4"></script>
+  <script src="js/platform-kpi-almacen.js?v=5"></script>
 </body>
 </html>

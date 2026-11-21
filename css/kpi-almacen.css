@@ -195,11 +195,24 @@ body.kpi-portal {
   font-size: 1.05rem;
   font-weight: 800;
 }
+.kpi-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.55rem;
+}
+.kpi-panel-head h2 { margin: 0; }
+.kpi-panel-head .kpi-sub { margin: 0; }
 .kpi-sub {
   margin: 0 0 0.85rem;
   color: var(--kpi-muted);
   font-size: 0.86rem;
 }
+.kpi-sub.is-open { color: var(--kpi-accent); font-weight: 600; }
+.kpi-sub.is-closed { color: var(--kpi-ok); font-weight: 600; }
+.kpi-sub.is-locked { color: var(--kpi-muted); }
 
 .kpi-cols {
   display: grid;

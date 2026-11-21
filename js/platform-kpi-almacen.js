@@ -1,24 +1,27 @@
 /**
- * Portal KPIs de Almacén — captura diaria, acumulados y proyección gerencial
+ * Portal KPIs de Almacén — captura, acumulados y proyección
  */
 (function (global) {
   'use strict';
 
-  var STORAGE_KEY = 'ac001_kpi_almacen_portal_v1';
+  var STORAGE_KEY = 'ac001_kpi_almacen_portal_v2';
+  var LEGACY_KEY = 'ac001_kpi_almacen_portal_v1';
+  var MONTHS_SHORT = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
   var METRICS = [
-    { id: 'descarga_local', name: 'Descarga Contenedores Local', unit: 'contenedores', rule: 'gte', agg: 'sum', owner: 'Recepción' },
-    { id: 'descarga_importados', name: 'Descarga Contenedores importados', unit: 'contenedores', rule: 'gte', agg: 'sum', owner: 'Recepción' },
     { id: 'facturacion', name: 'Facturación', unit: 'RD$', rule: 'gte', agg: 'sum', owner: 'Despacho' },
     { id: 'fill_rate', name: 'Fill Rate', unit: '%', rule: 'gte', agg: 'avg', owner: 'Despacho' },
+    { id: 'descarga_contenedores', name: 'Descarga de contenedores', unit: 'contenedores', rule: 'gte', agg: 'sum', owner: 'Recepción' },
     { id: 'diferencias_inventario', name: 'Diferencias de Inventario', unit: 'unidades', rule: 'lt', agg: 'sum', owner: 'Inventario' },
-    { id: 'acuracidad', name: 'Acuracidad', unit: '%', rule: 'gte', agg: 'avg', owner: 'Inventario' }
+    { id: 'acuracidad', name: 'Acuracidad', unit: '%', rule: 'gte', agg: 'avg', owner: 'Inventario' },
+    { id: 'bpa', name: 'BPA', unit: '%', rule: 'gte', agg: 'avg', owner: 'Calidad' }
   ];
 
   var state = {
     store: {},
     dateKey: '',
-    period: 'day', // day | yesterday | week | month
-    monthCursor: '' // YYYY-MM for calendar
+    period: 'day',
+    monthCursor: ''
   };
 
   function $(id) { return document.getElementById(id); }
@@ -44,19 +47,16 @@
     return toKey(d.getFullYear(), d.getMonth() + 1, d.getDate());
   }
 
+  function formatDisplayDate(key) {
+    var p = parseKey(key);
+    if (!p.y || !p.m || !p.d) return '—';
+    return p.d + '-' + MONTHS_SHORT[p.m - 1] + '-' + p.y;
+  }
+
   function monthLabel(ym) {
     var p = String(ym).split('-').map(Number);
     var d = new Date(p[0], p[1] - 1, 1);
     return d.toLocaleDateString('es-DO', { month: 'long', year: 'numeric' });
-  }
-
-  function loadStore() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
-    catch (e) { return {}; }
-  }
-
-  function saveStore() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.store));
   }
 
   function num(v) {
@@ -81,7 +81,7 @@
   function emptyDay() {
     var o = {};
     METRICS.forEach(function (m) {
-      o[m.id] = { plan: '', real: '', note: '' };
+      o[m.id] = { plan: '', real: '' };
     });
     return o;
   }
@@ -90,31 +90,89 @@
     return m.rule === 'lt' ? 'Verde si Real < Plan' : 'Verde si Real ≥ Plan';
   }
 
+  function migrateDay(raw) {
+    var day = emptyDay();
+    if (!raw || typeof raw !== 'object') return day;
+    METRICS.forEach(function (m) {
+      if (raw[m.id]) {
+        day[m.id] = {
+          plan: raw[m.id].plan != null ? raw[m.id].plan : '',
+          real: raw[m.id].real != null ? raw[m.id].real : ''
+        };
+      }
+    });
+    if (!raw.descarga_contenedores && (raw.descarga_local || raw.descarga_importados)) {
+      var a = raw.descarga_local || {};
+      var b = raw.descarga_importados || {};
+      var planSum = (num(a.plan) || 0) + (num(b.plan) || 0);
+      var realSum = (num(a.real) || 0) + (num(b.real) || 0);
+      var has = a.plan !== '' || a.real !== '' || b.plan !== '' || b.real !== '' ||
+        a.plan != null || a.real != null || b.plan != null || b.real != null;
+      if (has) {
+        day.descarga_contenedores = {
+          plan: String(planSum),
+          real: String(realSum)
+        };
+      }
+    }
+    return day;
+  }
+
+  function loadStore() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) raw = localStorage.getItem(LEGACY_KEY);
+      var parsed = raw ? JSON.parse(raw) : {};
+      var out = {};
+      Object.keys(parsed || {}).forEach(function (k) {
+        out[k] = migrateDay(parsed[k]);
+      });
+      return out;
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveStore() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.store));
+  }
+
   function daysInPeriod() {
     var base = state.dateKey || todayLocal();
     if (state.period === 'day') return [base];
     if (state.period === 'yesterday') return [shiftDate(base, -1)];
     if (state.period === 'week') {
-      var out = [];
-      for (var i = 6; i >= 0; i--) out.push(shiftDate(base, -i));
-      return out;
+      var week = [];
+      for (var i = 6; i >= 0; i--) week.push(shiftDate(base, -i));
+      return week;
     }
-    // month of selected date
-    var p = parseKey(base);
-    var last = new Date(p.y, p.m, 0).getDate();
-    var keys = [];
-    for (var d = 1; d <= last; d++) keys.push(toKey(p.y, p.m, d));
-    return keys;
+    if (state.period === 'trimestre') {
+      var p = parseKey(base);
+      var end = new Date(p.y, p.m - 1, p.d);
+      var start = new Date(p.y, p.m - 1, p.d);
+      start.setMonth(start.getMonth() - 3);
+      var keys = [];
+      var cur = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+      while (cur <= end) {
+        keys.push(toKey(cur.getFullYear(), cur.getMonth() + 1, cur.getDate()));
+        cur.setDate(cur.getDate() + 1);
+      }
+      return keys;
+    }
+    // month
+    var pm = parseKey(base);
+    var last = new Date(pm.y, pm.m, 0).getDate();
+    var monthKeys = [];
+    for (var d = 1; d <= last; d++) monthKeys.push(toKey(pm.y, pm.m, d));
+    return monthKeys;
   }
 
   function aggregatePeriod() {
     var keys = daysInPeriod();
-    var used = 0;
     var result = {};
     METRICS.forEach(function (m) {
       var plans = [];
       var reals = [];
-      var notes = [];
       keys.forEach(function (k) {
         var day = state.store[k];
         if (!day || !day[m.id]) return;
@@ -123,9 +181,7 @@
         if (plan == null && real == null) return;
         if (plan != null) plans.push(plan);
         if (real != null) reals.push(real);
-        if (day[m.id].note) notes.push(day[m.id].note);
       });
-      if (plans.length || reals.length) used += 1;
       var planAgg = null;
       var realAgg = null;
       if (m.agg === 'avg') {
@@ -138,7 +194,6 @@
       result[m.id] = {
         plan: planAgg,
         real: realAgg,
-        note: notes[0] || '',
         daysPlan: plans.length,
         daysReal: reals.length,
         status: evalMetric(m, planAgg, realAgg)
@@ -153,11 +208,20 @@
 
   function periodTitle() {
     var base = state.dateKey || todayLocal();
-    if (state.period === 'day') return 'Día ' + base;
-    if (state.period === 'yesterday') return 'Ayer ' + shiftDate(base, -1);
-    if (state.period === 'week') return 'Semana ' + shiftDate(base, -6) + ' → ' + base;
+    if (state.period === 'day') return formatDisplayDate(base);
+    if (state.period === 'yesterday') return formatDisplayDate(shiftDate(base, -1));
+    if (state.period === 'week') {
+      return formatDisplayDate(shiftDate(base, -6)) + ' → ' + formatDisplayDate(base);
+    }
+    if (state.period === 'trimestre') {
+      var pt = parseKey(base);
+      var startT = new Date(pt.y, pt.m - 1, pt.d);
+      startT.setMonth(startT.getMonth() - 3);
+      return formatDisplayDate(toKey(startT.getFullYear(), startT.getMonth() + 1, startT.getDate())) +
+        ' → ' + formatDisplayDate(base);
+    }
     var p = parseKey(base);
-    return 'Mes ' + monthLabel(p.y + '-' + String(p.m).padStart(2, '0'));
+    return monthLabel(p.y + '-' + String(p.m).padStart(2, '0'));
   }
 
   function isCaptureEditable() {
@@ -170,11 +234,9 @@
     METRICS.forEach(function (m) {
       var planEl = $('plan_' + m.id);
       var realEl = $('real_' + m.id);
-      var noteEl = $('note_' + m.id);
       day[m.id] = {
         plan: planEl ? planEl.value : '',
-        real: realEl ? realEl.value : '',
-        note: noteEl ? noteEl.value : ''
+        real: realEl ? realEl.value : ''
       };
     });
     state.store[state.dateKey] = day;
@@ -187,7 +249,6 @@
       var row = day[m.id] || {};
       var planEl = $('plan_' + m.id);
       var realEl = $('real_' + m.id);
-      var noteEl = $('note_' + m.id);
       var editable = isCaptureEditable();
       if (planEl) {
         planEl.value = row.plan == null ? '' : row.plan;
@@ -196,10 +257,6 @@
       if (realEl) {
         realEl.value = row.real == null ? '' : row.real;
         realEl.readOnly = !editable;
-      }
-      if (noteEl) {
-        noteEl.value = row.note || '';
-        noteEl.readOnly = !editable;
       }
       var rowEl = document.querySelector('.kpi-row[data-id="' + m.id + '"]');
       if (rowEl) rowEl.classList.toggle('is-readonly', !editable);
@@ -211,7 +268,6 @@
       var row = agg.metrics[m.id] || {};
       var planEl = $('plan_' + m.id);
       var realEl = $('real_' + m.id);
-      var noteEl = $('note_' + m.id);
       if (planEl) {
         planEl.value = row.plan == null ? '' : String(Math.round(row.plan * 100) / 100);
         planEl.readOnly = true;
@@ -219,10 +275,6 @@
       if (realEl) {
         realEl.value = row.real == null ? '' : String(Math.round(row.real * 100) / 100);
         realEl.readOnly = true;
-      }
-      if (noteEl) {
-        noteEl.value = row.note || '';
-        noteEl.readOnly = true;
       }
       var rowEl = document.querySelector('.kpi-row[data-id="' + m.id + '"]');
       if (rowEl) rowEl.classList.add('is-readonly');
@@ -237,10 +289,9 @@
         '<div><strong>' + m.name + '</strong><small>' + m.owner + ' · ' + ruleLabel(m) + '</small></div>' +
         '<input id="plan_' + m.id + '" type="number" step="any" inputmode="decimal" placeholder="0" aria-label="Plan ' + m.name + '">' +
         '<input id="real_' + m.id + '" type="number" step="any" inputmode="decimal" placeholder="0" aria-label="Real ' + m.name + '">' +
-        '<textarea id="note_' + m.id + '" placeholder="Nota reunión (causa / acción)"></textarea>' +
       '</div>';
     }).join('');
-    host.querySelectorAll('input, textarea').forEach(function (el) {
+    host.querySelectorAll('input').forEach(function (el) {
       el.addEventListener('input', function () {
         if (!isCaptureEditable()) return;
         readFormIntoStore();
@@ -260,7 +311,7 @@
     return { ok: ok, bad: bad, empty: empty };
   }
 
-  function renderBoard(hostId, agg, compact) {
+  function renderBoard(hostId, agg) {
     var host = $(hostId);
     if (!host) return;
     host.innerHTML = METRICS.map(function (m) {
@@ -274,8 +325,7 @@
       return '<article class="kpi-card is-' + st + '">' +
         '<h3>' + m.name + '</h3>' +
         '<span class="kpi-badge">' + badge + '</span>' +
-        '<p class="kpi-meta">Plan ' + formatVal(m, row.plan) + ' · Real ' + formatVal(m, row.real) + extra +
-          (!compact && row.note ? ' · ' + row.note : '') + '</p></article>';
+        '<p class="kpi-meta">Plan ' + formatVal(m, row.plan) + ' · Real ' + formatVal(m, row.real) + extra + '</p></article>';
     }).join('');
   }
 
@@ -285,26 +335,22 @@
     if ($('execOk')) $('execOk').textContent = String(c.ok);
     if ($('execBad')) $('execBad').textContent = String(c.bad);
     if ($('execPct')) $('execPct').textContent = scored ? Math.round((c.ok / scored) * 100) + '%' : '—';
-    if ($('execDays')) $('execDays').textContent = String(agg.daysWithData);
     if ($('projOk')) $('projOk').textContent = String(c.ok);
     if ($('projBad')) $('projBad').textContent = String(c.bad);
     if ($('projPct')) $('projPct').textContent = scored ? Math.round((c.ok / scored) * 100) + '%' : '—';
-    if ($('projDays')) $('projDays').textContent = String(agg.daysWithData);
 
-    // vs previous equivalent period
     var vsEl = $('execVs');
     var projVs = $('projVs');
     var prevOk = null;
     if (state.period === 'day' || state.period === 'yesterday') {
-      var yKey = shiftDate(state.period === 'day' ? state.dateKey : shiftDate(state.dateKey, -1), -1);
+      var focus = state.period === 'day' ? state.dateKey : shiftDate(state.dateKey, -1);
+      var yKey = shiftDate(focus, -1);
       var yDay = state.store[yKey];
       if (yDay) {
         var yAgg = { metrics: {} };
         METRICS.forEach(function (m) {
           var row = yDay[m.id] || {};
-          var plan = num(row.plan);
-          var real = num(row.real);
-          yAgg.metrics[m.id] = { status: evalMetric(m, plan, real) };
+          yAgg.metrics[m.id] = { status: evalMetric(m, num(row.plan), num(row.real)) };
         });
         prevOk = countFromAgg(yAgg).ok;
       }
@@ -313,7 +359,7 @@
     if (prevOk != null) {
       var delta = c.ok - prevOk;
       label = (delta > 0 ? '+' : '') + delta + ' ok';
-    } else if (state.period === 'week' || state.period === 'month') {
+    } else if (state.period === 'week' || state.period === 'month' || state.period === 'trimestre') {
       label = agg.daysWithData + ' días';
     }
     if (vsEl) vsEl.textContent = label;
@@ -324,40 +370,23 @@
     var list = $('kpiExceptList');
     var box = $('kpiExcept');
     var title = $('exceptTitle');
-    var proj = $('kpiProjExcept');
-    var projList = $('kpiProjExceptList');
     if (!list || !box) return;
     var bads = [];
     METRICS.forEach(function (m) {
       var row = agg.metrics[m.id] || {};
       if (row.status !== 'bad') return;
-      bads.push({
-        html: '<div class="kpi-except-item"><strong>' + m.name + '</strong><span>' +
-          m.owner + ' · Plan ' + formatVal(m, row.plan) + ' · Real ' + formatVal(m, row.real) +
-          (row.note ? ' · ' + row.note : '') + '</span></div>',
-        chip: m.name
-      });
+      bads.push('<div class="kpi-except-item"><strong>' + m.name + '</strong><span>' +
+        m.owner + ' · Plan ' + formatVal(m, row.plan) + ' · Real ' + formatVal(m, row.real) +
+        '</span></div>');
     });
     if (bads.length) {
       box.classList.remove('is-empty');
-      if (title) title.textContent = 'Excepciones (' + bads.length + ') — priorizar en reunión';
-      list.innerHTML = bads.map(function (b) { return b.html; }).join('');
-      if (proj) {
-        proj.classList.remove('is-ok');
-        proj.classList.add('is-bad');
-        proj.querySelector('strong').textContent = bads.length + ' fuera de meta';
-      }
-      if (projList) projList.innerHTML = bads.map(function (b) { return '<span>' + b.chip + '</span>'; }).join('');
+      if (title) title.textContent = 'Excepciones (' + bads.length + ')';
+      list.innerHTML = bads.join('');
     } else {
       box.classList.add('is-empty');
-      if (title) title.textContent = 'Sin excepciones — período en meta';
-      list.innerHTML = '<div class="kpi-except-item"><strong>Todos lograron la meta</strong><span>Reconocer al equipo y cerrar.</span></div>';
-      if (proj) {
-        proj.classList.remove('is-bad');
-        proj.classList.add('is-ok');
-        proj.querySelector('strong').textContent = 'Sin excepciones';
-      }
-      if (projList) projList.innerHTML = '<span>Todos en meta</span>';
+      if (title) title.textContent = 'Sin excepciones';
+      list.innerHTML = '<div class="kpi-except-item"><strong>Todos lograron la meta</strong></div>';
     }
   }
 
@@ -371,7 +400,7 @@
     var y = parts[0];
     var m = parts[1];
     var first = new Date(y, m - 1, 1);
-    var startPad = (first.getDay() + 6) % 7; // Monday first
+    var startPad = (first.getDay() + 6) % 7;
     var lastDay = new Date(y, m, 0).getDate();
     var html = ['L', 'M', 'X', 'J', 'V', 'S', 'D'].map(function (d) {
       return '<div class="kpi-month-dow">' + d + '</div>';
@@ -414,20 +443,12 @@
 
   function renderViews() {
     var agg = aggregatePeriod();
-    if ($('kpiResultSub')) {
-      $('kpiResultSub').textContent = periodTitle() + ' · ' + agg.daysWithData + ' día(s) con dato';
-    }
-    if ($('kpiProjSub')) {
-      $('kpiProjSub').textContent = periodTitle() + ' · ' + agg.daysWithData + ' día(s) con dato';
-    }
-    if ($('kpiCaptureHint')) {
-      $('kpiCaptureHint').textContent = isCaptureEditable()
-        ? 'Editando el día seleccionado (plan / real / nota).'
-        : 'Vista acumulada (' + state.period + '): solo lectura. Elige “Día” para editar.';
-    }
+    var title = periodTitle();
+    if ($('kpiResultSub')) $('kpiResultSub').textContent = title;
+    if ($('kpiProjSub')) $('kpiProjSub').textContent = title;
     renderExec(agg);
-    renderBoard('kpiBoard', agg, false);
-    renderBoard('kpiProjBoard', agg, true);
+    renderBoard('kpiBoard', agg);
+    renderBoard('kpiProjBoard', agg);
     renderExcept(agg);
     renderMonth();
   }
@@ -444,35 +465,6 @@
 
   function setMeeting(on) {
     document.body.classList.toggle('kpi-meeting', !!on);
-  }
-
-  function fillDemo() {
-    var base = state.dateKey || todayLocal();
-    var demoToday = {
-      descarga_local: { plan: '28', real: '31', note: '' },
-      descarga_importados: { plan: '12', real: '10', note: 'Patio saturado AM' },
-      facturacion: { plan: '1850000', real: '1925000', note: '' },
-      fill_rate: { plan: '96', real: '97.2', note: '' },
-      diferencias_inventario: { plan: '40', real: '22', note: '' },
-      acuracidad: { plan: '98.5', real: '97.9', note: 'Recontar zona 12' }
-    };
-    state.store[base] = demoToday;
-    // seed a few month days
-    for (var i = 1; i <= 10; i++) {
-      var k = shiftDate(base, -i);
-      if (state.store[k]) continue;
-      var okish = i % 3 !== 0;
-      state.store[k] = {
-        descarga_local: { plan: '28', real: okish ? '29' : '24', note: '' },
-        descarga_importados: { plan: '12', real: okish ? '13' : '9', note: '' },
-        facturacion: { plan: '1850000', real: okish ? '1900000' : '1700000', note: '' },
-        fill_rate: { plan: '96', real: okish ? '96.5' : '94', note: '' },
-        diferencias_inventario: { plan: '40', real: okish ? '18' : '45', note: '' },
-        acuracidad: { plan: '98.5', real: okish ? '98.8' : '97.5', note: '' }
-      };
-    }
-    saveStore();
-    loadPeriodIntoUI();
   }
 
   function init() {
@@ -518,7 +510,7 @@
         setTimeout(function () { btn.textContent = prev; }, 900);
       });
     }
-    if ($('kpiFillDemo')) $('kpiFillDemo').addEventListener('click', fillDemo);
+
     if ($('kpiMeet')) {
       $('kpiMeet').addEventListener('click', function () {
         if (isCaptureEditable()) readFormIntoStore();
@@ -526,7 +518,12 @@
         setMeeting(true);
       });
     }
-    if ($('kpiExitMeet')) $('kpiExitMeet').addEventListener('click', function () { setMeeting(false); });
+
+    var proj = document.querySelector('.kpi-projection');
+    if (proj) {
+      proj.addEventListener('dblclick', function () { setMeeting(false); });
+    }
+
     if ($('kpiMonthPrev')) {
       $('kpiMonthPrev').addEventListener('click', function () {
         var p = state.monthCursor.split('-').map(Number);
@@ -543,6 +540,7 @@
         renderMonth();
       });
     }
+
     document.addEventListener('keydown', function (ev) {
       if (ev.key === 'Escape') setMeeting(false);
     });
@@ -554,8 +552,5 @@
     init();
   }
 
-  global.PlatformKpiAlmacen = {
-    METRICS: METRICS,
-    reload: loadPeriodIntoUI
-  };
+  global.PlatformKpiAlmacen = { METRICS: METRICS, reload: loadPeriodIntoUI };
 })(typeof window !== 'undefined' ? window : this);

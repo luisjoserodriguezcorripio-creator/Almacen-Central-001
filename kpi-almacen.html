@@ -3,24 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="description" content="KPIs de Almacén — plan vs real diario y proyección gerencial" />
+  <meta name="description" content="KPIs de Almacén — plan vs real y proyección gerencial" />
   <meta name="theme-color" content="#eef2f6" />
-  <title>KPIs de Almacén — Almacén Central 001</title>
+  <title>KPIs de Almacén</title>
   <link rel="icon" type="image/svg+xml" href="assets/img/ac001-logo.svg?v=4" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/kpi-almacen.css?v=1" />
+  <link rel="stylesheet" href="css/kpi-almacen.css?v=2" />
 </head>
 <body class="kpi-portal">
   <noscript><p style="padding:2rem;text-align:center">Activa JavaScript para usar KPIs de Almacén.</p></noscript>
 
-  <div class="kpi-meet-bar" role="banner">
-    <strong id="kpiMeetTitle">Proyección gerencial</strong>
-    <button type="button" id="kpiExitMeet">Salir (Esc)</button>
-  </div>
-
-  <div class="kpi-projection" aria-label="Proyección completa">
+  <div class="kpi-projection" aria-label="Proyección completa" title="Doble clic o Esc para salir">
     <header class="kpi-proj-head">
       <h1>KPIs de Almacén</h1>
       <p id="kpiProjSub">—</p>
@@ -32,19 +27,13 @@
       <article class="kpi-exec-card"><span>Cumplimiento</span><strong id="projPct">—</strong></article>
     </section>
     <div class="kpi-proj-board" id="kpiProjBoard"></div>
-    <div class="kpi-proj-except is-ok" id="kpiProjExcept">
-      <strong>Sin excepciones</strong>
-      <div class="kpi-proj-except-list" id="kpiProjExceptList"><span>Todos en meta</span></div>
-    </div>
   </div>
 
   <div class="kpi-shell">
     <a class="kpi-home" href="index.html">← Portales</a>
 
     <header class="kpi-hero">
-      <p class="kpi-eye">Almacén Central 001 · Día de muelle</p>
       <h1>KPIs de Almacén</h1>
-      <p>Registra plan y real. Filtra acumulado por día, ayer, semana o mes. Proyecta la reunión sin scroll.</p>
     </header>
 
     <div class="kpi-toolbar">
@@ -59,10 +48,10 @@
           <button type="button" data-period="yesterday">Ayer</button>
           <button type="button" data-period="week">Semana</button>
           <button type="button" data-period="month">Mes</button>
+          <button type="button" data-period="trimestre">Trimestre</button>
         </div>
       </div>
       <div class="kpi-actions">
-        <button type="button" class="kpi-btn" id="kpiFillDemo">Cargar ejemplo</button>
         <button type="button" class="kpi-btn kpi-btn-primary" id="kpiSave">Guardar día</button>
         <button type="button" class="kpi-btn kpi-btn-meet" id="kpiMeet">Proyección reunión</button>
       </div>
@@ -72,13 +61,12 @@
       <article class="kpi-exec-card is-ok"><span>En meta</span><strong id="execOk">0</strong></article>
       <article class="kpi-exec-card is-bad"><span>Fuera de meta</span><strong id="execBad">0</strong></article>
       <article class="kpi-exec-card"><span>vs / contexto</span><strong id="execVs">—</strong></article>
-      <article class="kpi-exec-card"><span>Días con dato</span><strong id="execDays">0</strong></article>
+      <article class="kpi-exec-card"><span>Cumplimiento</span><strong id="execPct">—</strong></article>
     </section>
 
     <div class="kpi-layout">
       <section class="kpi-panel capture-block" aria-labelledby="entryTitle">
-        <h2 id="entryTitle">Captura / detalle</h2>
-        <p class="kpi-sub" id="kpiCaptureHint">Editando el día seleccionado.</p>
+        <h2 id="entryTitle">Registro</h2>
         <div class="kpi-cols"><span>Indicador</span><span>Plan</span><span>Real</span></div>
         <div class="kpi-rows" id="kpiRows"></div>
       </section>
@@ -109,6 +97,6 @@
     </section>
   </div>
 
-  <script src="js/platform-kpi-almacen.js?v=1"></script>
+  <script src="js/platform-kpi-almacen.js?v=2"></script>
 </body>
 </html>

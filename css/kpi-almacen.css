@@ -1,4 +1,4 @@
-/* KPIs de Almacén — visual Día de muelle + proyección gerencial */
+/* KPIs de Almacén — captura, acumulados y proyección gerencial */
 :root {
   --kpi-bg: #eef2f6;
   --kpi-bg2: #d9e1ea;
@@ -48,21 +48,7 @@ body.kpi-portal {
 .kpi-home:hover { text-decoration: underline; }
 
 .kpi-hero {
-  background: var(--kpi-panel);
-  border: 1px solid var(--kpi-line);
-  border-radius: calc(var(--kpi-radius) + 2px);
-  box-shadow: var(--kpi-shadow);
-  padding: 1.25rem 1.35rem 1.15rem;
   margin-bottom: 1rem;
-}
-.kpi-eye {
-  margin: 0 0 0.3rem;
-  color: var(--kpi-accent);
-  font-family: var(--kpi-font);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
 }
 .kpi-hero h1 {
   margin: 0;
@@ -71,11 +57,6 @@ body.kpi-portal {
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.1;
-}
-.kpi-hero p {
-  margin: 0.4rem 0 0;
-  color: var(--kpi-muted);
-  max-width: 54ch;
 }
 
 .kpi-toolbar {
@@ -261,21 +242,7 @@ body.kpi-portal {
   font: inherit;
   text-align: right;
 }
-.kpi-row textarea {
-  grid-column: 1 / -1;
-  width: 100%;
-  min-height: 48px;
-  resize: vertical;
-  border: 1px solid var(--kpi-line);
-  border-radius: 8px;
-  background: #fff;
-  color: var(--kpi-text);
-  padding: 0.45rem 0.6rem;
-  font: inherit;
-  font-size: 0.84rem;
-}
-.kpi-row.is-readonly input,
-.kpi-row.is-readonly textarea {
+.kpi-row.is-readonly input {
   background: #eef2f6;
   color: var(--kpi-muted);
 }
@@ -444,60 +411,31 @@ body.kpi-portal {
 .kpi-day-bar i.ok { background: var(--kpi-ok); }
 .kpi-day-bar i.bad { background: var(--kpi-bad); }
 
-/* ===== Proyección: viewport completo, sin scroll ===== */
-.kpi-meet-bar {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 60;
-  height: 44px;
-  padding: 0 0.9rem;
-  background: var(--kpi-ink);
-  color: #fff;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-.kpi-meet-bar strong { font-size: 0.9rem; }
-.kpi-meet-bar button {
-  border: 0;
-  border-radius: 999px;
-  padding: 0.4rem 0.85rem;
-  background: #fff;
-  color: var(--kpi-ink);
-  font-weight: 800;
-  cursor: pointer;
-}
-
+/* ===== Proyección: viewport completo, sin scroll, sin franja ===== */
 body.kpi-meeting {
   overflow: hidden;
   height: 100dvh;
   background: #e8eef4;
 }
 body.kpi-meeting .kpi-shell,
-body.kpi-meeting .kpi-home,
-body.kpi-meeting .kpi-hero,
-body.kpi-meeting .kpi-toolbar,
-body.kpi-meeting .capture-block,
-body.kpi-meeting .kpi-month {
+body.kpi-meeting .kpi-home {
   display: none !important;
 }
-body.kpi-meeting .kpi-meet-bar { display: flex; }
 
 .kpi-projection {
   display: none;
 }
 body.kpi-meeting .kpi-projection {
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto minmax(0, 1fr);
   position: fixed;
-  inset: 44px 0 0 0;
-  padding: 0.65rem 0.85rem 0.75rem;
-  gap: 0.55rem;
+  inset: 0;
+  padding: 0.85rem 1rem 1rem;
+  gap: 0.65rem;
   overflow: hidden;
-  height: calc(100dvh - 44px);
+  height: 100dvh;
+  width: 100%;
+  background: #e8eef4;
 }
 
 .kpi-proj-head {
@@ -510,20 +448,20 @@ body.kpi-meeting .kpi-projection {
 .kpi-proj-head h1 {
   margin: 0;
   font-family: var(--kpi-font);
-  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  font-size: clamp(1.35rem, 2.6vw, 1.9rem);
   font-weight: 800;
 }
 .kpi-proj-head p {
   margin: 0;
   color: var(--kpi-muted);
   font-weight: 600;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
 }
 
 .kpi-proj-exec {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.5rem;
+  gap: 0.55rem;
 }
 .kpi-proj-exec .kpi-exec-card {
   padding: 0.55rem 0.7rem;
@@ -536,7 +474,7 @@ body.kpi-meeting .kpi-projection {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: 0.55rem;
+  gap: 0.6rem;
   min-height: 0;
 }
 .kpi-proj-board .kpi-card {
@@ -545,50 +483,23 @@ body.kpi-meeting .kpi-projection {
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr auto;
   text-align: center;
-  padding: 0.7rem 0.75rem;
+  padding: 0.75rem 0.8rem;
   align-content: stretch;
 }
 .kpi-proj-board .kpi-card h3 {
-  font-size: clamp(0.85rem, 1.6vw, 1.1rem);
+  font-size: clamp(0.88rem, 1.7vw, 1.15rem);
 }
 .kpi-proj-board .kpi-badge {
   grid-row: auto;
   justify-self: center;
-  margin: 0.25rem 0;
-  font-size: clamp(0.75rem, 1.4vw, 0.95rem);
+  margin: 0.3rem 0;
+  font-size: clamp(0.78rem, 1.5vw, 1rem);
   min-width: 5.5rem;
-  padding: 0.45rem 0.7rem;
+  padding: 0.5rem 0.75rem;
 }
 .kpi-proj-board .kpi-meta {
-  font-size: clamp(0.72rem, 1.3vw, 0.9rem);
+  font-size: clamp(0.74rem, 1.35vw, 0.95rem);
   align-self: end;
-}
-
-.kpi-proj-except {
-  border-radius: 10px;
-  border: 1px solid var(--kpi-line);
-  background: #fff;
-  padding: 0.45rem 0.7rem;
-  min-height: 0;
-  max-height: 18%;
-  overflow: hidden;
-  font-size: 0.85rem;
-}
-.kpi-proj-except.is-bad {
-  border-color: var(--kpi-bad-line);
-  background: var(--kpi-bad-bg);
-}
-.kpi-proj-except.is-ok {
-  border-color: var(--kpi-ok-line);
-  background: var(--kpi-ok-bg);
-}
-.kpi-proj-except strong { font-family: var(--kpi-font); }
-.kpi-proj-except-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem 0.75rem;
-  margin-top: 0.25rem;
-  color: var(--kpi-muted);
 }
 
 @media (max-width: 900px) {

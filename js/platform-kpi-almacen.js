@@ -10,12 +10,12 @@
   var MONTHS_SHORT = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
   var METRICS = [
-    { id: 'facturacion', name: 'Facturación', unit: 'RD$', rule: 'gte', agg: 'sum', owner: 'Despacho' },
-    { id: 'fill_rate', name: 'Fill Rate', unit: '%', rule: 'gte', agg: 'avg', owner: 'Despacho' },
-    { id: 'descarga_contenedores', name: 'Descarga de contenedores', unit: 'contenedores', rule: 'gte', agg: 'sum', owner: 'Recepción' },
-    { id: 'diferencias_inventario', name: 'Diferencias de Inventario', unit: 'unidades', rule: 'lt', agg: 'sum', owner: 'Inventario' },
-    { id: 'acuracidad', name: 'Acuracidad', unit: '%', rule: 'gte', agg: 'avg', owner: 'Inventario' },
-    { id: 'bpa', name: 'BPA', unit: '%', rule: 'gte', agg: 'avg', owner: 'Calidad' }
+    { id: 'facturacion', name: 'Facturación', unit: 'RD$', rule: 'gte', agg: 'sum', owner: 'Despacho', desafio: '90%' },
+    { id: 'fill_rate', name: 'Fill Rate', unit: '%', rule: 'gte', agg: 'avg', owner: 'Despacho', desafio: '95%' },
+    { id: 'descarga_contenedores', name: 'Descarga de contenedores', unit: 'contenedores', rule: 'gte', agg: 'sum', owner: 'Recepción', desafio: '95%' },
+    { id: 'diferencias_inventario', name: 'Diferencias de Inventario', unit: 'unidades', rule: 'lt', agg: 'sum', owner: 'Inventario', desafio: '0.0001', desafioHint: 'Valor inventario vs valor diferencia' },
+    { id: 'acuracidad', name: 'Acuracidad', unit: '%', rule: 'gte', agg: 'avg', owner: 'Inventario', desafio: '95%' },
+    { id: 'bpa', name: 'BPA', unit: '%', rule: 'gte', agg: 'avg', owner: 'Calidad', desafio: '85%' }
   ];
 
   var state = {
@@ -342,8 +342,11 @@
     var host = $('kpiRows');
     if (!host) return;
     host.innerHTML = METRICS.map(function (m) {
+      var desafioTitle = m.desafioHint ? ' title="' + m.desafioHint + '"' : '';
+      var desafioHint = m.desafioHint ? '<small class="kpi-desafio-hint">' + m.desafioHint + '</small>' : '';
       return '<div class="kpi-row" data-id="' + m.id + '">' +
         '<div><strong>' + m.name + '</strong><small>' + m.owner + ' · ' + ruleLabel(m) + '</small></div>' +
+        '<div class="kpi-desafio"' + desafioTitle + '><strong>' + m.desafio + '</strong>' + desafioHint + '</div>' +
         '<input id="plan_' + m.id + '" type="number" step="any" inputmode="decimal" placeholder="0" aria-label="Plan ' + m.name + '">' +
         '<input id="real_' + m.id + '" type="number" step="any" inputmode="decimal" placeholder="0" aria-label="Real ' + m.name + '">' +
         '<textarea id="note_' + m.id + '" placeholder="Comentario / acción (causa · dueño · compromiso)"></textarea>' +
@@ -384,7 +387,7 @@
       return '<article class="kpi-card is-' + st + '">' +
         '<h3>' + m.name + '</h3>' +
         '<span class="kpi-badge">' + badge + '</span>' +
-        '<p class="kpi-meta">Plan ' + formatVal(m, row.plan) + ' · Real ' + formatVal(m, row.real) + extra + noteBit + '</p></article>';
+        '<p class="kpi-meta">Desafío ' + m.desafio + ' · Plan ' + formatVal(m, row.plan) + ' · Real ' + formatVal(m, row.real) + extra + noteBit + '</p></article>';
     }).join('');
   }
 
@@ -399,7 +402,6 @@
     if ($('projPct')) $('projPct').textContent = scored ? Math.round((c.ok / scored) * 100) + '%' : '—';
 
     var vsEl = $('execVs');
-    var projVs = $('projVs');
     var prevOk = null;
     if (state.period === 'day' || state.period === 'yesterday') {
       var focus = state.period === 'day' ? state.dateKey : shiftDate(state.dateKey, -1);
@@ -422,7 +424,6 @@
       label = agg.daysWithData + ' días';
     }
     if (vsEl) vsEl.textContent = label;
-    if (projVs) projVs.textContent = label;
   }
 
   function renderExcept(agg) {

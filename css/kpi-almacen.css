@@ -203,7 +203,7 @@ body.kpi-portal {
 
 .kpi-cols {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) 88px 88px;
+  grid-template-columns: minmax(0, 1.35fr) 92px 88px 88px;
   gap: 0.5rem;
   padding: 0 0.7rem 0.3rem;
   color: var(--kpi-muted);
@@ -213,11 +213,12 @@ body.kpi-portal {
   text-transform: uppercase;
 }
 .kpi-cols span:nth-child(2),
-.kpi-cols span:nth-child(3) { text-align: right; }
+.kpi-cols span:nth-child(3),
+.kpi-cols span:nth-child(4) { text-align: right; }
 .kpi-rows { display: grid; gap: 0.5rem; }
 .kpi-row {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) 88px 88px;
+  grid-template-columns: minmax(0, 1.35fr) 92px 88px 88px;
   gap: 0.5rem;
   align-items: center;
   padding: 0.65rem 0.7rem;
@@ -231,6 +232,26 @@ body.kpi-portal {
   color: var(--kpi-muted);
   font-size: 0.72rem;
   margin-top: 0.12rem;
+}
+.kpi-desafio {
+  text-align: right;
+  color: var(--kpi-ink);
+}
+.kpi-desafio strong {
+  display: block;
+  font-family: var(--kpi-font);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+.kpi-desafio-hint {
+  display: block;
+  margin-top: 0.1rem;
+  color: var(--kpi-muted);
+  font-size: 0.62rem;
+  line-height: 1.2;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
 }
 .kpi-row input[type="number"] {
   width: 100%;
@@ -474,14 +495,20 @@ body.kpi-meeting .kpi-projection {
 
 .kpi-proj-exec {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.55rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  max-width: 920px;
+  width: 100%;
+  margin: 0 auto;
 }
 .kpi-proj-exec .kpi-exec-card {
-  padding: 0.55rem 0.7rem;
+  padding: 0.85rem 1rem;
+}
+.kpi-proj-exec .kpi-exec-card span {
+  font-size: 0.78rem;
 }
 .kpi-proj-exec .kpi-exec-card strong {
-  font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+  font-size: clamp(1.55rem, 3.2vw, 2.15rem);
 }
 
 .kpi-proj-board {
@@ -521,7 +548,7 @@ body.kpi-meeting .kpi-projection {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: repeat(3, minmax(0, 1fr));
   }
-  .kpi-proj-exec { grid-template-columns: 1fr 1fr; }
+  .kpi-proj-exec { grid-template-columns: 1fr; max-width: none; }
 }
 @media (max-width: 560px) {
   .kpi-month-grid { gap: 0.3rem; }

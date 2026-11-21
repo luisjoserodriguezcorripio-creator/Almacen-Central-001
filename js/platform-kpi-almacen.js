@@ -299,37 +299,6 @@
     return isWithinOpenWindow(captureTargetKey());
   }
 
-  function captureStatusText(key) {
-    if (!isSingleDayPeriod()) {
-      return { text: 'Vista acumulada (solo lectura)', cls: 'is-locked' };
-    }
-    if (!isWithinOpenWindow(key)) {
-      return { text: 'Solo lectura · fuera de hoy/ayer', cls: 'is-locked' };
-    }
-    var day = state.store[key];
-    var filled = 0;
-    METRICS.forEach(function (m) {
-      var row = (day && day[m.id]) || {};
-      if (num(row.plan) != null && num(row.real) != null) filled += 1;
-    });
-    if (isDayComplete(day)) {
-      return { text: 'Completo · ' + formatDisplayDate(key) + ' · editable hasta fin de ventana', cls: 'is-closed' };
-    }
-    return {
-      text: 'Abierto · ' + formatDisplayDate(key) + ' · ' + filled + '/' + METRICS.length + ' — guarda y completa',
-      cls: 'is-open'
-    };
-  }
-
-  function updateCaptureStatus() {
-    var el = $('kpiCaptureStatus');
-    if (!el) return;
-    var st = captureStatusText(captureTargetKey());
-    el.textContent = st.text;
-    el.classList.remove('is-open', 'is-closed', 'is-locked');
-    el.classList.add(st.cls);
-  }
-
   function readFormIntoStore() {
     if (!isCaptureEditable()) return;
     var key = captureTargetKey();
@@ -571,7 +540,6 @@
     renderBoard('kpiProjBoard', agg, true);
     renderExcept(agg);
     renderMonth();
-    updateCaptureStatus();
   }
 
   function loadPeriodIntoUI() {
@@ -636,10 +604,8 @@
         loadPeriodIntoUI();
         var btn = $('kpiSave');
         var prev = btn.textContent;
-        var key = captureTargetKey();
-        var done = isDayComplete(state.store[key]);
-        btn.textContent = done ? 'Completo' : 'Guardado';
-        setTimeout(function () { btn.textContent = prev; }, 1100);
+        btn.textContent = 'Guardado';
+        setTimeout(function () { btn.textContent = prev; }, 900);
       });
     }
 

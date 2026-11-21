@@ -319,10 +319,17 @@ body.auth-locked:has(.auth-layout--hub-news) .auth-video-scrim {
     0 0 0 1px rgba(255, 255, 255, 0.06) inset;
 }
 
-.auth-layout--hub.auth-layout--portals-only .auth-portal-card--mando {
+.auth-layout--hub.auth-layout--portals-only .auth-portal-card--mando,
+.auth-layout--hub.auth-layout--portals-only .auth-portal-card--kpi {
   background:
     linear-gradient(145deg, rgba(12, 22, 38, 0.5) 0%, rgba(8, 14, 26, 0.46) 100%);
-  border-color: rgba(94, 179, 255, 0.36);
+  border-color: rgba(212, 160, 23, 0.42);
+}
+
+.auth-layout--hub.auth-layout--portals-only .auth-portal-card--kpi .auth-portal-icon--kpi {
+  background: linear-gradient(145deg, #d4a017, #9a6f0c);
+  color: #0c121c;
+  font-weight: 800;
 }
 
 .auth-layout--hub.auth-layout--portals-only .auth-portals-grid--hub .auth-portal-card:hover {
@@ -333,11 +340,12 @@ body.auth-locked:has(.auth-layout--hub-news) .auth-video-scrim {
     0 0 0 1px rgba(255, 255, 255, 0.08) inset;
 }
 
-.auth-layout--hub.auth-layout--portals-only .auth-portal-card--mando:hover {
-  border-color: rgba(94, 179, 255, 0.52);
+.auth-layout--hub.auth-layout--portals-only .auth-portal-card--mando:hover,
+.auth-layout--hub.auth-layout--portals-only .auth-portal-card--kpi:hover {
+  border-color: rgba(212, 160, 23, 0.62);
   box-shadow:
     0 14px 36px rgba(0, 0, 0, 0.26),
-    0 0 20px rgba(46, 152, 255, 0.1);
+    0 0 20px rgba(212, 160, 23, 0.12);
 }
 
 .auth-layout--hub.auth-layout--portals-only .auth-portals-head--hub {

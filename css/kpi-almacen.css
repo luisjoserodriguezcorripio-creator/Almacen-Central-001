@@ -242,7 +242,21 @@ body.kpi-portal {
   font: inherit;
   text-align: right;
 }
-.kpi-row.is-readonly input {
+.kpi-row textarea {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-height: 48px;
+  resize: vertical;
+  border: 1px solid var(--kpi-line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--kpi-text);
+  padding: 0.45rem 0.6rem;
+  font: inherit;
+  font-size: 0.84rem;
+}
+.kpi-row.is-readonly input,
+.kpi-row.is-readonly textarea {
   background: #eef2f6;
   color: var(--kpi-muted);
 }

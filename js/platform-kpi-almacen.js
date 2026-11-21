@@ -6,6 +6,7 @@
 
   var STORAGE_KEY = 'ac001_kpi_almacen_portal_v2';
   var LEGACY_KEY = 'ac001_kpi_almacen_portal_v1';
+  var DEMO_PURGE_FLAG = 'ac001_kpi_demo_purged_v1';
   var MONTHS_SHORT = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
   var METRICS = [
@@ -81,9 +82,24 @@
   function emptyDay() {
     var o = {};
     METRICS.forEach(function (m) {
-      o[m.id] = { plan: '', real: '' };
+      o[m.id] = { plan: '', real: '', note: '' };
     });
     return o;
+  }
+
+  function looksLikeDemoDay(day) {
+    if (!day || typeof day !== 'object') return false;
+    var f = day.facturacion || {};
+    var fr = day.fill_rate || {};
+    var ac = day.acuracidad || {};
+    var di = day.diferencias_inventario || {};
+    var planFact = String(f.plan == null ? '' : f.plan);
+    var planFill = String(fr.plan == null ? '' : fr.plan);
+    var planAcu = String(ac.plan == null ? '' : ac.plan);
+    var planDif = String(di.plan == null ? '' : di.plan);
+    var hasLegacyDescarga = !!(day.descarga_local || day.descarga_importados);
+    return planFact === '1850000' && planFill === '96' && planAcu === '98.5' && planDif === '40' &&
+      (hasLegacyDescarga || !!(day.descarga_contenedores));
   }
 
   function ruleLabel(m) {
@@ -97,7 +113,8 @@
       if (raw[m.id]) {
         day[m.id] = {
           plan: raw[m.id].plan != null ? raw[m.id].plan : '',
-          real: raw[m.id].real != null ? raw[m.id].real : ''
+          real: raw[m.id].real != null ? raw[m.id].real : '',
+          note: raw[m.id].note != null ? raw[m.id].note : ''
         };
       }
     });
@@ -106,16 +123,41 @@
       var b = raw.descarga_importados || {};
       var planSum = (num(a.plan) || 0) + (num(b.plan) || 0);
       var realSum = (num(a.real) || 0) + (num(b.real) || 0);
+      var noteJoin = [a.note, b.note].filter(Boolean).join(' · ');
       var has = a.plan !== '' || a.real !== '' || b.plan !== '' || b.real !== '' ||
         a.plan != null || a.real != null || b.plan != null || b.real != null;
       if (has) {
         day.descarga_contenedores = {
           plan: String(planSum),
-          real: String(realSum)
+          real: String(realSum),
+          note: noteJoin
         };
       }
     }
     return day;
+  }
+
+  function purgeDemoHistory(store) {
+    try {
+      if (localStorage.getItem(DEMO_PURGE_FLAG) === '1') return store;
+      var out = {};
+      var removed = 0;
+      Object.keys(store || {}).forEach(function (k) {
+        if (looksLikeDemoDay(store[k])) {
+          removed += 1;
+          return;
+        }
+        out[k] = store[k];
+      });
+      localStorage.setItem(DEMO_PURGE_FLAG, '1');
+      if (removed) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(out));
+        try { localStorage.removeItem(LEGACY_KEY); } catch (e1) { /* ignore */ }
+      }
+      return out;
+    } catch (e) {
+      return store || {};
+    }
   }
 
   function loadStore() {
@@ -127,7 +169,7 @@
       Object.keys(parsed || {}).forEach(function (k) {
         out[k] = migrateDay(parsed[k]);
       });
-      return out;
+      return purgeDemoHistory(out);
     } catch (e) {
       return {};
     }
@@ -173,6 +215,7 @@
     METRICS.forEach(function (m) {
       var plans = [];
       var reals = [];
+      var notes = [];
       keys.forEach(function (k) {
         var day = state.store[k];
         if (!day || !day[m.id]) return;
@@ -181,6 +224,7 @@
         if (plan == null && real == null) return;
         if (plan != null) plans.push(plan);
         if (real != null) reals.push(real);
+        if (day[m.id].note) notes.push(day[m.id].note);
       });
       var planAgg = null;
       var realAgg = null;
@@ -194,6 +238,7 @@
       result[m.id] = {
         plan: planAgg,
         real: realAgg,
+        note: notes[0] || '',
         daysPlan: plans.length,
         daysReal: reals.length,
         status: evalMetric(m, planAgg, realAgg)
@@ -234,9 +279,11 @@
     METRICS.forEach(function (m) {
       var planEl = $('plan_' + m.id);
       var realEl = $('real_' + m.id);
+      var noteEl = $('note_' + m.id);
       day[m.id] = {
         plan: planEl ? planEl.value : '',
-        real: realEl ? realEl.value : ''
+        real: realEl ? realEl.value : '',
+        note: noteEl ? noteEl.value : ''
       };
     });
     state.store[state.dateKey] = day;
@@ -249,6 +296,7 @@
       var row = day[m.id] || {};
       var planEl = $('plan_' + m.id);
       var realEl = $('real_' + m.id);
+      var noteEl = $('note_' + m.id);
       var editable = isCaptureEditable();
       if (planEl) {
         planEl.value = row.plan == null ? '' : row.plan;
@@ -257,6 +305,10 @@
       if (realEl) {
         realEl.value = row.real == null ? '' : row.real;
         realEl.readOnly = !editable;
+      }
+      if (noteEl) {
+        noteEl.value = row.note || '';
+        noteEl.readOnly = !editable;
       }
       var rowEl = document.querySelector('.kpi-row[data-id="' + m.id + '"]');
       if (rowEl) rowEl.classList.toggle('is-readonly', !editable);
@@ -268,6 +320,7 @@
       var row = agg.metrics[m.id] || {};
       var planEl = $('plan_' + m.id);
       var realEl = $('real_' + m.id);
+      var noteEl = $('note_' + m.id);
       if (planEl) {
         planEl.value = row.plan == null ? '' : String(Math.round(row.plan * 100) / 100);
         planEl.readOnly = true;
@@ -275,6 +328,10 @@
       if (realEl) {
         realEl.value = row.real == null ? '' : String(Math.round(row.real * 100) / 100);
         realEl.readOnly = true;
+      }
+      if (noteEl) {
+        noteEl.value = row.note || '';
+        noteEl.readOnly = true;
       }
       var rowEl = document.querySelector('.kpi-row[data-id="' + m.id + '"]');
       if (rowEl) rowEl.classList.add('is-readonly');
@@ -289,9 +346,10 @@
         '<div><strong>' + m.name + '</strong><small>' + m.owner + ' · ' + ruleLabel(m) + '</small></div>' +
         '<input id="plan_' + m.id + '" type="number" step="any" inputmode="decimal" placeholder="0" aria-label="Plan ' + m.name + '">' +
         '<input id="real_' + m.id + '" type="number" step="any" inputmode="decimal" placeholder="0" aria-label="Real ' + m.name + '">' +
+        '<textarea id="note_' + m.id + '" placeholder="Comentario / acción (causa · dueño · compromiso)"></textarea>' +
       '</div>';
     }).join('');
-    host.querySelectorAll('input').forEach(function (el) {
+    host.querySelectorAll('input, textarea').forEach(function (el) {
       el.addEventListener('input', function () {
         if (!isCaptureEditable()) return;
         readFormIntoStore();
@@ -311,7 +369,7 @@
     return { ok: ok, bad: bad, empty: empty };
   }
 
-  function renderBoard(hostId, agg) {
+  function renderBoard(hostId, agg, compact) {
     var host = $(hostId);
     if (!host) return;
     host.innerHTML = METRICS.map(function (m) {
@@ -322,10 +380,11 @@
       if (state.period !== 'day' && state.period !== 'yesterday' && (row.daysReal || row.daysPlan)) {
         extra = ' · ' + Math.max(row.daysReal || 0, row.daysPlan || 0) + ' días';
       }
+      var noteBit = (!compact && row.note) ? ' · ' + row.note : '';
       return '<article class="kpi-card is-' + st + '">' +
         '<h3>' + m.name + '</h3>' +
         '<span class="kpi-badge">' + badge + '</span>' +
-        '<p class="kpi-meta">Plan ' + formatVal(m, row.plan) + ' · Real ' + formatVal(m, row.real) + extra + '</p></article>';
+        '<p class="kpi-meta">Plan ' + formatVal(m, row.plan) + ' · Real ' + formatVal(m, row.real) + extra + noteBit + '</p></article>';
     }).join('');
   }
 
@@ -377,6 +436,7 @@
       if (row.status !== 'bad') return;
       bads.push('<div class="kpi-except-item"><strong>' + m.name + '</strong><span>' +
         m.owner + ' · Plan ' + formatVal(m, row.plan) + ' · Real ' + formatVal(m, row.real) +
+        (row.note ? ' · ' + row.note : '') +
         '</span></div>');
     });
     if (bads.length) {
@@ -447,8 +507,8 @@
     if ($('kpiResultSub')) $('kpiResultSub').textContent = title;
     if ($('kpiProjSub')) $('kpiProjSub').textContent = title;
     renderExec(agg);
-    renderBoard('kpiBoard', agg);
-    renderBoard('kpiProjBoard', agg);
+    renderBoard('kpiBoard', agg, false);
+    renderBoard('kpiProjBoard', agg, true);
     renderExcept(agg);
     renderMonth();
   }

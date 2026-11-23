@@ -209,8 +209,8 @@ body.kpi-portal {
 
 .kpi-cols {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) 92px 88px 88px;
-  gap: 0.5rem;
+  grid-template-columns: minmax(0, 1.2fr) 72px 84px 84px 68px;
+  gap: 0.45rem;
   padding: 0 0.7rem 0.3rem;
   color: var(--kpi-muted);
   font-size: 0.68rem;
@@ -220,12 +220,13 @@ body.kpi-portal {
 }
 .kpi-cols span:nth-child(2),
 .kpi-cols span:nth-child(3),
-.kpi-cols span:nth-child(4) { text-align: right; }
+.kpi-cols span:nth-child(4),
+.kpi-cols span:nth-child(5) { text-align: center; }
 .kpi-rows { display: grid; gap: 0.5rem; }
 .kpi-row {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) 92px 88px 88px;
-  gap: 0.5rem;
+  grid-template-columns: minmax(0, 1.2fr) 72px 84px 84px 68px;
+  gap: 0.45rem;
   align-items: center;
   padding: 0.65rem 0.7rem;
   border-radius: 12px;
@@ -240,7 +241,7 @@ body.kpi-portal {
   margin-top: 0.12rem;
 }
 .kpi-desafio {
-  text-align: right;
+  text-align: center;
   color: var(--kpi-ink);
 }
 .kpi-desafio strong {
@@ -266,13 +267,22 @@ body.kpi-portal {
   border-radius: 8px;
   background: #fff;
   color: var(--kpi-text);
-  padding: 0.5rem 0.45rem;
+  padding: 0.5rem 0.35rem;
   font: inherit;
-  text-align: right;
+  text-align: center;
 }
 .kpi-row input.kpi-num {
   font-variant-numeric: tabular-nums;
 }
+.kpi-alcance {
+  text-align: center;
+  font-family: var(--kpi-font);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--kpi-ink);
+}
+.kpi-alcance.is-ok { color: var(--kpi-ok); }
+.kpi-alcance.is-bad { color: var(--kpi-bad); }
 .kpi-row textarea {
   grid-column: 1 / -1;
   width: 100%;

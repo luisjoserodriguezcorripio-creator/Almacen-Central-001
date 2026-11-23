@@ -65,16 +65,19 @@
 
   function num(v) {
     if (v === '' || v == null) return null;
-    var s = String(v).trim().replace(/,/g, '');
+    var s = String(v).trim().replace(/[$\s%]/g, '').replace(/,/g, '');
     if (!s) return null;
     var n = Number(s);
     return isNaN(n) ? null : n;
   }
 
-  function storeNumberString(v, decimals) {
+  function storeNumberString(v, metric) {
     var n = num(v);
     if (n == null) return '';
-    if (decimals != null) return n.toFixed(decimals);
+    if (metric && metric.decimals != null) return n.toFixed(metric.decimals);
+    if (metric && (metric.unit === '%' || metric.unit === 'RD$' || metric.unit === 'contenedores')) {
+      return String(Math.round(n));
+    }
     return String(n);
   }
 
@@ -92,7 +95,13 @@
   }
 
   function formatMetricInput(metric, v) {
-    return formatThousands(v, metric.decimals != null ? metric.decimals : null);
+    if (v === '' || v == null) return '';
+    var n = num(v);
+    if (n == null) return '';
+    if (metric.decimals != null) return formatThousands(n, metric.decimals);
+    if (metric.unit === '%') return Math.round(n) + '%';
+    if (metric.unit === 'RD$') return '$' + formatThousands(Math.round(n));
+    return formatThousands(Math.round(n));
   }
 
   function evalMetric(metric, plan, real) {
@@ -105,9 +114,29 @@
   function formatVal(metric, v) {
     if (v == null) return '—';
     if (metric.decimals != null) return formatThousands(v, metric.decimals);
-    if (metric.unit === '%') return formatThousands(Math.round(v * 10) / 10) + '%';
-    if (metric.unit === 'RD$') return 'RD$ ' + formatThousands(Math.round(v));
-    return formatThousands(Math.round(v * 10) / 10);
+    if (metric.unit === '%') return Math.round(v) + '%';
+    if (metric.unit === 'RD$') return '$' + formatThousands(Math.round(v));
+    return formatThousands(Math.round(v));
+  }
+
+  /** Alcance siempre en % entero. Menor-es-mejor: Plan/Real. */
+  function calcAlcance(metric, plan, real) {
+    if (plan == null || real == null) return null;
+    if (metric.rule === 'lt' || metric.rule === 'lte') {
+      if (real === 0) return null;
+      return Math.round((plan / real) * 100);
+    }
+    if (plan === 0) return null;
+    return Math.round((real / plan) * 100);
+  }
+
+  function setAlcanceEl(metric, plan, real) {
+    var el = $('alcance_' + metric.id);
+    if (!el) return;
+    var pct = calcAlcance(metric, plan, real);
+    var st = evalMetric(metric, plan, real);
+    el.className = 'kpi-alcance' + (st === 'ok' ? ' is-ok' : (st === 'bad' ? ' is-bad' : ''));
+    el.textContent = pct == null ? '—' : pct + '%';
   }
 
   function emptyDay() {
@@ -396,8 +425,8 @@
       var realEl = $('real_' + m.id);
       var noteEl = $('note_' + m.id);
       day[m.id] = {
-        plan: planEl ? storeNumberString(planEl.value, m.decimals) : '',
-        real: realEl ? storeNumberString(realEl.value, m.decimals) : '',
+        plan: planEl ? storeNumberString(planEl.value, m) : '',
+        real: realEl ? storeNumberString(realEl.value, m) : '',
         note: noteEl ? noteEl.value : ''
       };
     });
@@ -450,6 +479,7 @@
         noteEl.value = row.note || '';
         noteEl.readOnly = !editable;
       }
+      setAlcanceEl(m, num(row.plan), num(row.real));
       var rowEl = document.querySelector('.kpi-row[data-id="' + m.id + '"]');
       if (rowEl) rowEl.classList.toggle('is-readonly', !editable);
     });
@@ -463,8 +493,8 @@
       var noteEl = $('note_' + m.id);
       var planShow = row.plan;
       var realShow = row.real;
-      if (planShow != null && m.decimals == null) planShow = Math.round(planShow * 100) / 100;
-      if (realShow != null && m.decimals == null) realShow = Math.round(realShow * 100) / 100;
+      if (planShow != null && m.decimals == null) planShow = Math.round(planShow);
+      if (realShow != null && m.decimals == null) realShow = Math.round(realShow);
       if (planEl) {
         planEl.value = planShow == null ? '' : formatMetricInput(m, planShow);
         planEl.readOnly = true;
@@ -477,14 +507,25 @@
         noteEl.value = row.note || '';
         noteEl.readOnly = true;
       }
+      setAlcanceEl(m, planShow, realShow);
       var rowEl = document.querySelector('.kpi-row[data-id="' + m.id + '"]');
       if (rowEl) rowEl.classList.add('is-readonly');
     });
   }
 
+  function refreshRowAlcance(metricId) {
+    var metric = METRICS.filter(function (m) { return m.id === metricId; })[0];
+    if (!metric) return;
+    var planEl = $('plan_' + metricId);
+    var realEl = $('real_' + metricId);
+    setAlcanceEl(metric, planEl ? num(planEl.value) : null, realEl ? num(realEl.value) : null);
+  }
+
   function bindNumInput(el) {
     el.addEventListener('input', function () {
       if (!isCaptureEditable()) return;
+      var row = el.closest('.kpi-row');
+      if (row) refreshRowAlcance(row.getAttribute('data-id'));
       withFormDraft(renderViews);
     });
     el.addEventListener('blur', function () {
@@ -493,6 +534,7 @@
       var metricId = row ? row.getAttribute('data-id') : '';
       var metric = METRICS.filter(function (m) { return m.id === metricId; })[0];
       el.value = metric ? formatMetricInput(metric, el.value) : formatThousands(el.value);
+      if (metric) refreshRowAlcance(metric.id);
       if (isCaptureEditable()) withFormDraft(renderViews);
     });
   }
@@ -508,7 +550,8 @@
         '<div class="kpi-desafio"' + desafioTitle + '><strong>' + m.desafio + '</strong>' + desafioHint + '</div>' +
         '<input id="plan_' + m.id + '" class="kpi-num" type="text" inputmode="decimal" placeholder="0" aria-label="Plan ' + m.name + '" autocomplete="off">' +
         '<input id="real_' + m.id + '" class="kpi-num" type="text" inputmode="decimal" placeholder="0" aria-label="Real ' + m.name + '" autocomplete="off">' +
-        '<textarea id="note_' + m.id + '" placeholder="Comentario / acción (causa · dueño · compromiso)"></textarea>' +
+        '<div class="kpi-alcance" id="alcance_' + m.id + '" aria-label="Alcance ' + m.name + '">—</div>' +
+        '<textarea id="note_' + m.id + '" placeholder="Causa/Acción"></textarea>' +
       '</div>';
     }).join('');
     host.querySelectorAll('input.kpi-num').forEach(bindNumInput);
@@ -543,10 +586,12 @@
         extra = ' · ' + Math.max(row.daysReal || 0, row.daysPlan || 0) + ' días';
       }
       var noteBit = (!compact && row.note) ? ' · ' + row.note : '';
+      var alcance = calcAlcance(m, row.plan, row.real);
+      var alcanceBit = alcance == null ? '' : ' · Alcance ' + alcance + '%';
       return '<article class="kpi-card is-' + st + '">' +
         '<h3>' + m.name + '</h3>' +
         '<span class="kpi-badge">' + badge + '</span>' +
-        '<p class="kpi-meta">Desafío ' + m.desafio + ' · Plan ' + formatVal(m, row.plan) + ' · Real ' + formatVal(m, row.real) + extra + noteBit + '</p></article>';
+        '<p class="kpi-meta">Desafío ' + m.desafio + ' · Plan ' + formatVal(m, row.plan) + ' · Real ' + formatVal(m, row.real) + alcanceBit + extra + noteBit + '</p></article>';
     }).join('');
   }
 

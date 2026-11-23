@@ -269,6 +269,7 @@
   function aggregatePeriod() {
     var keys = daysInPeriod();
     var result = {};
+    var daysCounted = {};
     METRICS.forEach(function (m) {
       var plans = [];
       var reals = [];
@@ -278,9 +279,11 @@
         if (!day || !day[m.id]) return;
         var plan = num(day[m.id].plan);
         var real = num(day[m.id].real);
-        if (plan == null && real == null) return;
-        if (plan != null) plans.push(plan);
-        if (real != null) reals.push(real);
+        // Acumulado (semana/mes/etc.): solo Plan+Real registrados y guardados.
+        if (plan == null || real == null) return;
+        plans.push(plan);
+        reals.push(real);
+        daysCounted[k] = true;
         if (day[m.id].note) notes.push(day[m.id].note);
       });
       var planAgg = null;
@@ -303,7 +306,7 @@
     });
     return {
       keys: keys,
-      daysWithData: keys.filter(function (k) { return !!state.store[k]; }).length,
+      daysWithData: Object.keys(daysCounted).length,
       metrics: result
     };
   }
@@ -336,11 +339,12 @@
     return isWithinOpenWindow(captureTargetKey());
   }
 
+  /** Día válido solo si tiene Plan y Real guardados en al menos un indicador. */
   function dayHasSavedData(day) {
     if (!day) return false;
     for (var i = 0; i < METRICS.length; i++) {
       var row = day[METRICS[i].id] || {};
-      if (num(row.plan) != null || num(row.real) != null) return true;
+      if (num(row.plan) != null && num(row.real) != null) return true;
     }
     return false;
   }

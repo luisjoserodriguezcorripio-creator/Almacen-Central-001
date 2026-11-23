@@ -18,9 +18,12 @@
     { id: 'bpa', name: 'BPA', unit: '%', rule: 'gte', agg: 'avg', owner: 'Calidad', desafio: '85%' }
   ];
 
+  var OPEN_WINDOW_DAYS = 3; /* hoy + hasta 3 días atrás */
+
   var state = {
     store: {},
-    dateKey: '',
+    dateFrom: '',
+    dateTo: '',
     period: 'day',
     monthCursor: ''
   };
@@ -62,8 +65,28 @@
 
   function num(v) {
     if (v === '' || v == null) return null;
-    var n = Number(String(v).replace(',', '.'));
+    var s = String(v).trim().replace(/,/g, '');
+    if (!s) return null;
+    var n = Number(s);
     return isNaN(n) ? null : n;
+  }
+
+  function storeNumberString(v) {
+    var n = num(v);
+    return n == null ? '' : String(n);
+  }
+
+  /** Miles con coma: 22887 → 22,887 */
+  function formatThousands(v) {
+    if (v === '' || v == null) return '';
+    var n = num(v);
+    if (n == null) return '';
+    var neg = n < 0;
+    var abs = Math.abs(n);
+    var raw = String(abs);
+    var parts = raw.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return (neg ? '-' : '') + parts.join('.');
   }
 
   function evalMetric(metric, plan, real) {
@@ -74,9 +97,9 @@
 
   function formatVal(metric, v) {
     if (v == null) return '—';
-    if (metric.unit === '%') return v.toLocaleString('es-DO', { maximumFractionDigits: 1 }) + '%';
-    if (metric.unit === 'RD$') return 'RD$ ' + v.toLocaleString('es-DO', { maximumFractionDigits: 0 });
-    return v.toLocaleString('es-DO', { maximumFractionDigits: 1 });
+    if (metric.unit === '%') return formatThousands(Math.round(v * 10) / 10) + '%';
+    if (metric.unit === 'RD$') return 'RD$ ' + formatThousands(Math.round(v));
+    return formatThousands(Math.round(v * 10) / 10);
   }
 
   function emptyDay() {
@@ -179,34 +202,68 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state.store));
   }
 
+  function normalizeRange() {
+    var from = state.dateFrom || todayLocal();
+    var to = state.dateTo || todayLocal();
+    if (from > to) {
+      var tmp = from;
+      from = to;
+      to = tmp;
+    }
+    state.dateFrom = from;
+    state.dateTo = to;
+  }
+
+  function keysBetween(from, to) {
+    var keys = [];
+    var p = parseKey(from);
+    var end = parseKey(to);
+    var cur = new Date(p.y, p.m - 1, p.d);
+    var last = new Date(end.y, end.m - 1, end.d);
+    while (cur <= last) {
+      keys.push(toKey(cur.getFullYear(), cur.getMonth() + 1, cur.getDate()));
+      cur.setDate(cur.getDate() + 1);
+    }
+    return keys;
+  }
+
   function daysInPeriod() {
-    var base = state.dateKey || todayLocal();
-    if (state.period === 'day') return [base];
-    if (state.period === 'yesterday') return [shiftDate(base, -1)];
-    if (state.period === 'week') {
-      var week = [];
-      for (var i = 6; i >= 0; i--) week.push(shiftDate(base, -i));
-      return week;
+    normalizeRange();
+    return keysBetween(state.dateFrom, state.dateTo);
+  }
+
+  function applyPeriodPreset(period) {
+    var today = todayLocal();
+    var to = state.dateTo || today;
+    if (period === 'day') {
+      state.dateFrom = today;
+      state.dateTo = today;
+    } else if (period === 'yesterday') {
+      var y = shiftDate(today, -1);
+      state.dateFrom = y;
+      state.dateTo = y;
+    } else if (period === 'week') {
+      state.dateTo = today;
+      state.dateFrom = shiftDate(today, -6);
+    } else if (period === 'month') {
+      var pm = parseKey(to);
+      state.dateFrom = toKey(pm.y, pm.m, 1);
+      state.dateTo = toKey(pm.y, pm.m, new Date(pm.y, pm.m, 0).getDate());
+    } else if (period === 'trimestre') {
+      var pt = parseKey(to);
+      var startT = new Date(pt.y, pt.m - 1, pt.d);
+      startT.setMonth(startT.getMonth() - 3);
+      state.dateFrom = toKey(startT.getFullYear(), startT.getMonth() + 1, startT.getDate());
+      state.dateTo = to;
     }
-    if (state.period === 'trimestre') {
-      var p = parseKey(base);
-      var end = new Date(p.y, p.m - 1, p.d);
-      var start = new Date(p.y, p.m - 1, p.d);
-      start.setMonth(start.getMonth() - 3);
-      var keys = [];
-      var cur = new Date(start.getFullYear(), start.getMonth(), start.getDate());
-      while (cur <= end) {
-        keys.push(toKey(cur.getFullYear(), cur.getMonth() + 1, cur.getDate()));
-        cur.setDate(cur.getDate() + 1);
-      }
-      return keys;
-    }
-    // month
-    var pm = parseKey(base);
-    var last = new Date(pm.y, pm.m, 0).getDate();
-    var monthKeys = [];
-    for (var d = 1; d <= last; d++) monthKeys.push(toKey(pm.y, pm.m, d));
-    return monthKeys;
+    state.period = period;
+    state.monthCursor = state.dateTo.slice(0, 7);
+    syncDateInputs();
+  }
+
+  function syncDateInputs() {
+    if ($('kpiDateFrom')) $('kpiDateFrom').value = state.dateFrom;
+    if ($('kpiDateTo')) $('kpiDateTo').value = state.dateTo;
   }
 
   function aggregatePeriod() {
@@ -252,39 +309,28 @@
   }
 
   function periodTitle() {
-    var base = state.dateKey || todayLocal();
-    if (state.period === 'day') return formatDisplayDate(base);
-    if (state.period === 'yesterday') return formatDisplayDate(shiftDate(base, -1));
-    if (state.period === 'week') {
-      return formatDisplayDate(shiftDate(base, -6)) + ' → ' + formatDisplayDate(base);
-    }
-    if (state.period === 'trimestre') {
-      var pt = parseKey(base);
-      var startT = new Date(pt.y, pt.m - 1, pt.d);
-      startT.setMonth(startT.getMonth() - 3);
-      return formatDisplayDate(toKey(startT.getFullYear(), startT.getMonth() + 1, startT.getDate())) +
-        ' → ' + formatDisplayDate(base);
-    }
-    var p = parseKey(base);
-    return monthLabel(p.y + '-' + String(p.m).padStart(2, '0'));
+    normalizeRange();
+    if (state.dateFrom === state.dateTo) return formatDisplayDate(state.dateTo);
+    return formatDisplayDate(state.dateFrom) + ' → ' + formatDisplayDate(state.dateTo);
   }
 
   function isSingleDayPeriod() {
-    return state.period === 'day' || state.period === 'yesterday';
+    normalizeRange();
+    return state.dateFrom === state.dateTo;
   }
 
   function captureTargetKey() {
-    var base = state.dateKey || todayLocal();
-    if (state.period === 'yesterday') return shiftDate(base, -1);
-    return base;
+    normalizeRange();
+    return state.dateTo;
   }
 
   function isWithinOpenWindow(key) {
     var today = todayLocal();
-    return key === today || key === shiftDate(today, -1);
+    var oldest = shiftDate(today, -OPEN_WINDOW_DAYS);
+    return key >= oldest && key <= today;
   }
 
-  /** Solo hoy y ayer se editan. Se puede guardar parcial. */
+  /** Hoy y hasta 3 días atrás. Se puede guardar parcial. */
   function isCaptureEditable() {
     if (!isSingleDayPeriod()) return false;
     return isWithinOpenWindow(captureTargetKey());
@@ -299,8 +345,8 @@
       var realEl = $('real_' + m.id);
       var noteEl = $('note_' + m.id);
       day[m.id] = {
-        plan: planEl ? planEl.value : '',
-        real: realEl ? realEl.value : '',
+        plan: planEl ? storeNumberString(planEl.value) : '',
+        real: realEl ? storeNumberString(realEl.value) : '',
         note: noteEl ? noteEl.value : ''
       };
     });
@@ -317,11 +363,11 @@
       var realEl = $('real_' + m.id);
       var noteEl = $('note_' + m.id);
       if (planEl) {
-        planEl.value = row.plan == null ? '' : row.plan;
+        planEl.value = formatThousands(row.plan);
         planEl.readOnly = !editable;
       }
       if (realEl) {
-        realEl.value = row.real == null ? '' : row.real;
+        realEl.value = formatThousands(row.real);
         realEl.readOnly = !editable;
       }
       if (noteEl) {
@@ -340,11 +386,11 @@
       var realEl = $('real_' + m.id);
       var noteEl = $('note_' + m.id);
       if (planEl) {
-        planEl.value = row.plan == null ? '' : String(Math.round(row.plan * 100) / 100);
+        planEl.value = row.plan == null ? '' : formatThousands(Math.round(row.plan * 100) / 100);
         planEl.readOnly = true;
       }
       if (realEl) {
-        realEl.value = row.real == null ? '' : String(Math.round(row.real * 100) / 100);
+        realEl.value = row.real == null ? '' : formatThousands(Math.round(row.real * 100) / 100);
         realEl.readOnly = true;
       }
       if (noteEl) {
@@ -353,6 +399,19 @@
       }
       var rowEl = document.querySelector('.kpi-row[data-id="' + m.id + '"]');
       if (rowEl) rowEl.classList.add('is-readonly');
+    });
+  }
+
+  function bindNumInput(el) {
+    el.addEventListener('input', function () {
+      if (!isCaptureEditable()) return;
+      readFormIntoStore();
+      renderViews();
+    });
+    el.addEventListener('blur', function () {
+      if (el.readOnly) return;
+      el.value = formatThousands(el.value);
+      if (isCaptureEditable()) readFormIntoStore();
     });
   }
 
@@ -365,12 +424,13 @@
       return '<div class="kpi-row" data-id="' + m.id + '">' +
         '<div><strong>' + m.name + '</strong><small>' + m.owner + ' · ' + ruleLabel(m) + '</small></div>' +
         '<div class="kpi-desafio"' + desafioTitle + '><strong>' + m.desafio + '</strong>' + desafioHint + '</div>' +
-        '<input id="plan_' + m.id + '" type="number" step="any" inputmode="decimal" placeholder="0" aria-label="Plan ' + m.name + '">' +
-        '<input id="real_' + m.id + '" type="number" step="any" inputmode="decimal" placeholder="0" aria-label="Real ' + m.name + '">' +
+        '<input id="plan_' + m.id + '" class="kpi-num" type="text" inputmode="decimal" placeholder="0" aria-label="Plan ' + m.name + '" autocomplete="off">' +
+        '<input id="real_' + m.id + '" class="kpi-num" type="text" inputmode="decimal" placeholder="0" aria-label="Real ' + m.name + '" autocomplete="off">' +
         '<textarea id="note_' + m.id + '" placeholder="Comentario / acción (causa · dueño · compromiso)"></textarea>' +
       '</div>';
     }).join('');
-    host.querySelectorAll('input, textarea').forEach(function (el) {
+    host.querySelectorAll('input.kpi-num').forEach(bindNumInput);
+    host.querySelectorAll('textarea').forEach(function (el) {
       el.addEventListener('input', function () {
         if (!isCaptureEditable()) return;
         readFormIntoStore();
@@ -398,7 +458,7 @@
       var st = row.status || 'empty';
       var badge = st === 'ok' ? 'Logró' : (st === 'bad' ? 'No logró' : 'Sin dato');
       var extra = '';
-      if (state.period !== 'day' && state.period !== 'yesterday' && (row.daysReal || row.daysPlan)) {
+      if (!isSingleDayPeriod() && (row.daysReal || row.daysPlan)) {
         extra = ' · ' + Math.max(row.daysReal || 0, row.daysPlan || 0) + ' días';
       }
       var noteBit = (!compact && row.note) ? ' · ' + row.note : '';
@@ -449,7 +509,7 @@
     var host = $('kpiMonthGrid');
     var label = $('kpiMonthLabel');
     if (!host) return;
-    var ym = state.monthCursor || state.dateKey.slice(0, 7);
+    var ym = state.monthCursor || (state.dateTo || todayLocal()).slice(0, 7);
     if (label) label.textContent = monthLabel(ym);
     var parts = ym.split('-').map(Number);
     var y = parts[0];
@@ -470,7 +530,8 @@
         if (!day || !day[metric.id]) return 'empty';
         return evalMetric(metric, num(day[metric.id].plan), num(day[metric.id].real));
       });
-      var selected = key === state.dateKey ? ' is-selected' : '';
+      var inRange = key >= state.dateFrom && key <= state.dateTo;
+      var selected = inRange ? ' is-selected' : '';
       html += '<button type="button" class="kpi-day' + selected + '" data-date="' + key + '">' +
         '<strong>' + d + '</strong>' +
         '<span>' + (day ? 'OK' : '—') + '</span>' +
@@ -482,10 +543,13 @@
     host.querySelectorAll('[data-date]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         if (isCaptureEditable()) readFormIntoStore();
-        state.dateKey = btn.getAttribute('data-date');
+        var key = btn.getAttribute('data-date');
+        state.dateFrom = key;
+        state.dateTo = key;
         state.period = 'day';
+        state.monthCursor = key.slice(0, 7);
         syncPeriodButtons();
-        if ($('kpiDate')) $('kpiDate').value = state.dateKey;
+        syncDateInputs();
         loadPeriodIntoUI();
       });
     });
@@ -524,29 +588,38 @@
     document.body.classList.toggle('kpi-meeting', !!on);
   }
 
+  function onRangeChange() {
+    if (isCaptureEditable()) readFormIntoStore();
+    state.dateFrom = ($('kpiDateFrom') && $('kpiDateFrom').value) || todayLocal();
+    state.dateTo = ($('kpiDateTo') && $('kpiDateTo').value) || todayLocal();
+    normalizeRange();
+    state.period = state.dateFrom === state.dateTo ? 'day' : 'custom';
+    state.monthCursor = state.dateTo.slice(0, 7);
+    syncPeriodButtons();
+    syncDateInputs();
+    loadPeriodIntoUI();
+  }
+
   function init() {
     state.store = loadStore();
-    state.dateKey = todayLocal();
+    var today = todayLocal();
+    state.dateFrom = today;
+    state.dateTo = today;
     state.period = 'day';
-    state.monthCursor = state.dateKey.slice(0, 7);
+    state.monthCursor = today.slice(0, 7);
 
-    if ($('kpiDate')) $('kpiDate').value = state.dateKey;
+    syncDateInputs();
     renderRows();
     syncPeriodButtons();
     loadPeriodIntoUI();
 
-    if ($('kpiDate')) {
-      $('kpiDate').addEventListener('change', function () {
-        state.dateKey = $('kpiDate').value || todayLocal();
-        state.monthCursor = state.dateKey.slice(0, 7);
-        loadPeriodIntoUI();
-      });
-    }
+    if ($('kpiDateFrom')) $('kpiDateFrom').addEventListener('change', onRangeChange);
+    if ($('kpiDateTo')) $('kpiDateTo').addEventListener('change', onRangeChange);
 
     document.querySelectorAll('[data-period]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         if (isCaptureEditable()) readFormIntoStore();
-        state.period = btn.getAttribute('data-period') || 'day';
+        applyPeriodPreset(btn.getAttribute('data-period') || 'day');
         syncPeriodButtons();
         loadPeriodIntoUI();
       });
@@ -554,16 +627,8 @@
 
     if ($('kpiSave')) {
       $('kpiSave').addEventListener('click', function () {
-        if (!isSingleDayPeriod()) {
-          state.period = 'day';
-          state.dateKey = todayLocal();
-          if ($('kpiDate')) $('kpiDate').value = state.dateKey;
-          syncPeriodButtons();
-          loadPeriodIntoUI();
-        } else if (!isWithinOpenWindow(captureTargetKey())) {
-          state.period = 'day';
-          state.dateKey = todayLocal();
-          if ($('kpiDate')) $('kpiDate').value = state.dateKey;
+        if (!isSingleDayPeriod() || !isWithinOpenWindow(captureTargetKey())) {
+          applyPeriodPreset('day');
           syncPeriodButtons();
           loadPeriodIntoUI();
         }

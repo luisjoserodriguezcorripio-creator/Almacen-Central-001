@@ -66,6 +66,12 @@ body.kpi-portal {
   align-items: end;
   margin-bottom: 1rem;
 }
+.kpi-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: end;
+}
 .kpi-field {
   display: grid;
   gap: 0.28rem;
@@ -253,6 +259,7 @@ body.kpi-portal {
   text-transform: none;
   letter-spacing: 0;
 }
+.kpi-row input[type="text"],
 .kpi-row input[type="number"] {
   width: 100%;
   border: 1px solid var(--kpi-line);
@@ -262,6 +269,9 @@ body.kpi-portal {
   padding: 0.5rem 0.45rem;
   font: inherit;
   text-align: right;
+}
+.kpi-row input.kpi-num {
+  font-variant-numeric: tabular-nums;
 }
 .kpi-row textarea {
   grid-column: 1 / -1;

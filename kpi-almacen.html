@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/kpi-almacen.css?v=7" />
+  <link rel="stylesheet" href="css/kpi-almacen.css?v=8" />
 </head>
 <body class="kpi-portal">
   <noscript><p style="padding:2rem;text-align:center">Activa JavaScript para usar KPIs de Almacén.</p></noscript>
@@ -36,9 +36,15 @@
     </header>
 
     <div class="kpi-toolbar">
-      <div class="kpi-field">
-        <label for="kpiDate">Fecha base</label>
-        <input id="kpiDate" type="date" />
+      <div class="kpi-dates" role="group" aria-label="Rango de fechas">
+        <div class="kpi-field">
+          <label for="kpiDateFrom">Fecha desde</label>
+          <input id="kpiDateFrom" type="date" />
+        </div>
+        <div class="kpi-field">
+          <label for="kpiDateTo">Fecha hasta</label>
+          <input id="kpiDateTo" type="date" />
+        </div>
       </div>
       <div class="kpi-field" style="min-width:auto">
         <label>Acumulado</label>
@@ -95,6 +101,6 @@
     </section>
   </div>
 
-  <script src="js/platform-kpi-almacen.js?v=7"></script>
+  <script src="js/platform-kpi-almacen.js?v=8"></script>
 </body>
 </html>

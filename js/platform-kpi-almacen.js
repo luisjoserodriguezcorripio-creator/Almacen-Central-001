@@ -13,7 +13,7 @@
     { id: 'facturacion', name: 'Facturación', unit: 'RD$', rule: 'gte', agg: 'sum', owner: 'Despacho', desafio: '90%' },
     { id: 'fill_rate', name: 'Fill Rate', unit: '%', rule: 'gte', agg: 'avg', owner: 'Despacho', desafio: '95%' },
     { id: 'descarga_contenedores', name: 'Descarga de contenedores', unit: 'contenedores', rule: 'gte', agg: 'sum', owner: 'Recepción', desafio: '95%' },
-    { id: 'diferencias_inventario', name: 'Diferencias de Inventario', unit: 'unidades', rule: 'lt', agg: 'sum', owner: 'Inventario', desafio: '0.0001', desafioHint: 'Valor inventario vs valor diferencia' },
+    { id: 'diferencias_inventario', name: 'Diferencias de Inventario', unit: 'ratio', rule: 'lt', agg: 'avg', owner: 'Inventario', desafio: '0.0001', desafioHint: 'Valor inventario vs valor diferencia', decimals: 4 },
     { id: 'acuracidad', name: 'Acuracidad', unit: '%', rule: 'gte', agg: 'avg', owner: 'Inventario', desafio: '95%' },
     { id: 'bpa', name: 'BPA', unit: '%', rule: 'gte', agg: 'avg', owner: 'Calidad', desafio: '85%' }
   ];
@@ -71,22 +71,28 @@
     return isNaN(n) ? null : n;
   }
 
-  function storeNumberString(v) {
+  function storeNumberString(v, decimals) {
     var n = num(v);
-    return n == null ? '' : String(n);
+    if (n == null) return '';
+    if (decimals != null) return n.toFixed(decimals);
+    return String(n);
   }
 
-  /** Miles con coma: 22887 → 22,887 */
-  function formatThousands(v) {
+  /** Miles con coma: 22887 → 22,887. Si decimals, fija decimales (ej. 0.0001). */
+  function formatThousands(v, decimals) {
     if (v === '' || v == null) return '';
     var n = num(v);
     if (n == null) return '';
     var neg = n < 0;
     var abs = Math.abs(n);
-    var raw = String(abs);
+    var raw = decimals != null ? abs.toFixed(decimals) : String(abs);
     var parts = raw.split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     return (neg ? '-' : '') + parts.join('.');
+  }
+
+  function formatMetricInput(metric, v) {
+    return formatThousands(v, metric.decimals != null ? metric.decimals : null);
   }
 
   function evalMetric(metric, plan, real) {
@@ -97,6 +103,7 @@
 
   function formatVal(metric, v) {
     if (v == null) return '—';
+    if (metric.decimals != null) return formatThousands(v, metric.decimals);
     if (metric.unit === '%') return formatThousands(Math.round(v * 10) / 10) + '%';
     if (metric.unit === 'RD$') return 'RD$ ' + formatThousands(Math.round(v));
     return formatThousands(Math.round(v * 10) / 10);
@@ -386,8 +393,8 @@
       var realEl = $('real_' + m.id);
       var noteEl = $('note_' + m.id);
       day[m.id] = {
-        plan: planEl ? storeNumberString(planEl.value) : '',
-        real: realEl ? storeNumberString(realEl.value) : '',
+        plan: planEl ? storeNumberString(planEl.value, m.decimals) : '',
+        real: realEl ? storeNumberString(realEl.value, m.decimals) : '',
         note: noteEl ? noteEl.value : ''
       };
     });
@@ -429,11 +436,11 @@
       var realEl = $('real_' + m.id);
       var noteEl = $('note_' + m.id);
       if (planEl) {
-        planEl.value = formatThousands(row.plan);
+        planEl.value = formatMetricInput(m, row.plan);
         planEl.readOnly = !editable;
       }
       if (realEl) {
-        realEl.value = formatThousands(row.real);
+        realEl.value = formatMetricInput(m, row.real);
         realEl.readOnly = !editable;
       }
       if (noteEl) {
@@ -451,12 +458,16 @@
       var planEl = $('plan_' + m.id);
       var realEl = $('real_' + m.id);
       var noteEl = $('note_' + m.id);
+      var planShow = row.plan;
+      var realShow = row.real;
+      if (planShow != null && m.decimals == null) planShow = Math.round(planShow * 100) / 100;
+      if (realShow != null && m.decimals == null) realShow = Math.round(realShow * 100) / 100;
       if (planEl) {
-        planEl.value = row.plan == null ? '' : formatThousands(Math.round(row.plan * 100) / 100);
+        planEl.value = planShow == null ? '' : formatMetricInput(m, planShow);
         planEl.readOnly = true;
       }
       if (realEl) {
-        realEl.value = row.real == null ? '' : formatThousands(Math.round(row.real * 100) / 100);
+        realEl.value = realShow == null ? '' : formatMetricInput(m, realShow);
         realEl.readOnly = true;
       }
       if (noteEl) {
@@ -475,7 +486,10 @@
     });
     el.addEventListener('blur', function () {
       if (el.readOnly) return;
-      el.value = formatThousands(el.value);
+      var row = el.closest('.kpi-row');
+      var metricId = row ? row.getAttribute('data-id') : '';
+      var metric = METRICS.filter(function (m) { return m.id === metricId; })[0];
+      el.value = metric ? formatMetricInput(metric, el.value) : formatThousands(el.value);
       if (isCaptureEditable()) withFormDraft(renderViews);
     });
   }

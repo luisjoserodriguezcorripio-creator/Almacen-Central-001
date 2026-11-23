@@ -336,9 +336,37 @@
     return isWithinOpenWindow(captureTargetKey());
   }
 
-  function readFormIntoStore() {
-    if (!isCaptureEditable()) return;
-    var key = captureTargetKey();
+  function dayHasSavedData(day) {
+    if (!day) return false;
+    for (var i = 0; i < METRICS.length; i++) {
+      var row = day[METRICS[i].id] || {};
+      if (num(row.plan) != null || num(row.real) != null) return true;
+    }
+    return false;
+  }
+
+  /** Prefill desde el día anterior (plan/real); comentarios vacíos. */
+  function clonePreviousDay(key) {
+    var prev = state.store[shiftDate(key, -1)];
+    if (!dayHasSavedData(prev)) return emptyDay();
+    var out = emptyDay();
+    METRICS.forEach(function (m) {
+      var row = prev[m.id] || {};
+      out[m.id] = {
+        plan: row.plan != null && row.plan !== '' ? String(row.plan) : '',
+        real: row.real != null && row.real !== '' ? String(row.real) : '',
+        note: ''
+      };
+    });
+    return out;
+  }
+
+  function resolveCaptureDay(key) {
+    if (dayHasSavedData(state.store[key])) return state.store[key];
+    return clonePreviousDay(key);
+  }
+
+  function readFormDay() {
     var day = emptyDay();
     METRICS.forEach(function (m) {
       var planEl = $('plan_' + m.id);
@@ -350,8 +378,33 @@
         note: noteEl ? noteEl.value : ''
       };
     });
-    state.store[key] = day;
+    return day;
+  }
+
+  /** Solo persiste al pulsar Guardar. */
+  function readFormIntoStore() {
+    if (!isCaptureEditable()) return;
+    var key = captureTargetKey();
+    state.store[key] = readFormDay();
     saveStore();
+  }
+
+  /** Vista previa del resultado sin guardar. */
+  function withFormDraft(fn) {
+    if (!isCaptureEditable()) {
+      fn();
+      return;
+    }
+    var key = captureTargetKey();
+    var had = Object.prototype.hasOwnProperty.call(state.store, key);
+    var backup = state.store[key];
+    state.store[key] = readFormDay();
+    try {
+      fn();
+    } finally {
+      if (had) state.store[key] = backup;
+      else delete state.store[key];
+    }
   }
 
   function writeFormFromDay(day, editable) {
@@ -405,13 +458,12 @@
   function bindNumInput(el) {
     el.addEventListener('input', function () {
       if (!isCaptureEditable()) return;
-      readFormIntoStore();
-      renderViews();
+      withFormDraft(renderViews);
     });
     el.addEventListener('blur', function () {
       if (el.readOnly) return;
       el.value = formatThousands(el.value);
-      if (isCaptureEditable()) readFormIntoStore();
+      if (isCaptureEditable()) withFormDraft(renderViews);
     });
   }
 
@@ -433,8 +485,7 @@
     host.querySelectorAll('textarea').forEach(function (el) {
       el.addEventListener('input', function () {
         if (!isCaptureEditable()) return;
-        readFormIntoStore();
-        renderViews();
+        withFormDraft(renderViews);
       });
     });
   }
@@ -542,7 +593,6 @@
     host.innerHTML = html;
     host.querySelectorAll('[data-date]').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        if (isCaptureEditable()) readFormIntoStore();
         var key = btn.getAttribute('data-date');
         state.dateFrom = key;
         state.dateTo = key;
@@ -577,7 +627,13 @@
     var agg = aggregatePeriod();
     if (isSingleDayPeriod()) {
       var key = captureTargetKey();
-      writeFormFromDay(state.store[key] || emptyDay(), isCaptureEditable());
+      var editable = isCaptureEditable();
+      var day = editable ? resolveCaptureDay(key) : (state.store[key] || emptyDay());
+      writeFormFromDay(day, editable);
+      if (editable && !dayHasSavedData(state.store[key])) {
+        withFormDraft(renderViews);
+        return;
+      }
     } else {
       fillFormFromAggregate(agg);
     }
@@ -589,7 +645,6 @@
   }
 
   function onRangeChange() {
-    if (isCaptureEditable()) readFormIntoStore();
     state.dateFrom = ($('kpiDateFrom') && $('kpiDateFrom').value) || todayLocal();
     state.dateTo = ($('kpiDateTo') && $('kpiDateTo').value) || todayLocal();
     normalizeRange();
@@ -618,7 +673,6 @@
 
     document.querySelectorAll('[data-period]').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        if (isCaptureEditable()) readFormIntoStore();
         applyPeriodPreset(btn.getAttribute('data-period') || 'day');
         syncPeriodButtons();
         loadPeriodIntoUI();
@@ -643,8 +697,7 @@
 
     if ($('kpiMeet')) {
       $('kpiMeet').addEventListener('click', function () {
-        if (isCaptureEditable()) readFormIntoStore();
-        renderViews();
+        withFormDraft(renderViews);
         setMeeting(true);
       });
     }

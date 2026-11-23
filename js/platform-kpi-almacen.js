@@ -345,10 +345,19 @@
     return false;
   }
 
-  /** Prefill desde el día anterior (plan/real); comentarios vacíos. */
-  function clonePreviousDay(key) {
-    var prev = state.store[shiftDate(key, -1)];
-    if (!dayHasSavedData(prev)) return emptyDay();
+  /** Último día con registro anterior a `key` (ej. lunes ← sábado si no hubo domingo). */
+  function findLastRegisteredDay(beforeKey) {
+    var keys = Object.keys(state.store || {}).filter(function (k) {
+      return k < beforeKey && dayHasSavedData(state.store[k]);
+    }).sort();
+    if (!keys.length) return null;
+    return state.store[keys[keys.length - 1]];
+  }
+
+  /** Prefill desde la última data registrada (plan/real); comentarios vacíos. */
+  function cloneFromLastRegistered(key) {
+    var prev = findLastRegisteredDay(key);
+    if (!prev) return emptyDay();
     var out = emptyDay();
     METRICS.forEach(function (m) {
       var row = prev[m.id] || {};
@@ -363,7 +372,7 @@
 
   function resolveCaptureDay(key) {
     if (dayHasSavedData(state.store[key])) return state.store[key];
-    return clonePreviousDay(key);
+    return cloneFromLastRegistered(key);
   }
 
   function readFormDay() {

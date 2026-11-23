@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Preview — Registro + Alcance</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #eef2f6; --panel: #fff; --text: #1a2433; --muted: #64748b;
+      --line: #c5d0dc; --ink: #0f172a; --ok: #15803d; --bad: #b91c1c;
+      --font: "DM Sans", system-ui, sans-serif; --body: "IBM Plex Sans", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; padding: 1.5rem;
+      font-family: var(--body); color: var(--text);
+      background: linear-gradient(180deg, var(--bg), #d9e1ea);
+    }
+    .wrap { width: min(720px, 100%); margin: 0 auto; }
+    .banner {
+      margin-bottom: 1rem; padding: 0.75rem 1rem;
+      border-radius: 12px; background: #fff7ed; border: 1px solid #fdba74;
+      font-size: 0.9rem;
+    }
+    .banner strong { font-family: var(--font); }
+    .panel {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: 14px; box-shadow: 0 12px 32px rgba(26,36,51,.08); padding: 1rem;
+    }
+    h2 { margin: 0 0 0.75rem; font-family: var(--font); font-size: 1.05rem; font-weight: 800; }
+    .cols, .row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) 72px 88px 88px 72px;
+      gap: 0.45rem; align-items: center;
+    }
+    .cols {
+      padding: 0 0.7rem 0.3rem; color: var(--muted);
+      font-size: 0.68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    }
+    .cols span:nth-child(n+2) { text-align: center; }
+    .rows { display: grid; gap: 0.5rem; }
+    .row {
+      padding: 0.65rem 0.7rem; border-radius: 12px;
+      border: 1px solid #e5ebf1; background: #f8fafc;
+    }
+    .row > strong { font-size: 0.88rem; display: block; }
+    .row > strong small { display: block; color: var(--muted); font-size: 0.72rem; margin-top: 0.12rem; font-weight: 500; }
+    .desafio { text-align: center; font-family: var(--font); font-weight: 800; font-size: 0.92rem; }
+    .desafio small { display: block; color: var(--muted); font-size: 0.58rem; font-weight: 500; line-height: 1.2; }
+    input[type="text"] {
+      width: 100%; border: 1px solid var(--line); border-radius: 8px;
+      background: #fff; padding: 0.5rem 0.4rem; font: inherit; text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .alcance {
+      text-align: center; font-family: var(--font); font-weight: 800; font-size: 0.95rem;
+    }
+    .alcance.is-ok { color: var(--ok); }
+    .alcance.is-bad { color: var(--bad); }
+    textarea {
+      grid-column: 1 / -1; width: 100%; min-height: 40px; resize: vertical;
+      border: 1px solid var(--line); border-radius: 8px; background: #fff;
+      padding: 0.4rem 0.55rem; font: inherit; font-size: 0.84rem;
+    }
+    .note { margin-top: 0.85rem; color: var(--muted); font-size: 0.82rem; }
+    .note code { background: #eef2f6; padding: 0.1rem 0.35rem; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="banner">
+      <strong>Preview (sin publicar)</strong> — Porcentajes sin decimales (Plan/Real/% Alcance).
+      Facturación con <code>$</code> · Diferencias con 4 decimales · notas <em>Causa/Acción</em>.
+    </div>
+    <section class="panel">
+      <h2>Registro</h2>
+      <div class="cols">
+        <span>Indicador</span><span>Desafío</span><span>Plan</span><span>Real</span><span>Alcance</span>
+      </div>
+      <div class="rows">
+        <div class="row">
+          <strong>Facturación<small>Despacho · Verde si Real ≥ Plan</small></strong>
+          <div class="desafio">90%</div>
+          <input type="text" value="$22,887" readonly />
+          <input type="text" value="$18,442" readonly />
+          <div class="alcance is-bad">81%</div>
+          <textarea placeholder="Causa/Acción" readonly></textarea>
+        </div>
+        <div class="row">
+          <strong>Fill Rate<small>Despacho · Verde si Real ≥ Plan</small></strong>
+          <div class="desafio">95%</div>
+          <input type="text" value="95%" readonly />
+          <input type="text" value="88%" readonly />
+          <div class="alcance is-bad">93%</div>
+          <textarea placeholder="Causa/Acción" readonly></textarea>
+        </div>
+        <div class="row">
+          <strong>Descarga de contenedores<small>Recepción · Verde si Real ≥ Plan</small></strong>
+          <div class="desafio">95%</div>
+          <input type="text" value="6" readonly />
+          <input type="text" value="9" readonly />
+          <div class="alcance is-ok">150%</div>
+          <textarea placeholder="Causa/Acción" readonly></textarea>
+        </div>
+        <div class="row">
+          <strong>Diferencias de Inventario<small>Inventario · Verde si Real ≤ Plan</small></strong>
+          <div class="desafio">0.0001<small>Valor inventario vs valor diferencia</small></div>
+          <input type="text" value="0.0001" readonly />
+          <input type="text" value="0.0169" readonly />
+          <div class="alcance is-bad">1%</div>
+          <textarea placeholder="Causa/Acción" readonly></textarea>
+        </div>
+        <div class="row">
+          <strong>Acuracidad<small>Inventario · Verde si Real ≥ Plan</small></strong>
+          <div class="desafio">95%</div>
+          <input type="text" value="99%" readonly />
+          <input type="text" value="98%" readonly />
+          <div class="alcance is-bad">99%</div>
+          <textarea placeholder="Causa/Acción" readonly></textarea>
+        </div>
+        <div class="row">
+          <strong>BPA<small>Calidad · Verde si Real ≥ Plan</small></strong>
+          <div class="desafio">85%</div>
+          <input type="text" value="85%" readonly />
+          <input type="text" value="90%" readonly />
+          <div class="alcance is-ok">106%</div>
+          <textarea placeholder="Causa/Acción" readonly></textarea>
+        </div>
+      </div>
+      <p class="note">
+        Fill Rate / Acuracidad / BPA / Alcance: enteros con <code>%</code> · Facturación: <code>$</code> sin decimales ·
+        Diferencias Plan/Real: 4 decimales · Descarga: enteros.
+      </p>
+    </section>
+  </div>
+</body>
+</html>

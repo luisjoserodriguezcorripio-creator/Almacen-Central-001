@@ -13,7 +13,7 @@
     { id: 'facturacion', name: 'Facturación', unit: 'RD$', rule: 'gte', agg: 'sum', owner: 'Despacho', desafio: '90%' },
     { id: 'fill_rate', name: 'Fill Rate', unit: '%', rule: 'gte', agg: 'avg', owner: 'Despacho', desafio: '95%' },
     { id: 'descarga_contenedores', name: 'Descarga de contenedores', unit: 'contenedores', rule: 'gte', agg: 'sum', owner: 'Recepción', desafio: '95%' },
-    { id: 'diferencias_inventario', name: 'Diferencias de Inventario', unit: 'ratio', rule: 'lt', agg: 'avg', owner: 'Inventario', desafio: '0.0001', desafioHint: 'Valor inventario vs valor diferencia', decimals: 4 },
+    { id: 'diferencias_inventario', name: 'Diferencias de Inventario', unit: 'ratio', rule: 'lte', agg: 'avg', owner: 'Inventario', desafio: '0.0001', desafioHint: 'Valor inventario vs valor diferencia', decimals: 4 },
     { id: 'acuracidad', name: 'Acuracidad', unit: '%', rule: 'gte', agg: 'avg', owner: 'Inventario', desafio: '95%' },
     { id: 'bpa', name: 'BPA', unit: '%', rule: 'gte', agg: 'avg', owner: 'Calidad', desafio: '85%' }
   ];
@@ -98,6 +98,7 @@
   function evalMetric(metric, plan, real) {
     if (plan == null || real == null) return 'empty';
     if (metric.rule === 'lt') return real < plan ? 'ok' : 'bad';
+    if (metric.rule === 'lte') return real <= plan ? 'ok' : 'bad';
     return real >= plan ? 'ok' : 'bad';
   }
 
@@ -133,7 +134,9 @@
   }
 
   function ruleLabel(m) {
-    return m.rule === 'lt' ? 'Verde si Real < Plan' : 'Verde si Real ≥ Plan';
+    if (m.rule === 'lt') return 'Verde si Real < Plan';
+    if (m.rule === 'lte') return 'Verde si Real ≤ Plan';
+    return 'Verde si Real ≥ Plan';
   }
 
   function migrateDay(raw) {

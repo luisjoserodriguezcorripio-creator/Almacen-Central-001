@@ -12,15 +12,11 @@ permissions:
 
 concurrency:
   group: pages
-  # false: evita fallos en "Publicar" cuando un deploy anterior aún cierra
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -49,9 +45,13 @@ jobs:
         with:
           path: _site
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Publicar
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          # Reintento implícito ante fallos intermitentes del API de Pages
-          timeout: 600000

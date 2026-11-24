@@ -211,15 +211,17 @@
     return 'Seleccionado';
   }
 
+  function labelFechaTv(dayKey) {
+    if (!dayKey) return '';
+    var base = shortDayLabel(dayKey) + '/' + String(dayKey).slice(0, 4);
+    return dayKey === todayKeyDespacho() ? ('Hoy · ' + base) : base;
+  }
+
+  /** Resumen del botón Fechas: fecha del día (auto) o la filtrada / Seleccionado. */
   function fechaFilterSummaryLabel(selectedKeys) {
-    if (!selectedKeys || !selectedKeys.length) return 'Hoy (auto)';
-    var hoy = todayKeyDespacho();
-    function labelForDay(d) {
-      var base = shortDayLabel(d) + '/' + String(d).slice(0, 4);
-      return d === hoy ? ('Hoy · ' + base) : base;
-    }
-    if (selectedKeys.length === 1) return labelForDay(selectedKeys[0]);
-    return 'Seleccionado · ' + selectedKeys.map(labelForDay).join(', ');
+    if (!selectedKeys || !selectedKeys.length) return labelFechaTv(todayKeyDespacho());
+    if (selectedKeys.length === 1) return labelFechaTv(selectedKeys[0]);
+    return 'Seleccionado';
   }
 
   function renderFilterDropdown(opts) {
@@ -244,13 +246,13 @@
     var hoy = todayKeyDespacho();
     var fechaItems = [{
       value: 'all',
-      label: 'Hoy (auto) · Cargado del día',
+      label: labelFechaTv(hoy) + ' (Cargado del día)',
       checked: !filterFechas
     }];
     availableDays.forEach(function (d) {
       fechaItems.push({
         value: d,
-        label: (d === hoy ? 'Hoy · ' : '') + shortDayLabel(d) + '/' + d.slice(0, 4),
+        label: labelFechaTv(d),
         checked: !!(filterFechas && filterFechas.indexOf(d) >= 0)
       });
     });

@@ -33,7 +33,7 @@
   var KPI_LABELS = {
     pendiente_carga: 'Pendiente',
     en_validacion: 'Validado',
-    listo_despacho: 'Cargado'
+    listo_despacho: 'Cargado hoy'
   };
 
   function DS() {
@@ -129,14 +129,31 @@
     return parts[2] + '/' + parts[1];
   }
 
-  function collectAvailableDays(pedidos) {
+  /** Timestamp de carga (listo_despacho); sin inventar con updatedAt para el corte diario. */
+  function cargadoIso(p) {
     var store = DS();
+    if (!p) return '';
+    if (store && store.fechaCambioEstado) {
+      var byEstado = store.fechaCambioEstado(p);
+      if (byEstado) return byEstado;
+    }
+    var etapas = store && store.fechasEtapasValidador ? store.fechasEtapasValidador(p) : {};
+    if (etapas.listo_despacho) return etapas.listo_despacho;
+    var hist = p.historial || [];
+    var i;
+    for (i = hist.length - 1; i >= 0; i--) {
+      var h = hist[i];
+      if (h && h.hacia === 'listo_despacho' && h.at) return h.at;
+    }
+    return '';
+  }
+
+  function collectAvailableDays(pedidos) {
     var map = {};
     (pedidos || []).forEach(function (p) {
       var k;
       if (p && p.estado === 'listo_despacho') {
-        var etapas = store && store.fechasEtapasValidador ? store.fechasEtapasValidador(p) : {};
-        k = dayKeyPedido(etapas.listo_despacho || registroIso(p));
+        k = dayKeyPedido(cargadoIso(p));
       } else {
         k = dayKeyPedido(registroIso(p));
       }
@@ -147,22 +164,27 @@
 
   function todayKeyDespacho() {
     var store = DS();
+    if (store && store.hoyCalendarioDespacho) return store.hoyCalendarioDespacho();
     if (store && store.dayKeyCalendarioDespacho) {
       return store.dayKeyCalendarioDespacho(new Date().toISOString());
     }
     return dayKeyPedido(new Date().toISOString());
   }
 
-  /** Cargado solo del día actual; Pendiente/Validado todos (backlog). Histórico permanece en BD. */
+  /**
+   * Alcance TV diario (zona America/Santo_Domingo):
+   * - Cargado: solo del día actual (amanecer → 0).
+   * - Pendiente / Validado: backlog completo (no se ocultan al cambiar el día).
+   * Histórico permanece en BD; no se borra.
+   */
   function applyTvDailyScope(pedidos) {
-    var store = DS();
     var hoy = todayKeyDespacho();
     return (pedidos || []).filter(function (p) {
       if (!p) return false;
       if (p.estado === 'pendiente_carga' || p.estado === 'en_validacion') return true;
       if (p.estado !== 'listo_despacho') return false;
-      var etapas = store && store.fechasEtapasValidador ? store.fechasEtapasValidador(p) : {};
-      var iso = etapas.listo_despacho || p.updatedAt || p.createdAt || '';
+      var iso = cargadoIso(p);
+      if (!iso) return false;
       return dayKeyPedido(iso) === hoy;
     });
   }
@@ -170,15 +192,11 @@
   function applyTvFilters(pedidos) {
     return (pedidos || []).filter(function (p) {
       if (filterFechas && filterFechas.length) {
-        var dia;
+        // La fecha solo afecta Cargado. Pendiente/Validado siempre quedan visibles.
         if (p.estado === 'listo_despacho') {
-          var store = DS();
-          var etapas = store && store.fechasEtapasValidador ? store.fechasEtapasValidador(p) : {};
-          dia = dayKeyPedido(etapas.listo_despacho || registroIso(p));
-        } else {
-          dia = dayKeyPedido(registroIso(p));
+          var dia = dayKeyPedido(cargadoIso(p));
+          if (filterFechas.indexOf(dia) < 0) return false;
         }
-        if (filterFechas.indexOf(dia) < 0) return false;
       }
       if (filterEstados && filterEstados.length) {
         if (filterEstados.indexOf(p.estado) < 0) return false;
@@ -212,18 +230,23 @@
   }
 
   function renderTvFilters(availableDays) {
-    var fechaItems = [{ value: 'all', label: 'Todas', checked: !filterFechas }];
+    var hoy = todayKeyDespacho();
+    var fechaItems = [{
+      value: 'all',
+      label: 'Hoy (auto) · Cargado del día',
+      checked: !filterFechas
+    }];
     availableDays.forEach(function (d) {
       fechaItems.push({
         value: d,
-        label: shortDayLabel(d) + '/' + d.slice(0, 4),
+        label: (d === hoy ? 'Hoy · ' : '') + shortDayLabel(d) + '/' + d.slice(0, 4),
         checked: !!(filterFechas && filterFechas.indexOf(d) >= 0)
       });
     });
     var fechaSummaryItems = (filterFechas || []).map(function (d) {
       return { value: d, label: shortDayLabel(d) };
     });
-    var fechaSummary = filterSummaryLabel(fechaSummaryItems, 'Todas', 'Elegir fecha');
+    var fechaSummary = filterSummaryLabel(fechaSummaryItems, 'Hoy (auto)', 'Elegir fecha');
 
     var store = DS();
     var estadoItems = [{ value: 'all', label: 'Todos', checked: !filterEstados }];
@@ -305,7 +328,7 @@
       '<span class="desp-lista-present-foot-item">IDC visibles: <strong>' + esc(String(counts.total || 0)) + '</strong></span>' +
       '<span class="desp-lista-present-foot-item">Pendiente: <strong>' + esc(String(counts.pendiente_carga || 0)) + '</strong></span>' +
       '<span class="desp-lista-present-foot-item">Validado: <strong>' + esc(String(counts.en_validacion || 0)) + '</strong></span>' +
-      '<span class="desp-lista-present-foot-item">Cargado: <strong>' + esc(String(counts.cargadoUnidades != null ? counts.cargadoUnidades : counts.listo_despacho || 0)) + ' cam.</strong>' +
+      '<span class="desp-lista-present-foot-item">Cargado hoy: <strong>' + esc(String(counts.cargadoUnidades != null ? counts.cargadoUnidades : counts.listo_despacho || 0)) + ' cam.</strong>' +
       ' <span class="desp-lista-present-foot-idc">(' + esc(String(counts.listo_despacho || 0)) + ' IDC)</span></span>' +
       '<span class="desp-lista-present-foot-item desp-lista-present-foot-sync" title="Última actualización de datos">Actualizado: ' + esc(syncLbl) + '</span>' +
       '</td></tr></tfoot>';
@@ -353,11 +376,12 @@
         var kpiCls = id === 'pendiente_carga' ? 'pendiente' : (id === 'en_validacion' ? 'validado' : 'cargado');
         var num = counts[id] || 0;
         var title = id === 'listo_despacho'
-          ? 'Camiones registrados en IDC cargados'
-          : (id === 'en_validacion' ? 'IDC en validación' : 'IDC pendientes por validar');
+          ? 'Camiones cargados solo del día actual (se reinicia a medianoche RD)'
+          : (id === 'en_validacion' ? 'IDC validados (backlog)' : 'IDC pendientes por validar (backlog)');
         if (id === 'listo_despacho' && counts.cargadoUnidades != null) {
           num = counts.cargadoUnidades;
-          title = (counts.cargadoUnidades || 0) + ' camiones · ' + (counts.listo_despacho || 0) + ' IDC cargados';
+          title = (counts.cargadoUnidades || 0) + ' camiones · ' + (counts.listo_despacho || 0) +
+            ' IDC cargados hoy';
         }
         return '<div class="desp-lista-present-kpi desp-lista-present-kpi--' + esc(kpiCls) + '">' +
           (icon ? '<span class="desp-lista-present-kpi-iconbox" aria-hidden="true">' + icon + '</span>' : '') +

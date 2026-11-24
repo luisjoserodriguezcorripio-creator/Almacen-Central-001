@@ -205,10 +205,21 @@
     });
   }
 
-  function filterSummaryLabel(selected, allLabel, oneEmptyLabel) {
+  function filterSummaryLabel(selected, allLabel) {
     if (!selected || !selected.length) return allLabel;
     if (selected.length === 1) return selected[0].label;
-    return 'seleccionado';
+    return 'Seleccionado';
+  }
+
+  function fechaFilterSummaryLabel(selectedKeys) {
+    if (!selectedKeys || !selectedKeys.length) return 'Hoy (auto)';
+    var hoy = todayKeyDespacho();
+    function labelForDay(d) {
+      var base = shortDayLabel(d) + '/' + String(d).slice(0, 4);
+      return d === hoy ? ('Hoy · ' + base) : base;
+    }
+    if (selectedKeys.length === 1) return labelForDay(selectedKeys[0]);
+    return 'Seleccionado · ' + selectedKeys.map(labelForDay).join(', ');
   }
 
   function renderFilterDropdown(opts) {
@@ -243,10 +254,7 @@
         checked: !!(filterFechas && filterFechas.indexOf(d) >= 0)
       });
     });
-    var fechaSummaryItems = (filterFechas || []).map(function (d) {
-      return { value: d, label: shortDayLabel(d) };
-    });
-    var fechaSummary = filterSummaryLabel(fechaSummaryItems, 'Hoy (auto)', 'Elegir fecha');
+    var fechaSummary = fechaFilterSummaryLabel(filterFechas);
 
     var store = DS();
     var estadoItems = [{ value: 'all', label: 'Todos', checked: !filterEstados }];
@@ -262,7 +270,7 @@
       var e = store && store.ESTADOS[id];
       return { value: id, label: (e && (e.short || e.label)) || id };
     });
-    var estadoSummary = filterSummaryLabel(estadoSummaryItems, 'Todos', 'Elegir estado');
+    var estadoSummary = filterSummaryLabel(estadoSummaryItems, 'Todos');
 
     return {
       fecha: renderFilterDropdown({

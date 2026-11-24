@@ -217,10 +217,9 @@
     return dayKey === todayKeyDespacho() ? ('Hoy · ' + base) : base;
   }
 
-  /** Resumen del botón Fechas: fecha del día (auto) o la filtrada / Seleccionado. */
+  /** Resumen del botón Fechas: Todos (abierto) o Seleccionado al filtrar. */
   function fechaFilterSummaryLabel(selectedKeys) {
-    if (!selectedKeys || !selectedKeys.length) return labelFechaTv(todayKeyDespacho());
-    if (selectedKeys.length === 1) return labelFechaTv(selectedKeys[0]);
+    if (!selectedKeys || !selectedKeys.length) return 'Todos';
     return 'Seleccionado';
   }
 
@@ -246,7 +245,7 @@
     var hoy = todayKeyDespacho();
     var fechaItems = [{
       value: 'all',
-      label: labelFechaTv(hoy) + ' (Cargado del día)',
+      label: 'Todos',
       checked: !filterFechas
     }];
     availableDays.forEach(function (d) {

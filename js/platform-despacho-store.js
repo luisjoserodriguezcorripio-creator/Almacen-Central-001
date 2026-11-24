@@ -1625,19 +1625,32 @@
     return counts;
   }
 
-  /** Resumen por validador: IDC validados/cargados + camiones registrados por persona. */
+  /** Resumen por validador: pendiente / validado / cargado (camiones) por persona. */
   function resumenPorValidador(pedidos) {
     var activos = getPedidosVisiblesValidador(pedidos);
     var byName = {};
     function ensureRow(name) {
       if (!byName[name]) {
-        byName[name] = { nombre: name, validado: 0, cargado: 0, camiones: 0, ultimaValidacion: null };
+        byName[name] = {
+          nombre: name,
+          pendiente: 0,
+          validado: 0,
+          cargado: 0,
+          camiones: 0,
+          ultimaValidacion: null
+        };
       }
       return byName[name];
     }
     activos.forEach(function (p) {
       var etapas = fechasEtapasValidador(p);
-      if (p.estado === 'en_validacion') {
+      if (p.estado === 'pendiente_carga') {
+        var namePend = validadorCreditoPorEstado(p, 'pendiente_carga') || validadorAsignadoEnPedido(p);
+        if (namePend) {
+          var rowPend = ensureRow(namePend);
+          rowPend.pendiente += 1;
+        }
+      } else if (p.estado === 'en_validacion') {
         var nameVal = validadorCreditoPorEstado(p, 'en_validacion');
         if (nameVal) {
           var rowVal = ensureRow(nameVal);
@@ -1662,18 +1675,26 @@
     });
     var list = Object.keys(byName).map(function (n) { return byName[n]; });
     list.sort(function (a, b) {
-      var ta = (a.validado || 0) + (a.cargado || 0);
-      var tb = (b.validado || 0) + (b.cargado || 0);
+      var ta = (a.pendiente || 0) + (a.validado || 0) + (a.cargado || 0);
+      var tb = (b.pendiente || 0) + (b.validado || 0) + (b.cargado || 0);
       if (tb !== ta) return tb - ta;
       return String(a.nombre).localeCompare(String(b.nombre), 'es');
     });
+    var totPendiente = 0;
     var totValidado = 0;
     var totCargado = 0;
     list.forEach(function (r) {
-      totValidado += r.validado;
-      totCargado += r.cargado;
+      totPendiente += r.pendiente || 0;
+      totValidado += r.validado || 0;
+      totCargado += r.cargado || 0;
     });
-    return { filas: list, totalValidado: totValidado, totalCargado: totCargado, totalCamiones: totCargado };
+    return {
+      filas: list,
+      totalPendiente: totPendiente,
+      totalValidado: totValidado,
+      totalCargado: totCargado,
+      totalCamiones: totCargado
+    };
   }
 
   function getPedidosActivos(pedidos) {

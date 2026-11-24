@@ -80,7 +80,7 @@
     var valSig = '';
     if (resumen && resumen.filas) {
       valSig = resumen.filas.map(function (r) {
-        return r.nombre + ':' + r.validado + '/' + r.cargado + '/' + (r.camiones || 0) + '@' + (r.ultimaValidacion || '');
+        return r.nombre + ':' + (r.pendiente || 0) + '/' + r.validado + '/' + r.cargado + '/' + (r.camiones || 0) + '@' + (r.ultimaValidacion || '');
       }).join(';');
     }
     return share.updatedAt + '::' + String(dataUpdatedAt || '') + '::' + countSig + '::' + valSig + '::' + rows;
@@ -130,18 +130,54 @@
   }
 
   function collectAvailableDays(pedidos) {
+    var store = DS();
     var map = {};
     (pedidos || []).forEach(function (p) {
-      var k = dayKeyPedido(registroIso(p));
+      var k;
+      if (p && p.estado === 'listo_despacho') {
+        var etapas = store && store.fechasEtapasValidador ? store.fechasEtapasValidador(p) : {};
+        k = dayKeyPedido(etapas.listo_despacho || registroIso(p));
+      } else {
+        k = dayKeyPedido(registroIso(p));
+      }
       if (k) map[k] = true;
     });
     return Object.keys(map).sort().reverse();
   }
 
+  function todayKeyDespacho() {
+    var store = DS();
+    if (store && store.dayKeyCalendarioDespacho) {
+      return store.dayKeyCalendarioDespacho(new Date().toISOString());
+    }
+    return dayKeyPedido(new Date().toISOString());
+  }
+
+  /** Cargado solo del día actual; Pendiente/Validado todos (backlog). Histórico permanece en BD. */
+  function applyTvDailyScope(pedidos) {
+    var store = DS();
+    var hoy = todayKeyDespacho();
+    return (pedidos || []).filter(function (p) {
+      if (!p) return false;
+      if (p.estado === 'pendiente_carga' || p.estado === 'en_validacion') return true;
+      if (p.estado !== 'listo_despacho') return false;
+      var etapas = store && store.fechasEtapasValidador ? store.fechasEtapasValidador(p) : {};
+      var iso = etapas.listo_despacho || p.updatedAt || p.createdAt || '';
+      return dayKeyPedido(iso) === hoy;
+    });
+  }
+
   function applyTvFilters(pedidos) {
     return (pedidos || []).filter(function (p) {
       if (filterFechas && filterFechas.length) {
-        var dia = dayKeyPedido(registroIso(p));
+        var dia;
+        if (p.estado === 'listo_despacho') {
+          var store = DS();
+          var etapas = store && store.fechasEtapasValidador ? store.fechasEtapasValidador(p) : {};
+          dia = dayKeyPedido(etapas.listo_despacho || registroIso(p));
+        } else {
+          dia = dayKeyPedido(registroIso(p));
+        }
         if (filterFechas.indexOf(dia) < 0) return false;
       }
       if (filterEstados && filterEstados.length) {
@@ -331,73 +367,48 @@
       '</div>';
   }
 
-  /** Tope visual de productividad (no se muestra en pantalla). Evita barras siempre llenas. */
-  var BAR_SCALE_MAX = 10;
-
-  function barScaleGlobal(filas) {
-    var max = BAR_SCALE_MAX;
-    (filas || []).forEach(function (r) {
-      max = Math.max(max, r.validado || 0, r.cargado || 0);
-    });
-    return Math.min(250, max);
+  /** Barra TV: meta=P+V+C; no se llena al 100% hasta que todo esté Cargado. */
+  function prodBarWidths(pendiente, validado, cargado) {
+    var p = Math.max(0, pendiente || 0);
+    var v = Math.max(0, validado || 0);
+    var c = Math.max(0, cargado || 0);
+    var meta = p + v + c;
+    if (!meta) return { p: 0, v: 0, c: 0, done: true };
+    if (p === 0 && v === 0) return { p: 0, v: 0, c: 100, done: true };
+    var filled = 28 + 72 * (c / meta);
+    return {
+      p: +(filled * (p / meta)).toFixed(2),
+      v: +(filled * (v / meta)).toFixed(2),
+      c: +(filled * (c / meta)).toFixed(2),
+      done: false
+    };
   }
 
-  function barFlexClass(n) {
-    n = Math.max(0, Math.min(250, Math.round(n || 0)));
-    return 'desp-bar-n-' + n;
-  }
-
-  function renderBarFlex(value, scaleMax, kind) {
-    var v = Math.max(0, Math.min(scaleMax, value || 0));
-    var rest = Math.max(0, scaleMax - v);
-    var html = '<div class="desp-val-chart-bar-line desp-val-chart-bar-line--flex">';
-    if (v > 0) {
-      html += '<span class="desp-val-chart-bar-fill desp-val-chart-bar-fill--' + kind + ' ' + barFlexClass(v) + '"></span>';
+  function renderProdStackedBar(r) {
+    var p = r.pendiente != null ? r.pendiente : 0;
+    var v = r.validado != null ? r.validado : 0;
+    var c = r.cargado != null ? r.cargado : 0;
+    var w = prodBarWidths(p, v, c);
+    var segs = '';
+    if (w.done) {
+      segs = '<span class="desp-lista-prod-seg desp-lista-prod-seg--cam" style="width:100%">' +
+        esc(String(c)) + '</span>';
+    } else {
+      if (p > 0) {
+        segs += '<span class="desp-lista-prod-seg desp-lista-prod-seg--pend" style="width:' + w.p + '%">' +
+          esc(String(p)) + '</span>';
+      }
+      if (v > 0) {
+        segs += '<span class="desp-lista-prod-seg desp-lista-prod-seg--val" style="width:' + w.v + '%">' +
+          esc(String(v)) + '</span>';
+      }
+      if (c > 0) {
+        segs += '<span class="desp-lista-prod-seg desp-lista-prod-seg--cam" style="width:' + w.c + '%">' +
+          esc(String(c)) + '</span>';
+      }
     }
-    if (rest > 0) {
-      html += '<span class="desp-val-chart-bar-rest ' + barFlexClass(rest) + '"></span>';
-    }
-    html += '</div>';
-    return html;
-  }
-
-  function renderResumenGrafico(pedidos) {
-    var store = DS();
-    if (!store || !store.resumenPorValidador) return '';
-    var resumen = store.resumenPorValidador(pedidos || []);
-    var filas = (resumen.filas || []).filter(function (r) {
-      return (r.validado || 0) > 0 || (r.cargado || 0) > 0;
-    });
-    var scaleMax = barScaleGlobal(filas);
-
-    var rows = filas.map(function (r) {
-      var cargado = r.cargado != null ? r.cargado : 0;
-      return '<div class="desp-val-chart-row">' +
-        '<span class="desp-val-chart-name" title="' + esc(r.nombre) + '">' + esc(r.nombre) + '</span>' +
-        '<div class="desp-val-chart-bars" role="img" aria-label="' + esc(r.nombre) + ': ' +
-        r.validado + ' validados, ' + cargado + ' camiones cargados">' +
-        '<div class="desp-val-chart-bar-row">' +
-        renderBarFlex(r.validado, scaleMax, 'validado') +
-        '<span class="desp-val-chart-seg-num desp-val-chart-seg-num--validado" title="IDC validados">' +
-        esc(String(r.validado)) + '</span></div>' +
-        '<div class="desp-val-chart-bar-row">' +
-        renderBarFlex(cargado, scaleMax, 'cargado') +
-        '<span class="desp-val-chart-seg-num desp-val-chart-seg-num--cargado" title="Camiones cargados">' +
-        esc(String(cargado)) + '</span></div>' +
-        '</div>' +
-        '</div>';
-    }).join('');
-
-    if (!rows) {
-      rows = '<p class="desp-val-chart-empty">Sin IDC validados ni cargados asignados.</p>';
-    }
-
-    return '<aside class="desp-val-resumen desp-val-resumen--solo-barras" aria-label="Resumen validadores">' +
-      '<div class="desp-val-resumen-legend desp-val-resumen-legend--tv">' +
-      '<span class="desp-val-resumen-legend-item"><span class="desp-val-swatch desp-val-swatch--validado" aria-hidden="true"></span> Validados</span>' +
-      '<span class="desp-val-resumen-legend-item"><span class="desp-val-swatch desp-val-swatch--cargado" aria-hidden="true"></span> Cargados (cam.)</span>' +
-      '</div>' +
-      '<div class="desp-val-chart-rows">' + rows + '</div></aside>';
+    return '<div class="desp-lista-prod-stack' + (w.done ? ' is-done' : '') + '" role="img" aria-label="' +
+      esc(r.nombre) + ': Pendiente ' + p + ', Validado ' + v + ', Cargado ' + c + '">' + segs + '</div>';
   }
 
   function buildProdFilasCompletas(pedidos) {
@@ -416,7 +427,7 @@
     catalog.forEach(function (name) {
       if (!name || seen[name]) return;
       seen[name] = true;
-      filas.push(byName[name] || { nombre: name, validado: 0, cargado: 0 });
+      filas.push(byName[name] || { nombre: name, pendiente: 0, validado: 0, cargado: 0 });
     });
     (resumen.filas || []).forEach(function (r) {
       if (!r || !r.nombre || seen[r.nombre]) return;
@@ -424,8 +435,8 @@
       filas.push(r);
     });
     filas.sort(function (a, b) {
-      var ta = (a.validado || 0) + (a.cargado || 0);
-      var tb = (b.validado || 0) + (b.cargado || 0);
+      var ta = (a.pendiente || 0) + (a.validado || 0) + (a.cargado || 0);
+      var tb = (b.pendiente || 0) + (b.validado || 0) + (b.cargado || 0);
       if (tb !== ta) return tb - ta;
       return String(a.nombre).localeCompare(String(b.nombre), 'es');
     });
@@ -440,24 +451,11 @@
         '<p class="desp-lista-prod-empty">Sin datos</p></aside>';
     }
     var filas = buildProdFilasCompletas(pedidos);
-    var scaleMax = barScaleGlobal(filas);
     var cards = filas.map(function (r) {
-      var cargado = r.cargado != null ? r.cargado : 0;
-      var validado = r.validado != null ? r.validado : 0;
       return '<div class="desp-lista-prod-person">' +
-        '<div class="desp-lista-prod-person-top">' +
         '<div class="desp-lista-prod-name">' + esc(r.nombre) + '</div>' +
-        '<div class="desp-lista-prod-nums" aria-label="Validados y cargados">' +
-        '<span class="desp-lista-prod-num desp-lista-prod-num--val" title="Validados">' +
-        esc(String(validado)) + '</span>' +
-        '<span class="desp-lista-prod-num desp-lista-prod-num--cam" title="Cargados">' +
-        esc(String(cargado)) + '</span></div></div>' +
-        '<div class="desp-lista-prod-bars">' +
-        '<div class="desp-lista-prod-bar-row" title="Validados">' +
-        renderBarFlex(validado, scaleMax, 'validado') + '</div>' +
-        '<div class="desp-lista-prod-bar-row" title="Cargados">' +
-        renderBarFlex(cargado, scaleMax, 'cargado') + '</div>' +
-        '</div></div>';
+        renderProdStackedBar(r) +
+        '</div>';
     }).join('');
     if (!cards) {
       cards = '<p class="desp-lista-prod-empty">Sin validadores en catálogo.</p>';
@@ -465,8 +463,9 @@
     return '<aside class="desp-lista-prod-side" aria-label="Productividad validadores">' +
       '<h2 class="desp-lista-prod-title">Productividad validadores</h2>' +
       '<div class="desp-lista-prod-legend" aria-hidden="true">' +
+      '<span><i class="desp-lista-prod-swatch desp-lista-prod-swatch--pend"></i>Pendiente</span>' +
       '<span><i class="desp-lista-prod-swatch desp-lista-prod-swatch--val"></i>Validado</span>' +
-      '<span><i class="desp-lista-prod-swatch desp-lista-prod-swatch--cam"></i>Cargados</span>' +
+      '<span><i class="desp-lista-prod-swatch desp-lista-prod-swatch--cam"></i>Cargado hoy</span>' +
       '</div>' +
       '<div class="desp-lista-prod-list">' + cards + '</div>' +
       '</aside>';
@@ -487,8 +486,9 @@
 
     data = data || (DS() ? DS().load() : { pedidos: [] });
     var allPedidos = DS() ? DS().getPedidosVisiblesValidador(data.pedidos) : [];
-    var availableDays = collectAvailableDays(allPedidos);
-    var pedidos = applyTvFilters(allPedidos);
+    var scopedPedidos = applyTvDailyScope(allPedidos);
+    var availableDays = collectAvailableDays(scopedPedidos);
+    var pedidos = applyTvFilters(scopedPedidos);
     var counts = DS() && DS().countResumenValidador ? DS().countResumenValidador(pedidos) : null;
     var resumen = DS() && DS().resumenPorValidador ? DS().resumenPorValidador(pedidos) : null;
     var filters = renderTvFilters(availableDays);
@@ -525,9 +525,10 @@
       '</div></div></div>';
 
     bindTvFilters(share, data);
-    lastSig = listaSignature(share, allPedidos, counts, resumen, data.updatedAt) +
+    lastSig = listaSignature(share, scopedPedidos, counts, resumen, data.updatedAt) +
       '::f=' + (filterFechas ? filterFechas.join(',') : 'all') +
-      '::e=' + (filterEstados ? filterEstados.join(',') : 'all');
+      '::e=' + (filterEstados ? filterEstados.join(',') : 'all') +
+      '::hoy=' + todayKeyDespacho();
   }
 
   function refreshFromStore() {
@@ -544,12 +545,14 @@
       return;
     }
     var allPedidos = store.getPedidosVisiblesValidador(data.pedidos);
-    var pedidos = applyTvFilters(allPedidos);
+    var scopedPedidos = applyTvDailyScope(allPedidos);
+    var pedidos = applyTvFilters(scopedPedidos);
     var counts = store.countResumenValidador ? store.countResumenValidador(pedidos) : null;
     var resumen = store.resumenPorValidador ? store.resumenPorValidador(pedidos) : null;
-    var sig = listaSignature(share, allPedidos, counts, resumen, data.updatedAt) +
+    var sig = listaSignature(share, scopedPedidos, counts, resumen, data.updatedAt) +
       '::f=' + (filterFechas ? filterFechas.join(',') : 'all') +
-      '::e=' + (filterEstados ? filterEstados.join(',') : 'all');
+      '::e=' + (filterEstados ? filterEstados.join(',') : 'all') +
+      '::hoy=' + todayKeyDespacho();
     if (sig === lastSig) return;
     renderMount(share, data);
   }

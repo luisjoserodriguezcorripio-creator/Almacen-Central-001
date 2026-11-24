@@ -33,7 +33,7 @@
   var KPI_LABELS = {
     pendiente_carga: 'Pendiente',
     en_validacion: 'Validado',
-    listo_despacho: 'Cargado hoy'
+    listo_despacho: 'Cargado'
   };
 
   function DS() {
@@ -337,7 +337,7 @@
       '<span class="desp-lista-present-foot-item">IDC visibles: <strong>' + esc(String(counts.total || 0)) + '</strong></span>' +
       '<span class="desp-lista-present-foot-item">Pendiente: <strong>' + esc(String(counts.pendiente_carga || 0)) + '</strong></span>' +
       '<span class="desp-lista-present-foot-item">Validado: <strong>' + esc(String(counts.en_validacion || 0)) + '</strong></span>' +
-      '<span class="desp-lista-present-foot-item">Cargado hoy: <strong>' + esc(String(counts.cargadoUnidades != null ? counts.cargadoUnidades : counts.listo_despacho || 0)) + ' cam.</strong>' +
+      '<span class="desp-lista-present-foot-item">Cargado: <strong>' + esc(String(counts.cargadoUnidades != null ? counts.cargadoUnidades : counts.listo_despacho || 0)) + ' cam.</strong>' +
       ' <span class="desp-lista-present-foot-idc">(' + esc(String(counts.listo_despacho || 0)) + ' IDC)</span></span>' +
       '<span class="desp-lista-present-foot-item desp-lista-present-foot-sync" title="Última actualización de datos">Actualizado: ' + esc(syncLbl) + '</span>' +
       '</td></tr></tfoot>';
@@ -385,12 +385,12 @@
         var kpiCls = id === 'pendiente_carga' ? 'pendiente' : (id === 'en_validacion' ? 'validado' : 'cargado');
         var num = counts[id] || 0;
         var title = id === 'listo_despacho'
-          ? 'Camiones cargados solo del día actual (se reinicia a medianoche RD)'
-          : (id === 'en_validacion' ? 'IDC validados (backlog)' : 'IDC pendientes por validar (backlog)');
+          ? 'Camiones cargados del día actual (histórico queda en BD)'
+          : (id === 'en_validacion' ? 'IDC validados (histórico)' : 'IDC pendientes por validar (histórico)');
         if (id === 'listo_despacho' && counts.cargadoUnidades != null) {
           num = counts.cargadoUnidades;
           title = (counts.cargadoUnidades || 0) + ' camiones · ' + (counts.listo_despacho || 0) +
-            ' IDC cargados hoy';
+            ' IDC cargados (solo hoy)';
         }
         return '<div class="desp-lista-present-kpi desp-lista-present-kpi--' + esc(kpiCls) + '">' +
           (icon ? '<span class="desp-lista-present-kpi-iconbox" aria-hidden="true">' + icon + '</span>' : '') +
@@ -498,7 +498,7 @@
       '<div class="desp-lista-prod-legend" aria-hidden="true">' +
       '<span><i class="desp-lista-prod-swatch desp-lista-prod-swatch--pend"></i>Pendiente</span>' +
       '<span><i class="desp-lista-prod-swatch desp-lista-prod-swatch--val"></i>Validado</span>' +
-      '<span><i class="desp-lista-prod-swatch desp-lista-prod-swatch--cam"></i>Cargado hoy</span>' +
+      '<span><i class="desp-lista-prod-swatch desp-lista-prod-swatch--cam"></i>Cargado</span>' +
       '</div>' +
       '<div class="desp-lista-prod-list">' + cards + '</div>' +
       '</aside>';

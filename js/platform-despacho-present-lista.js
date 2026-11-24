@@ -129,23 +129,29 @@
     return parts[2] + '/' + parts[1];
   }
 
-  /** Timestamp de carga (listo_despacho); sin inventar con updatedAt para el corte diario. */
+  /**
+   * Timestamp real de carga (historial → listo_despacho).
+   * Nunca usa updatedAt: sync/toques del día hinchaban el KPI con histórico.
+   */
   function cargadoIso(p) {
-    var store = DS();
     if (!p) return '';
-    if (store && store.fechaCambioEstado) {
-      var byEstado = store.fechaCambioEstado(p);
-      if (byEstado) return byEstado;
-    }
-    var etapas = store && store.fechasEtapasValidador ? store.fechasEtapasValidador(p) : {};
-    if (etapas.listo_despacho) return etapas.listo_despacho;
     var hist = p.historial || [];
+    var best = '';
     var i;
-    for (i = hist.length - 1; i >= 0; i--) {
+    for (i = 0; i < hist.length; i++) {
       var h = hist[i];
-      if (h && h.hacia === 'listo_despacho' && h.at) return h.at;
+      if (!h || h.hacia !== 'listo_despacho' || !h.at) continue;
+      if (!best || String(h.at) > String(best)) best = h.at;
     }
-    return '';
+    return best;
+  }
+
+  /** Jornada operativa despacho (inicia 6:00 a.m. RD) → amanece en 0. */
+  function dayKeyCargado(iso) {
+    var store = DS();
+    if (!iso) return '';
+    if (store && store.claveJornadaLaboral) return store.claveJornadaLaboral(iso);
+    return dayKeyPedido(iso);
   }
 
   function collectAvailableDays(pedidos) {
@@ -153,7 +159,7 @@
     (pedidos || []).forEach(function (p) {
       var k;
       if (p && p.estado === 'listo_despacho') {
-        k = dayKeyPedido(cargadoIso(p));
+        k = dayKeyCargado(cargadoIso(p));
       } else {
         k = dayKeyPedido(registroIso(p));
       }
@@ -164,6 +170,7 @@
 
   function todayKeyDespacho() {
     var store = DS();
+    if (store && store.jornadaLaboralActualClave) return store.jornadaLaboralActualClave();
     if (store && store.hoyCalendarioDespacho) return store.hoyCalendarioDespacho();
     if (store && store.dayKeyCalendarioDespacho) {
       return store.dayKeyCalendarioDespacho(new Date().toISOString());
@@ -172,9 +179,9 @@
   }
 
   /**
-   * Alcance TV diario (zona America/Santo_Domingo):
-   * - Cargado: solo del día actual (amanecer → 0).
-   * - Pendiente / Validado: backlog completo (no se ocultan al cambiar el día).
+   * Alcance TV diario (jornada 6:00 a.m. America/Santo_Domingo):
+   * - Cargado: solo de la jornada actual (amanecer operativo → 0).
+   * - Pendiente / Validado: histórico/backlog completo.
    * Histórico permanece en BD; no se borra.
    */
   function applyTvDailyScope(pedidos) {
@@ -185,7 +192,7 @@
       if (p.estado !== 'listo_despacho') return false;
       var iso = cargadoIso(p);
       if (!iso) return false;
-      return dayKeyPedido(iso) === hoy;
+      return dayKeyCargado(iso) === hoy;
     });
   }
 
@@ -194,7 +201,7 @@
       if (filterFechas && filterFechas.length) {
         // La fecha solo afecta Cargado. Pendiente/Validado siempre quedan visibles.
         if (p.estado === 'listo_despacho') {
-          var dia = dayKeyPedido(cargadoIso(p));
+          var dia = dayKeyCargado(cargadoIso(p));
           if (filterFechas.indexOf(dia) < 0) return false;
         }
       }

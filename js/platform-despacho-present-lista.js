@@ -129,28 +129,32 @@
     return parts[2] + '/' + parts[1];
   }
 
+  var TV_BUILD = 'tv24j';
+
   /**
-   * Timestamp real de carga (historial → listo_despacho).
-   * Nunca usa updatedAt: sync/toques del día hinchaban el KPI con histórico.
+   * Primera fecha real de carga (historial → listo_despacho).
+   * Nunca usa updatedAt (sync lo pone en "hoy" y metía el histórico del 18/19).
    */
   function cargadoIso(p) {
     if (!p) return '';
     var hist = p.historial || [];
-    var best = '';
+    var earliest = '';
     var i;
     for (i = 0; i < hist.length; i++) {
       var h = hist[i];
-      if (!h || h.hacia !== 'listo_despacho' || !h.at) continue;
-      if (!best || String(h.at) > String(best)) best = h.at;
+      if (!h || !h.at) continue;
+      var hacia = h.hacia || h.to || h.estado || '';
+      if (hacia !== 'listo_despacho') continue;
+      if (!earliest || String(h.at) < String(earliest)) earliest = h.at;
     }
-    return best;
+    return earliest;
   }
 
-  /** Jornada operativa despacho (inicia 6:00 a.m. RD) → amanece en 0. */
+  /** Día calendario RD (YYYY-MM-DD) — corte estricto para Cargado. */
   function dayKeyCargado(iso) {
-    var store = DS();
     if (!iso) return '';
-    if (store && store.claveJornadaLaboral) return store.claveJornadaLaboral(iso);
+    var store = DS();
+    if (store && store.dayKeyCalendarioDespacho) return store.dayKeyCalendarioDespacho(iso);
     return dayKeyPedido(iso);
   }
 
@@ -170,7 +174,6 @@
 
   function todayKeyDespacho() {
     var store = DS();
-    if (store && store.jornadaLaboralActualClave) return store.jornadaLaboralActualClave();
     if (store && store.hoyCalendarioDespacho) return store.hoyCalendarioDespacho();
     if (store && store.dayKeyCalendarioDespacho) {
       return store.dayKeyCalendarioDespacho(new Date().toISOString());
@@ -178,21 +181,25 @@
     return dayKeyPedido(new Date().toISOString());
   }
 
+  function esCargadoDeHoy(p) {
+    if (!p || p.estado !== 'listo_despacho') return false;
+    var iso = cargadoIso(p);
+    if (!iso) return false;
+    return dayKeyCargado(iso) === todayKeyDespacho();
+  }
+
   /**
-   * Alcance TV diario (jornada 6:00 a.m. America/Santo_Domingo):
-   * - Cargado: solo de la jornada actual (amanecer operativo → 0).
-   * - Pendiente / Validado: histórico/backlog completo.
+   * Alcance TV diario (calendario America/Santo_Domingo):
+   * - Cargado: SOLO marcados listo_despacho con historial del día de hoy → amanece en 0.
+   * - Pendiente / Validado: histórico completo.
    * Histórico permanece en BD; no se borra.
    */
   function applyTvDailyScope(pedidos) {
-    var hoy = todayKeyDespacho();
     return (pedidos || []).filter(function (p) {
       if (!p) return false;
       if (p.estado === 'pendiente_carga' || p.estado === 'en_validacion') return true;
       if (p.estado !== 'listo_despacho') return false;
-      var iso = cargadoIso(p);
-      if (!iso) return false;
-      return dayKeyCargado(iso) === hoy;
+      return esCargadoDeHoy(p);
     });
   }
 
@@ -363,7 +370,7 @@
       var cargaTxt = store && store.formatCargasEquipoResumen
         ? store.formatCargasEquipoResumen(p, { withTotal: true })
         : '—';
-      var regIso = registroIso(p);
+      var regIso = p.estado === 'listo_despacho' ? (cargadoIso(p) || registroIso(p)) : registroIso(p);
       return '<tr>' +
         '<td class="desp-lista-present-registro">' + esc(regIso ? fmtDtLista(regIso) : '—') + '</td>' +
         '<td class="desp-lista-present-idc">' + esc(idc) + '</td>' +
@@ -538,7 +545,7 @@
     document.body.classList.add('desp-live-lista-on');
 
     mountEl.innerHTML =
-      '<div class="desp-lista-present-shell">' +
+      '<div class="desp-lista-present-shell" data-tv-build="' + esc(TV_BUILD) + '">' +
       '<div class="desp-lista-present-inner desp-lista-present-layout-v2">' +
       '<div class="desp-lista-top-band">' +
       '<div class="desp-lista-top-left">' +
